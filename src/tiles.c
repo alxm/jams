@@ -21,3 +21,8 @@ void z_tiles_load(void)
     g_tiles[Z_TILE_TYPE_GROUND].walkable = true;
     g_tiles[Z_TILE_TYPE_PEBBLES].walkable = true;
 }
+
+ASprite* z_tiles_sprite(size_t Index)
+{
+    return g_tiles[Index].sprite;
+}

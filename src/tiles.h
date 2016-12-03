@@ -5,3 +5,5 @@ typedef enum ZTileType {
 } ZTileType;
 
 extern void z_tiles_load(void);
+
+extern ASprite* z_tiles_sprite(size_t Index);

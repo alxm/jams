@@ -37,3 +37,8 @@ void z_comp_map_init(ZCompMap* Map)
         }
     }
 }
+
+ASprite* z_comp_map_sprite(const ZCompMap* Map, int X, int Y)
+{
+    return z_tiles_sprite(Map->tiles[Y][X]);
+}
