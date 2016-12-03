@@ -1,11 +1,8 @@
 #include <a2x.h>
 
-static AStrHash* g_graphics;
+#include "map.h"
 
-ASpriteFrames* z_graphics_get(const char* Key)
-{
-    return a_strhash_get(g_graphics, Key);
-}
+static AStrHash* g_graphics;
 
 A_STATE(load)
 {
@@ -20,6 +17,8 @@ A_STATE(load)
         a_strhash_add(g_graphics, "player", player);
         a_strhash_add(g_graphics, "tiles", tiles);
 
+        z_map_tile_load();
+
         a_state_push("world");
     }
 
@@ -31,4 +30,9 @@ A_STATE(load)
 
         a_strhash_free(g_graphics);
     }
+}
+
+ASpriteFrames* z_graphics_get(const char* Key)
+{
+    return a_strhash_get(g_graphics, Key);
 }

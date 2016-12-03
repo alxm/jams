@@ -1,19 +1,16 @@
 #include <a2x.h>
 
-struct ZTile {
-    bool walkable;
-    ASprite* sprite;
-};
+#include "map.h"
 
-struct ZMap {
-    int w, h;
-    int** tiles; // index to tiles
-};
-
-struct ZPlayer {
+typedef struct ZPlayer {
     AFix x, y; // pixel-level coords on world map
     ASpriteFrames* frames;
-};
+} ZPlayer;
+
+typedef struct ZGame {
+    ZMap* map;
+    ZPlayer* player;
+} ZGame;
 
 A_STATE(world)
 {
