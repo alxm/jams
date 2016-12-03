@@ -29,4 +29,34 @@ void z_map_tile_load(void)
     }
 
     g_tiles[Z_TILE_TYPE_GROUND].walkable = true;
+    g_tiles[Z_TILE_TYPE_PEBBLES].walkable = true;
+}
+
+size_t z_map_comp_size(void)
+{
+    return sizeof(ZMap);
+}
+
+AEntity* z_map_new(void)
+{
+    AEntity* entity = a_entity_new();
+
+    return entity;
+}
+
+void z_map_comp_free(void* Self)
+{
+    ZMap* m = Self;
+
+    for(int i = m->h; i--; ) {
+        free(m->tiles[i]);
+    }
+
+    free(m->tiles);
+    free(m);
+}
+
+void z_map_comp_handler_draw(AEntity* Entity, void* GlobalContext)
+{
+    //
 }
