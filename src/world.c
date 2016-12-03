@@ -1,11 +1,7 @@
 #include <a2x.h>
 
 #include "map.h"
-
-typedef struct ZPlayer {
-    AFix x, y; // pixel-level coords on world map
-    ASpriteFrames* frames;
-} ZPlayer;
+#include "player.h"
 
 typedef struct ZGame {
     AEntity* map;
@@ -19,8 +15,12 @@ A_STATE(world)
     A_STATE_INIT
     {
         a_component_declare("map", z_map_comp_size(), z_map_comp_free);
+        a_component_declare("position", z_comp_position_size(), NULL);
 
+        a_system_declare("mapTick", "map", z_map_comp_handler_tick);
         a_system_declare("mapDraw", "map", z_map_comp_handler_draw);
+
+        a_system_draw("mapDraw");
 
         a_system_setContext(&game);
 

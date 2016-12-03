@@ -56,6 +56,11 @@ void z_map_comp_free(void* Self)
     free(m);
 }
 
+void z_map_comp_handler_tick(AEntity* Entity, void* GlobalContext)
+{
+    //
+}
+
 void z_map_comp_handler_draw(AEntity* Entity, void* GlobalContext)
 {
     //
