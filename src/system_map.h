@@ -1,0 +1,2 @@
+extern ASystemHandler z_system_mapTick;
+extern ASystemHandler z_system_mapDraw;

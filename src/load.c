@@ -1,6 +1,6 @@
 #include <a2x.h>
 
-#include "map.h"
+#include "tiles.h"
 
 static AStrHash* g_graphics;
 
@@ -17,7 +17,7 @@ A_STATE(load)
         a_strhash_add(g_graphics, "player", player);
         a_strhash_add(g_graphics, "tiles", tiles);
 
-        z_map_tile_load();
+        z_tiles_load();
 
         a_state_push("world");
     }
