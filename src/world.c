@@ -5,6 +5,7 @@
 #include "component_sprite.h"
 
 #include "system_map.h"
+#include "system_sprite.h"
 
 #include "entity_camera.h"
 #include "entity_map.h"
@@ -28,9 +29,10 @@ A_STATE(world)
 
         a_system_declare("mapTick", "map", z_system_mapTick);
         a_system_declare("mapDraw", "map", z_system_mapDraw);
+        a_system_declare("sprite", "position sprite", z_system_sprite);
 
         a_system_tick("mapTick");
-        a_system_draw("mapDraw");
+        a_system_draw("mapDraw sprite");
 
         a_system_setContext(&world);
 
