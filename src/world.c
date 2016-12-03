@@ -51,3 +51,8 @@ A_STATE(world)
         a_entity_free(world.player);
     }
 }
+
+AEntity* z_world_getCamera(const ZWorld* World)
+{
+    return World->camera;
+}

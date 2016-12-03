@@ -1,3 +1,5 @@
+#define Z_TILE_DIM 16
+
 typedef enum ZTileType {
     Z_TILE_TYPE_GROUND,
     Z_TILE_TYPE_PEBBLES,

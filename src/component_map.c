@@ -42,3 +42,9 @@ ASprite* z_comp_map_sprite(const ZCompMap* Map, int X, int Y)
 {
     return z_tiles_sprite(Map->tiles[Y][X]);
 }
+
+void z_comp_map_getDim(const ZCompMap* Map, int* W, int* H)
+{
+    *W = Map->w;
+    *H = Map->h;
+}
