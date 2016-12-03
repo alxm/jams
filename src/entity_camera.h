@@ -1,1 +1,1 @@
-extern AEntity* z_entity_camera_new(void);
+extern AEntity* z_entity_camera_new(AEntity* Anchor);

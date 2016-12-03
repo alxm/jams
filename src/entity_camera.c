@@ -2,11 +2,14 @@
 
 #include "component_position.h"
 
-AEntity* z_entity_camera_new(void)
+AEntity* z_entity_camera_new(AEntity* Anchor)
 {
     AEntity* camera = a_entity_new();
 
-    z_comp_position_init(a_entity_addComponent(camera, "position"), 0, 0);
+    ZCompPosition* position = a_entity_getComponent(Anchor, "position");
+
+    z_comp_position_initPointer(a_entity_addComponent(camera, "position"),
+                                position);
 
     return camera;
 }

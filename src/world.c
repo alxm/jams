@@ -36,7 +36,7 @@ A_STATE(world)
 
         game.map = z_entity_map_new();
         game.player = z_entity_player_new();
-        game.camera = z_entity_camera_new();
+        game.camera = z_entity_camera_new(game.player);
     }
 
     A_STATE_BODY
