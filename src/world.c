@@ -27,6 +27,7 @@ A_STATE(world)
         a_system_declare("mapTick", "map", z_system_mapTick);
         a_system_declare("mapDraw", "map", z_system_mapDraw);
 
+        a_system_tick("mapTick");
         a_system_draw("mapDraw");
 
         a_system_setContext(&game);
