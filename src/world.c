@@ -6,12 +6,14 @@
 
 #include "system_map.h"
 
+#include "entity_camera.h"
 #include "entity_map.h"
 #include "entity_player.h"
 
 typedef struct ZGame {
     AEntity* map;
     AEntity* player;
+    AEntity* camera;
 } ZGame;
 
 A_STATE(world)
@@ -34,6 +36,7 @@ A_STATE(world)
 
         game.map = z_entity_map_new();
         game.player = z_entity_player_new();
+        game.camera = z_entity_camera_new();
     }
 
     A_STATE_BODY
@@ -43,6 +46,7 @@ A_STATE(world)
 
     A_STATE_FREE
     {
+        a_entity_free(game.camera);
         a_entity_free(game.map);
         a_entity_free(game.player);
     }
