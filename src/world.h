@@ -1,3 +1,3 @@
-typedef struct ZGame ZGame;
+typedef struct ZWorld ZWorld;
 
 extern A_STATE(world);

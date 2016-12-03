@@ -10,15 +10,15 @@
 #include "entity_map.h"
 #include "entity_player.h"
 
-typedef struct ZGame {
+typedef struct ZWorld {
     AEntity* map;
     AEntity* player;
     AEntity* camera;
-} ZGame;
+} ZWorld;
 
 A_STATE(world)
 {
-    static ZGame game;
+    static ZWorld world;
 
     A_STATE_INIT
     {
@@ -32,11 +32,11 @@ A_STATE(world)
         a_system_tick("mapTick");
         a_system_draw("mapDraw");
 
-        a_system_setContext(&game);
+        a_system_setContext(&world);
 
-        game.map = z_entity_map_new();
-        game.player = z_entity_player_new();
-        game.camera = z_entity_camera_new(game.player);
+        world.map = z_entity_map_new();
+        world.player = z_entity_player_new();
+        world.camera = z_entity_camera_new(world.player);
     }
 
     A_STATE_BODY
@@ -46,8 +46,8 @@ A_STATE(world)
 
     A_STATE_FREE
     {
-        a_entity_free(game.camera);
-        a_entity_free(game.map);
-        a_entity_free(game.player);
+        a_entity_free(world.camera);
+        a_entity_free(world.map);
+        a_entity_free(world.player);
     }
 }
