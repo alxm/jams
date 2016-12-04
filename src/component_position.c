@@ -1,9 +1,11 @@
 #include <a2x.h>
 
-typedef struct ZCompPosition {
+#include "component_position.h"
+
+struct ZCompPosition {
     int x, y;
     struct ZCompPosition* anchor;
-} ZCompPosition;
+};
 
 size_t z_comp_position_size(void)
 {

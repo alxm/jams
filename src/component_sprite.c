@@ -1,10 +1,11 @@
 #include <a2x.h>
 
-#include "load.h"
+#include "component_sprite.h"
+#include "graphics.h"
 
-typedef struct ZCompSprite {
+struct ZCompSprite {
     ASpriteFrames* frames;
-} ZCompSprite;
+};
 
 size_t z_comp_sprite_size(void)
 {

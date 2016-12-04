@@ -1,6 +1,6 @@
 #include <a2x.h>
 
-#include "load.h"
+#include "graphics.h"
 #include "tiles.h"
 
 typedef struct ZTile {

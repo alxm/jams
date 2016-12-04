@@ -1,11 +1,12 @@
 #include <a2x.h>
 
+#include "component_map.h"
 #include "tiles.h"
 
-typedef struct ZCompMap {
+struct ZCompMap {
     int w, h;
     int** tiles; // index to tiles
-} ZCompMap;
+};
 
 size_t z_comp_map_size(void)
 {
