@@ -5,7 +5,7 @@
 
 struct ZCompMap {
     int w, h;
-    int** tiles; // index to tiles
+    ZTileType** tiles; // index to tiles
 };
 
 size_t z_comp_map_size(void)
@@ -28,10 +28,10 @@ void z_comp_map_init(ZCompMap* Map)
 {
     Map->w = 8;
     Map->h = 8;
-    Map->tiles = a_mem_malloc(Map->h * sizeof(int*));
+    Map->tiles = a_mem_malloc(Map->h * sizeof(ZTileType*));
 
     for(int i = Map->h; i--;) {
-        Map->tiles[i] = a_mem_malloc(Map->w * sizeof(int));
+        Map->tiles[i] = a_mem_malloc(Map->w * sizeof(ZTileType));
 
         for(int j = Map->w; j--; ) {
             if(i == j) Map->tiles[i][j] = Z_TILE_TYPE_GROUND;
