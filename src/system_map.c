@@ -21,20 +21,36 @@ void z_system_mapDraw(AEntity* Entity, void* GlobalContext)
     a_pixel_setRGB(0x11, 0x11, 0x11);
     a_draw_fill();
 
-    int startMapPixelX = centerX - a_screen_width() / 2;
-    int startMapPixelY = centerY - a_screen_height() / 2;
+    const int startMapPixelX = centerX - a_screen_width() / 2;
+    const int startMapPixelY = centerY - a_screen_height() / 2;
+    int startDrawX = -(startMapPixelX % Z_TILE_DIM);
+    int startDrawY = -(startMapPixelY % Z_TILE_DIM);
     int startMapTileX = startMapPixelX / Z_TILE_DIM;
     int startMapTileY = startMapPixelY / Z_TILE_DIM;
-    int xOffset = startMapPixelX % Z_TILE_DIM;
-    int yOffset = startMapPixelY % Z_TILE_DIM;
+    const int endMapTileX = a_math_min(mapW - 1, startMapTileX + a_screen_width() / Z_TILE_DIM + 1);
+    const int endMapTileY = a_math_min(mapH - 1, startMapTileY + a_screen_height() / Z_TILE_DIM + 1);
 
-    for(int drawY = -yOffset, tileY = startMapTileY; drawY < a_screen_height(); drawY += Z_TILE_DIM, tileY++) {
-        for(int drawX = -xOffset, tileX = startMapTileX; drawX < a_screen_width(); drawX += Z_TILE_DIM, tileX++) {
-            if(tileX >= 0 && tileX < mapW && tileY >= 0 && tileY < mapH) {
-                a_sprite_blit(z_comp_map_sprite(map, tileX, tileY),
-                              drawX,
-                              drawY);
-            }
+    if(startMapTileX < 0) {
+        startDrawX += -startMapTileX * Z_TILE_DIM;
+        startMapTileX = 0;
+    }
+
+    if(startMapTileY < 0) {
+        startDrawY += -startMapTileY * Z_TILE_DIM;
+        startMapTileY = 0;
+    }
+
+    for(int tileY = startMapTileY, drawY = startDrawY;
+        tileY < endMapTileY;
+        tileY++, drawY += Z_TILE_DIM) {
+
+        for(int tileX = startMapTileX, drawX = startDrawX;
+            tileX < endMapTileX;
+            tileX++, drawX += Z_TILE_DIM) {
+
+            a_sprite_blit(z_comp_map_sprite(map, tileX, tileY),
+                          drawX,
+                          drawY);
         }
     }
 }
