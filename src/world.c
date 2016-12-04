@@ -6,6 +6,7 @@
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
+#include "component_volume.h"
 
 #include "system_input.h"
 #include "system_map.h"
@@ -34,6 +35,7 @@ A_STATE(world)
         a_component_declare("position", z_comp_position_size(), NULL);
         a_component_declare("sprite", z_comp_sprite_size(), z_comp_sprite_free);
         a_component_declare("velocity", z_comp_velocity_size(), NULL);
+        a_component_declare("volume", z_comp_volume_size(), NULL);
 
         a_system_declare("input", "input", z_system_input);
         a_system_declare("mapDraw", "map", z_system_mapDraw);
