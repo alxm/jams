@@ -27,6 +27,7 @@ void z_graphics_load(void)
     z_graphics_addStill("player", sheet, 0, 17);
     z_graphics_addAnimation("player", sheet, 17, 17, 8);
     z_graphics_addAnimation("tiles", sheet, 0, 0, 1);
+    z_graphics_addStill("chest", sheet, 0, 51);
 
     a_sprite_free(sheet);
 }

@@ -23,7 +23,13 @@ void z_comp_sprite_free(void* Self)
 void z_comp_sprite_init(ZCompSprite* Sprite, const char* Key)
 {
     Sprite->still = z_graphics_getStill(Key);
-    Sprite->frames = a_spriteframes_clone(z_graphics_getAnimation(Key));
+
+    ASpriteFrames* frames = z_graphics_getAnimation(Key);
+
+    if(frames != NULL) {
+        Sprite->frames = a_spriteframes_clone(frames);
+    }
+
     Sprite->moving = false;
 }
 
