@@ -21,5 +21,6 @@ AEntity* z_entity_player_new(void)
 
 static void z_entity_player_input(AEntity* Entity)
 {
-    //
+    ZCompPosition* position = a_entity_getComponent(Entity, "position");
+    ZCompPosition* velocity = a_entity_getComponent(Entity, "velocity");
 }
