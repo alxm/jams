@@ -6,6 +6,7 @@
 struct ZCompMap {
     int w, h;
     ZTileType** tiles; // index to tiles
+    AColMap* colmap;
 };
 
 size_t z_comp_map_size(void)
@@ -22,6 +23,7 @@ void z_comp_map_free(void* Self)
     }
 
     free(m->tiles);
+    a_colmap_free(m->colmap);
 }
 
 void z_comp_map_init(ZCompMap* Map)
@@ -40,6 +42,10 @@ void z_comp_map_init(ZCompMap* Map)
             if(a_random_int(5)==0 && i!=0 && j!=0) Map->tiles[i][j]=Z_TILE_TYPE_ROCK;
         }
     }
+
+    Map->colmap = a_colmap_new(Map->w * Z_TILE_DIM,
+                               Map->h * Z_TILE_DIM,
+                               Z_TILE_DIM);
 }
 
 ASprite* z_comp_map_sprite(const ZCompMap* Map, int X, int Y)
