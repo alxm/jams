@@ -30,6 +30,11 @@ int z_comp_volume_getDim(const ZCompVolume* Volume)
     return Volume->dim;
 }
 
+AColObject* z_comp_volume_getColobj(const ZCompVolume* Volume)
+{
+    return Volume->colobject;
+}
+
 void z_comp_volume_setCoords(const ZCompVolume* Volume, int X, int Y)
 {
     a_colobject_setCoords(Volume->colobject, X, Y);

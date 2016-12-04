@@ -18,8 +18,11 @@
 #include "entity_map.h"
 #include "entity_player.h"
 
+#include "tiles.h"
+
 typedef struct ZWorld {
     AEntity* map;
+    AColMap* colmap;
     AEntity* player;
     AEntity* camera;
 } ZWorld;
@@ -49,10 +52,17 @@ A_STATE(world)
         a_system_setContext(&world);
 
         world.map = z_entity_map_new();
-        world.player = z_entity_player_new();
+
+        int mapW, mapH;
+        z_comp_map_getDim(a_entity_getComponent(world.map, "map"), &mapW, &mapH);
+        world.colmap = a_colmap_new(mapW * Z_TILE_DIM,
+                                    mapH * Z_TILE_DIM,
+                                    Z_TILE_DIM);
+
+        world.player = z_entity_player_new(0, 0, world.colmap);
         world.camera = z_entity_camera_new(world.player);
 
-        z_entity_chest_new(40, 40);
+        z_entity_chest_new(40, 40, world.colmap);
     }
 
     A_STATE_BODY
@@ -63,8 +73,9 @@ A_STATE(world)
     A_STATE_FREE
     {
         a_entity_free(world.camera);
-        a_entity_free(world.map);
         a_entity_free(world.player);
+        a_colmap_free(world.colmap);
+        a_entity_free(world.map);
     }
 }
 

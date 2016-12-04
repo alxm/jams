@@ -4,18 +4,20 @@
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
+#include "component_volume.h"
 #include "controls.h"
 
 static ZCompInputHandler z_entity_player_input;
 
-AEntity* z_entity_player_new(void)
+AEntity* z_entity_player_new(int X, int Y, AColMap* Colmap)
 {
     AEntity* player = a_entity_new();
 
     z_comp_input_init(a_entity_addComponent(player, "input"), z_entity_player_input);
-    z_comp_position_init(a_entity_addComponent(player, "position"), 0, 0);
+    z_comp_position_init(a_entity_addComponent(player, "position"), X, Y);
     z_comp_sprite_init(a_entity_addComponent(player, "sprite"), "player");
     z_comp_velocity_init(a_entity_addComponent(player, "velocity"));
+    z_comp_volume_init(a_entity_addComponent(player, "volume"), 8, Colmap, X, Y);
 
     return player;
 }
