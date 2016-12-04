@@ -15,7 +15,11 @@ AEntity* z_entity_player_new(int X, int Y, AColMap* Colmap)
 
     z_comp_input_init(a_entity_addComponent(player, "input"), z_entity_player_input);
     z_comp_position_init(a_entity_addComponent(player, "position"), X, Y);
-    z_comp_sprite_init(a_entity_addComponent(player, "sprite"), "player");
+
+    ZCompSprite* sprite = a_entity_addComponent(player, "sprite");
+    z_comp_sprite_init(sprite, "playerUp playerDown playerLeft playerRight");
+    z_comp_sprite_setDir(sprite, Z_COMP_SPRITE_DIRECTION_DOWN);
+
     z_comp_velocity_init(a_entity_addComponent(player, "velocity"));
     z_comp_volume_init(a_entity_addComponent(player, "volume"), 8, Colmap, X, Y);
 

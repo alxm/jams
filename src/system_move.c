@@ -80,5 +80,15 @@ void z_system_move(AEntity* Entity, void* GlobalContext)
 
     if(sprite) {
         z_comp_sprite_move(sprite);
+
+        if(newY > oldY) {
+            z_comp_sprite_setDir(sprite, Z_COMP_SPRITE_DIRECTION_DOWN);
+        } else if(newY < oldY) {
+            z_comp_sprite_setDir(sprite, Z_COMP_SPRITE_DIRECTION_UP);
+        } else if(newX > oldX) {
+            z_comp_sprite_setDir(sprite, Z_COMP_SPRITE_DIRECTION_RIGHT);
+        } else if(newX < oldX) {
+            z_comp_sprite_setDir(sprite, Z_COMP_SPRITE_DIRECTION_LEFT);
+        }
     }
 }

@@ -24,10 +24,16 @@ void z_graphics_load(void)
 
     ASprite* sheet = a_sprite_fromFile("gfx/tiles.png");
 
-    z_graphics_addStill("player", sheet, 0, 17);
-    z_graphics_addAnimation("player", sheet, 17, 17, 8);
+    z_graphics_addStill("playerUp", sheet, 0, 17);
+    z_graphics_addStill("playerDown", sheet, 0, 34);
+    z_graphics_addStill("playerLeft", sheet, 0, 51);
+    z_graphics_addStill("playerRight", sheet, 0, 68);
+    z_graphics_addAnimation("playerUp", sheet, 17, 17, 8);
+    z_graphics_addAnimation("playerDown", sheet, 17, 34, 8);
+    z_graphics_addAnimation("playerLeft", sheet, 17, 51, 8);
+    z_graphics_addAnimation("playerRight", sheet, 17, 68, 8);
     z_graphics_addAnimation("tiles", sheet, 0, 0, 1);
-    z_graphics_addStill("chest", sheet, 0, 51);
+    z_graphics_addStill("chest", sheet, 0, 85);
 
     a_sprite_free(sheet);
 }
