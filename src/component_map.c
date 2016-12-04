@@ -36,6 +36,8 @@ void z_comp_map_init(ZCompMap* Map)
         for(int j = Map->w; j--; ) {
             if(i == j) Map->tiles[i][j] = Z_TILE_TYPE_GROUND;
             else Map->tiles[i][j] = Z_TILE_TYPE_PEBBLES;
+
+            if(a_random_int(5)==0 && i!=0 && j!=0) Map->tiles[i][j]=Z_TILE_TYPE_ROCK;
         }
     }
 }
