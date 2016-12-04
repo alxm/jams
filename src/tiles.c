@@ -12,7 +12,7 @@ static ZTile g_tiles[Z_TILE_TYPE_NUM];
 
 void z_tiles_load(void)
 {
-    ASpriteFrames* frames = z_graphics_get("tiles");
+    ASpriteFrames* frames = z_graphics_getAnimation("tiles");
 
     for(size_t i = 0; i < a_spriteframes_num(frames); i++) {
         g_tiles[i].sprite = a_spriteframes_getByIndex(frames, i);

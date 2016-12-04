@@ -4,7 +4,9 @@
 #include "graphics.h"
 
 struct ZCompSprite {
+    ASprite* still;
     ASpriteFrames* frames;
+    bool moving;
 };
 
 size_t z_comp_sprite_size(void)
@@ -20,21 +22,29 @@ void z_comp_sprite_free(void* Self)
 
 void z_comp_sprite_init(ZCompSprite* Sprite, const char* Key)
 {
-    Sprite->frames = a_spriteframes_clone(z_graphics_get(Key));
+    Sprite->still = z_graphics_getStill(Key);
+    Sprite->frames = a_spriteframes_clone(z_graphics_getAnimation(Key));
+    Sprite->moving = false;
 }
 
-void z_comp_sprite_stop(const ZCompSprite* Sprite)
+void z_comp_sprite_stop(ZCompSprite* Sprite)
 {
     a_spriteframes_reset(Sprite->frames);
     a_spriteframes_pause(Sprite->frames);
+    Sprite->moving = false;
 }
 
-void z_comp_sprite_move(const ZCompSprite* Sprite)
+void z_comp_sprite_move(ZCompSprite* Sprite)
 {
     a_spriteframes_resume(Sprite->frames);
+    Sprite->moving = true;
 }
 
 ASprite* z_comp_sprite_getFrame(const ZCompSprite* Sprite)
 {
-    return a_spriteframes_next(Sprite->frames);
+    if(Sprite->moving) {
+        return a_spriteframes_next(Sprite->frames);
+    } else {
+        return Sprite->still;
+    }
 }
