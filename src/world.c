@@ -2,6 +2,7 @@
 
 #include "component_input.h"
 #include "component_map.h"
+#include "component_mapevent.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
@@ -29,6 +30,7 @@ A_STATE(world)
     {
         a_component_declare("input", z_comp_input_size(), NULL);
         a_component_declare("map", z_comp_map_size(), z_comp_map_free);
+        a_component_declare("mapevent", z_comp_mapevent_size(), NULL);
         a_component_declare("position", z_comp_position_size(), NULL);
         a_component_declare("sprite", z_comp_sprite_size(), z_comp_sprite_free);
         a_component_declare("velocity", z_comp_velocity_size(), NULL);
