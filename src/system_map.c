@@ -18,18 +18,23 @@ void z_system_mapDraw(AEntity* Entity, void* GlobalContext)
     int mapW, mapH;
     z_comp_map_getDim(map, &mapW, &mapH);
 
-    int startTileX = a_math_max(0, (centerX - a_screen_width() / 2) / Z_TILE_DIM);
-    int startTileY = a_math_max(0, (centerY - a_screen_height() / 2) / Z_TILE_DIM);
-    int endTileX = a_math_min(mapW - 1, startTileX + a_screen_width() / Z_TILE_DIM);
-    int endTileY = a_math_min(mapH - 1, startTileY + a_screen_height() / Z_TILE_DIM);
-    int startDrawX = -(centerX % Z_TILE_DIM);
-    int startDrawY = -(centerY % Z_TILE_DIM);
+    a_pixel_setRGB(0x11, 0x11, 0x11);
+    a_draw_fill();
 
-    for(int tileY = startTileY; tileY < endTileY; tileY++) {
-        for(int tileX = startTileX; tileX < endTileX; tileX++) {
-            a_sprite_blit(z_comp_map_sprite(map, tileX, tileY),
-                          startDrawX + (tileX - startTileX) * Z_TILE_DIM,
-                          startDrawY + (tileY - startTileY) * Z_TILE_DIM);
+    int startMapPixelX = centerX - a_screen_width() / 2;
+    int startMapPixelY = centerY - a_screen_height() / 2;
+    int startMapTileX = startMapPixelX / Z_TILE_DIM;
+    int startMapTileY = startMapPixelY / Z_TILE_DIM;
+    int xOffset = startMapPixelX % Z_TILE_DIM;
+    int yOffset = startMapPixelY % Z_TILE_DIM;
+
+    for(int drawY = -yOffset, tileY = startMapTileY; drawY < a_screen_height(); drawY += Z_TILE_DIM, tileY++) {
+        for(int drawX = -xOffset, tileX = startMapTileX; drawX < a_screen_width(); drawX += Z_TILE_DIM, tileX++) {
+            if(tileX >= 0 && tileX < mapW && tileY >= 0 && tileY < mapH) {
+                a_sprite_blit(z_comp_map_sprite(map, tileX, tileY),
+                              drawX,
+                              drawY);
+            }
         }
     }
 }

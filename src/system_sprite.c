@@ -18,7 +18,9 @@ void z_system_sprite(AEntity* Entity, void* GlobalContext)
     int sprX, sprY;
     z_comp_position_getCoords(spritePosition, &sprX, &sprY);
 
-    a_sprite_blit(z_comp_sprite_getFrame(sprite),
-                  a_screen_width() / 2 + (sprX - camX),
-                  a_screen_height() / 2 + (sprY - camY));
+    ASprite* s = z_comp_sprite_getFrame(sprite);
+
+    a_sprite_blit(s,
+                  a_screen_width() / 2 + (sprX - camX) - a_sprite_w(s) / 2,
+                  a_screen_height() / 2 + (sprY - camY) - a_sprite_h(s) / 2);
 }

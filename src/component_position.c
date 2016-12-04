@@ -44,3 +44,12 @@ void z_comp_position_move(ZCompPosition* Position, int DirX, int DirY)
     Position->dirX = DirX;
     Position->dirY = DirY;
 }
+
+void z_comp_position_doMove(ZCompPosition* Position, int Speed)
+{
+    Position->x += Position->dirX * Speed;
+    Position->y += Position->dirY * Speed;
+
+    Position->dirX = 0;
+    Position->dirY = 0;
+}

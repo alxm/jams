@@ -34,7 +34,8 @@ void z_comp_map_init(ZCompMap* Map)
         Map->tiles[i] = a_mem_malloc(Map->w * sizeof(int));
 
         for(int j = Map->w; j--; ) {
-            Map->tiles[i][j] = a_random_int(Z_TILE_TYPE_NUM);
+            Map->tiles[i][j] = Z_TILE_TYPE_PEBBLES;//a_random_int(Z_TILE_TYPE_NUM);
+            if(i == j) Map->tiles[i][j] = Z_TILE_TYPE_GROUND;
         }
     }
 }
