@@ -14,6 +14,7 @@
 #include "system_sprite.h"
 
 #include "entity_camera.h"
+#include "entity_cathedral.h"
 #include "entity_chest.h"
 #include "entity_map.h"
 #include "entity_player.h"
@@ -63,6 +64,7 @@ A_STATE(world)
         world.camera = z_entity_camera_new(world.player);
 
         z_entity_chest_new(40, 40, world.colmap);
+        z_entity_cathedral_new(64, -176/2 + 32, world.colmap);
     }
 
     A_STATE_BODY

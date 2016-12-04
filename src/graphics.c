@@ -34,6 +34,7 @@ void z_graphics_load(void)
     z_graphics_addAnimation("playerRight", sheet, 17, 68, 8);
     z_graphics_addAnimation("tiles", sheet, 0, 0, 1);
     z_graphics_addStill("chest", sheet, 0, 85);
+    z_graphics_addStill("cathedral", sheet, 85, 17);
 
     a_sprite_free(sheet);
 }
