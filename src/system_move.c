@@ -33,7 +33,9 @@ void z_system_move(AEntity* Entity, void* GlobalContext)
     int newX = oldX + xDir * speed;
     int newY = oldY + yDir * speed;
 
-    if(z_comp_map_canWalk(map, newX, newY)) {
+    if(z_comp_map_canWalk(map, newX, newY)
+        && z_comp_map_canWalk(map, newX, oldY)
+        && z_comp_map_canWalk(map, oldX, newY)) {
         z_comp_position_setCoords(position, newX, newY);
     } else if(z_comp_map_canWalk(map, newX, oldY)) {
         z_comp_position_setCoords(position, newX, oldY);
