@@ -35,6 +35,7 @@ void z_graphics_load(void)
     z_graphics_addAnimation("tiles", sheet, 0, 0, 1);
     z_graphics_addStill("chest", sheet, 0, 85);
     z_graphics_addStill("cathedral", sheet, 85, 17);
+    z_graphics_addStill("colorcircle", sheet, 17, 85);
 
     a_sprite_free(sheet);
 }

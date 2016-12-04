@@ -1,0 +1,2 @@
+extern ASystemHandler z_system_cathedralTick;
+extern ASystemHandler z_system_cathedralDraw;

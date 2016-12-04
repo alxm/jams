@@ -1,5 +1,6 @@
 #include <a2x.h>
 
+#include "component_cathedral.h"
 #include "component_input.h"
 #include "component_map.h"
 #include "component_mapevent.h"
@@ -8,6 +9,7 @@
 #include "component_velocity.h"
 #include "component_volume.h"
 
+#include "system_cathedral.h"
 #include "system_input.h"
 #include "system_map.h"
 #include "system_move.h"
@@ -34,6 +36,7 @@ A_STATE(world)
 
     A_STATE_INIT
     {
+        a_component_declare("cathedral", z_comp_cathedral_size(), NULL);
         a_component_declare("input", z_comp_input_size(), NULL);
         a_component_declare("map", z_comp_map_size(), z_comp_map_free);
         a_component_declare("mapevent", z_comp_mapevent_size(), NULL);
@@ -42,13 +45,15 @@ A_STATE(world)
         a_component_declare("velocity", z_comp_velocity_size(), NULL);
         a_component_declare("volume", z_comp_volume_size(), z_comp_volume_free);
 
+        a_system_declare("cathedralTick", "cathedral", z_system_cathedralTick);
+        a_system_declare("cathedralDraw", "cathedral", z_system_cathedralDraw);
         a_system_declare("input", "input", z_system_input);
         a_system_declare("mapDraw", "map", z_system_mapDraw);
         a_system_declare("move", "position velocity", z_system_move);
         a_system_declare("sprite", "position sprite", z_system_sprite);
 
-        a_system_tick("input move");
-        a_system_draw("mapDraw sprite");
+        a_system_tick("input move cathedralTick");
+        a_system_draw("mapDraw sprite cathedralDraw");
 
         a_system_setContext(&world);
 
@@ -60,11 +65,11 @@ A_STATE(world)
                                     mapH * Z_TILE_DIM,
                                     Z_TILE_DIM);
 
-        world.player = z_entity_player_new(0, 0, world.colmap);
-        world.camera = z_entity_camera_new(world.player);
-
         z_entity_chest_new(40, 40, world.colmap);
         z_entity_cathedral_new(64, -176/2 + 32, world.colmap);
+
+        world.player = z_entity_player_new(0, 0, world.colmap);
+        world.camera = z_entity_camera_new(world.player);
     }
 
     A_STATE_BODY
