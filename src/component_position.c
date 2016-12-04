@@ -4,6 +4,7 @@
 
 struct ZCompPosition {
     int x, y;
+    int dirX, dirY;
     struct ZCompPosition* anchor;
 };
 
@@ -16,13 +17,14 @@ void z_comp_position_init(ZCompPosition* Position, int X, int Y)
 {
     Position->x = X;
     Position->y = Y;
+    Position->dirX = 0;
+    Position->dirY = 0;
     Position->anchor = NULL;
 }
 
 void z_comp_position_initPointer(ZCompPosition* Position, ZCompPosition* Anchor)
 {
-    Position->x = 0;
-    Position->y = 0;
+    z_comp_position_init(Position, 0, 0);
     Position->anchor = Anchor;
 }
 
@@ -35,4 +37,10 @@ void z_comp_position_getCoords(const ZCompPosition* Position, int* X, int* Y)
         *X = Position->anchor->x;
         *Y = Position->anchor->y;
     }
+}
+
+void z_comp_position_move(ZCompPosition* Position, int DirX, int DirY)
+{
+    Position->dirX = DirX;
+    Position->dirY = DirY;
 }

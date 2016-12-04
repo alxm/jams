@@ -8,6 +8,7 @@
 
 #include "system_input.h"
 #include "system_map.h"
+#include "system_move.h"
 #include "system_sprite.h"
 
 #include "entity_camera.h"
@@ -33,11 +34,11 @@ A_STATE(world)
         a_component_declare("velocity", z_comp_velocity_size(), NULL);
 
         a_system_declare("input", "input", z_system_input);
-        a_system_declare("mapTick", "map", z_system_mapTick);
         a_system_declare("mapDraw", "map", z_system_mapDraw);
+        a_system_declare("move", "position velocity", z_system_move);
         a_system_declare("sprite", "position sprite", z_system_sprite);
 
-        a_system_tick("input mapTick");
+        a_system_tick("input move");
         a_system_draw("mapDraw sprite");
 
         a_system_setContext(&world);
@@ -58,6 +59,11 @@ A_STATE(world)
         a_entity_free(world.map);
         a_entity_free(world.player);
     }
+}
+
+AEntity* z_world_getMap(const ZWorld* World)
+{
+    return World->map;
 }
 
 AEntity* z_world_getCamera(const ZWorld* World)

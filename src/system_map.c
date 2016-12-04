@@ -6,11 +6,6 @@
 #include "tiles.h"
 #include "world.h"
 
-void z_system_mapTick(AEntity* Entity, void* GlobalContext)
-{
-    //
-}
-
 void z_system_mapDraw(AEntity* Entity, void* GlobalContext)
 {
     AEntity* camera = z_world_getCamera(GlobalContext);
