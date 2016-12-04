@@ -17,17 +17,21 @@ size_t z_comp_sprite_size(void)
 void z_comp_sprite_free(void* Self)
 {
     ZCompSprite* sprite = Self;
-    a_spriteframes_free(sprite->frames, false);
+
+    if(sprite->frames != NULL) {
+        a_spriteframes_free(sprite->frames, false);
+    }
 }
 
 void z_comp_sprite_init(ZCompSprite* Sprite, const char* Key)
 {
     Sprite->still = z_graphics_getStill(Key);
-
     ASpriteFrames* frames = z_graphics_getAnimation(Key);
 
     if(frames != NULL) {
         Sprite->frames = a_spriteframes_clone(frames);
+    } else {
+        Sprite->frames = NULL;
     }
 
     Sprite->moving = false;
