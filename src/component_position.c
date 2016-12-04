@@ -28,6 +28,12 @@ void z_comp_position_initPointer(ZCompPosition* Position, ZCompPosition* Anchor)
     Position->anchor = Anchor;
 }
 
+void z_comp_position_setCoords(ZCompPosition* Position, int X, int Y)
+{
+    Position->x = X;
+    Position->y = Y;
+}
+
 void z_comp_position_getCoords(const ZCompPosition* Position, int* X, int* Y)
 {
     if(Position->anchor == NULL) {
@@ -39,16 +45,16 @@ void z_comp_position_getCoords(const ZCompPosition* Position, int* X, int* Y)
     }
 }
 
-void z_comp_position_move(ZCompPosition* Position, int DirX, int DirY)
+void z_comp_position_setDir(ZCompPosition* Position, int DirX, int DirY)
 {
     Position->dirX = DirX;
     Position->dirY = DirY;
 }
 
-void z_comp_position_doMove(ZCompPosition* Position, int Speed)
+void z_comp_position_retrieveDir(ZCompPosition* Position, int* DirX, int* DirY)
 {
-    Position->x += Position->dirX * Speed;
-    Position->y += Position->dirY * Speed;
+    *DirX = Position->dirX;
+    *DirY = Position->dirY;
 
     Position->dirX = 0;
     Position->dirY = 0;

@@ -44,5 +44,5 @@ static void z_entity_player_input(AEntity* Entity)
     }
 
 
-    z_comp_position_move(position, xDir, yDir);
+    z_comp_position_setDir(position, xDir, yDir);
 }

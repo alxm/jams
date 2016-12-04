@@ -9,3 +9,4 @@ typedef enum ZTileType {
 extern void z_tiles_load(void);
 
 extern ASprite* z_tiles_sprite(size_t Index);
+extern bool z_tiles_isWalkable(size_t Index);

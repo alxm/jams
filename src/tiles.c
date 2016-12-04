@@ -26,3 +26,8 @@ ASprite* z_tiles_sprite(size_t Index)
 {
     return g_tiles[Index].sprite;
 }
+
+bool z_tiles_isWalkable(size_t Index)
+{
+    return g_tiles[Index].walkable;
+}

@@ -27,8 +27,8 @@ void z_system_mapDraw(AEntity* Entity, void* GlobalContext)
     int startDrawY = -(startMapPixelY % Z_TILE_DIM);
     int startMapTileX = startMapPixelX / Z_TILE_DIM;
     int startMapTileY = startMapPixelY / Z_TILE_DIM;
-    const int endMapTileX = a_math_min(mapW - 1, startMapTileX + a_screen_width() / Z_TILE_DIM + 1);
-    const int endMapTileY = a_math_min(mapH - 1, startMapTileY + a_screen_height() / Z_TILE_DIM + 1);
+    const int endMapTileX = a_math_min(mapW, startMapTileX + a_screen_width() / Z_TILE_DIM + 1);
+    const int endMapTileY = a_math_min(mapH, startMapTileY + a_screen_height() / Z_TILE_DIM + 1);
 
     if(startMapTileX < 0) {
         startDrawX += -startMapTileX * Z_TILE_DIM;

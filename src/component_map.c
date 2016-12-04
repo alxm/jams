@@ -26,16 +26,16 @@ void z_comp_map_free(void* Self)
 
 void z_comp_map_init(ZCompMap* Map)
 {
-    Map->w = 32;
-    Map->h = 32;
+    Map->w = 8;
+    Map->h = 8;
     Map->tiles = a_mem_malloc(Map->h * sizeof(int*));
 
     for(int i = Map->h; i--;) {
         Map->tiles[i] = a_mem_malloc(Map->w * sizeof(int));
 
         for(int j = Map->w; j--; ) {
-            Map->tiles[i][j] = Z_TILE_TYPE_PEBBLES;//a_random_int(Z_TILE_TYPE_NUM);
             if(i == j) Map->tiles[i][j] = Z_TILE_TYPE_GROUND;
+            else Map->tiles[i][j] = Z_TILE_TYPE_PEBBLES;
         }
     }
 }
@@ -49,4 +49,20 @@ void z_comp_map_getDim(const ZCompMap* Map, int* W, int* H)
 {
     *W = Map->w;
     *H = Map->h;
+}
+
+bool z_comp_map_canWalk(const ZCompMap* Map, int X, int Y)
+{
+    if(X < 0 || Y < 0) {
+        return false;
+    }
+
+    X /= Z_TILE_DIM;
+    Y /= Z_TILE_DIM;
+
+    if(X >= Map->w || Y >= Map->h) {
+        return false;
+    }
+
+    return z_tiles_isWalkable(Map->tiles[Y][X]);
 }
