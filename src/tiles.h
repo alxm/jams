@@ -7,6 +7,7 @@ typedef enum ZTileType {
     Z_TILE_TYPE_PEBBLES2,
     Z_TILE_TYPE_ROCK2,
     Z_TILE_TYPE_WEEDS,
+    Z_TILE_TYPE_PEBBLES3,
     Z_TILE_TYPE_NUM
 } ZTileType;
 

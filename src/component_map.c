@@ -27,7 +27,7 @@ void z_comp_map_free(void* Self)
 void z_comp_map_init(ZCompMap* Map)
 {
     #define MAP_WIDTH 16
-    #define MAP_HEIGHT 8
+    #define MAP_HEIGHT 10
 
     ZTileType map[MAP_HEIGHT][MAP_WIDTH] = {
         {5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,},
@@ -38,6 +38,8 @@ void z_comp_map_init(ZCompMap* Map)
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+        {6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,},
     };
 
     Map->w = MAP_WIDTH;

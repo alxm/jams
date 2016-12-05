@@ -65,10 +65,10 @@ A_STATE(world)
                                     mapH * Z_TILE_DIM,
                                     Z_TILE_DIM);
 
-        z_entity_chest_new(40, 40, world.colmap);
+        z_entity_chest_new(96, 96, world.colmap);
         z_entity_cathedral_new(128, -176/2 + 32, world.colmap);
 
-        world.player = z_entity_player_new(128, 64, world.colmap);
+        world.player = z_entity_player_new(128, 104, world.colmap);
         world.camera = z_entity_camera_new(world.player);
     }
 
