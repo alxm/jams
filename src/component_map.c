@@ -26,18 +26,41 @@ void z_comp_map_free(void* Self)
 
 void z_comp_map_init(ZCompMap* Map)
 {
-    Map->w = 8;
-    Map->h = 8;
+    #define MAP_WIDTH 16
+    #define MAP_HEIGHT 8
+
+    ZTileType map[MAP_HEIGHT][MAP_WIDTH] = {
+        {5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,},
+        {0,0,0,0,4,4,4,4,4,4,4,4,0,0,0,0,},
+        {0,0,0,0,4,4,4,3,3,4,4,4,0,0,0,0,},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+    };
+
+    Map->w = MAP_WIDTH;
+    Map->h = MAP_HEIGHT;
     Map->tiles = a_mem_malloc(Map->h * sizeof(ZTileType*));
 
     for(int i = Map->h; i--;) {
         Map->tiles[i] = a_mem_malloc(Map->w * sizeof(ZTileType));
 
         for(int j = Map->w; j--; ) {
-            if(i == j) Map->tiles[i][j] = Z_TILE_TYPE_GROUND;
-            else Map->tiles[i][j] = Z_TILE_TYPE_PEBBLES;
+            ZTileType tile = map[i][j];
 
-            if(a_random_int(5)==0 && i!=0 && j!=0) Map->tiles[i][j]=Z_TILE_TYPE_ROCK;
+            if(tile == Z_TILE_TYPE_GROUND) {
+                tile = Z_TILE_TYPE_PEBBLES;
+            }
+
+            if(tile == Z_TILE_TYPE_PEBBLES) {
+                if(a_random_int(10) == 0) {
+                    tile = Z_TILE_TYPE_ROCK;
+                }
+            }
+
+            Map->tiles[i][j] = tile;
         }
     }
 }
