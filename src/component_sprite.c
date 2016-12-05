@@ -72,6 +72,11 @@ void z_comp_sprite_move(ZCompSprite* Sprite)
     Sprite->moving = true;
 }
 
+ZCompSpriteDirection z_comp_sprite_getDir(const ZCompSprite* Sprite)
+{
+    return Sprite->direction;
+}
+
 void z_comp_sprite_setDir(ZCompSprite* Sprite, ZCompSpriteDirection Direction)
 {
     Sprite->direction = Direction;

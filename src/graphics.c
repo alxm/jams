@@ -37,6 +37,7 @@ void z_graphics_load(void)
     z_graphics_addStill("cathedral", sheet, 85, 17);
     z_graphics_addStill("circleFrame", sheet, 17, 85);
     z_graphics_addStill("circleColors", sheet, 44, 85);
+    z_graphics_addStill("circleB&W", sheet, 44, 113);
 
     a_sprite_free(sheet);
 }

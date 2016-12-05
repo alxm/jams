@@ -95,3 +95,8 @@ AEntity* z_world_getCamera(const ZWorld* World)
 {
     return World->camera;
 }
+
+AEntity* z_world_getPlayer(const ZWorld* World)
+{
+    return World->player;
+}

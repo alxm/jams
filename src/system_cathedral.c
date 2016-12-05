@@ -2,12 +2,28 @@
 
 #include "component_cathedral.h"
 #include "component_position.h"
+#include "component_sprite.h"
 #include "graphics.h"
+#include "tiles.h"
 #include "world.h"
 
 void z_system_cathedralTick(AEntity* Entity, void* GlobalContext)
 {
-    z_comp_cathedral_incAngle(a_entity_getComponent(Entity, "cathedral"));
+    AEntity* player = z_world_getPlayer(GlobalContext);
+    ZCompPosition* playerPosition = a_entity_getComponent(player, "position");
+    ZCompSprite* playerSprite = a_entity_getComponent(player, "sprite");
+    ZCompCathedral* cathedral = a_entity_getComponent(Entity, "cathedral");
+
+    int playerX, playerY;
+    z_comp_position_getCoords(playerPosition, &playerX, &playerY);
+    playerX /= Z_TILE_DIM;
+    playerY /= Z_TILE_DIM;
+
+    z_comp_cathedral_setColors(cathedral,
+                               playerX >= 7 && playerX <= 8 && playerY == 2
+                               && z_comp_sprite_getDir(playerSprite) == Z_COMP_SPRITE_DIRECTION_UP);
+
+    z_comp_cathedral_incAngle(cathedral);
 }
 
 void z_system_cathedralDraw(AEntity* Entity, void* GlobalContext)
@@ -24,7 +40,7 @@ void z_system_cathedralDraw(AEntity* Entity, void* GlobalContext)
     z_comp_position_getCoords(spritePosition, &sprX, &sprY);
 
     ASprite* mask = z_graphics_getStill("circleFrame");
-    ASprite* colors = z_graphics_getStill("circleColors");
+    ASprite* colors = z_comp_cathedral_getColors(cathedral);
     const int maskW = a_sprite_w(mask);
     const int maskH = a_sprite_h(mask);
 
