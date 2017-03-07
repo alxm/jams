@@ -22,3 +22,6 @@ extern size_t z_comp_map_size(void);
 extern void z_comp_map_init(ZCompMap* Map);
 
 extern ASprite* z_comp_map_getTileSprite(const ZCompMap* Map, int X, int Y);
+
+extern bool z_comp_map_getTileFreeSpace(ZCompMap* Map, int X, int Y);
+extern void z_comp_map_setTileFreeSpace(ZCompMap* Map, int X, int Y, bool IsFree);

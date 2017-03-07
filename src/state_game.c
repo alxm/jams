@@ -30,6 +30,12 @@
 #include "system_map.h"
 #include "system_sprite.h"
 
+typedef struct ZGame {
+    AEntity* map;
+} ZGame;
+
+static ZGame g_game;
+
 static void playerInput(const AEntity* Entity)
 {
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
@@ -51,8 +57,14 @@ static void playerInput(const AEntity* Entity)
     }
 
     if(x != originalX || y != originalY) {
-        if(x >= 0 && y >= 0 && x < Z_MAP_TILES_W && y < Z_MAP_TILES_H) {
+        ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
+
+        if(x >= 0 && y >= 0 && x < Z_MAP_TILES_W && y < Z_MAP_TILES_H
+            && z_comp_map_getTileFreeSpace(map, x, y)) {
+
             z_comp_position_setCoords(position, x, y);
+            z_comp_map_setTileFreeSpace(map, x, y, false);
+            z_comp_map_setTileFreeSpace(map, originalX, originalY, true);
         }
     }
 }
@@ -73,13 +85,31 @@ A_STATE(game)
         a_system_tick("getInputs");
         a_system_draw("drawMap drawSprites");
 
-        AEntity* map = a_entity_new();
-        z_comp_map_init(a_entity_addComponent(map, "map"));
+        g_game.map = a_entity_new();
+        ZCompMap* map = a_entity_addComponent(g_game.map, "map");
+        z_comp_map_init(map);
 
         AEntity* player = a_entity_new();
-        z_comp_position_init(a_entity_addComponent(player, "position"), 3, 3);
+        int x = 3, y = 3;
+        z_comp_map_setTileFreeSpace(map, x, y, false);
+        z_comp_position_init(a_entity_addComponent(player, "position"), x, y);
         z_comp_sprite_init(a_entity_addComponent(player, "sprite"), "playerShip");
         z_comp_input_init(a_entity_addComponent(player, "input"), playerInput);
+
+        for(int i = 1 + a_random_int(10); i--; ) {
+            AEntity* sat = a_entity_new();
+            ZCompSprite* sprite = a_entity_addComponent(sat, "sprite");
+            ZCompPosition* position = a_entity_addComponent(sat, "position");
+
+            do {
+                x = a_random_int(Z_MAP_TILES_W);
+                y = a_random_int(Z_MAP_TILES_H);
+            } while(!z_comp_map_getTileFreeSpace(map, x, y));
+
+            z_comp_map_setTileFreeSpace(map, x, y, false);
+            z_comp_position_init(position, x, y);
+            z_comp_sprite_init(sprite, "satellite");
+        }
     }
 
     A_STATE_BODY
