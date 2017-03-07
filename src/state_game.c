@@ -213,8 +213,8 @@ A_STATE(playGame)
             ZCompPosition* position = a_entity_addComponent(sat, "position");
 
             do {
-                x = a_random_int(Z_MAP_TILES_W);
-                y = a_random_int(Z_MAP_TILES_H);
+                x = 1 + a_random_int(Z_MAP_TILES_W - 2);
+                y = 1 + a_random_int(Z_MAP_TILES_H - 2);
             } while(!z_comp_map_getTileFreeSpace(map, x, y));
 
             z_comp_map_setTileFreeSpace(map, x, y, false);
