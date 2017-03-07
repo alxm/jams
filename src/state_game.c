@@ -46,6 +46,8 @@ typedef struct ZGame {
     ZScreenMove moveAction;
     int lastPlayerX, lastPlayerY;
     AEntity* map;
+    ASprite* oldMapScreen;
+    ASprite* newMapScreen;
 } ZGame;
 
 static ZGame g_game;
@@ -122,6 +124,12 @@ A_STATE(newGame)
         g_game.universeX = Z_UNIVERSE_DIM / 2;
         g_game.universeY = Z_UNIVERSE_DIM / 2;
         g_game.moveAction = Z_SCREEN_MOVE_NONE;
+        g_game.oldMapScreen = a_sprite_blank(Z_MAP_TILES_W * Z_MAP_TILE_DIM,
+                                             Z_MAP_TILES_H * Z_MAP_TILE_DIM,
+                                             false);
+        g_game.newMapScreen = a_sprite_blank(Z_MAP_TILES_W * Z_MAP_TILE_DIM,
+                                             Z_MAP_TILES_H * Z_MAP_TILE_DIM,
+                                             false);
     }
 
     A_STATE_BODY
@@ -184,7 +192,14 @@ A_STATE(playGame)
             } break;
         }
 
-        g_game.moveAction = Z_SCREEN_MOVE_NONE;
+        if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {
+            // Draw the new map and feed it to the nextScreen transition state
+            a_screen_setTargetSprite(g_game.newMapScreen);
+            z_system_mapDraw(g_game.map);
+            a_screen_resetTarget();
+
+            a_state_push("nextScreen");
+        }
 
         AEntity* player = a_entity_new();
         z_comp_map_setTileFreeSpace(map, x, y, false);
@@ -211,5 +226,82 @@ A_STATE(playGame)
     A_STATE_BODY
     {
         A_STATE_LOOP;
+    }
+}
+
+A_STATE(nextScreen)
+{
+    A_STATE_INIT
+    {
+        // Capture the old map
+        a_screen_copyPart(a_sprite_pixels(g_game.oldMapScreen),
+                          0,
+                          0,
+                          a_sprite_width(g_game.oldMapScreen),
+                          a_sprite_height(g_game.oldMapScreen));
+    }
+
+    A_STATE_BODY
+    {
+        int mapSpriteW = a_sprite_width(g_game.oldMapScreen);
+        int mapSpriteH = a_sprite_height(g_game.oldMapScreen);
+
+        int xInc = 0, yInc = 0;
+        int xStart = 0, yStart = 0;
+        int numMoves = 0;
+        int movesPerFrame = Z_MAP_TILE_DIM / 4;
+
+        switch(g_game.moveAction) {
+            case Z_SCREEN_MOVE_LEFT: {
+                xInc = 1;
+                xStart = -mapSpriteW;
+                numMoves = mapSpriteW;
+            } break;
+
+            case Z_SCREEN_MOVE_RIGHT: {
+                xInc = -1;
+                xStart = mapSpriteW;
+                numMoves = mapSpriteW;
+            } break;
+
+            case Z_SCREEN_MOVE_UP: {
+                yInc = 1;
+                yStart = -mapSpriteH;
+                numMoves = mapSpriteH;
+            } break;
+
+            case Z_SCREEN_MOVE_DOWN: {
+                yInc = -1;
+                yStart = mapSpriteH;
+                numMoves = mapSpriteH;
+            } break;
+
+            default: break;
+        }
+
+        a_screen_setClip(0, 0, mapSpriteW, mapSpriteH);
+
+        A_STATE_LOOP
+        {
+            a_sprite_blit(g_game.newMapScreen, xStart, yStart);
+            a_sprite_blit(g_game.oldMapScreen,
+                          xStart + xInc * mapSpriteW,
+                          yStart + yInc * mapSpriteH);
+
+            xStart += xInc * movesPerFrame;
+            yStart += yInc * movesPerFrame;
+            numMoves -= movesPerFrame;
+
+            if(numMoves <= 0) {
+                a_state_pop();
+            }
+        }
+
+        a_screen_resetClip();
+    }
+
+    A_STATE_FREE
+    {
+        g_game.moveAction = Z_SCREEN_MOVE_NONE;
     }
 }

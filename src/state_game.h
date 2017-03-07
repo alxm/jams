@@ -18,3 +18,4 @@
 
 extern A_STATE(newGame);
 extern A_STATE(playGame);
+extern A_STATE(nextScreen);

@@ -35,6 +35,7 @@ A_MAIN
     a_state_new("load", load);
     a_state_new("newGame", newGame);
     a_state_new("playGame", playGame);
+    a_state_new("nextScreen", nextScreen);
 
     a_state_push("load");
 }
