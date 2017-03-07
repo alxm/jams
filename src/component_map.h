@@ -16,24 +16,13 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+#define Z_MAP_TILES_W 10
+#define Z_MAP_TILES_H 10
+#define Z_MAP_TILE_DIM 24
 
-#include "state_game.h"
-#include "state_load.h"
+typedef struct ZCompMap ZCompMap;
 
-A_SETUP
-{
-    a_settings_set("app.title", "Space Station Plunder");
-    a_settings_set("app.version", "0.0");
-    a_settings_set("app.author", "alxm");
-    a_settings_set("app.output.on", "yes");
-    a_settings_set("app.output.verbose", "yes");
-}
+extern size_t z_comp_map_size(void);
+extern void z_comp_map_init(ZCompMap* Map);
 
-A_MAIN
-{
-    a_state_new("load", load);
-    a_state_new("game", game);
-
-    a_state_push("load");
-}
+extern ASprite* z_comp_map_getTileSprite(const ZCompMap* Map, int X, int Y);

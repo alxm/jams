@@ -18,22 +18,33 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
-#include "state_load.h"
+#include "component_map.h"
 
-A_SETUP
+#include "util_graphics.h"
+
+struct ZCompMap {
+    const ZGraphic* tileGfx;
+    int tiles[Z_MAP_TILES_H][Z_MAP_TILES_W];
+};
+
+size_t z_comp_map_size(void)
 {
-    a_settings_set("app.title", "Space Station Plunder");
-    a_settings_set("app.version", "0.0");
-    a_settings_set("app.author", "alxm");
-    a_settings_set("app.output.on", "yes");
-    a_settings_set("app.output.verbose", "yes");
+    return sizeof(ZCompMap);
 }
 
-A_MAIN
+void z_comp_map_init(ZCompMap* Map)
 {
-    a_state_new("load", load);
-    a_state_new("game", game);
+    Map->tileGfx = z_graphics_get("spaceTiles");
+    int numFrames = (int)z_graphics_numFrames(Map->tileGfx);
 
-    a_state_push("load");
+    for(int i = 0; i < Z_MAP_TILES_H; i++) {
+        for(int j = 0; j < Z_MAP_TILES_W; j++) {
+            Map->tiles[i][j] = a_random_int(numFrames);
+        }
+    }
+}
+
+ASprite* z_comp_map_getTileSprite(const ZCompMap* Map, int X, int Y)
+{
+    return z_graphics_getFrame(Map->tileGfx, (unsigned)Map->tiles[Y][X]);
 }
