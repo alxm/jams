@@ -30,7 +30,22 @@
 #include "system_map.h"
 #include "system_sprite.h"
 
+#define Z_UNIVERSE_DIM 256
+
+typedef enum {
+    Z_SCREEN_MOVE_NONE,
+    Z_SCREEN_MOVE_LEFT,
+    Z_SCREEN_MOVE_RIGHT,
+    Z_SCREEN_MOVE_UP,
+    Z_SCREEN_MOVE_DOWN
+} ZScreenMove;
+
 typedef struct ZGame {
+    bool ranOnce;
+    unsigned initialSeed;
+    unsigned universeX, universeY;
+    ZScreenMove moveAction;
+    int lastPlayerX, lastPlayerY;
     AEntity* map;
 } ZGame;
 
@@ -57,14 +72,45 @@ static void playerInput(const AEntity* Entity)
     }
 
     if(x != originalX || y != originalY) {
-        ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
+        if(x < 0) {
+            if(g_game.universeX > 0) {
+                g_game.universeX--;
+                g_game.moveAction = Z_SCREEN_MOVE_LEFT;
+                g_game.lastPlayerY = y;
+            }
+        } else if(x >= Z_MAP_TILES_W) {
+            if(g_game.universeX < Z_UNIVERSE_DIM - 1) {
+                g_game.universeX++;
+                g_game.moveAction = Z_SCREEN_MOVE_RIGHT;
+                g_game.lastPlayerY = y;
+            }
+        } else if(y < 0) {
+            if(g_game.universeY > 0) {
+                g_game.universeY--;
+                g_game.moveAction = Z_SCREEN_MOVE_UP;
+                g_game.lastPlayerX = x;
+            }
+        } else if(y >= Z_MAP_TILES_H) {
+            if(g_game.universeY < Z_UNIVERSE_DIM - 1) {
+                g_game.universeY++;
+                g_game.moveAction = Z_SCREEN_MOVE_DOWN;
+                g_game.lastPlayerX = x;
+            }
+        } else {
+            ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
 
-        if(x >= 0 && y >= 0 && x < Z_MAP_TILES_W && y < Z_MAP_TILES_H
-            && z_comp_map_getTileFreeSpace(map, x, y)) {
+            if(x >= 0 && y >= 0 && x < Z_MAP_TILES_W && y < Z_MAP_TILES_H
+                && z_comp_map_getTileFreeSpace(map, x, y)) {
 
-            z_comp_position_setCoords(position, x, y);
-            z_comp_map_setTileFreeSpace(map, x, y, false);
-            z_comp_map_setTileFreeSpace(map, originalX, originalY, true);
+                z_comp_position_setCoords(position, x, y);
+                z_comp_map_setTileFreeSpace(map, x, y, false);
+                z_comp_map_setTileFreeSpace(map, originalX, originalY, true);
+            }
+        }
+
+        if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {
+            a_state_pop();
+            a_state_push("game");
         }
     }
 }
@@ -85,12 +131,55 @@ A_STATE(game)
         a_system_tick("getInputs");
         a_system_draw("drawMap drawSprites");
 
+        if(!g_game.ranOnce) {
+            g_game.ranOnce = true;
+            g_game.initialSeed = a_random_getSeed();
+            g_game.universeX = Z_UNIVERSE_DIM / 2;
+            g_game.universeY = Z_UNIVERSE_DIM / 2;
+            g_game.moveAction = Z_SCREEN_MOVE_NONE;
+        }
+
+        // This screen's unique seed
+        a_random_setSeed(g_game.initialSeed
+                         + g_game.universeY * Z_UNIVERSE_DIM
+                         + g_game.universeX);
+
         g_game.map = a_entity_new();
         ZCompMap* map = a_entity_addComponent(g_game.map, "map");
         z_comp_map_init(map);
 
+        int x, y;
+
+        switch(g_game.moveAction) {
+            case Z_SCREEN_MOVE_NONE: {
+                x = Z_MAP_TILES_W / 2;
+                y = Z_MAP_TILES_H / 2;
+            } break;
+
+            case Z_SCREEN_MOVE_LEFT: {
+                x = Z_MAP_TILES_W - 1;
+                y = g_game.lastPlayerY;
+            } break;
+
+            case Z_SCREEN_MOVE_RIGHT: {
+                x = 0;
+                y = g_game.lastPlayerY;
+            } break;
+
+            case Z_SCREEN_MOVE_UP: {
+                x = g_game.lastPlayerX;
+                y = Z_MAP_TILES_H - 1;
+            } break;
+
+            case Z_SCREEN_MOVE_DOWN: {
+                x = g_game.lastPlayerX;
+                y = 0;
+            } break;
+        }
+
+        g_game.moveAction = Z_SCREEN_MOVE_NONE;
+
         AEntity* player = a_entity_new();
-        int x = 3, y = 3;
         z_comp_map_setTileFreeSpace(map, x, y, false);
         z_comp_position_init(a_entity_addComponent(player, "position"), x, y);
         z_comp_sprite_init(a_entity_addComponent(player, "sprite"), "playerShip");
