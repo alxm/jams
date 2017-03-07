@@ -24,4 +24,3 @@ void z_system_input(AEntity* Entity)
 {
     z_comp_input_runHandler(a_entity_requireComponent(Entity, "input"));
 }
-

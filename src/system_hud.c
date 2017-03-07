@@ -16,8 +16,26 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern A_STATE(newGame);
-extern A_STATE(playGame);
-extern A_STATE(nextScreen);
+#include <a2x.h>
 
-extern void z_game_getUniverseCoords(unsigned* X, unsigned* Y);
+#include "util_graphics.h"
+
+#include "state_game.h"
+
+void z_system_hudDraw(AEntity* Entity)
+{
+    Entity = Entity;
+
+    a_pixel_setHex(0);
+    a_draw_rectangle(Z_MAP_PIXEL_W,
+                     0,
+                     a_screen_width() - Z_MAP_PIXEL_W,
+                     a_screen_height());
+
+    unsigned x, y;
+    z_game_getUniverseCoords(&x, &y);
+
+    a_font_setFace(A_FONT_FACE_WHITE);
+    a_font_setCoords(Z_MAP_PIXEL_W + 4, 4);
+    a_font_textf("@ %u, %u", x, y);
+}

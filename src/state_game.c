@@ -27,6 +27,7 @@
 #include "component_sprite.h"
 
 #include "system_input.h"
+#include "system_hud.h"
 #include "system_map.h"
 #include "system_sprite.h"
 
@@ -51,6 +52,12 @@ typedef struct ZGame {
 } ZGame;
 
 static ZGame g_game;
+
+void z_game_getUniverseCoords(unsigned* X, unsigned* Y)
+{
+    *X = g_game.universeX;
+    *Y = g_game.universeY;
+}
 
 static void playerInput(const AEntity* Entity)
 {
@@ -124,11 +131,11 @@ A_STATE(newGame)
         g_game.universeX = Z_UNIVERSE_DIM / 2;
         g_game.universeY = Z_UNIVERSE_DIM / 2;
         g_game.moveAction = Z_SCREEN_MOVE_NONE;
-        g_game.oldMapScreen = a_sprite_blank(Z_MAP_TILES_W * Z_MAP_TILE_DIM,
-                                             Z_MAP_TILES_H * Z_MAP_TILE_DIM,
+        g_game.oldMapScreen = a_sprite_blank(Z_MAP_PIXEL_W,
+                                             Z_MAP_PIXEL_H,
                                              false);
-        g_game.newMapScreen = a_sprite_blank(Z_MAP_TILES_W * Z_MAP_TILE_DIM,
-                                             Z_MAP_TILES_H * Z_MAP_TILE_DIM,
+        g_game.newMapScreen = a_sprite_blank(Z_MAP_PIXEL_W,
+                                             Z_MAP_PIXEL_H,
                                              false);
     }
 
@@ -143,16 +150,18 @@ A_STATE(playGame)
     A_STATE_INIT
     {
         a_component_declare("input", z_comp_input_size(), NULL);
+        a_component_declare("hud", 0, NULL);
         a_component_declare("map", z_comp_map_size(), NULL);
         a_component_declare("position", z_comp_position_size(), NULL);
         a_component_declare("sprite", z_comp_sprite_size(), NULL);
 
+        a_system_declare("drawHud", "hud", z_system_hudDraw, NULL, false);
         a_system_declare("drawMap", "map", z_system_mapDraw, NULL, false);
         a_system_declare("drawSprites", "position sprite", z_system_sprite, NULL, false);
         a_system_declare("getInputs", "input", z_system_input, NULL, false);
 
         a_system_tick("getInputs");
-        a_system_draw("drawMap drawSprites");
+        a_system_draw("drawMap drawSprites drawHud");
 
         // This screen's unique seed
         a_random_setSeed(g_game.initialSeed
@@ -221,6 +230,8 @@ A_STATE(playGame)
             z_comp_position_init(position, x, y);
             z_comp_sprite_init(sprite, "satellite");
         }
+
+        a_entity_addComponent(a_entity_new(), "hud");
     }
 
     A_STATE_BODY
@@ -243,9 +254,6 @@ A_STATE(nextScreen)
 
     A_STATE_BODY
     {
-        int mapSpriteW = a_sprite_width(g_game.oldMapScreen);
-        int mapSpriteH = a_sprite_height(g_game.oldMapScreen);
-
         int xInc = 0, yInc = 0;
         int xStart = 0, yStart = 0;
         int numMoves = 0;
@@ -254,39 +262,39 @@ A_STATE(nextScreen)
         switch(g_game.moveAction) {
             case Z_SCREEN_MOVE_LEFT: {
                 xInc = 1;
-                xStart = -mapSpriteW;
-                numMoves = mapSpriteW;
+                xStart = -Z_MAP_PIXEL_W;
+                numMoves = Z_MAP_PIXEL_W;
             } break;
 
             case Z_SCREEN_MOVE_RIGHT: {
                 xInc = -1;
-                xStart = mapSpriteW;
-                numMoves = mapSpriteW;
+                xStart = Z_MAP_PIXEL_W;
+                numMoves = Z_MAP_PIXEL_W;
             } break;
 
             case Z_SCREEN_MOVE_UP: {
                 yInc = 1;
-                yStart = -mapSpriteH;
-                numMoves = mapSpriteH;
+                yStart = -Z_MAP_PIXEL_H;
+                numMoves = Z_MAP_PIXEL_H;
             } break;
 
             case Z_SCREEN_MOVE_DOWN: {
                 yInc = -1;
-                yStart = mapSpriteH;
-                numMoves = mapSpriteH;
+                yStart = Z_MAP_PIXEL_H;
+                numMoves = Z_MAP_PIXEL_H;
             } break;
 
             default: break;
         }
 
-        a_screen_setClip(0, 0, mapSpriteW, mapSpriteH);
+        a_screen_setClip(0, 0, Z_MAP_PIXEL_W, Z_MAP_PIXEL_H);
 
         A_STATE_LOOP
         {
             a_sprite_blit(g_game.newMapScreen, xStart, yStart);
             a_sprite_blit(g_game.oldMapScreen,
-                          xStart + xInc * mapSpriteW,
-                          yStart + yInc * mapSpriteH);
+                          xStart + xInc * Z_MAP_PIXEL_W,
+                          yStart + yInc * Z_MAP_PIXEL_H);
 
             xStart += xInc * movesPerFrame;
             yStart += yInc * movesPerFrame;

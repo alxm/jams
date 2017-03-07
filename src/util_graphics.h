@@ -20,6 +20,9 @@
 #define Z_MAP_TILES_H 10
 #define Z_MAP_TILE_DIM 24
 
+#define Z_MAP_PIXEL_W (Z_MAP_TILES_W * Z_MAP_TILE_DIM)
+#define Z_MAP_PIXEL_H (Z_MAP_TILES_H * Z_MAP_TILE_DIM)
+
 typedef struct ZGraphic ZGraphic;
 
 extern void z_graphics_load(void);
