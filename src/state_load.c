@@ -31,7 +31,7 @@ A_STATE(load)
 
     A_STATE_BODY
     {
-        a_state_push("game");
+        a_state_push("newGame");
     }
 
     A_STATE_FREE

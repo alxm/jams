@@ -41,7 +41,6 @@ typedef enum {
 } ZScreenMove;
 
 typedef struct ZGame {
-    bool ranOnce;
     unsigned initialSeed;
     unsigned universeX, universeY;
     ZScreenMove moveAction;
@@ -110,12 +109,28 @@ static void playerInput(const AEntity* Entity)
 
         if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {
             a_state_pop();
-            a_state_push("game");
+            a_state_push("playGame");
         }
     }
 }
 
-A_STATE(game)
+A_STATE(newGame)
+{
+    A_STATE_INIT
+    {
+        g_game.initialSeed = a_random_getSeed();
+        g_game.universeX = Z_UNIVERSE_DIM / 2;
+        g_game.universeY = Z_UNIVERSE_DIM / 2;
+        g_game.moveAction = Z_SCREEN_MOVE_NONE;
+    }
+
+    A_STATE_BODY
+    {
+        a_state_push("playGame");
+    }
+}
+
+A_STATE(playGame)
 {
     A_STATE_INIT
     {
@@ -130,14 +145,6 @@ A_STATE(game)
 
         a_system_tick("getInputs");
         a_system_draw("drawMap drawSprites");
-
-        if(!g_game.ranOnce) {
-            g_game.ranOnce = true;
-            g_game.initialSeed = a_random_getSeed();
-            g_game.universeX = Z_UNIVERSE_DIM / 2;
-            g_game.universeY = Z_UNIVERSE_DIM / 2;
-            g_game.moveAction = Z_SCREEN_MOVE_NONE;
-        }
 
         // This screen's unique seed
         a_random_setSeed(g_game.initialSeed
