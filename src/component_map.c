@@ -18,9 +18,9 @@
 
 #include <a2x.h>
 
-#include "component_map.h"
-
 #include "util_graphics.h"
+
+#include "component_map.h"
 
 struct ZCompMap {
     const ZGraphic* tileGfx;

@@ -18,13 +18,13 @@
 
 #include <a2x.h>
 
-#include "component_map.h"
-
 #include "util_graphics.h"
+
+#include "component_map.h"
 
 void z_system_mapDraw(AEntity* Entity)
 {
-    ZCompMap* map = a_entity_getComponent(Entity, "map");
+    ZCompMap* map = a_entity_requireComponent(Entity, "map");
 
     for(int i = 0; i < Z_MAP_TILES_H; i++) {
         for(int j = 0; j < Z_MAP_TILES_W; j++) {

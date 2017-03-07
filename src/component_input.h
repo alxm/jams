@@ -16,16 +16,10 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define Z_MAP_TILES_W 10
-#define Z_MAP_TILES_H 10
-#define Z_MAP_TILE_DIM 24
+typedef struct ZCompInput ZCompInput;
+typedef void ZCompInputHandler(const AEntity* Entity);
 
-typedef struct ZGraphic ZGraphic;
+extern size_t z_comp_input_size(void);
+extern void z_comp_input_init(ZCompInput* Input, ZCompInputHandler* Handler);
 
-extern void z_graphics_load(void);
-extern void z_graphics_unload(void);
-
-extern const ZGraphic* z_graphics_get(const char* Name);
-
-extern unsigned z_graphics_numFrames(const ZGraphic* Graphic);
-extern ASprite* z_graphics_getFrame(const ZGraphic* Graphic, unsigned Frame);
+extern void z_comp_input_runHandler(const ZCompInput* Input);

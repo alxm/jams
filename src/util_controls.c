@@ -16,16 +16,25 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define Z_MAP_TILES_W 10
-#define Z_MAP_TILES_H 10
-#define Z_MAP_TILE_DIM 24
+#include <a2x.h>
 
-typedef struct ZGraphic ZGraphic;
+#include "util_controls.h"
 
-extern void z_graphics_load(void);
-extern void z_graphics_unload(void);
+ZControls z_controls;
 
-extern const ZGraphic* z_graphics_get(const char* Name);
+void z_controls_load(void)
+{
+    z_controls.up = a_button_new("generic.up");
+    z_controls.down = a_button_new("generic.down");
+    z_controls.left = a_button_new("generic.left");
+    z_controls.right = a_button_new("generic.right");
+    z_controls.main = a_button_new("generic.b0");
+    z_controls.secondary = a_button_new("generic.b1");
 
-extern unsigned z_graphics_numFrames(const ZGraphic* Graphic);
-extern ASprite* z_graphics_getFrame(const ZGraphic* Graphic, unsigned Frame);
+    unsigned repeatInterval = a_settings_getUnsigned("video.fps") / 5;
+
+    a_button_setRepeat(z_controls.up, repeatInterval);
+    a_button_setRepeat(z_controls.down, repeatInterval);
+    a_button_setRepeat(z_controls.left, repeatInterval);
+    a_button_setRepeat(z_controls.right, repeatInterval);
+}

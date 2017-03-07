@@ -18,12 +18,14 @@
 
 #include <a2x.h>
 
+#include "util_controls.h"
 #include "util_graphics.h"
 
 A_STATE(load)
 {
     A_STATE_INIT
     {
+        z_controls_load();
         z_graphics_load();
     }
 

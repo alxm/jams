@@ -16,16 +16,17 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define Z_MAP_TILES_W 10
-#define Z_MAP_TILES_H 10
-#define Z_MAP_TILE_DIM 24
+typedef struct ZControls ZControls;
 
-typedef struct ZGraphic ZGraphic;
+struct ZControls {
+    AInputButton* up;
+    AInputButton* down;
+    AInputButton* left;
+    AInputButton* right;
+    AInputButton* main;
+    AInputButton* secondary;
+};
 
-extern void z_graphics_load(void);
-extern void z_graphics_unload(void);
+extern ZControls z_controls;
 
-extern const ZGraphic* z_graphics_get(const char* Name);
-
-extern unsigned z_graphics_numFrames(const ZGraphic* Graphic);
-extern ASprite* z_graphics_getFrame(const ZGraphic* Graphic, unsigned Frame);
+extern void z_controls_load(void);

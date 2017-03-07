@@ -16,10 +16,6 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define Z_MAP_TILES_W 10
-#define Z_MAP_TILES_H 10
-#define Z_MAP_TILE_DIM 24
-
 typedef struct ZCompMap ZCompMap;
 
 extern size_t z_comp_map_size(void);
