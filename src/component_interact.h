@@ -16,14 +16,18 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern A_STATE(newGame);
-extern A_STATE(playGame);
-extern A_STATE(nextScreen);
+typedef struct ZCompInteract ZCompInteract;
+typedef struct ZPendingAction ZPendingAction;
 
-extern void z_game_getUniverseCoords(unsigned* X, unsigned* Y);
-extern AEntity* z_game_getPlayer(void);
+typedef enum {
+    Z_ACTION_ATTACK,
+} ZActionType;
 
-extern void z_game_setLogAction(const char* Format, ...);
-extern AList* z_game_getLogLines(void);
+extern size_t z_comp_interact_size(void);
+extern void z_comp_interact_init(ZCompInteract* Interact, const char* Name);
+extern AComponentFree z_comp_interact_free;
 
-extern void z_game_removeEntity(AEntity* Entity);
+extern void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZActionType Action);
+extern const char* z_comp_interact_getName(const ZCompInteract* Interact);
+extern AList* z_comp_interact_getPending(const ZCompInteract* Interact);
+extern void z_comp_interact_getActionData(const ZPendingAction* Action, AEntity** Actor, ZActionType* ActionType);

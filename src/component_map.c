@@ -25,7 +25,7 @@
 struct ZCompMap {
     const ZGraphic* tileGfx;
     int tiles[Z_MAP_TILES_H][Z_MAP_TILES_W];
-    bool freeSpace[Z_MAP_TILES_H][Z_MAP_TILES_W];
+    AEntity* entities[Z_MAP_TILES_H][Z_MAP_TILES_W];
 };
 
 size_t z_comp_map_size(void)
@@ -41,7 +41,7 @@ void z_comp_map_init(ZCompMap* Map)
     for(int i = 0; i < Z_MAP_TILES_H; i++) {
         for(int j = 0; j < Z_MAP_TILES_W; j++) {
             Map->tiles[i][j] = a_random_int(numFrames);
-            Map->freeSpace[i][j] = true;
+            Map->entities[i][j] = NULL;
         }
     }
 }
@@ -51,12 +51,12 @@ ASprite* z_comp_map_getTileSprite(const ZCompMap* Map, int X, int Y)
     return z_graphics_getFrame(Map->tileGfx, (unsigned)Map->tiles[Y][X]);
 }
 
-bool z_comp_map_getTileFreeSpace(ZCompMap* Map, int X, int Y)
+AEntity* z_comp_map_getTileEntity(ZCompMap* Map, int X, int Y)
 {
-    return Map->freeSpace[Y][X];
+    return Map->entities[Y][X];
 }
 
-void z_comp_map_setTileFreeSpace(ZCompMap* Map, int X, int Y, bool IsFree)
+void z_comp_map_setTileEntity(ZCompMap* Map, int X, int Y, AEntity* Entity)
 {
-    Map->freeSpace[Y][X] = IsFree;
+    Map->entities[Y][X] = Entity;
 }

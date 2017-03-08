@@ -41,3 +41,13 @@ void z_comp_health_getStats(const ZCompHealth* Health, int* Points, int* Max)
     *Points = Health->points;
     *Max = Health->max;
 }
+
+void z_comp_health_takeDamage(ZCompHealth* Health, int Damage)
+{
+    Health->points = a_math_max(Health->points - Damage, 0);
+}
+
+bool z_comp_health_isAlive(const ZCompHealth* Health)
+{
+    return Health->points > 0;
+}

@@ -22,3 +22,5 @@ extern size_t z_comp_health_size(void);
 extern void z_comp_health_init(ZCompHealth* Health, int Points);
 
 extern void z_comp_health_getStats(const ZCompHealth* Health, int* Points, int* Max);
+extern void z_comp_health_takeDamage(ZCompHealth* Health, int Damage);
+extern bool z_comp_health_isAlive(const ZCompHealth* Health);

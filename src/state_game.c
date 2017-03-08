@@ -21,13 +21,16 @@
 #include "util_controls.h"
 #include "util_graphics.h"
 
+#include "component_damage.h"
 #include "component_health.h"
 #include "component_input.h"
+#include "component_interact.h"
 #include "component_map.h"
 #include "component_position.h"
 #include "component_sprite.h"
 
 #include "system_input.h"
+#include "system_interact.h"
 #include "system_hud.h"
 #include "system_map.h"
 #include "system_sprite.h"
@@ -102,7 +105,22 @@ AList* z_game_getLogLines(void)
     return g_game.lines;
 }
 
-static void playerInput(const AEntity* Entity)
+void z_game_removeEntity(AEntity* Entity)
+{
+    ZCompPosition* position = a_entity_getComponent(Entity, "position");
+
+    if(position) {
+        int x, y;
+        z_comp_position_getCoords(position, &x, &y);
+
+        ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
+        z_comp_map_setTileEntity(map, x, y, NULL);
+    }
+
+    a_entity_remove(Entity);
+}
+
+static void playerInput(AEntity* Entity)
 {
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
 
@@ -154,12 +172,18 @@ static void playerInput(const AEntity* Entity)
         } else {
             ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
 
-            if(x >= 0 && y >= 0 && x < Z_MAP_TILES_W && y < Z_MAP_TILES_H
-                && z_comp_map_getTileFreeSpace(map, x, y)) {
-
+            if(z_comp_map_getTileEntity(map, x, y) == NULL) {
                 z_comp_position_setCoords(position, x, y);
-                z_comp_map_setTileFreeSpace(map, x, y, false);
-                z_comp_map_setTileFreeSpace(map, originalX, originalY, true);
+                z_comp_map_setTileEntity(map, x, y, Entity);
+                z_comp_map_setTileEntity(map, originalX, originalY, NULL);
+            } else {
+                // Interact with the entity on this tile
+                AEntity* e = z_comp_map_getTileEntity(map, x, y);
+                ZCompInteract* interact = a_entity_getComponent(e, "interact");
+
+                if(interact) {
+                    z_comp_interact_action(interact, Entity, Z_ACTION_ATTACK);
+                }
             }
         }
 
@@ -206,9 +230,11 @@ A_STATE(playGame)
 {
     A_STATE_INIT
     {
-        a_component_declare("input", z_comp_input_size(), NULL);
+        a_component_declare("damage", z_comp_damage_size(), NULL);
         a_component_declare("health", z_comp_health_size(), NULL);
         a_component_declare("hud", 0, NULL);
+        a_component_declare("input", z_comp_input_size(), NULL);
+        a_component_declare("interact", z_comp_interact_size(), z_comp_interact_free);
         a_component_declare("map", z_comp_map_size(), NULL);
         a_component_declare("position", z_comp_position_size(), NULL);
         a_component_declare("sprite", z_comp_sprite_size(), NULL);
@@ -217,8 +243,9 @@ A_STATE(playGame)
         a_system_declare("drawMap", "map", z_system_mapDraw, NULL, false);
         a_system_declare("drawSprites", "position sprite", z_system_sprite, NULL, false);
         a_system_declare("getInputs", "input", z_system_input, NULL, false);
+        a_system_declare("runInteractions", "interact", z_system_interact, NULL, false);
 
-        a_system_tick("getInputs");
+        a_system_tick("getInputs runInteractions");
         a_system_draw("drawMap drawSprites drawHud");
 
         // This screen's unique seed
@@ -269,27 +296,30 @@ A_STATE(playGame)
         }
 
         g_game.playerShip = a_entity_new();
-        z_comp_map_setTileFreeSpace(map, x, y, false);
+        z_comp_map_setTileEntity(map, x, y, g_game.playerShip);
         z_comp_position_init(a_entity_addComponent(g_game.playerShip, "position"), x, y);
         z_comp_sprite_init(a_entity_addComponent(g_game.playerShip, "sprite"), "playerShip");
         z_comp_input_init(a_entity_addComponent(g_game.playerShip, "input"), playerInput);
         z_comp_health_init(a_entity_addComponent(g_game.playerShip, "health"), 100);
+        z_comp_damage_init(a_entity_addComponent(g_game.playerShip, "damage"), 4);
 
         for(int i = 1 + a_random_int(10); i--; ) {
             AEntity* sat = a_entity_new();
             ZCompSprite* sprite = a_entity_addComponent(sat, "sprite");
             ZCompPosition* position = a_entity_addComponent(sat, "position");
             ZCompHealth* health = a_entity_addComponent(sat, "health");
+            ZCompInteract* interact = a_entity_addComponent(sat, "interact");
 
             do {
                 x = 1 + a_random_int(Z_MAP_TILES_W - 2);
                 y = 1 + a_random_int(Z_MAP_TILES_H - 2);
-            } while(!z_comp_map_getTileFreeSpace(map, x, y));
+            } while(z_comp_map_getTileEntity(map, x, y) != NULL);
 
-            z_comp_map_setTileFreeSpace(map, x, y, false);
+            z_comp_map_setTileEntity(map, x, y, sat);
             z_comp_position_init(position, x, y);
             z_comp_sprite_init(sprite, "satellite");
             z_comp_health_init(health, 15);
+            z_comp_interact_init(interact, "Satellite");
         }
 
         a_entity_addComponent(a_entity_new(), "hud");

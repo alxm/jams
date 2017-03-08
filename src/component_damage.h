@@ -16,14 +16,9 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern A_STATE(newGame);
-extern A_STATE(playGame);
-extern A_STATE(nextScreen);
+typedef struct ZCompDamage ZCompDamage;
 
-extern void z_game_getUniverseCoords(unsigned* X, unsigned* Y);
-extern AEntity* z_game_getPlayer(void);
+extern size_t z_comp_damage_size(void);
+extern void z_comp_damage_init(ZCompDamage* Damage, int Points);
 
-extern void z_game_setLogAction(const char* Format, ...);
-extern AList* z_game_getLogLines(void);
-
-extern void z_game_removeEntity(AEntity* Entity);
+extern int z_comp_damage_getPoints(const ZCompDamage* Damage);
