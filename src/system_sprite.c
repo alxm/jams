@@ -39,7 +39,7 @@ void z_system_sprite(AEntity* Entity)
                   x * Z_MAP_TILE_DIM,
                   y * Z_MAP_TILE_DIM);
 
-    if(health && Entity != z_game_getPlayerEntity()) {
+    if(health && Entity != z_game_getPlayer()) {
         int points, max;
         z_comp_health_getStats(health, &points, &max);
 

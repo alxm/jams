@@ -28,37 +28,51 @@ void z_system_hudDraw(AEntity* Entity)
 {
     Entity = Entity;
 
-    int hudWidth = a_screen_width() - Z_MAP_PIXEL_W;
+    int x = Z_MAP_PIXEL_W;
+    int y = 0;
+    int hudWidth = a_screen_width() - x;
+    int hudHeight = a_screen_height() - y;
 
     a_pixel_setHex(0);
-    a_draw_rectangle(Z_MAP_PIXEL_W, 0, hudWidth, a_screen_height());
+    a_draw_rectangle(x, y, hudWidth, hudHeight);
 
-    unsigned x, y;
-    z_game_getUniverseCoords(&x, &y);
+    x += 4;
+    y += 4;
+
+    unsigned universeX, universeY;
+    z_game_getUniverseCoords(&universeX, &universeY);
 
     a_font_setFace(A_FONT_FACE_WHITE);
-    a_font_setCoords(Z_MAP_PIXEL_W + 4, 4);
-    a_font_textf("@ %u, %u", x, y);
+    a_font_setCoords(x, y);
+    a_font_textf("@ %u, %u", universeX, universeY);
     a_font_newLine();
+    y = a_font_getY() + 2;
 
-    ZCompHealth* health = a_entity_requireComponent(z_game_getPlayerEntity(),
+    ZCompHealth* health = a_entity_requireComponent(z_game_getPlayer(),
                                                     "health");
     int points, max;
     z_comp_health_getStats(health, &points, &max);
 
-    int totalWidth = hudWidth - 4;
+    int totalWidth = hudWidth - 8;
     int greenWidth = totalWidth * points / max;
     int redWidth = totalWidth - greenWidth;
+    int barHeight = 8;
 
     a_pixel_setHex(0x00bb00);
-    a_draw_rectangle(Z_MAP_PIXEL_W + 2,
-                     a_font_getY() + 2,
-                     greenWidth,
-                     8);
+    a_draw_rectangle(x, y, greenWidth, barHeight);
 
     a_pixel_setHex(0xbb0000);
-    a_draw_rectangle(Z_MAP_PIXEL_W + 2 + greenWidth,
-                     a_font_getY() + 2,
-                     redWidth,
-                     8);
+    a_draw_rectangle(x + greenWidth, y, redWidth, barHeight);
+
+    y += barHeight + 4;
+    a_font_setCoords(x, y);
+
+    A_LIST_ITERATE_BACKWARDS(z_game_getLogLines(), char*, line) {
+        a_font_text(line);
+        a_font_newLine();
+
+        if(A_LIST_IS_FIRST()) {
+            a_font_setFace(A_FONT_FACE_LIGHT_GRAY);
+        }
+    }
 }

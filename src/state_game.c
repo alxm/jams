@@ -51,6 +51,7 @@ typedef struct ZGame {
     AEntity* map;
     ASprite* oldMapScreen;
     ASprite* newMapScreen;
+    AList* lines;
 } ZGame;
 
 static ZGame g_game;
@@ -61,9 +62,44 @@ void z_game_getUniverseCoords(unsigned* X, unsigned* Y)
     *Y = g_game.universeY;
 }
 
-AEntity* z_game_getPlayerEntity(void)
+AEntity* z_game_getPlayer(void)
 {
     return g_game.playerShip;
+}
+
+void z_game_setLogAction(const char* Format, ...)
+{
+    va_list args;
+    va_start(args, Format);
+
+    int needed = vsnprintf(NULL, 0, Format, args);
+
+    va_end(args);
+    va_start(args, Format);
+
+    if(needed > 0) {
+        size_t size = (size_t)needed + 1;
+        char* buffer = a_mem_malloc(size);
+        needed = vsnprintf(buffer, size, Format, args);
+
+        if(needed > 0 && (size_t)needed < size) {
+            a_list_addLast(g_game.lines, buffer);
+            a_out_textf(buffer);
+
+            if(a_list_size(g_game.lines) > 23) {
+                free(a_list_pop(g_game.lines));
+            }
+        } else {
+            free(buffer);
+        }
+    }
+
+    va_end(args);
+}
+
+AList* z_game_getLogLines(void)
+{
+    return g_game.lines;
 }
 
 static void playerInput(const AEntity* Entity)
@@ -92,24 +128,28 @@ static void playerInput(const AEntity* Entity)
                 g_game.universeX--;
                 g_game.moveAction = Z_SCREEN_MOVE_LEFT;
                 g_game.lastPlayerY = y;
+                z_game_setLogAction("Moved west");
             }
         } else if(x >= Z_MAP_TILES_W) {
             if(g_game.universeX < Z_UNIVERSE_DIM - 1) {
                 g_game.universeX++;
                 g_game.moveAction = Z_SCREEN_MOVE_RIGHT;
                 g_game.lastPlayerY = y;
+                z_game_setLogAction("Moved east");
             }
         } else if(y < 0) {
             if(g_game.universeY > 0) {
                 g_game.universeY--;
                 g_game.moveAction = Z_SCREEN_MOVE_UP;
                 g_game.lastPlayerX = x;
+                z_game_setLogAction("Moved north");
             }
         } else if(y >= Z_MAP_TILES_H) {
             if(g_game.universeY < Z_UNIVERSE_DIM - 1) {
                 g_game.universeY++;
                 g_game.moveAction = Z_SCREEN_MOVE_DOWN;
                 g_game.lastPlayerX = x;
+                z_game_setLogAction("Moved south");
             }
         } else {
             ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
@@ -144,11 +184,21 @@ A_STATE(newGame)
         g_game.newMapScreen = a_sprite_blank(Z_MAP_PIXEL_W,
                                              Z_MAP_PIXEL_H,
                                              false);
+        g_game.lines = a_list_new();
     }
 
     A_STATE_BODY
     {
         a_state_push("playGame");
+    }
+
+    A_STATE_FREE
+    {
+        A_LIST_ITERATE(g_game.lines, char*, line) {
+            free(line);
+        }
+
+        a_list_free(g_game.lines);
     }
 }
 
