@@ -16,19 +16,15 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompInteract ZCompInteract;
-typedef struct ZPendingAction ZPendingAction;
+typedef struct ZCompMood ZCompMood;
 
 typedef enum {
-    Z_ACTION_GREET,
-    Z_ACTION_ATTACK,
-} ZActionType;
+    Z_MOOD_GOOD,
+    Z_MOOD_EVIL,
+} ZMoodType;
 
-extern size_t z_comp_interact_size(void);
-extern void z_comp_interact_init(ZCompInteract* Interact, const char* Name);
-extern AComponentFree z_comp_interact_free;
+extern size_t z_comp_mood_size(void);
+extern void z_comp_mood_init(ZCompMood* Mood, ZMoodType Type);
 
-extern void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZActionType Action);
-extern const char* z_comp_interact_getName(const ZCompInteract* Interact);
-extern AList* z_comp_interact_getPending(const ZCompInteract* Interact);
-extern void z_comp_interact_getActionData(const ZPendingAction* Action, AEntity** Actor, ZActionType* ActionType);
+extern void z_comp_mood_setType(ZCompMood* Mood, ZMoodType Type);
+extern ZMoodType z_comp_mood_getType(const ZCompMood* Mood);

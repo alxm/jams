@@ -63,7 +63,6 @@ void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZActionType
     pending->action = Action;
 
     a_list_addLast(Interact->pending, pending);
-    z_game_setLogAction("Attacking %s", Interact->name);
 }
 
 const char* z_comp_interact_getName(const ZCompInteract* Interact)

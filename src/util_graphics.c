@@ -46,6 +46,7 @@ void z_graphics_load(void)
     z_graphic_new("spaceTiles", sh, 0, 0, 1);
     z_graphic_new("playerShip", sh, 0, 25, 1);
     z_graphic_new("satellite", sh, 0, 50, 1);
+    z_graphic_new("goodbad", sh, 0, 75, 1);
 
     a_sprite_free(sh);
 }

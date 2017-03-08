@@ -21,13 +21,12 @@
 #include "util_graphics.h"
 
 #include "component_health.h"
+#include "component_mood.h"
 
 #include "state_game.h"
 
 void z_system_hudDraw(AEntity* Entity)
 {
-    Entity = Entity;
-
     int x = Z_MAP_PIXEL_W;
     int y = 0;
     int hudWidth = a_screen_width() - x;
@@ -39,6 +38,14 @@ void z_system_hudDraw(AEntity* Entity)
     x += 4;
     y += 4;
 
+    ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
+    ZMoodType moodType = z_comp_mood_getType(mood);
+
+    ASprite* face = z_graphics_getFrame(z_graphics_get("goodbad"),
+                                        moodType == Z_MOOD_GOOD ? 0 : 1);
+    a_sprite_blit(face, x, y);
+    y += a_sprite_height(face) + 4;
+
     unsigned universeX, universeY;
     z_game_getUniverseCoords(&universeX, &universeY);
 
@@ -48,7 +55,7 @@ void z_system_hudDraw(AEntity* Entity)
     a_font_newLine();
     y = a_font_getY() + 2;
 
-    ZCompHealth* health = a_entity_requireComponent(z_game_getPlayer(),
+    ZCompHealth* health = a_entity_requireComponent(Entity,
                                                     "health");
     int points, max;
     z_comp_health_getStats(health, &points, &max);

@@ -26,6 +26,7 @@
 #include "component_input.h"
 #include "component_interact.h"
 #include "component_map.h"
+#include "component_mood.h"
 #include "component_position.h"
 #include "component_sprite.h"
 
@@ -50,6 +51,7 @@ typedef struct ZGame {
     unsigned universeX, universeY;
     ZScreenMove moveAction;
     int lastPlayerX, lastPlayerY;
+    ZMoodType lastPlayerMood;
     AEntity* playerShip;
     AEntity* map;
     ASprite* oldMapScreen;
@@ -89,7 +91,7 @@ void z_game_setLogAction(const char* Format, ...)
             a_list_addLast(g_game.lines, buffer);
             a_out_textf(buffer);
 
-            if(a_list_size(g_game.lines) > 23) {
+            if(a_list_size(g_game.lines) > 21) {
                 free(a_list_pop(g_game.lines));
             }
         } else {
@@ -123,6 +125,9 @@ void z_game_removeEntity(AEntity* Entity)
 static void playerInput(AEntity* Entity)
 {
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
+
+    ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
+    ZMoodType moodType = z_comp_mood_getType(mood);
 
     int originalX, originalY;
     z_comp_position_getCoords(position, &originalX, &originalY);
@@ -182,7 +187,13 @@ static void playerInput(AEntity* Entity)
                 ZCompInteract* interact = a_entity_getComponent(e, "interact");
 
                 if(interact) {
-                    z_comp_interact_action(interact, Entity, Z_ACTION_ATTACK);
+                    ZActionType action = Z_ACTION_GREET;
+
+                    if(moodType == Z_MOOD_EVIL) {
+                        action = Z_ACTION_ATTACK;
+                    }
+
+                    z_comp_interact_action(interact, Entity, action);
                 }
             }
         }
@@ -191,6 +202,17 @@ static void playerInput(AEntity* Entity)
             a_state_pop();
             a_state_push("playGame");
         }
+    }
+
+    if(a_button_getOnce(z_controls.main)) {
+        if(moodType == Z_MOOD_GOOD) {
+            moodType = Z_MOOD_EVIL;
+        } else if(moodType == Z_MOOD_EVIL) {
+            moodType = Z_MOOD_GOOD;
+        }
+
+        z_comp_mood_setType(mood, moodType);
+        g_game.lastPlayerMood = moodType;
     }
 }
 
@@ -209,6 +231,7 @@ A_STATE(newGame)
                                              Z_MAP_PIXEL_H,
                                              false);
         g_game.lines = a_list_new();
+        g_game.lastPlayerMood = Z_MOOD_GOOD;
     }
 
     A_STATE_BODY
@@ -236,6 +259,7 @@ A_STATE(playGame)
         a_component_declare("input", z_comp_input_size(), NULL);
         a_component_declare("interact", z_comp_interact_size(), z_comp_interact_free);
         a_component_declare("map", z_comp_map_size(), NULL);
+        a_component_declare("mood", z_comp_mood_size(), NULL);
         a_component_declare("position", z_comp_position_size(), NULL);
         a_component_declare("sprite", z_comp_sprite_size(), NULL);
 
@@ -296,12 +320,15 @@ A_STATE(playGame)
         }
 
         g_game.playerShip = a_entity_new();
+        a_entity_setId(g_game.playerShip, "playerShip");
         z_comp_map_setTileEntity(map, x, y, g_game.playerShip);
         z_comp_position_init(a_entity_addComponent(g_game.playerShip, "position"), x, y);
         z_comp_sprite_init(a_entity_addComponent(g_game.playerShip, "sprite"), "playerShip");
         z_comp_input_init(a_entity_addComponent(g_game.playerShip, "input"), playerInput);
         z_comp_health_init(a_entity_addComponent(g_game.playerShip, "health"), 100);
         z_comp_damage_init(a_entity_addComponent(g_game.playerShip, "damage"), 4);
+        z_comp_mood_init(a_entity_addComponent(g_game.playerShip, "mood"), g_game.lastPlayerMood);
+        a_entity_addComponent(g_game.playerShip, "hud");
 
         for(int i = 1 + a_random_int(10); i--; ) {
             AEntity* sat = a_entity_new();
@@ -321,8 +348,6 @@ A_STATE(playGame)
             z_comp_health_init(health, 15);
             z_comp_interact_init(interact, "Satellite");
         }
-
-        a_entity_addComponent(a_entity_new(), "hud");
     }
 
     A_STATE_BODY

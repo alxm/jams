@@ -35,6 +35,11 @@ void z_system_interact(AEntity* Entity)
         z_comp_interact_getActionData(a, &actor, &actionType);
 
         switch(actionType) {
+            case Z_ACTION_GREET: {
+                z_game_setLogAction("Hello, %s!",
+                                    z_comp_interact_getName(interact));
+            } break;
+
             case Z_ACTION_ATTACK: {
                 ZCompHealth* health = a_entity_getComponent(Entity, "health");
                 ZCompDamage* damage = a_entity_getComponent(actor, "damage");
@@ -48,10 +53,15 @@ void z_system_interact(AEntity* Entity)
                                             z_comp_interact_getName(interact));
 
                         z_game_removeEntity(Entity);
+                    } else {
+                        z_game_setLogAction("Attacked %s",
+                                            z_comp_interact_getName(interact));
                     }
                 }
             } break;
         }
+
+        free(a);
     }
 
     a_list_clear(pendingActions);
