@@ -16,9 +16,9 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define Z_MAP_TILES_W 10
-#define Z_MAP_TILES_H 10
-#define Z_MAP_TILE_DIM 24
+#define Z_MAP_TILES_W 12
+#define Z_MAP_TILES_H 12
+#define Z_MAP_TILE_DIM 20
 
 #define Z_MAP_PIXEL_W (Z_MAP_TILES_W * Z_MAP_TILE_DIM)
 #define Z_MAP_PIXEL_H (Z_MAP_TILES_H * Z_MAP_TILE_DIM)

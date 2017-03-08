@@ -46,17 +46,18 @@ void z_system_sprite(AEntity* Entity)
         int totalWidth = Z_MAP_TILE_DIM - 4;
         int greenWidth = totalWidth * points / max;
         int redWidth = totalWidth - greenWidth;
+        int barHeight = 2;
 
         a_pixel_setHex(0x00bb00);
         a_draw_rectangle(x * Z_MAP_TILE_DIM + 2,
                          y * Z_MAP_TILE_DIM,
                          greenWidth,
-                         2);
+                         barHeight);
 
         a_pixel_setHex(0xbb0000);
         a_draw_rectangle(x * Z_MAP_TILE_DIM + 2 + greenWidth,
                          y * Z_MAP_TILE_DIM,
                          redWidth,
-                         2);
+                         barHeight);
     }
 }
