@@ -20,13 +20,17 @@
 
 #include "util_graphics.h"
 
+#include "component_health.h"
 #include "component_position.h"
 #include "component_sprite.h"
+
+#include "state_game.h"
 
 void z_system_sprite(AEntity* Entity)
 {
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
+    ZCompHealth* health = a_entity_getComponent(Entity, "health");
 
     int x, y;
     z_comp_position_getCoords(position, &x, &y);
@@ -34,4 +38,25 @@ void z_system_sprite(AEntity* Entity)
     a_sprite_blit(z_comp_sprite_getFrame(sprite),
                   x * Z_MAP_TILE_DIM,
                   y * Z_MAP_TILE_DIM);
+
+    if(health && Entity != z_game_getPlayerEntity()) {
+        int points, max;
+        z_comp_health_getStats(health, &points, &max);
+
+        int totalWidth = Z_MAP_TILE_DIM - 4;
+        int greenWidth = totalWidth * points / max;
+        int redWidth = totalWidth - greenWidth;
+
+        a_pixel_setHex(0x00bb00);
+        a_draw_rectangle(x * Z_MAP_TILE_DIM + 2,
+                         y * Z_MAP_TILE_DIM,
+                         greenWidth,
+                         2);
+
+        a_pixel_setHex(0xbb0000);
+        a_draw_rectangle(x * Z_MAP_TILE_DIM + 2 + greenWidth,
+                         y * Z_MAP_TILE_DIM,
+                         redWidth,
+                         2);
+    }
 }

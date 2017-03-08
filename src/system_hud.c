@@ -20,17 +20,18 @@
 
 #include "util_graphics.h"
 
+#include "component_health.h"
+
 #include "state_game.h"
 
 void z_system_hudDraw(AEntity* Entity)
 {
     Entity = Entity;
 
+    int hudWidth = a_screen_width() - Z_MAP_PIXEL_W;
+
     a_pixel_setHex(0);
-    a_draw_rectangle(Z_MAP_PIXEL_W,
-                     0,
-                     a_screen_width() - Z_MAP_PIXEL_W,
-                     a_screen_height());
+    a_draw_rectangle(Z_MAP_PIXEL_W, 0, hudWidth, a_screen_height());
 
     unsigned x, y;
     z_game_getUniverseCoords(&x, &y);
@@ -38,4 +39,26 @@ void z_system_hudDraw(AEntity* Entity)
     a_font_setFace(A_FONT_FACE_WHITE);
     a_font_setCoords(Z_MAP_PIXEL_W + 4, 4);
     a_font_textf("@ %u, %u", x, y);
+    a_font_newLine();
+
+    ZCompHealth* health = a_entity_requireComponent(z_game_getPlayerEntity(),
+                                                    "health");
+    int points, max;
+    z_comp_health_getStats(health, &points, &max);
+
+    int totalWidth = hudWidth - 4;
+    int greenWidth = totalWidth * points / max;
+    int redWidth = totalWidth - greenWidth;
+
+    a_pixel_setHex(0x00bb00);
+    a_draw_rectangle(Z_MAP_PIXEL_W + 2,
+                     a_font_getY() + 2,
+                     greenWidth,
+                     8);
+
+    a_pixel_setHex(0xbb0000);
+    a_draw_rectangle(Z_MAP_PIXEL_W + 2 + greenWidth,
+                     a_font_getY() + 2,
+                     redWidth,
+                     8);
 }

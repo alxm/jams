@@ -16,9 +16,9 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern A_STATE(newGame);
-extern A_STATE(playGame);
-extern A_STATE(nextScreen);
+typedef struct ZCompHealth ZCompHealth;
 
-extern void z_game_getUniverseCoords(unsigned* X, unsigned* Y);
-extern AEntity* z_game_getPlayerEntity(void);
+extern size_t z_comp_health_size(void);
+extern void z_comp_health_init(ZCompHealth* Health, int Points);
+
+extern void z_comp_health_getStats(const ZCompHealth* Health, int* Points, int* Max);

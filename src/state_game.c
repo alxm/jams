@@ -21,6 +21,7 @@
 #include "util_controls.h"
 #include "util_graphics.h"
 
+#include "component_health.h"
 #include "component_input.h"
 #include "component_map.h"
 #include "component_position.h"
@@ -46,6 +47,7 @@ typedef struct ZGame {
     unsigned universeX, universeY;
     ZScreenMove moveAction;
     int lastPlayerX, lastPlayerY;
+    AEntity* playerShip;
     AEntity* map;
     ASprite* oldMapScreen;
     ASprite* newMapScreen;
@@ -57,6 +59,11 @@ void z_game_getUniverseCoords(unsigned* X, unsigned* Y)
 {
     *X = g_game.universeX;
     *Y = g_game.universeY;
+}
+
+AEntity* z_game_getPlayerEntity(void)
+{
+    return g_game.playerShip;
 }
 
 static void playerInput(const AEntity* Entity)
@@ -150,6 +157,7 @@ A_STATE(playGame)
     A_STATE_INIT
     {
         a_component_declare("input", z_comp_input_size(), NULL);
+        a_component_declare("health", z_comp_health_size(), NULL);
         a_component_declare("hud", 0, NULL);
         a_component_declare("map", z_comp_map_size(), NULL);
         a_component_declare("position", z_comp_position_size(), NULL);
@@ -210,16 +218,18 @@ A_STATE(playGame)
             a_state_push("nextScreen");
         }
 
-        AEntity* player = a_entity_new();
+        g_game.playerShip = a_entity_new();
         z_comp_map_setTileFreeSpace(map, x, y, false);
-        z_comp_position_init(a_entity_addComponent(player, "position"), x, y);
-        z_comp_sprite_init(a_entity_addComponent(player, "sprite"), "playerShip");
-        z_comp_input_init(a_entity_addComponent(player, "input"), playerInput);
+        z_comp_position_init(a_entity_addComponent(g_game.playerShip, "position"), x, y);
+        z_comp_sprite_init(a_entity_addComponent(g_game.playerShip, "sprite"), "playerShip");
+        z_comp_input_init(a_entity_addComponent(g_game.playerShip, "input"), playerInput);
+        z_comp_health_init(a_entity_addComponent(g_game.playerShip, "health"), 100);
 
         for(int i = 1 + a_random_int(10); i--; ) {
             AEntity* sat = a_entity_new();
             ZCompSprite* sprite = a_entity_addComponent(sat, "sprite");
             ZCompPosition* position = a_entity_addComponent(sat, "position");
+            ZCompHealth* health = a_entity_addComponent(sat, "health");
 
             do {
                 x = 1 + a_random_int(Z_MAP_TILES_W - 2);
@@ -229,6 +239,7 @@ A_STATE(playGame)
             z_comp_map_setTileFreeSpace(map, x, y, false);
             z_comp_position_init(position, x, y);
             z_comp_sprite_init(sprite, "satellite");
+            z_comp_health_init(health, 15);
         }
 
         a_entity_addComponent(a_entity_new(), "hud");
