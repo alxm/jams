@@ -310,15 +310,6 @@ A_STATE(playGame)
             } break;
         }
 
-        if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {
-            // Draw the new map and feed it to the nextScreen transition state
-            a_screen_setTargetSprite(g_game.newMapScreen);
-            z_system_mapDraw(g_game.map);
-            a_screen_resetTarget();
-
-            a_state_push("nextScreen");
-        }
-
         g_game.playerShip = a_entity_new();
         a_entity_setId(g_game.playerShip, "playerShip");
         z_comp_map_setTileEntity(map, x, y, g_game.playerShip);
@@ -347,6 +338,20 @@ A_STATE(playGame)
             z_comp_sprite_init(sprite, "satellite");
             z_comp_health_init(health, 15);
             z_comp_interact_init(interact, "Satellite");
+        }
+
+        if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {
+            // Draw the new map and feed it to the transition state
+            a_state_push("nextScreen");
+
+            a_screen_setTargetSprite(g_game.newMapScreen);
+
+            a_system_flushNewEntities();
+            a_entity_mute(g_game.playerShip);
+            a_system_execute("drawMap drawSprites");
+            a_entity_unmute(g_game.playerShip);
+
+            a_screen_resetTarget();
         }
     }
 
