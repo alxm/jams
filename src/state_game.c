@@ -21,6 +21,7 @@
 #include "util_controls.h"
 #include "util_graphics.h"
 
+#include "component_cargo.h"
 #include "component_damage.h"
 #include "component_health.h"
 #include "component_input.h"
@@ -258,6 +259,7 @@ A_STATE(playGame)
 {
     A_STATE_INIT
     {
+        a_component_declare("cargo", z_comp_cargo_size(), NULL);
         a_component_declare("damage", z_comp_damage_size(), NULL);
         a_component_declare("health", z_comp_health_size(), NULL);
         a_component_declare("hud", 0, NULL);
@@ -324,6 +326,7 @@ A_STATE(playGame)
         z_comp_health_init(a_entity_addComponent(g_game.playerShip, "health"), 100);
         z_comp_damage_init(a_entity_addComponent(g_game.playerShip, "damage"), 4);
         z_comp_mood_init(a_entity_addComponent(g_game.playerShip, "mood"), g_game.lastPlayerMood);
+        z_comp_cargo_init(a_entity_addComponent(g_game.playerShip, "cargo"));
         a_entity_addComponent(g_game.playerShip, "hud");
 
         for(int i = 1 + a_random_int(10); i--; ) {
@@ -332,6 +335,7 @@ A_STATE(playGame)
             ZCompPosition* position = a_entity_addComponent(sat, "position");
             ZCompHealth* health = a_entity_addComponent(sat, "health");
             ZCompInteract* interact = a_entity_addComponent(sat, "interact");
+            ZCompCargo* cargo = a_entity_addComponent(sat, "cargo");
 
             do {
                 x = 1 + a_random_int(Z_MAP_TILES_W - 2);
@@ -343,6 +347,8 @@ A_STATE(playGame)
             z_comp_sprite_init(sprite, "satellite");
             z_comp_health_init(health, 15);
             z_comp_interact_init(interact, "Satellite");
+            z_comp_cargo_init(cargo);
+            z_comp_cargo_addContent(cargo, Z_CARGO_TYPE_CREDS, a_random_int(3));
         }
 
         if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {

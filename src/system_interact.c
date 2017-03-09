@@ -18,6 +18,7 @@
 
 #include <a2x.h>
 
+#include "component_cargo.h"
 #include "component_damage.h"
 #include "component_health.h"
 #include "component_interact.h"
@@ -49,10 +50,27 @@ void z_system_interact(AEntity* Entity)
                                              z_comp_damage_getPoints(damage));
 
                     if(!z_comp_health_isAlive(health)) {
+                        z_game_removeEntity(Entity);
                         z_game_setLogAction("Destroyed %s",
                                             z_comp_interact_getName(interact));
 
-                        z_game_removeEntity(Entity);
+                        ZCompCargo* foundCargo = a_entity_getComponent(Entity, "cargo");
+                        ZCompCargo* actorCargo = a_entity_getComponent(actor, "cargo");
+
+                        if(foundCargo && actorCargo) {
+                            for(ZCargoType t = Z_CARGO_TYPE_NUM; t--; ) {
+                                int num = z_comp_cargo_getContent(foundCargo, t);
+
+                                if(num > 0) {
+                                    z_comp_cargo_addContent(actorCargo, t, num);
+
+                                    z_game_setLogAction("Plundered %d %s from %s",
+                                                        num,
+                                                        z_comp_cargo_getName(t, num > 1),
+                                                        z_comp_interact_getName(interact));
+                                }
+                            }
+                        }
                     } else {
                         z_game_setLogAction("Attacked %s",
                                             z_comp_interact_getName(interact));

@@ -20,6 +20,7 @@
 
 #include "util_graphics.h"
 
+#include "component_cargo.h"
 #include "component_health.h"
 #include "component_mood.h"
 
@@ -57,8 +58,7 @@ void z_system_hudDraw(AEntity* Entity)
     a_font_newLine();
     y = a_font_getY() + 2;
 
-    ZCompHealth* health = a_entity_requireComponent(Entity,
-                                                    "health");
+    ZCompHealth* health = a_entity_requireComponent(Entity, "health");
     int points, max;
     z_comp_health_getStats(health, &points, &max);
 
@@ -72,6 +72,16 @@ void z_system_hudDraw(AEntity* Entity)
 
     a_pixel_setHex(0xbb0000);
     a_draw_rectangle(x + greenWidth, y, redWidth, barHeight);
+
+    ZCompCargo* cargo = a_entity_requireComponent(Entity, "cargo");
+    a_font_setCoords(4, y + barHeight + 4);
+
+    for(ZCargoType t = 0; t < Z_CARGO_TYPE_NUM; t++) {
+        a_font_textf("%s: %d",
+                     z_comp_cargo_getName(t, true),
+                     z_comp_cargo_getContent(cargo, t));
+        a_font_newLine();
+    }
 
     x = 80;
     y = Z_MAP_PIXEL_H + 4;
