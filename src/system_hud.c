@@ -27,13 +27,15 @@
 
 void z_system_hudDraw(AEntity* Entity)
 {
-    int x = Z_MAP_PIXEL_W;
-    int y = 0;
-    int hudWidth = a_screen_width() - x;
-    int hudHeight = a_screen_height() - y;
+    int x = 0;
+    int y = Z_MAP_PIXEL_H;
 
-    a_pixel_setHex(0);
-    a_draw_rectangle(x, y, hudWidth, hudHeight);
+    a_pixel_setHex(0x432949);
+    a_draw_hline(0, a_screen_width(), y);
+    y++;
+
+    a_pixel_setHex(0x151225);
+    a_draw_rectangle(x, y, a_screen_width(), a_screen_height() - y);
 
     x += 4;
     y += 4;
@@ -44,7 +46,7 @@ void z_system_hudDraw(AEntity* Entity)
     ASprite* face = z_graphics_getFrame(z_graphics_get("goodbad"),
                                         moodType == Z_MOOD_GOOD ? 0 : 1);
     a_sprite_blit(face, x, y);
-    y += a_sprite_height(face) + 4;
+    x += a_sprite_width(face) + 4;
 
     unsigned universeX, universeY;
     z_game_getUniverseCoords(&universeX, &universeY);
@@ -60,7 +62,7 @@ void z_system_hudDraw(AEntity* Entity)
     int points, max;
     z_comp_health_getStats(health, &points, &max);
 
-    int totalWidth = hudWidth - 8;
+    int totalWidth = 24;
     int greenWidth = totalWidth * points / max;
     int redWidth = totalWidth - greenWidth;
     int barHeight = 8;
@@ -71,7 +73,9 @@ void z_system_hudDraw(AEntity* Entity)
     a_pixel_setHex(0xbb0000);
     a_draw_rectangle(x + greenWidth, y, redWidth, barHeight);
 
-    y += barHeight + 4;
+    x = 80;
+    y = Z_MAP_PIXEL_H + 4;
+
     a_font_setCoords(x, y);
 
     A_LIST_ITERATE_BACKWARDS(z_game_getLogLines(), char*, line) {

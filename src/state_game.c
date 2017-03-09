@@ -91,7 +91,7 @@ void z_game_setLogAction(const char* Format, ...)
             a_list_addLast(g_game.lines, buffer);
             a_out_textf(buffer);
 
-            if(a_list_size(g_game.lines) > 21) {
+            if(a_list_size(g_game.lines) > 6) {
                 free(a_list_pop(g_game.lines));
             }
         } else {
@@ -199,6 +199,11 @@ static void playerInput(AEntity* Entity)
         }
 
         if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {
+            // Capture the old map
+            a_screen_setTargetSprite(g_game.oldMapScreen);
+            a_system_execute("drawMap drawSprites");
+            a_screen_resetTarget();
+
             a_state_pop();
             a_state_push("playGame");
         }
@@ -363,16 +368,6 @@ A_STATE(playGame)
 
 A_STATE(nextScreen)
 {
-    A_STATE_INIT
-    {
-        // Capture the old map
-        a_screen_copyPart(a_sprite_pixels(g_game.oldMapScreen),
-                          0,
-                          0,
-                          a_sprite_width(g_game.oldMapScreen),
-                          a_sprite_height(g_game.oldMapScreen));
-    }
-
     A_STATE_BODY
     {
         int xInc = 0, yInc = 0;
@@ -427,10 +422,7 @@ A_STATE(nextScreen)
         }
 
         a_screen_resetClip();
-    }
 
-    A_STATE_FREE
-    {
         g_game.moveAction = Z_SCREEN_MOVE_NONE;
     }
 }
