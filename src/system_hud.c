@@ -88,12 +88,27 @@ void z_system_hudDraw(AEntity* Entity)
 
     a_font_setCoords(x, y);
 
-    A_LIST_ITERATE_BACKWARDS(z_game_getLogLines(), char*, line) {
+    int alphaInc = 32;
+    int numLines = (int)a_list_size(z_game_getLogLines());
+    int alpha = A_PIXEL_ALPHA_MAX - numLines * alphaInc;
+
+    a_pixel_push();
+    a_pixel_setBlend(A_PIXEL_BLEND_RGBA);
+
+    A_LIST_ITERATE(z_game_getLogLines(), char*, line) {
+        if(A_LIST_IS_LAST()) {
+            a_pixel_setBlend(A_PIXEL_BLEND_PLAIN);
+        } else {
+            a_pixel_setAlpha(alpha);
+            alpha += alphaInc;
+        }
+
+        a_font_setFace(A_FONT_FACE_GREEN);
+        a_font_text("> ");
+        a_font_setFace(A_FONT_FACE_WHITE);
         a_font_text(line);
         a_font_newLine();
-
-        if(A_LIST_IS_FIRST()) {
-            a_font_setFace(A_FONT_FACE_LIGHT_GRAY);
-        }
     }
+
+    a_pixel_pop();
 }
