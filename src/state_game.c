@@ -31,12 +31,6 @@
 #include "component_position.h"
 #include "component_sprite.h"
 
-#include "system_input.h"
-#include "system_interact.h"
-#include "system_hud.h"
-#include "system_map.h"
-#include "system_sprite.h"
-
 #define Z_UNIVERSE_DIM 256
 
 typedef enum {
@@ -259,23 +253,6 @@ A_STATE(playGame)
 {
     A_STATE_INIT
     {
-        a_component_declare("cargo", z_comp_cargo_size(), NULL);
-        a_component_declare("damage", z_comp_damage_size(), NULL);
-        a_component_declare("health", z_comp_health_size(), NULL);
-        a_component_declare("hud", 0, NULL);
-        a_component_declare("input", z_comp_input_size(), NULL);
-        a_component_declare("interact", z_comp_interact_size(), z_comp_interact_free);
-        a_component_declare("map", z_comp_map_size(), NULL);
-        a_component_declare("mood", z_comp_mood_size(), NULL);
-        a_component_declare("position", z_comp_position_size(), NULL);
-        a_component_declare("sprite", z_comp_sprite_size(), NULL);
-
-        a_system_declare("drawHud", "hud", z_system_hudDraw, NULL, false);
-        a_system_declare("drawMap", "map", z_system_mapDraw, NULL, false);
-        a_system_declare("drawSprites", "position sprite", z_system_sprite, NULL, false);
-        a_system_declare("getInputs", "input", z_system_input, NULL, false);
-        a_system_declare("runInteractions", "interact", z_system_interact, NULL, false);
-
         a_system_tick("getInputs runInteractions");
         a_system_draw("drawMap drawSprites drawHud");
 
