@@ -18,7 +18,16 @@
 
 typedef struct ZCompSprite ZCompSprite;
 
+typedef enum {
+    Z_SPRITE_DIRECTION_UP,
+    Z_SPRITE_DIRECTION_DOWN,
+    Z_SPRITE_DIRECTION_LEFT,
+    Z_SPRITE_DIRECTION_RIGHT,
+    Z_SPRITE_DIRECTION_NUM
+} ZSpriteDirection;
+
 extern size_t z_comp_sprite_size(void);
-extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Name);
+extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right);
 
 extern ASprite* z_comp_sprite_getFrame(const ZCompSprite* Sprite);
+extern void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZSpriteDirection Direction);

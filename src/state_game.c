@@ -142,7 +142,7 @@ static void z_game_freeScreen(ZGameScreen* Screen)
     a_sprite_free(Screen->mapScreen);
 }
 
-static AEntity* spawnEntity(ZCompMap* Map, const char* Sprite, const char* Name)
+static AEntity* spawnEntity(ZCompMap* Map, const char* Name, const char* Up, const char* Down, const char* Left, const char* Right)
 {
     AEntity* e = a_entity_new();
     a_entity_setId(e, Name);
@@ -161,7 +161,7 @@ static AEntity* spawnEntity(ZCompMap* Map, const char* Sprite, const char* Name)
     z_comp_map_setTileEntity(Map, x, y, e);
 
     ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, Sprite);
+    z_comp_sprite_init(sprite, Up, Down, Left, Right);
 
     ZCompInteract* interact = a_entity_addComponent(e, "interact");
     z_comp_interact_init(interact, Name);
@@ -260,14 +260,14 @@ static void z_game_createStagingScreen(void)
 
     // Satellites
     for(int i = 1 + a_random_int(4); i--; ) {
-        AEntity* e = spawnEntity(map, "satellite1", "Satellite");
+        AEntity* e = spawnEntity(map, "Satellite", "satellite1", "satellite1", "satellite1", "satellite1");
         addHealth(e, 15);
         addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(3));
     }
 
     // Space ships
     for(int i = 1 + a_random_int(4); i--; ) {
-        AEntity* e = spawnEntity(map, "ship1", "Space Ship");
+        AEntity* e = spawnEntity(map, "Space Ship", "ship1Up", "ship1Down", "ship1Left", "ship1Right");
         addHealth(e, 20);
         addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(5));
         addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(3));
@@ -345,6 +345,7 @@ static void playerInput(AEntity* Entity)
     bool acted = false;
 
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
+    ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
     ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
     ZMoodType moodType = z_comp_mood_getType(mood);
 
@@ -356,12 +357,16 @@ static void playerInput(AEntity* Entity)
 
     if(a_button_get(z_controls.up)) {
         y--;
+        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_UP);
     } else if(a_button_get(z_controls.down)) {
         y++;
+        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_DOWN);
     } else if(a_button_get(z_controls.left)) {
         x--;
+        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_LEFT);
     } else if(a_button_get(z_controls.right)) {
         x++;
+        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_RIGHT);
     }
 
     if(x != originalX || y != originalY) {
@@ -450,7 +455,7 @@ A_STATE(playGame)
         g_game.playerShip = a_entity_new();
         a_entity_setId(g_game.playerShip, "playerShip");
         z_comp_position_init(a_entity_addComponent(g_game.playerShip, "position"), Z_MAP_TILES_W / 2, Z_MAP_TILES_H / 2);
-        z_comp_sprite_init(a_entity_addComponent(g_game.playerShip, "sprite"), "playerShip");
+        z_comp_sprite_init(a_entity_addComponent(g_game.playerShip, "sprite"), "playerShipUp", "playerShipDown", "playerShipLeft", "playerShipRight");
         z_comp_input_init(a_entity_addComponent(g_game.playerShip, "input"), playerInput);
         z_comp_health_init(a_entity_addComponent(g_game.playerShip, "health"), 100);
         z_comp_damage_init(a_entity_addComponent(g_game.playerShip, "damage"), 4);

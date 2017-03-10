@@ -23,7 +23,8 @@
 #include "component_sprite.h"
 
 struct ZCompSprite {
-    const ZGraphic* graphic;
+    const ZGraphic* graphics[Z_SPRITE_DIRECTION_NUM];
+    ZSpriteDirection direction;
 };
 
 size_t z_comp_sprite_size(void)
@@ -31,12 +32,22 @@ size_t z_comp_sprite_size(void)
     return sizeof(ZCompSprite);
 }
 
-void z_comp_sprite_init(ZCompSprite* Sprite, const char* Name)
+void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right)
 {
-    Sprite->graphic = z_graphics_get(Name);
+    Sprite->graphics[Z_SPRITE_DIRECTION_UP] = z_graphics_get(Up);
+    Sprite->graphics[Z_SPRITE_DIRECTION_DOWN] = z_graphics_get(Down);
+    Sprite->graphics[Z_SPRITE_DIRECTION_LEFT] = z_graphics_get(Left);
+    Sprite->graphics[Z_SPRITE_DIRECTION_RIGHT] = z_graphics_get(Right);
+
+    Sprite->direction = Z_SPRITE_DIRECTION_UP;
 }
 
 ASprite* z_comp_sprite_getFrame(const ZCompSprite* Sprite)
 {
-    return z_graphics_getFrame(Sprite->graphic, 0);
+    return z_graphics_getFrame(Sprite->graphics[Sprite->direction], 0);
+}
+
+void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZSpriteDirection Direction)
+{
+    Sprite->direction = Direction;
 }
