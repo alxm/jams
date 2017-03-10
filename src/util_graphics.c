@@ -76,3 +76,15 @@ ASprite* z_graphics_getFrame(const ZGraphic* Graphic, unsigned Frame)
 {
     return a_spriteframes_getByIndex(Graphic->frames, Frame);
 }
+
+void z_graphics_drawBar(uint32_t Hexcode1, uint32_t Hexcode2, int Value, int OutOf, int X, int Y, int Width, int Height)
+{
+    int part1Width = Width * Value / OutOf;
+    int part2Width = Width - part1Width;
+
+    a_pixel_setHex(Hexcode1);
+    a_draw_rectangle(X, Y, part1Width, Height);
+
+    a_pixel_setHex(Hexcode2);
+    a_draw_rectangle(X + part1Width, Y, part2Width, Height);
+}

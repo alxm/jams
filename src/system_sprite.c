@@ -43,21 +43,13 @@ void z_system_sprite(AEntity* Entity)
         int points, max;
         z_comp_health_getStats(health, &points, &max);
 
-        int totalWidth = Z_MAP_TILE_DIM - 4;
-        int greenWidth = totalWidth * points / max;
-        int redWidth = totalWidth - greenWidth;
-        int barHeight = 2;
-
-        a_pixel_setHex(0x00bb00);
-        a_draw_rectangle(x * Z_MAP_TILE_DIM + 2,
-                         y * Z_MAP_TILE_DIM,
-                         greenWidth,
-                         barHeight);
-
-        a_pixel_setHex(0xbb0000);
-        a_draw_rectangle(x * Z_MAP_TILE_DIM + 2 + greenWidth,
-                         y * Z_MAP_TILE_DIM,
-                         redWidth,
-                         barHeight);
+        z_graphics_drawBar(0x00bb00,
+                           0xbb0000,
+                           points,
+                           max,
+                           x * Z_MAP_TILE_DIM + 2,
+                           y * Z_MAP_TILE_DIM,
+                           Z_MAP_TILE_DIM - 4,
+                           2);
     }
 }

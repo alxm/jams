@@ -61,20 +61,10 @@ void z_system_hudDraw(AEntity* Entity)
     ZCompHealth* health = a_entity_requireComponent(Entity, "health");
     int points, max;
     z_comp_health_getStats(health, &points, &max);
-
-    int totalWidth = 24;
-    int greenWidth = totalWidth * points / max;
-    int redWidth = totalWidth - greenWidth;
-    int barHeight = 8;
-
-    a_pixel_setHex(0x00bb00);
-    a_draw_rectangle(x, y, greenWidth, barHeight);
-
-    a_pixel_setHex(0xbb0000);
-    a_draw_rectangle(x + greenWidth, y, redWidth, barHeight);
+    z_graphics_drawBar(0x00bb00, 0xbb0000, points, max, x, y, 50, 8);
 
     ZCompCargo* cargo = a_entity_requireComponent(Entity, "cargo");
-    a_font_setCoords(4, y + barHeight + 4);
+    a_font_setCoords(4, y + 8 + 4);
 
     for(ZCargoType t = 0; t < Z_CARGO_TYPE_NUM; t++) {
         a_font_textf("%s: %d",

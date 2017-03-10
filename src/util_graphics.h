@@ -33,3 +33,5 @@ extern const ZGraphic* z_graphics_get(const char* Name);
 
 extern unsigned z_graphics_numFrames(const ZGraphic* Graphic);
 extern ASprite* z_graphics_getFrame(const ZGraphic* Graphic, unsigned Frame);
+
+extern void z_graphics_drawBar(uint32_t Hexcode1, uint32_t Hexcode2, int Value, int OutOf, int X, int Y, int Width, int Height);
