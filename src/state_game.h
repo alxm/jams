@@ -16,15 +16,28 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern A_STATE(playGame);
-extern A_STATE(nextScreen);
+typedef enum {
+    Z_SCREEN_MOVE_NONE,
+    Z_SCREEN_MOVE_LEFT,
+    Z_SCREEN_MOVE_RIGHT,
+    Z_SCREEN_MOVE_UP,
+    Z_SCREEN_MOVE_DOWN
+} ZScreenMove;
+
+extern bool z_game_moveScreen(ZScreenMove Direction);
+
+extern AEntity* z_game_getPlayer(void);
+extern AEntity* z_game_getMap(void);
 
 extern void z_game_getUniverseCoords(unsigned* X, unsigned* Y);
-extern AEntity* z_game_getPlayer(void);
 
-extern void z_game_setLogAction(const char* Format, ...);
-extern AList* z_game_getLogLines(void);
+extern bool z_game_getWaitingForPlayer(void);
+extern void z_game_setWaitingForPlayer(bool Waiting);
 
 extern void z_game_removeEntity(AEntity* Entity);
 
-extern bool z_game_waitingForPlayer(void);
+extern void z_game_log(const char* Format, ...);
+extern AList* z_game_getLogLines(void);
+
+extern A_STATE(playGame);
+extern A_STATE(nextScreen);

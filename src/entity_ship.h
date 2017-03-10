@@ -16,24 +16,5 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
-
-#include "component_ai.h"
-
-#include "state_game.h"
-
-void z_system_ai(AEntity* Entity)
-{
-    if(z_game_getWaitingForPlayer()) {
-        return;
-    }
-
-    ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
-
-    ZAiMessageType type;
-    AEntity* relevant;
-
-    while(z_comp_ai_getMessage(ai, &type, &relevant)) {
-        z_comp_ai_runHandler(ai, type, relevant);
-    }
-}
+extern AEntity* z_entity_ship_satellite(ZCompMap* Map);
+extern AEntity* z_entity_ship_ship(ZCompMap* Map);

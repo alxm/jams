@@ -16,24 +16,10 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef struct ZLog ZLog;
 
-#include "component_ai.h"
+extern ZLog* z_log_new(unsigned MaxLines);
+extern void z_log_free(ZLog* Log);
 
-#include "state_game.h"
-
-void z_system_ai(AEntity* Entity)
-{
-    if(z_game_getWaitingForPlayer()) {
-        return;
-    }
-
-    ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
-
-    ZAiMessageType type;
-    AEntity* relevant;
-
-    while(z_comp_ai_getMessage(ai, &type, &relevant)) {
-        z_comp_ai_runHandler(ai, type, relevant);
-    }
-}
+extern void z_log_log(ZLog* Log, const char* Format, va_list Args);
+extern AList* z_log_getLines(const ZLog* Log);

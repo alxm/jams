@@ -37,8 +37,8 @@ void z_system_interact(AEntity* Entity)
     while(z_comp_interact_getPending(interact, &actor, &actionType)) {
         switch(actionType) {
             case Z_ACTION_GREET: {
-                z_game_setLogAction("Hello, %s!",
-                                    z_comp_interact_getName(interact));
+                z_game_log("Hello, %s!",
+                           z_comp_interact_getName(interact));
 
                 if(ai) {
                     z_comp_ai_queueMessage(ai,
@@ -60,8 +60,8 @@ void z_system_interact(AEntity* Entity)
                         ZCompCargo* foundCargo = a_entity_getComponent(Entity, "cargo");
                         ZCompCargo* actorCargo = a_entity_getComponent(actor, "cargo");
 
-                        z_game_setLogAction("Destroyed %s",
-                                            z_comp_interact_getName(interact));
+                        z_game_log("Destroyed %s",
+                                   z_comp_interact_getName(interact));
 
                         if(foundCargo && actorCargo) {
                             for(ZCargoType t = Z_CARGO_TYPE_NUM; t--; ) {
@@ -69,9 +69,9 @@ void z_system_interact(AEntity* Entity)
 
                                 if(num > 0) {
                                     z_comp_cargo_addContent(actorCargo, t, num);
-                                    z_game_setLogAction("  Plundered %d %s",
-                                                        num,
-                                                        z_comp_cargo_getName(t, num > 1));
+                                    z_game_log("  Plundered %d %s",
+                                               num,
+                                               z_comp_cargo_getName(t, num > 1));
                                 }
                             }
                         }
@@ -84,8 +84,8 @@ void z_system_interact(AEntity* Entity)
                                                    actor);
                         }
 
-                        z_game_setLogAction("Attacked %s",
-                                            z_comp_interact_getName(interact));
+                        z_game_log("Attacked %s",
+                                   z_comp_interact_getName(interact));
                     }
                 }
             } break;
