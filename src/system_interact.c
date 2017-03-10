@@ -52,27 +52,21 @@ void z_system_interact(AEntity* Entity)
                     if(!z_comp_health_isAlive(health)) {
                         ZCompCargo* foundCargo = a_entity_getComponent(Entity, "cargo");
                         ZCompCargo* actorCargo = a_entity_getComponent(actor, "cargo");
-                        bool plundered = false;
+
+                        z_game_setLogAction("Destroyed %s",
+                                            z_comp_interact_getName(interact));
 
                         if(foundCargo && actorCargo) {
                             for(ZCargoType t = Z_CARGO_TYPE_NUM; t--; ) {
                                 int num = z_comp_cargo_getContent(foundCargo, t);
 
                                 if(num > 0) {
-                                    plundered = true;
                                     z_comp_cargo_addContent(actorCargo, t, num);
-
-                                    z_game_setLogAction("Destroyed %s and plundered %d %s",
-                                                        z_comp_interact_getName(interact),
+                                    z_game_setLogAction("  Plundered %d %s",
                                                         num,
                                                         z_comp_cargo_getName(t, num > 1));
                                 }
                             }
-                        }
-
-                        if(!plundered) {
-                            z_game_setLogAction("Destroyed %s",
-                                                z_comp_interact_getName(interact));
                         }
 
                         z_game_removeEntity(Entity);

@@ -90,7 +90,7 @@ void z_system_hudDraw(AEntity* Entity)
 
     int alphaInc = 32;
     int numLines = (int)a_list_size(z_game_getLogLines());
-    int alpha = A_PIXEL_ALPHA_MAX - numLines * alphaInc;
+    int alpha = A_PIXEL_ALPHA_MAX - (numLines + 1) * alphaInc;
 
     a_pixel_push();
     a_pixel_setBlend(A_PIXEL_BLEND_RGBA);
