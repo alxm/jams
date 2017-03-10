@@ -18,6 +18,7 @@
 
 #include <a2x.h>
 
+#include "component_ai.h"
 #include "component_cargo.h"
 #include "component_damage.h"
 #include "component_health.h"
@@ -27,6 +28,7 @@
 
 void z_system_interact(AEntity* Entity)
 {
+    ZCompAi* ai = a_entity_getComponent(Entity, "ai");
     ZCompInteract* interact = a_entity_requireComponent(Entity, "interact");
     AList* pendingActions = z_comp_interact_getPending(interact);
 
@@ -39,6 +41,12 @@ void z_system_interact(AEntity* Entity)
             case Z_ACTION_GREET: {
                 z_game_setLogAction("Hello, %s!",
                                     z_comp_interact_getName(interact));
+
+                if(ai) {
+                    z_comp_ai_queueMessage(ai,
+                                           Z_AI_MESSAGE_GREETED,
+                                           actor);
+                }
             } break;
 
             case Z_ACTION_ATTACK: {
@@ -48,6 +56,7 @@ void z_system_interact(AEntity* Entity)
                 if(health && damage) {
                     z_comp_health_takeDamage(health,
                                              z_comp_damage_getPoints(damage));
+
 
                     if(!z_comp_health_isAlive(health)) {
                         ZCompCargo* foundCargo = a_entity_getComponent(Entity, "cargo");
@@ -71,6 +80,12 @@ void z_system_interact(AEntity* Entity)
 
                         z_game_removeEntity(Entity);
                     } else {
+                        if(ai) {
+                            z_comp_ai_queueMessage(ai,
+                                                   Z_AI_MESSAGE_ATTACKED,
+                                                   actor);
+                        }
+
                         z_game_setLogAction("Attacked %s",
                                             z_comp_interact_getName(interact));
                     }

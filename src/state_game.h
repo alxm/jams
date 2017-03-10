@@ -26,3 +26,5 @@ extern void z_game_setLogAction(const char* Format, ...);
 extern AList* z_game_getLogLines(void);
 
 extern void z_game_removeEntity(AEntity* Entity);
+
+extern bool z_game_waitingForPlayer(void);

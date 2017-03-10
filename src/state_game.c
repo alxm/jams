@@ -21,6 +21,7 @@
 #include "util_controls.h"
 #include "util_graphics.h"
 
+#include "component_ai.h"
 #include "component_cargo.h"
 #include "component_damage.h"
 #include "component_health.h"
@@ -55,6 +56,7 @@ typedef struct ZGame {
     AList* lines;
     ZGameScreen current;
     ZGameScreen staging;
+    bool waitForPlayerTurn;
 } ZGame;
 
 static ZGame g_game;
@@ -117,8 +119,14 @@ void z_game_removeEntity(AEntity* Entity)
         z_comp_map_setTileEntity(map, x, y, NULL);
     }
 
+    a_entity_mute(Entity);
     a_entity_remove(Entity);
     a_list_remove(g_game.current.entities, Entity);
+}
+
+bool z_game_waitingForPlayer(void)
+{
+    return g_game.waitForPlayerTurn;
 }
 
 static void z_game_initScreen(ZGameScreen* Screen)
@@ -179,6 +187,35 @@ static void addCargo(AEntity* Entity, ZCargoType Type, int Number)
     z_comp_cargo_addContent(cargo, Type, Number);
 }
 
+typedef struct ZAiContextShip {
+    int x;
+} ZAiContextShip;
+
+static void shipAi(AEntity* Entity, ZAiMessageType Type, AEntity* Relevant)
+{
+    ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
+    ZAiContextShip* context = z_comp_ai_getContext(ai);
+
+    switch(Type) {
+        case Z_AI_MESSAGE_GREETED: {
+            z_game_setLogAction("Hello to you too, %s",
+                                a_entity_getId(Relevant));
+        } break;
+
+        case Z_AI_MESSAGE_ATTACKED: {
+            z_game_setLogAction("Ouch, %s... %d",
+                                a_entity_getId(Relevant),
+                                ++context->x);
+        } break;
+    }
+}
+
+static void addShipAi(AEntity* Entity)
+{
+    ZCompAi* ai = a_entity_addComponent(Entity, "ai");
+    z_comp_ai_init(ai, shipAi, sizeof(ZAiContextShip));
+}
+
 static void z_game_createStagingScreen(void)
 {
     // This screen's unique seed
@@ -234,6 +271,7 @@ static void z_game_createStagingScreen(void)
         addHealth(e, 20);
         addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(5));
         addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(3));
+        addShipAi(e);
     }
 }
 
@@ -299,10 +337,13 @@ static void z_game_flipStagingScreen(void)
     }
 
     g_game.moveAction = Z_SCREEN_MOVE_NONE;
+    g_game.waitForPlayerTurn = true;
 }
 
 static void playerInput(AEntity* Entity)
 {
+    bool acted = false;
+
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
     ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
     ZMoodType moodType = z_comp_mood_getType(mood);
@@ -352,6 +393,7 @@ static void playerInput(AEntity* Entity)
             ZCompMap* map = a_entity_requireComponent(g_game.current.map, "map");
 
             if(z_comp_map_getTileEntity(map, x, y) == NULL) {
+                // Move to this tile
                 z_comp_position_setCoords(position, x, y);
                 z_comp_map_setTileEntity(map, x, y, Entity);
                 z_comp_map_setTileEntity(map, originalX, originalY, NULL);
@@ -370,6 +412,8 @@ static void playerInput(AEntity* Entity)
                     z_comp_interact_action(interact, Entity, action);
                 }
             }
+
+            acted = true;
         }
 
         if(g_game.moveAction != Z_SCREEN_MOVE_NONE) {
@@ -386,6 +430,8 @@ static void playerInput(AEntity* Entity)
 
         z_comp_mood_setType(mood, moodType);
     }
+
+    g_game.waitForPlayerTurn = !acted;
 }
 
 A_STATE(playGame)
@@ -414,7 +460,8 @@ A_STATE(playGame)
 
         z_game_createStagingScreen();
 
-        a_system_tick("getInputs runInteractions");
+        // Player does something, process that, AI does something, process that
+        a_system_tick("getInputs runInteractions ai runInteractions");
         a_system_draw("drawMap drawSprites drawHud");
     }
 

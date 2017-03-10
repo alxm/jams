@@ -16,20 +16,4 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompInteract ZCompInteract;
-typedef struct ZPendingAction ZPendingAction;
-
-typedef enum {
-    Z_ACTION_GREET,
-    Z_ACTION_ATTACK,
-} ZActionType;
-
-extern size_t z_comp_interact_size(void);
-extern void z_comp_interact_init(ZCompInteract* Interact, const char* Name);
-extern AComponentFree z_comp_interact_free;
-
-extern void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZActionType Action);
-extern const char* z_comp_interact_getName(const ZCompInteract* Interact);
-
-extern AList* z_comp_interact_getPending(const ZCompInteract* Interact);
-extern void z_comp_interact_getActionData(const ZPendingAction* Action, AEntity** Actor, ZActionType* ActionType);
+extern ASystemHandler z_system_ai;

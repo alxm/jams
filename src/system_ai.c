@@ -16,20 +16,28 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompInteract ZCompInteract;
-typedef struct ZPendingAction ZPendingAction;
+#include <a2x.h>
 
-typedef enum {
-    Z_ACTION_GREET,
-    Z_ACTION_ATTACK,
-} ZActionType;
+#include "component_ai.h"
 
-extern size_t z_comp_interact_size(void);
-extern void z_comp_interact_init(ZCompInteract* Interact, const char* Name);
-extern AComponentFree z_comp_interact_free;
+#include "state_game.h"
 
-extern void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZActionType Action);
-extern const char* z_comp_interact_getName(const ZCompInteract* Interact);
+void z_system_ai(AEntity* Entity)
+{
+    if(z_game_waitingForPlayer()) {
+        return;
+    }
 
-extern AList* z_comp_interact_getPending(const ZCompInteract* Interact);
-extern void z_comp_interact_getActionData(const ZPendingAction* Action, AEntity** Actor, ZActionType* ActionType);
+    ZAiMessage* message;
+    ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
+
+    while((message = z_comp_ai_getMessage(ai))) {
+        ZAiMessageType type;
+        AEntity* relevant;
+        z_comp_ai_getMessageData(message, &type, &relevant);
+
+        z_comp_ai_runHandler(ai, type, relevant);
+
+        free(message);
+    }
+}

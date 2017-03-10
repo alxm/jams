@@ -18,6 +18,7 @@
 
 #include <a2x.h>
 
+#include "component_ai.h"
 #include "component_cargo.h"
 #include "component_damage.h"
 #include "component_health.h"
@@ -28,6 +29,7 @@
 #include "component_position.h"
 #include "component_sprite.h"
 
+#include "system_ai.h"
 #include "system_input.h"
 #include "system_interact.h"
 #include "system_hud.h"
@@ -48,6 +50,7 @@ A_SETUP
 
 A_MAIN
 {
+    a_component_declare("ai", z_comp_ai_size(), z_comp_ai_free);
     a_component_declare("cargo", z_comp_cargo_size(), NULL);
     a_component_declare("damage", z_comp_damage_size(), NULL);
     a_component_declare("health", z_comp_health_size(), NULL);
@@ -59,6 +62,7 @@ A_MAIN
     a_component_declare("position", z_comp_position_size(), NULL);
     a_component_declare("sprite", z_comp_sprite_size(), NULL);
 
+    a_system_declare("ai", "ai", z_system_ai, NULL, false);
     a_system_declare("drawHud", "hud", z_system_hudDraw, NULL, false);
     a_system_declare("drawMap", "map", z_system_mapDraw, NULL, false);
     a_system_declare("drawSprites", "position sprite", z_system_sprite, NULL, false);
