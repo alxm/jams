@@ -26,10 +26,11 @@
 #include "component_health.h"
 #include "component_input.h"
 #include "component_interact.h"
-#include "component_map.h"
 #include "component_mood.h"
 #include "component_position.h"
 #include "component_sprite.h"
+
+#include "entity_macros.h"
 
 #include "state_game.h"
 
@@ -37,77 +38,20 @@ static void playerInput(AEntity* Entity)
 {
     bool acted = false;
 
-    ZCompPosition* position = a_entity_requireComponent(Entity, "position");
-    ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
-    ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
-    ZMoodType moodType = z_comp_mood_getType(mood);
-
-    int originalX, originalY;
-    z_comp_position_getCoords(position, &originalX, &originalY);
-
-    int x = originalX;
-    int y = originalY;
-
     if(a_button_get(z_controls.up)) {
-        y--;
-        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_UP);
+        acted = z_entity_macro_move(Entity, Z_MOVE_UP);
     } else if(a_button_get(z_controls.down)) {
-        y++;
-        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_DOWN);
+        acted = z_entity_macro_move(Entity, Z_MOVE_DOWN);
     } else if(a_button_get(z_controls.left)) {
-        x--;
-        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_LEFT);
+        acted = z_entity_macro_move(Entity, Z_MOVE_LEFT);
     } else if(a_button_get(z_controls.right)) {
-        x++;
-        z_comp_sprite_setDirection(sprite, Z_SPRITE_DIRECTION_RIGHT);
-    }
-
-    if(x != originalX || y != originalY) {
-        if(x < 0) {
-            if(z_game_moveScreen(Z_SCREEN_MOVE_LEFT)) {
-                z_game_log("Moved west");
-            }
-        } else if(x >= Z_MAP_TILES_W) {
-            if(z_game_moveScreen(Z_SCREEN_MOVE_RIGHT)) {
-                z_game_log("Moved east");
-            }
-        } else if(y < 0) {
-            if(z_game_moveScreen(Z_SCREEN_MOVE_UP)) {
-                z_game_log("Moved north");
-            }
-        } else if(y >= Z_MAP_TILES_H) {
-            if(z_game_moveScreen(Z_SCREEN_MOVE_DOWN)) {
-                z_game_log("Moved south");
-            }
-        } else {
-            ZCompMap* map = a_entity_requireComponent(z_game_getMap(), "map");
-
-            if(z_comp_map_getTileEntity(map, x, y) == NULL) {
-                // Move to this tile
-                z_comp_position_setCoords(position, x, y);
-                z_comp_map_setTileEntity(map, x, y, Entity);
-                z_comp_map_setTileEntity(map, originalX, originalY, NULL);
-            } else {
-                // Interact with the entity on this tile
-                AEntity* e = z_comp_map_getTileEntity(map, x, y);
-                ZCompInteract* interact = a_entity_getComponent(e, "interact");
-
-                if(interact) {
-                    ZActionType action = Z_ACTION_GREET;
-
-                    if(moodType == Z_MOOD_EVIL) {
-                        action = Z_ACTION_ATTACK;
-                    }
-
-                    z_comp_interact_action(interact, Entity, action);
-                }
-            }
-
-            acted = true;
-        }
+        acted = z_entity_macro_move(Entity, Z_MOVE_RIGHT);
     }
 
     if(a_button_getOnce(z_controls.main)) {
+        ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
+        ZMoodType moodType = z_comp_mood_getType(mood);
+
         if(moodType == Z_MOOD_GOOD) {
             moodType = Z_MOOD_EVIL;
         } else if(moodType == Z_MOOD_EVIL) {
@@ -123,7 +67,7 @@ static void playerInput(AEntity* Entity)
 AEntity* z_entity_player_new(void)
 {
     AEntity* e = a_entity_new();
-    a_entity_setId(e, "playerShip");
+    a_entity_setId(e, "player");
 
     ZCompCargo* cargo = a_entity_addComponent(e, "cargo");
     z_comp_cargo_init(cargo);
@@ -136,6 +80,9 @@ AEntity* z_entity_player_new(void)
 
     ZCompInput* input = a_entity_addComponent(e, "input");
     z_comp_input_init(input, playerInput);
+
+    ZCompInteract* interact = a_entity_addComponent(e, "interact");
+    z_comp_interact_init(interact, "Player");
 
     ZCompMood* mood = a_entity_addComponent(e, "mood");
     z_comp_mood_init(mood, Z_MOOD_GOOD);

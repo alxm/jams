@@ -50,6 +50,7 @@ void z_system_interact(AEntity* Entity)
             case Z_ACTION_ATTACK: {
                 ZCompHealth* health = a_entity_getComponent(Entity, "health");
                 ZCompDamage* damage = a_entity_getComponent(actor, "damage");
+                ZCompInteract* actorInteract = a_entity_requireComponent(actor, "interact");
 
                 if(health && damage) {
                     z_comp_health_takeDamage(health,
@@ -60,23 +61,41 @@ void z_system_interact(AEntity* Entity)
                         ZCompCargo* foundCargo = a_entity_getComponent(Entity, "cargo");
                         ZCompCargo* actorCargo = a_entity_getComponent(actor, "cargo");
 
-                        z_game_log("Destroyed %s",
+                        z_game_log("%s was destroyed",
                                    z_comp_interact_getName(interact));
 
                         if(foundCargo && actorCargo) {
+                            int total = 0;
+
                             for(ZCargoType t = Z_CARGO_TYPE_NUM; t--; ) {
-                                int num = z_comp_cargo_getContent(foundCargo, t);
+                                int num = z_comp_cargo_getNum(foundCargo, t);
 
                                 if(num > 0) {
-                                    z_comp_cargo_addContent(actorCargo, t, num);
-                                    z_game_log("  Plundered %d %s",
-                                               num,
-                                               z_comp_cargo_getName(t, num > 1));
+                                    int n = z_comp_cargo_take(actorCargo,
+                                                              foundCargo,
+                                                              t,
+                                                              num);
+                                    total += n;
+
+                                    z_game_log("  %s plundered %d %s",
+                                               z_comp_interact_getName(actorInteract),
+                                               n,
+                                               z_comp_cargo_getName(t, n > 1));
                                 }
+                            }
+
+                            if(total == 0) {
+                                z_game_log("  %s had no cargo",
+                                           z_comp_interact_getName(interact));
                             }
                         }
 
-                        z_game_removeEntity(Entity);
+                        if(Entity == z_game_getPlayer()) {
+                            z_game_log("THE PLAYER NEVER DIES!");
+                            z_comp_health_addPoints(health, 100);
+                        } else {
+                            z_game_removeEntity(Entity);
+                        }
                     } else {
                         if(ai) {
                             z_comp_ai_queueMessage(ai,
@@ -84,7 +103,8 @@ void z_system_interact(AEntity* Entity)
                                                    actor);
                         }
 
-                        z_game_log("Attacked %s",
+                        z_game_log("%s attacked %s",
+                                   z_comp_interact_getName(actorInteract),
                                    z_comp_interact_getName(interact));
                     }
                 }

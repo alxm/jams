@@ -41,7 +41,7 @@ typedef struct ZGame {
     unsigned initialSeed;
     unsigned universeX, universeY;
     ZScreenMove moveAction;
-    AEntity* playerShip;
+    AEntity* player;
     ZLog* log;
     ZGameScreen current;
     ZGameScreen staging;
@@ -78,7 +78,7 @@ static void z_game_createStagingScreen(void)
 
     // Set player's new position
     int x, y;
-    ZCompPosition* playerPosition = a_entity_requireComponent(g_game.playerShip,
+    ZCompPosition* playerPosition = a_entity_requireComponent(g_game.player,
                                                               "position");
     z_comp_position_getCoords(playerPosition, &x, &y);
 
@@ -103,7 +103,7 @@ static void z_game_createStagingScreen(void)
     }
 
     z_comp_position_setCoords(playerPosition, x, y);
-    z_comp_map_setTileEntity(map, x, y, g_game.playerShip);
+    z_comp_map_setTileEntity(map, x, y, g_game.player);
 
     // Satellites
     for(int i = 1 + a_random_int(4); i--; ) {
@@ -138,7 +138,7 @@ static void z_game_prepareNextScreen(void)
     a_screen_setTargetSprite(g_game.staging.mapScreen);
 
     // Player ship gets unmuted in z_game_flipStagingScreen in the new screen
-    a_entity_mute(g_game.playerShip);
+    a_entity_mute(g_game.player);
     a_system_execute("drawMap drawSprites");
 
     a_screen_resetTarget();
@@ -174,7 +174,7 @@ static void z_game_flipStagingScreen(void)
     g_game.staging = current;
 
     // Unmute new entities
-    a_entity_unmute(g_game.playerShip);
+    a_entity_unmute(g_game.player);
 
     A_LIST_ITERATE(g_game.current.entities, AEntity*, e) {
         a_entity_unmute(e);
@@ -233,7 +233,7 @@ bool z_game_moveScreen(ZScreenMove Direction)
 
 AEntity* z_game_getPlayer(void)
 {
-    return g_game.playerShip;
+    return g_game.player;
 }
 
 AEntity* z_game_getMap(void)
@@ -297,7 +297,7 @@ A_STATE(playGame)
         g_game.universeX = Z_UNIVERSE_DIM / 2;
         g_game.universeY = Z_UNIVERSE_DIM / 2;
         g_game.moveAction = Z_SCREEN_MOVE_NONE;
-        g_game.playerShip = z_entity_player_new();
+        g_game.player = z_entity_player_new();
         g_game.log = z_log_new(6);
 
         z_game_initScreen(&g_game.current);

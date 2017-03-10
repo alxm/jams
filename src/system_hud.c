@@ -69,7 +69,7 @@ void z_system_hudDraw(AEntity* Entity)
     for(ZCargoType t = 0; t < Z_CARGO_TYPE_NUM; t++) {
         a_font_textf("%s: %d",
                      z_comp_cargo_getName(t, true),
-                     z_comp_cargo_getContent(cargo, t));
+                     z_comp_cargo_getNum(cargo, t));
         a_font_newLine();
     }
 

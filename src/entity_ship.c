@@ -26,29 +26,72 @@
 #include "component_health.h"
 #include "component_interact.h"
 #include "component_map.h"
+#include "component_mood.h"
 #include "component_position.h"
 #include "component_sprite.h"
+
+#include "entity_macros.h"
 
 #include "state_game.h"
 
 typedef struct ZAiContextShip {
-    int x;
+    int annoyedCounter;
 } ZAiContextShip;
 
 static void shipAi(AEntity* Entity, ZAiMessageType Type, AEntity* Relevant)
 {
     ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
+    ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
+
+    ZCompInteract* actorInteract = a_entity_requireComponent(Relevant,
+                                                             "interact");
+    const char* actorName = z_comp_interact_getName(actorInteract);
+
     ZAiContextShip* context = z_comp_ai_getContext(ai);
+    ZMoodType currentMood = z_comp_mood_getType(mood);
 
     switch(Type) {
         case Z_AI_MESSAGE_GREETED: {
-            z_game_log("Hello to you too, %s", a_entity_getId(Relevant));
+            if(currentMood == Z_MOOD_GOOD) {
+                z_game_log("Hello to you too, %s", actorName);
+            } else {
+                if(context->annoyedCounter > 0) {
+                    z_game_log("Get lost, %s...", actorName);
+
+                    if(--context->annoyedCounter == 0) {
+                        z_comp_mood_setType(mood, Z_MOOD_GOOD);
+                    }
+                } else {
+                    z_game_log("* Radio silence *");
+                }
+            }
         } break;
 
         case Z_AI_MESSAGE_ATTACKED: {
-            z_game_log("Ouch, %s... %d",
-                       a_entity_getId(Relevant),
-                       ++context->x);
+            context->annoyedCounter++;
+
+            // Retaliate
+            z_comp_mood_setType(mood, Z_MOOD_EVIL);
+
+            ZCompPosition* myPos = a_entity_requireComponent(Entity,
+                                                             "position");
+            int myX, myY;
+            z_comp_position_getCoords(myPos, &myX, &myY);
+
+            ZCompPosition* actorPos = a_entity_requireComponent(Relevant,
+                                                                "position");
+            int actorX, actorY;
+            z_comp_position_getCoords(actorPos, &actorX, &actorY);
+
+            if(myX < actorX) {
+                z_entity_macro_move(Entity, Z_MOVE_RIGHT);
+            } else if(myX > actorX) {
+                z_entity_macro_move(Entity, Z_MOVE_LEFT);
+            } else if(myY < actorY) {
+                z_entity_macro_move(Entity, Z_MOVE_DOWN);
+            } else if(myY > actorY) {
+                z_entity_macro_move(Entity, Z_MOVE_UP);
+            }
         } break;
     }
 }
@@ -78,10 +121,13 @@ static AEntity* spawn(ZCompMap* Map, const char* Name, const char* Up, const cha
     return e;
 }
 
-static void addHealth(AEntity* Entity, int Points)
+static void addAiShip(AEntity* Entity)
 {
-    ZCompHealth* health = a_entity_addComponent(Entity, "health");
-    z_comp_health_init(health, Points);
+    ZCompAi* ai = a_entity_addComponent(Entity, "ai");
+    z_comp_ai_init(ai, shipAi, sizeof(ZAiContextShip));
+
+    ZAiContextShip* context = z_comp_ai_getContext(ai);
+    context->annoyedCounter = 0;
 }
 
 static void addCargo(AEntity* Entity, ZCargoType Type, int Number)
@@ -93,13 +139,25 @@ static void addCargo(AEntity* Entity, ZCargoType Type, int Number)
         z_comp_cargo_init(cargo);
     }
 
-    z_comp_cargo_addContent(cargo, Type, Number);
+    z_comp_cargo_add(cargo, Type, Number);
 }
 
-static void addShipAi(AEntity* Entity)
+static void addDamage(AEntity* Entity, int Points)
 {
-    ZCompAi* ai = a_entity_addComponent(Entity, "ai");
-    z_comp_ai_init(ai, shipAi, sizeof(ZAiContextShip));
+    ZCompDamage* damage = a_entity_addComponent(Entity, "damage");
+    z_comp_damage_init(damage, Points);
+}
+
+static void addHealth(AEntity* Entity, int Points)
+{
+    ZCompHealth* health = a_entity_addComponent(Entity, "health");
+    z_comp_health_init(health, Points);
+}
+
+static void addMood(AEntity* Entity, ZMoodType Type)
+{
+    ZCompMood* mood = a_entity_addComponent(Entity, "mood");
+    z_comp_mood_init(mood, Type);
 }
 
 AEntity* z_entity_ship_satellite(ZCompMap* Map)
@@ -111,9 +169,9 @@ AEntity* z_entity_ship_satellite(ZCompMap* Map)
                        "satellite1",
                        "satellite1");
 
-    addHealth(e, 15);
-
     addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(3));
+
+    addHealth(e, 15);
 
     return e;
 }
@@ -127,12 +185,16 @@ AEntity* z_entity_ship_ship(ZCompMap* Map)
                        "ship1Left",
                        "ship1Right");
 
-    addHealth(e, 20);
+    addAiShip(e);
 
     addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(5));
     addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(3));
 
-    addShipAi(e);
+    addDamage(e, 8);
+
+    addHealth(e, 20);
+
+    addMood(e, Z_MOOD_GOOD);
 
     return e;
 }

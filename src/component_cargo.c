@@ -34,14 +34,9 @@ void z_comp_cargo_init(ZCompCargo* Cargo)
     memset(Cargo->contents, 0, sizeof(Cargo->contents));
 }
 
-int z_comp_cargo_getContent(const ZCompCargo* Cargo, ZCargoType Type)
+int z_comp_cargo_getNum(const ZCompCargo* Cargo, ZCargoType Type)
 {
     return Cargo->contents[Type];
-}
-
-void z_comp_cargo_addContent(ZCompCargo* Cargo, ZCargoType Type, int Num)
-{
-    Cargo->contents[Type] += Num;
 }
 
 const char* z_comp_cargo_getName(ZCargoType Type, bool Plural)
@@ -52,4 +47,19 @@ const char* z_comp_cargo_getName(ZCargoType Type, bool Plural)
     };
 
     return names[Type][Plural];
+}
+
+void z_comp_cargo_add(ZCompCargo* Cargo, ZCargoType Type, int Num)
+{
+    Cargo->contents[Type] += Num;
+}
+
+int z_comp_cargo_take(ZCompCargo* Taker, ZCompCargo* Giver, ZCargoType Type, int Num)
+{
+    int numTook = a_math_min(Num, Giver->contents[Type]);
+
+    Taker->contents[Type] += numTook;
+    Giver->contents[Type] -= numTook;
+
+    return numTook;
 }

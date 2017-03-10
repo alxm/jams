@@ -47,6 +47,11 @@ void z_comp_health_takeDamage(ZCompHealth* Health, int Damage)
     Health->points = a_math_max(Health->points - Damage, 0);
 }
 
+void z_comp_health_addPoints(ZCompHealth* Health, int Points)
+{
+    Health->points = a_math_min(Health->points + Points, Health->max);
+}
+
 bool z_comp_health_isAlive(const ZCompHealth* Health)
 {
     return Health->points > 0;
