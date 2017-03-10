@@ -16,7 +16,6 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern A_STATE(newGame);
 extern A_STATE(playGame);
 extern A_STATE(nextScreen);
 

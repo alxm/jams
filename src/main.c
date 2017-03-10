@@ -66,7 +66,6 @@ A_MAIN
     a_system_declare("runInteractions", "interact", z_system_interact, NULL, false);
 
     a_state_new("load", load);
-    a_state_new("newGame", newGame);
     a_state_new("playGame", playGame);
     a_state_new("nextScreen", nextScreen);
 
