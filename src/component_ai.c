@@ -21,15 +21,15 @@
 #include "component_ai.h"
 
 struct ZCompAi {
-    AList* messageQueue;
+    AList* messageQueue; // list of ZAiMessage
     ZCompAiHandler* handler;
     void* context;
 };
 
-struct ZAiMessage {
+typedef struct ZAiMessage {
     ZAiMessageType type;
     AEntity* relevantEntity;
-};
+} ZAiMessage;
 
 size_t z_comp_ai_size(void)
 {
@@ -80,19 +80,19 @@ void z_comp_ai_queueMessage(ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant)
     a_list_addLast(Ai->messageQueue, m);
 }
 
-ZAiMessage* z_comp_ai_getMessage(const ZCompAi* Ai)
+bool z_comp_ai_getMessage(ZCompAi* Ai, ZAiMessageType* Type, AEntity** Relevant)
 {
     ZAiMessage* m = a_list_pop(Ai->messageQueue);
 
     if(m) {
-        a_entity_release(m->relevantEntity);
+        *Type = m->type;
+        *Relevant = m->relevantEntity;
+
+        a_entity_release(*Relevant);
+        free(m);
+
+        return true;
     }
 
-    return m;
-}
-
-void z_comp_ai_getMessageData(const ZAiMessage* Message, ZAiMessageType* Type, AEntity** Relevant)
-{
-    *Type = Message->type;
-    *Relevant = Message->relevantEntity;
+    return false;
 }

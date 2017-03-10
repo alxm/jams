@@ -22,10 +22,10 @@
 
 #include "state_game.h"
 
-struct ZPendingAction {
+typedef struct ZPendingAction {
     AEntity* actor;
     ZActionType action;
-};
+} ZPendingAction;
 
 struct ZCompInteract {
     char* name;
@@ -70,13 +70,18 @@ const char* z_comp_interact_getName(const ZCompInteract* Interact)
     return Interact->name;
 }
 
-AList* z_comp_interact_getPending(const ZCompInteract* Interact)
+bool z_comp_interact_getPending(ZCompInteract* Interact, AEntity** Actor, ZActionType* ActionType)
 {
-    return Interact->pending;
-}
+    ZPendingAction* p = a_list_pop(Interact->pending);
 
-void z_comp_interact_getActionData(const ZPendingAction* Action, AEntity** Actor, ZActionType* ActionType)
-{
-    *Actor = Action->actor;
-    *ActionType = Action->action;
+    if(p) {
+        *Actor = p->actor;
+        *ActionType = p->action;
+
+        free(p);
+
+        return true;
+    }
+
+    return false;
 }

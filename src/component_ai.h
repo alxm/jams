@@ -17,7 +17,6 @@
 */
 
 typedef struct ZCompAi ZCompAi;
-typedef struct ZAiMessage ZAiMessage;
 
 typedef enum {
     Z_AI_MESSAGE_GREETED,
@@ -34,5 +33,4 @@ extern void z_comp_ai_runHandler(const ZCompAi* Ai, ZAiMessageType Type, AEntity
 extern void* z_comp_ai_getContext(const ZCompAi* Ai);
 
 extern void z_comp_ai_queueMessage(ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant);
-extern ZAiMessage* z_comp_ai_getMessage(const ZCompAi* Ai);
-extern void z_comp_ai_getMessageData(const ZAiMessage* Message, ZAiMessageType* Type, AEntity** Relevant);
+extern bool z_comp_ai_getMessage(ZCompAi* Ai, ZAiMessageType* Type, AEntity** Relevant);

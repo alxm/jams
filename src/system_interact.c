@@ -30,13 +30,11 @@ void z_system_interact(AEntity* Entity)
 {
     ZCompAi* ai = a_entity_getComponent(Entity, "ai");
     ZCompInteract* interact = a_entity_requireComponent(Entity, "interact");
-    AList* pendingActions = z_comp_interact_getPending(interact);
 
-    A_LIST_ITERATE(pendingActions, ZPendingAction*, a) {
-        AEntity* actor;
-        ZActionType actionType;
-        z_comp_interact_getActionData(a, &actor, &actionType);
+    AEntity* actor;
+    ZActionType actionType;
 
+    while(z_comp_interact_getPending(interact, &actor, &actionType)) {
         switch(actionType) {
             case Z_ACTION_GREET: {
                 z_game_setLogAction("Hello, %s!",
@@ -92,9 +90,5 @@ void z_system_interact(AEntity* Entity)
                 }
             } break;
         }
-
-        free(a);
     }
-
-    a_list_clear(pendingActions);
 }

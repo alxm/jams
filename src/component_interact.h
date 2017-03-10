@@ -17,7 +17,6 @@
 */
 
 typedef struct ZCompInteract ZCompInteract;
-typedef struct ZPendingAction ZPendingAction;
 
 typedef enum {
     Z_ACTION_GREET,
@@ -31,5 +30,4 @@ extern AComponentFree z_comp_interact_free;
 extern void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZActionType Action);
 extern const char* z_comp_interact_getName(const ZCompInteract* Interact);
 
-extern AList* z_comp_interact_getPending(const ZCompInteract* Interact);
-extern void z_comp_interact_getActionData(const ZPendingAction* Action, AEntity** Actor, ZActionType* ActionType);
+extern bool z_comp_interact_getPending(ZCompInteract* Interact, AEntity** Actor, ZActionType* ActionType);
