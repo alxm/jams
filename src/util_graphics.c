@@ -44,9 +44,10 @@ void z_graphics_load(void)
     ASprite* sh = a_sprite_fromFile("./gfx/sprites.png");
 
     z_graphic_new("spaceTiles", sh, 0, 0, 1);
-    z_graphic_new("playerShip", sh, 0, 21, 1);
-    z_graphic_new("satellite", sh, 0, 42, 1);
     z_graphic_new("goodbad", sh, 0, 63, 1);
+    z_graphic_new("playerShip", sh, 0, 21, 1);
+    z_graphic_new("satellite1", sh, 0, 42, 1);
+    z_graphic_new("ship1", sh, 0, 84, 1);
 
     a_sprite_free(sh);
 }

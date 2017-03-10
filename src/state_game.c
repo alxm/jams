@@ -134,6 +134,51 @@ static void z_game_freeScreen(ZGameScreen* Screen)
     a_sprite_free(Screen->mapScreen);
 }
 
+static AEntity* spawnEntity(ZCompMap* Map, const char* Sprite, const char* Name)
+{
+    AEntity* e = a_entity_new();
+    a_entity_setId(e, Name);
+
+    a_list_addLast(g_game.staging.entities, e);
+
+    int x, y;
+    ZCompPosition* position = a_entity_addComponent(e, "position");
+
+    do {
+        x = 1 + a_random_int(Z_MAP_TILES_W - 2);
+        y = 1 + a_random_int(Z_MAP_TILES_H - 2);
+    } while(z_comp_map_getTileEntity(Map, x, y) != NULL);
+
+    z_comp_position_init(position, x, y);
+    z_comp_map_setTileEntity(Map, x, y, e);
+
+    ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
+    z_comp_sprite_init(sprite, Sprite);
+
+    ZCompInteract* interact = a_entity_addComponent(e, "interact");
+    z_comp_interact_init(interact, Name);
+
+    return e;
+}
+
+static void addHealth(AEntity* Entity, int Points)
+{
+    ZCompHealth* health = a_entity_addComponent(Entity, "health");
+    z_comp_health_init(health, Points);
+}
+
+static void addCargo(AEntity* Entity, ZCargoType Type, int Number)
+{
+    ZCompCargo* cargo = a_entity_getComponent(Entity, "cargo");
+
+    if(cargo == NULL) {
+        cargo = a_entity_addComponent(Entity, "cargo");
+        z_comp_cargo_init(cargo);
+    }
+
+    z_comp_cargo_addContent(cargo, Type, Number);
+}
+
 static void z_game_createStagingScreen(void)
 {
     // This screen's unique seed
@@ -147,30 +192,48 @@ static void z_game_createStagingScreen(void)
     ZCompMap* map = a_entity_addComponent(g_game.staging.map, "map");
     z_comp_map_init(map);
 
+    // Set player's new position
     int x, y;
+    ZCompPosition* playerPosition = a_entity_requireComponent(g_game.playerShip,
+                                                              "position");
+    z_comp_position_getCoords(playerPosition, &x, &y);
 
-    for(int i = 1 + a_random_int(10); i--; ) {
-        AEntity* sat = a_entity_new();
-        a_list_addLast(g_game.staging.entities, sat);
+    switch(g_game.moveAction) {
+        case Z_SCREEN_MOVE_LEFT: {
+            x = Z_MAP_TILES_W - 1;
+        } break;
 
-        ZCompSprite* sprite = a_entity_addComponent(sat, "sprite");
-        ZCompPosition* position = a_entity_addComponent(sat, "position");
-        ZCompHealth* health = a_entity_addComponent(sat, "health");
-        ZCompInteract* interact = a_entity_addComponent(sat, "interact");
-        ZCompCargo* cargo = a_entity_addComponent(sat, "cargo");
+        case Z_SCREEN_MOVE_RIGHT: {
+            x = 0;
+        } break;
 
-        do {
-            x = 1 + a_random_int(Z_MAP_TILES_W - 2);
-            y = 1 + a_random_int(Z_MAP_TILES_H - 2);
-        } while(z_comp_map_getTileEntity(map, x, y) != NULL);
+        case Z_SCREEN_MOVE_UP: {
+            y = Z_MAP_TILES_H - 1;
+        } break;
 
-        z_comp_map_setTileEntity(map, x, y, sat);
-        z_comp_position_init(position, x, y);
-        z_comp_sprite_init(sprite, "satellite");
-        z_comp_health_init(health, 15);
-        z_comp_interact_init(interact, "Satellite");
-        z_comp_cargo_init(cargo);
-        z_comp_cargo_addContent(cargo, Z_CARGO_TYPE_CREDS, a_random_int(3));
+        case Z_SCREEN_MOVE_DOWN: {
+            y = 0;
+        } break;
+
+        default: break;
+    }
+
+    z_comp_position_setCoords(playerPosition, x, y);
+    z_comp_map_setTileEntity(map, x, y, g_game.playerShip);
+
+    // Satellites
+    for(int i = 1 + a_random_int(4); i--; ) {
+        AEntity* e = spawnEntity(map, "satellite1", "Satellite");
+        addHealth(e, 15);
+        addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(3));
+    }
+
+    // Space ships
+    for(int i = 1 + a_random_int(4); i--; ) {
+        AEntity* e = spawnEntity(map, "ship1", "Space Ship");
+        addHealth(e, 20);
+        addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(5));
+        addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(3));
     }
 }
 
@@ -186,7 +249,7 @@ static void z_game_prepareNextScreen(void)
         a_entity_mute(e);
     }
 
-    // Create a new screen
+    // Create a new screen and set new player position
     z_game_createStagingScreen();
     a_system_flushNewEntities();
 
@@ -195,7 +258,6 @@ static void z_game_prepareNextScreen(void)
 
     a_entity_mute(g_game.playerShip);
     a_system_execute("drawMap drawSprites");
-    a_entity_unmute(g_game.playerShip);
 
     a_screen_resetTarget();
 
@@ -230,43 +292,11 @@ static void z_game_flipStagingScreen(void)
     g_game.staging = current;
 
     // Unmute new entities
+    a_entity_unmute(g_game.playerShip);
+
     A_LIST_ITERATE(g_game.current.entities, AEntity*, e) {
         a_entity_unmute(e);
     }
-
-    // Set player's new position
-    int x, y;
-    ZCompPosition* playerPosition = a_entity_requireComponent(g_game.playerShip,
-                                                              "position");
-    z_comp_position_getCoords(playerPosition, &x, &y);
-
-    switch(g_game.moveAction) {
-        case Z_SCREEN_MOVE_NONE: {
-            x = Z_MAP_TILES_W / 2;
-            y = Z_MAP_TILES_H / 2;
-        } break;
-
-        case Z_SCREEN_MOVE_LEFT: {
-            x = Z_MAP_TILES_W - 1;
-        } break;
-
-        case Z_SCREEN_MOVE_RIGHT: {
-            x = 0;
-        } break;
-
-        case Z_SCREEN_MOVE_UP: {
-            y = Z_MAP_TILES_H - 1;
-        } break;
-
-        case Z_SCREEN_MOVE_DOWN: {
-            y = 0;
-        } break;
-    }
-
-    z_comp_position_setCoords(playerPosition, x, y);
-
-    ZCompMap* map = a_entity_requireComponent(g_game.current.map, "map");
-    z_comp_map_setTileEntity(map, x, y, g_game.playerShip);
 
     g_game.moveAction = Z_SCREEN_MOVE_NONE;
 }
@@ -373,7 +403,7 @@ A_STATE(playGame)
 
         g_game.playerShip = a_entity_new();
         a_entity_setId(g_game.playerShip, "playerShip");
-        z_comp_position_init(a_entity_addComponent(g_game.playerShip, "position"), 0, 0);
+        z_comp_position_init(a_entity_addComponent(g_game.playerShip, "position"), Z_MAP_TILES_W / 2, Z_MAP_TILES_H / 2);
         z_comp_sprite_init(a_entity_addComponent(g_game.playerShip, "sprite"), "playerShip");
         z_comp_input_init(a_entity_addComponent(g_game.playerShip, "input"), playerInput);
         z_comp_health_init(a_entity_addComponent(g_game.playerShip, "health"), 100);
