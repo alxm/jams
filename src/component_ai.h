@@ -23,13 +23,15 @@ typedef enum {
     Z_AI_MESSAGE_ATTACKED,
 } ZAiMessageType;
 
-typedef void ZCompAiHandler(AEntity* Entity, ZAiMessageType Type, AEntity* Relevant);
+typedef void ZAiMessageHandler(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant);
+typedef void ZAiTickHandler(AEntity* Entity, ZCompAi* Ai);
 
 extern size_t z_comp_ai_size(void);
-extern void z_comp_ai_init(ZCompAi* Ai, ZCompAiHandler* Handler, size_t ContextSize);
+extern void z_comp_ai_init(ZCompAi* Ai, ZAiMessageHandler* MessageHandler, ZAiTickHandler* TickHandler, size_t ContextSize);
 extern AComponentFree z_comp_ai_free;
 
-extern void z_comp_ai_runHandler(const ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant);
+extern void z_comp_ai_runMessageHandler(ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant);
+extern void z_comp_ai_runTickHandler(ZCompAi* Ai);
 extern void* z_comp_ai_getContext(const ZCompAi* Ai);
 
 extern void z_comp_ai_queueMessage(ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant);

@@ -34,21 +34,34 @@
 
 #include "state_game.h"
 
-typedef struct ZAiContextShip {
-    int annoyedCounter;
-} ZAiContextShip;
+typedef enum {
+    Z_AI_GOAL_NONE,
+    Z_AI_GOAL_FLEE,
+    Z_AI_GOAL_PURSUE,
+} ZShipAiGoal;
 
-static void shipAi(AEntity* Entity, ZAiMessageType Type, AEntity* Relevant)
+typedef struct ZShipAiContext {
+    int annoyedCounter;
+    ZShipAiGoal goal;
+    int goalCounter;
+    AEntity* goalContext;
+} ZShipAiContext;
+
+static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant)
 {
-    ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
+    ZShipAiContext* context = z_comp_ai_getContext(Ai);
+
+    // A long-term goal is in progress, ignore this message
+    if(context->goal != Z_AI_GOAL_NONE) {
+        return;
+    }
+
     ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
+    ZMoodType currentMood = z_comp_mood_getType(mood);
 
     ZCompInteract* actorInteract = a_entity_requireComponent(Relevant,
                                                              "interact");
     const char* actorName = z_comp_interact_getName(actorInteract);
-
-    ZAiContextShip* context = z_comp_ai_getContext(ai);
-    ZMoodType currentMood = z_comp_mood_getType(mood);
 
     switch(Type) {
         case Z_AI_MESSAGE_GREETED: {
@@ -68,21 +81,110 @@ static void shipAi(AEntity* Entity, ZAiMessageType Type, AEntity* Relevant)
         } break;
 
         case Z_AI_MESSAGE_ATTACKED: {
-            context->annoyedCounter++;
-
             // Retaliate
+            context->annoyedCounter++;
             z_comp_mood_setType(mood, Z_MOOD_EVIL);
 
-            ZCompPosition* myPos = a_entity_requireComponent(Entity,
-                                                             "position");
-            int myX, myY;
-            z_comp_position_getCoords(myPos, &myX, &myY);
+            ZCompHealth* myHealth = a_entity_requireComponent(Entity, "health");
+            int myHealthPoints, myHealthMax;
+            z_comp_health_getStats(myHealth, &myHealthPoints, &myHealthMax);
 
-            ZCompPosition* actorPos = a_entity_requireComponent(Relevant,
-                                                                "position");
-            int actorX, actorY;
-            z_comp_position_getCoords(actorPos, &actorX, &actorY);
+            ZCompHealth* enHealth = a_entity_requireComponent(Relevant, "health");
+            int enHealthPoints, enHealthMax;
+            z_comp_health_getStats(enHealth, &enHealthPoints, &enHealthMax);
 
+            bool amWeak = myHealthPoints < myHealthMax / 2;
+            bool isWeak = enHealthPoints < enHealthMax / 2;
+
+            if(isWeak) {
+                // Pursue
+                context->goal = Z_AI_GOAL_PURSUE;
+                context->goalCounter = 3;
+            } else if(amWeak) {
+                // Flee
+                z_comp_mood_setType(mood, Z_MOOD_GOOD);
+                context->goal = Z_AI_GOAL_FLEE;
+                context->goalCounter = 5;
+            } else {
+                // Retaliate once right now
+                context->goal = Z_AI_GOAL_PURSUE;
+                context->goalCounter = 1;
+            }
+
+            context->goalContext = Relevant;
+            a_entity_reference(Relevant);
+        } break;
+    }
+}
+
+static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
+{
+    ZShipAiContext* context = z_comp_ai_getContext(Ai);
+
+    if(context->goal == Z_AI_GOAL_NONE) {
+        return;
+    }
+
+    ZCompMood* myMood = a_entity_requireComponent(Entity, "mood");
+    ZCompPosition* myPos = a_entity_requireComponent(Entity, "position");
+    ZCompPosition* actorPos = a_entity_requireComponent(context->goalContext,
+                                                        "position");
+
+    int myX, myY;
+    z_comp_position_getCoords(myPos, &myX, &myY);
+
+    int actorX, actorY;
+    z_comp_position_getCoords(actorPos, &actorX, &actorY);
+
+    switch(context->goal) {
+        case Z_AI_GOAL_FLEE: {
+            bool moved = false;
+
+            if(myX < actorX) {
+                moved = z_entity_macro_move(Entity, Z_MOVE_LEFT);
+            } else if(myX > actorX) {
+                moved = z_entity_macro_move(Entity, Z_MOVE_RIGHT);
+            }
+
+            if(moved) {
+                break;
+            }
+
+            if(myY < actorY) {
+                moved = z_entity_macro_move(Entity, Z_MOVE_UP);
+            } else if(myY > actorY) {
+                moved = z_entity_macro_move(Entity, Z_MOVE_DOWN);
+            }
+
+            if(moved) {
+                break;
+            }
+
+            if(myX == actorX) {
+                ZMove randDir = Z_MOVE_LEFT + a_random_int(2);
+                moved = z_entity_macro_move(Entity, randDir);
+            }
+
+            if(moved) {
+                break;
+            }
+
+            if(myY == actorY) {
+                ZMove randDir = Z_MOVE_UP + a_random_int(2);
+                moved = z_entity_macro_move(Entity, randDir);
+            }
+
+            if(moved) {
+                break;
+            }
+
+            // Could not run away, attack a few times instead
+            z_comp_mood_setType(myMood, Z_MOOD_EVIL);
+            context->goal = Z_AI_GOAL_PURSUE;
+            context->goalCounter += 2;
+        } break;
+
+        case Z_AI_GOAL_PURSUE: {
             if(myX < actorX) {
                 z_entity_macro_move(Entity, Z_MOVE_RIGHT);
             } else if(myX > actorX) {
@@ -93,6 +195,14 @@ static void shipAi(AEntity* Entity, ZAiMessageType Type, AEntity* Relevant)
                 z_entity_macro_move(Entity, Z_MOVE_UP);
             }
         } break;
+
+        default: break;
+    }
+
+    if(--context->goalCounter == 0) {
+        a_entity_release(context->goalContext);
+        context->goal = Z_AI_GOAL_NONE;
+        z_comp_mood_setType(myMood, Z_MOOD_GOOD);
     }
 }
 
@@ -124,10 +234,7 @@ static AEntity* spawn(ZCompMap* Map, const char* Name, const char* Up, const cha
 static void addAiShip(AEntity* Entity)
 {
     ZCompAi* ai = a_entity_addComponent(Entity, "ai");
-    z_comp_ai_init(ai, shipAi, sizeof(ZAiContextShip));
-
-    ZAiContextShip* context = z_comp_ai_getContext(ai);
-    context->annoyedCounter = 0;
+    z_comp_ai_init(ai, shipMessageAi, shipTickAi, sizeof(ZShipAiContext));
 }
 
 static void addCargo(AEntity* Entity, ZCargoType Type, int Number)

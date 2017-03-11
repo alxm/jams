@@ -34,6 +34,8 @@ void z_system_ai(AEntity* Entity)
     AEntity* relevant;
 
     while(z_comp_ai_getMessage(ai, &type, &relevant)) {
-        z_comp_ai_runHandler(ai, type, relevant);
+        z_comp_ai_runMessageHandler(ai, type, relevant);
     }
+
+    z_comp_ai_runTickHandler(ai);
 }
