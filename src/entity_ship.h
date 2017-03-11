@@ -17,4 +17,6 @@
 */
 
 extern AEntity* z_entity_ship_satellite(ZCompMap* Map);
-extern AEntity* z_entity_ship_ship(ZCompMap* Map);
+extern AEntity* z_entity_ship_neutralShip(ZCompMap* Map);
+extern AEntity* z_entity_ship_stubbornShip(ZCompMap* Map);
+extern AEntity* z_entity_ship_aggressiveShip(ZCompMap* Map);

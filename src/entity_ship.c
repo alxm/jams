@@ -40,12 +40,43 @@ typedef enum {
     Z_AI_GOAL_PURSUE,
 } ZShipAiGoal;
 
+typedef enum {
+    Z_AI_PERSONALITY_NEUTRAL,
+    Z_AI_PERSONALITY_STUBBORN,
+    Z_AI_PERSONALITY_AGGRESSIVE,
+} ZShipAiPersonality;
+
 typedef struct ZShipAiContext {
-    int annoyedCounter;
+    ZShipAiPersonality personality;
     ZShipAiGoal goal;
     int goalCounter;
     AEntity* goalContext;
 } ZShipAiContext;
+
+static void setGoal(ZShipAiContext* Context, ZShipAiGoal Goal, int Iterations, AEntity* Target)
+{
+    Context->goal = Goal;
+    Context->goalCounter = Iterations;
+    Context->goalContext = Target;
+
+    a_entity_reference(Target);
+}
+
+static bool clearGoal(ZShipAiContext* Context)
+{
+    Context->goalCounter--;
+
+    if(Context->goalCounter == 0) {
+        a_entity_release(Context->goalContext);
+
+        Context->goal = Z_AI_GOAL_NONE;
+        Context->goalContext = NULL;
+
+        return true;
+    }
+
+    return false;
+}
 
 static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant)
 {
@@ -56,63 +87,69 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
         return;
     }
 
-    ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
-    ZMoodType currentMood = z_comp_mood_getType(mood);
+    ZCompMood* myMood = a_entity_requireComponent(Entity, "mood");
+    ZMoodType myCurrentMood = z_comp_mood_getType(myMood);
 
-    ZCompInteract* actorInteract = a_entity_requireComponent(Relevant,
-                                                             "interact");
-    const char* actorName = z_comp_interact_getName(actorInteract);
+    ZCompInteract* itsInteract = a_entity_requireComponent(Relevant, "interact");
+    const char* itsName = z_comp_interact_getName(itsInteract);
 
     switch(Type) {
         case Z_AI_MESSAGE_GREETED: {
-            if(currentMood == Z_MOOD_GOOD) {
-                z_game_log("Hello to you too, %s", actorName);
+            if(myCurrentMood == Z_MOOD_GOOD) {
+                z_game_log("Hello, %s", itsName);
             } else {
-                if(context->annoyedCounter > 0) {
-                    z_game_log("Get lost, %s...", actorName);
-
-                    if(--context->annoyedCounter == 0) {
-                        z_comp_mood_setType(mood, Z_MOOD_GOOD);
-                    }
-                } else {
-                    z_game_log("* Radio silence *");
-                }
+                z_game_log("* Radio silence *");
             }
         } break;
 
         case Z_AI_MESSAGE_ATTACKED: {
-            // Retaliate
-            context->annoyedCounter++;
-            z_comp_mood_setType(mood, Z_MOOD_EVIL);
+            z_comp_mood_setType(myMood, Z_MOOD_EVIL);
 
             ZCompHealth* myHealth = a_entity_requireComponent(Entity, "health");
             int myHealthPoints, myHealthMax;
             z_comp_health_getStats(myHealth, &myHealthPoints, &myHealthMax);
 
-            ZCompHealth* enHealth = a_entity_requireComponent(Relevant, "health");
-            int enHealthPoints, enHealthMax;
-            z_comp_health_getStats(enHealth, &enHealthPoints, &enHealthMax);
+            ZCompHealth* itsHealth = a_entity_requireComponent(Relevant, "health");
+            int itsHealthPoints, itsHealthMax;
+            z_comp_health_getStats(itsHealth, &itsHealthPoints, &itsHealthMax);
 
-            bool amWeak = myHealthPoints < myHealthMax / 2;
-            bool isWeak = enHealthPoints < enHealthMax / 2;
+            bool amIWeak = myHealthPoints < myHealthMax / 4;
+            bool isItWeak = itsHealthPoints < itsHealthMax / 3;
 
-            if(isWeak) {
-                // Pursue
-                context->goal = Z_AI_GOAL_PURSUE;
-                context->goalCounter = 3;
-            } else if(amWeak) {
-                // Flee
-                z_comp_mood_setType(mood, Z_MOOD_GOOD);
-                context->goal = Z_AI_GOAL_FLEE;
-                context->goalCounter = 5;
-            } else {
-                // Retaliate once right now
-                context->goal = Z_AI_GOAL_PURSUE;
-                context->goalCounter = 1;
+            switch(context->personality) {
+                case Z_AI_PERSONALITY_NEUTRAL: {
+                    if(amIWeak) {
+                        // Flee
+                        setGoal(context, Z_AI_GOAL_FLEE, 5, Relevant);
+                        z_comp_mood_setType(myMood, Z_MOOD_GOOD);
+                    } else if(isItWeak) {
+                        // Retaliate several times
+                        setGoal(context, Z_AI_GOAL_PURSUE, 3, Relevant);
+                    } else {
+                        // Retaliate once
+                        setGoal(context, Z_AI_GOAL_PURSUE, 1, Relevant);
+                    }
+                } break;
+
+                case Z_AI_PERSONALITY_STUBBORN: {
+                    if(isItWeak) {
+                        // Retaliate several times
+                        setGoal(context, Z_AI_GOAL_PURSUE, 3, Relevant);
+                    } else if(amIWeak) {
+                        // Flee
+                        setGoal(context, Z_AI_GOAL_FLEE, 5, Relevant);
+                        z_comp_mood_setType(myMood, Z_MOOD_GOOD);
+                    } else {
+                        // Retaliate once
+                        setGoal(context, Z_AI_GOAL_PURSUE, 1, Relevant);
+                    }
+                } break;
+
+                case Z_AI_PERSONALITY_AGGRESSIVE: {
+                    // Retaliate several times regardless of anything
+                    setGoal(context, Z_AI_GOAL_PURSUE, 5, Relevant);
+                } break;
             }
-
-            context->goalContext = Relevant;
-            a_entity_reference(Relevant);
         } break;
     }
 }
@@ -122,59 +159,63 @@ static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
     ZShipAiContext* context = z_comp_ai_getContext(Ai);
 
     if(context->goal == Z_AI_GOAL_NONE) {
-        return;
+        if(context->personality == Z_AI_PERSONALITY_AGGRESSIVE) {
+            // Not doing anything, pursue player
+            setGoal(context, Z_AI_GOAL_PURSUE, 10, z_game_getPlayer());
+        } else {
+            return;
+        }
     }
 
     ZCompMood* myMood = a_entity_requireComponent(Entity, "mood");
     ZCompPosition* myPos = a_entity_requireComponent(Entity, "position");
-    ZCompPosition* actorPos = a_entity_requireComponent(context->goalContext,
-                                                        "position");
+    ZCompPosition* itsPos = a_entity_requireComponent(context->goalContext, "position");
 
     int myX, myY;
     z_comp_position_getCoords(myPos, &myX, &myY);
 
-    int actorX, actorY;
-    z_comp_position_getCoords(actorPos, &actorX, &actorY);
+    int itsX, itsY;
+    z_comp_position_getCoords(itsPos, &itsX, &itsY);
 
     switch(context->goal) {
         case Z_AI_GOAL_FLEE: {
-            bool moved = false;
+            bool iMoved = false;
 
-            if(myX < actorX) {
-                moved = z_entity_macro_move(Entity, Z_MOVE_LEFT);
-            } else if(myX > actorX) {
-                moved = z_entity_macro_move(Entity, Z_MOVE_RIGHT);
+            if(myX < itsX) {
+                iMoved = z_entity_macro_move(Entity, Z_MOVE_LEFT);
+            } else if(myX > itsX) {
+                iMoved = z_entity_macro_move(Entity, Z_MOVE_RIGHT);
             }
 
-            if(moved) {
+            if(iMoved) {
                 break;
             }
 
-            if(myY < actorY) {
-                moved = z_entity_macro_move(Entity, Z_MOVE_UP);
-            } else if(myY > actorY) {
-                moved = z_entity_macro_move(Entity, Z_MOVE_DOWN);
+            if(myY < itsY) {
+                iMoved = z_entity_macro_move(Entity, Z_MOVE_UP);
+            } else if(myY > itsY) {
+                iMoved = z_entity_macro_move(Entity, Z_MOVE_DOWN);
             }
 
-            if(moved) {
+            if(iMoved) {
                 break;
             }
 
-            if(myX == actorX) {
+            if(myX == itsX) {
                 ZMove randDir = Z_MOVE_LEFT + a_random_int(2);
-                moved = z_entity_macro_move(Entity, randDir);
+                iMoved = z_entity_macro_move(Entity, randDir);
             }
 
-            if(moved) {
+            if(iMoved) {
                 break;
             }
 
-            if(myY == actorY) {
+            if(myY == itsY) {
                 ZMove randDir = Z_MOVE_UP + a_random_int(2);
-                moved = z_entity_macro_move(Entity, randDir);
+                iMoved = z_entity_macro_move(Entity, randDir);
             }
 
-            if(moved) {
+            if(iMoved) {
                 break;
             }
 
@@ -185,13 +226,13 @@ static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
         } break;
 
         case Z_AI_GOAL_PURSUE: {
-            if(myX < actorX) {
+            if(myX < itsX) {
                 z_entity_macro_move(Entity, Z_MOVE_RIGHT);
-            } else if(myX > actorX) {
+            } else if(myX > itsX) {
                 z_entity_macro_move(Entity, Z_MOVE_LEFT);
-            } else if(myY < actorY) {
+            } else if(myY < itsY) {
                 z_entity_macro_move(Entity, Z_MOVE_DOWN);
-            } else if(myY > actorY) {
+            } else if(myY > itsY) {
                 z_entity_macro_move(Entity, Z_MOVE_UP);
             }
         } break;
@@ -199,10 +240,10 @@ static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
         default: break;
     }
 
-    if(--context->goalCounter == 0) {
-        a_entity_release(context->goalContext);
-        context->goal = Z_AI_GOAL_NONE;
-        z_comp_mood_setType(myMood, Z_MOOD_GOOD);
+    if(clearGoal(context)) {
+        if(context->personality != Z_AI_PERSONALITY_AGGRESSIVE) {
+            z_comp_mood_setType(myMood, Z_MOOD_GOOD);
+        }
     }
 }
 
@@ -231,10 +272,13 @@ static AEntity* spawn(ZCompMap* Map, const char* Name, const char* Up, const cha
     return e;
 }
 
-static void addAiShip(AEntity* Entity)
+static void addAiShip(AEntity* Entity, ZShipAiPersonality Personality)
 {
     ZCompAi* ai = a_entity_addComponent(Entity, "ai");
     z_comp_ai_init(ai, shipMessageAi, shipTickAi, sizeof(ZShipAiContext));
+
+    ZShipAiContext* context = z_comp_ai_getContext(ai);
+    context->personality = Personality;
 }
 
 static void addCargo(AEntity* Entity, ZCargoType Type, int Number)
@@ -283,25 +327,65 @@ AEntity* z_entity_ship_satellite(ZCompMap* Map)
     return e;
 }
 
-AEntity* z_entity_ship_ship(ZCompMap* Map)
+AEntity* z_entity_ship_neutralShip(ZCompMap* Map)
 {
     AEntity* e = spawn(Map,
-                       "Space Ship",
+                       "Neutral Ship",
                        "ship1Up",
                        "ship1Down",
                        "ship1Left",
                        "ship1Right");
 
-    addAiShip(e);
+    addAiShip(e, Z_AI_PERSONALITY_NEUTRAL);
+    addMood(e, Z_MOOD_GOOD);
+
+    addDamage(e, 8);
+    addHealth(e, 20);
 
     addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(5));
     addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(3));
 
-    addDamage(e, 8);
+    return e;
+}
 
-    addHealth(e, 20);
+AEntity* z_entity_ship_stubbornShip(ZCompMap* Map)
+{
+    AEntity* e = spawn(Map,
+                       "Stubborn Ship",
+                       "ship2Up",
+                       "ship2Down",
+                       "ship2Left",
+                       "ship2Right");
 
+    addAiShip(e, Z_AI_PERSONALITY_STUBBORN);
     addMood(e, Z_MOOD_GOOD);
+
+    addDamage(e, 12);
+    addHealth(e, 30);
+
+    addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(20));
+    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(10));
+
+    return e;
+}
+
+AEntity* z_entity_ship_aggressiveShip(ZCompMap* Map)
+{
+    AEntity* e = spawn(Map,
+                       "Aggressive Ship",
+                       "ship2Up",
+                       "ship2Down",
+                       "ship2Left",
+                       "ship2Right");
+
+    addAiShip(e, Z_AI_PERSONALITY_AGGRESSIVE);
+    addMood(e, Z_MOOD_EVIL);
+
+    addDamage(e, 16);
+    addHealth(e, 40);
+
+    addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(40));
+    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(40));
 
     return e;
 }

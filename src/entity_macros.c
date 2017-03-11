@@ -96,17 +96,17 @@ bool z_entity_macro_move(AEntity* Entity, ZMove Direction)
             acted = true;
         } else {
             // Interact with the entity on this tile
-            AEntity* e = z_comp_map_getTileEntity(map, x, y);
-            ZCompInteract* interact = a_entity_getComponent(e, "interact");
+            AEntity* target = z_comp_map_getTileEntity(map, x, y);
+            ZCompInteract* targetInteract = a_entity_getComponent(target, "interact");
 
-            if(interact) {
+            if(targetInteract) {
                 ZMoodType moodType = z_comp_mood_getType(mood);
 
                 if(moodType == Z_MOOD_EVIL) {
-                    z_comp_interact_action(interact, Entity, Z_ACTION_ATTACK);
+                    z_comp_interact_action(targetInteract, Entity, Z_ACTION_ATTACK);
                     acted = true;
                 } else if(Entity == player) { // No need for AI-AI greeting :-)
-                    z_comp_interact_action(interact, Entity, Z_ACTION_GREET);
+                    z_comp_interact_action(targetInteract, Entity, Z_ACTION_GREET);
                     acted = true;
                 }
             }

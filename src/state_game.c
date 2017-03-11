@@ -113,9 +113,21 @@ static void z_game_createStagingScreen(void)
         a_list_addLast(g_game.staging.entities, e);
     }
 
-    // Space ships
+    // Weak space ships
     for(int i = 1 + a_random_int(4); i--; ) {
-        AEntity* e = z_entity_ship_ship(map);
+        AEntity* e = z_entity_ship_neutralShip(map);
+        a_list_addLast(g_game.staging.entities, e);
+    }
+
+    // Stronger space ships
+    for(int i = 1 + a_random_int(4); i--; ) {
+        AEntity* e = z_entity_ship_stubbornShip(map);
+        a_list_addLast(g_game.staging.entities, e);
+    }
+
+    // Strong ships that actively pursue player
+    for(int i = 1 + a_random_int(2); i--; ) {
+        AEntity* e = z_entity_ship_aggressiveShip(map);
         a_list_addLast(g_game.staging.entities, e);
     }
 }

@@ -26,86 +26,88 @@
 
 #include "state_game.h"
 
-void z_system_interact(AEntity* Entity)
+void z_system_interact(AEntity* Target)
 {
-    ZCompAi* ai = a_entity_getComponent(Entity, "ai");
-    ZCompInteract* interact = a_entity_requireComponent(Entity, "interact");
+    ZCompAi* targetAi = a_entity_getComponent(Target, "ai");
+    ZCompInteract* targetInteract = a_entity_requireComponent(Target, "interact");
+    const char* targetName = z_comp_interact_getName(targetInteract);
 
     AEntity* actor;
     ZActionType actionType;
 
-    while(z_comp_interact_getPending(interact, &actor, &actionType)) {
+    while(z_comp_interact_getPending(targetInteract, &actor, &actionType)) {
         switch(actionType) {
             case Z_ACTION_GREET: {
-                z_game_log("Hello, %s!",
-                           z_comp_interact_getName(interact));
+                z_game_log("Hello, %s!", targetName);
 
-                if(ai) {
-                    z_comp_ai_queueMessage(ai,
+                if(targetAi) {
+                    z_comp_ai_queueMessage(targetAi,
                                            Z_AI_MESSAGE_GREETED,
                                            actor);
                 }
             } break;
 
             case Z_ACTION_ATTACK: {
-                ZCompHealth* health = a_entity_getComponent(Entity, "health");
-                ZCompDamage* damage = a_entity_getComponent(actor, "damage");
+                ZCompHealth* targetHealth = a_entity_getComponent(Target, "health");
+
+                ZCompDamage* actorDamage = a_entity_getComponent(actor, "damage");
                 ZCompInteract* actorInteract = a_entity_requireComponent(actor, "interact");
+                const char* actorName = z_comp_interact_getName(actorInteract);
 
-                if(health && damage) {
-                    z_comp_health_takeDamage(health,
-                                             z_comp_damage_getPoints(damage));
+                if(targetHealth == NULL) {
+                    z_game_log("%s cannot be attacked", targetName);
+                } else if(actorDamage == NULL) {
+                    z_game_log("%s has no weapons to attack with", actorName);
+                } else {
+                    z_game_log("%s attacked %s", actorName, targetName);
+
+                    z_comp_health_takeDamage(targetHealth,
+                                             z_comp_damage_getPoints(actorDamage));
 
 
-                    if(!z_comp_health_isAlive(health)) {
-                        ZCompCargo* foundCargo = a_entity_getComponent(Entity, "cargo");
+                    if(!z_comp_health_isAlive(targetHealth)) {
+                        ZCompCargo* targetCargo = a_entity_getComponent(Target, "cargo");
                         ZCompCargo* actorCargo = a_entity_getComponent(actor, "cargo");
 
-                        z_game_log("%s was destroyed",
-                                   z_comp_interact_getName(interact));
+                        z_game_log("%s was destroyed", targetName);
 
-                        if(foundCargo && actorCargo) {
+                        if(targetCargo && actorCargo) {
                             int total = 0;
 
                             for(ZCargoType t = Z_CARGO_TYPE_NUM; t--; ) {
-                                int num = z_comp_cargo_getNum(foundCargo, t);
+                                int num = z_comp_cargo_getNum(targetCargo, t);
 
                                 if(num > 0) {
                                     int n = z_comp_cargo_take(actorCargo,
-                                                              foundCargo,
+                                                              targetCargo,
                                                               t,
                                                               num);
                                     total += n;
 
                                     z_game_log("  %s plundered %d %s",
-                                               z_comp_interact_getName(actorInteract),
+                                               actorName,
                                                n,
                                                z_comp_cargo_getName(t, n > 1));
                                 }
                             }
 
                             if(total == 0) {
-                                z_game_log("  %s had no cargo",
-                                           z_comp_interact_getName(interact));
+                                z_game_log("  %s had no cargo", targetName);
                             }
                         }
 
-                        if(Entity == z_game_getPlayer()) {
-                            z_game_log("THE PLAYER NEVER DIES!");
-                            z_comp_health_addPoints(health, 100);
+                        if(Target == z_game_getPlayer()) {
+                            z_game_log("*** THE PLAYER NEVER DIES ***");
+                            z_comp_health_addPoints(targetHealth, 100);
                         } else {
-                            z_game_removeEntity(Entity);
+                            z_game_removeEntity(Target);
                         }
                     } else {
-                        if(ai) {
-                            z_comp_ai_queueMessage(ai,
+                        if(targetAi) {
+                            z_comp_ai_queueMessage(targetAi,
                                                    Z_AI_MESSAGE_ATTACKED,
                                                    actor);
                         }
-
-                        z_game_log("%s attacked %s",
-                                   z_comp_interact_getName(actorInteract),
-                                   z_comp_interact_getName(interact));
                     }
                 }
             } break;
