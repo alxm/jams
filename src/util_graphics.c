@@ -58,10 +58,12 @@ void z_graphics_load(void)
     z_graphic_new("ship1Left", sh, 0, 189, 1);
     z_graphic_new("ship1Right", sh, 0, 210, 1);
 
-    z_graphic_new("ship2Up", sh, 21, 147, 1);
-    z_graphic_new("ship2Down", sh, 21, 168, 1);
-    z_graphic_new("ship2Left", sh, 21, 189, 1);
-    z_graphic_new("ship2Right", sh, 21, 210, 1);
+    z_graphic_new("ship2Up", sh, 0, 231, 1);
+    z_graphic_new("ship2Down", sh, 0, 252, 1);
+    z_graphic_new("ship2Left", sh, 0, 273, 1);
+    z_graphic_new("ship2Right", sh, 0, 294, 1);
+
+    z_graphic_new("asteroid", sh, 0, 315, 1);
 
     a_sprite_free(sh);
 }

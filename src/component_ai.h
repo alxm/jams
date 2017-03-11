@@ -19,8 +19,8 @@
 typedef struct ZCompAi ZCompAi;
 
 typedef enum {
-    Z_AI_MESSAGE_GREETED,
-    Z_AI_MESSAGE_ATTACKED,
+    Z_AI_MESSAGE_BENEVOLENT,
+    Z_AI_MESSAGE_AGGRESSIVE,
 } ZAiMessageType;
 
 typedef void ZAiMessageHandler(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant);

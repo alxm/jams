@@ -16,20 +16,4 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompCargo ZCompCargo;
-
-typedef enum {
-    Z_CARGO_TYPE_CREDS,
-    Z_CARGO_TYPE_FUEL,
-    Z_CARGO_TYPE_MINERALS,
-    Z_CARGO_TYPE_NUM
-} ZCargoType;
-
-extern size_t z_comp_cargo_size(void);
-extern void z_comp_cargo_init(ZCompCargo* Cargo);
-
-extern int z_comp_cargo_getNum(const ZCompCargo* Cargo, ZCargoType Type);
-extern const char* z_comp_cargo_getName(ZCargoType Type, bool Plural);
-
-extern void z_comp_cargo_add(ZCompCargo* Cargo, ZCargoType Type, int Num);
-extern int z_comp_cargo_take(ZCompCargo* Taker, ZCompCargo* Giver, ZCargoType Type, int Num);
+extern AEntity* z_entity_asteroid_new(ZCompMap* Map);

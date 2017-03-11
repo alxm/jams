@@ -23,4 +23,5 @@ typedef enum {
     Z_MOVE_RIGHT
 } ZMove;
 
+extern AEntity* z_entity_macro_spawn(ZCompMap* Map, const char* Name, const char* Up, const char* Down, const char* Left, const char* Right);
 extern bool z_entity_macro_move(AEntity* Entity, ZMove Direction);

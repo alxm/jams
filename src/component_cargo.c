@@ -44,6 +44,7 @@ const char* z_comp_cargo_getName(ZCargoType Type, bool Plural)
     static const char* names[Z_CARGO_TYPE_NUM][2] = {
         {"cred", "creds"},
         {"fuel can", "fuel cans"},
+        {"mineral", "minerals"},
     };
 
     return names[Type][Plural];

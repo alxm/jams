@@ -24,6 +24,7 @@
 #include "component_map.h"
 #include "component_position.h"
 
+#include "entity_asteroid.h"
 #include "entity_player.h"
 #include "entity_ship.h"
 
@@ -106,6 +107,12 @@ static void z_game_createStagingScreen(void)
 
     z_comp_position_setCoords(playerPosition, x, y);
     z_comp_map_setTileEntity(map, x, y, g_game.player);
+
+    // Asteroids for mining
+    for(int i = 1 + a_random_int(2); i--; ) {
+        AEntity* e = z_entity_asteroid_new(map);
+        a_list_addLast(g_game.staging.entities, e);
+    }
 
     // Satellites
     for(int i = 1 + a_random_int(4); i--; ) {
@@ -328,7 +335,7 @@ A_STATE(playGame)
         z_game_initScreen(&g_game.staging);
         z_game_createStagingScreen();
 
-        a_system_tick("getInputs ai runInteractions");
+        a_system_tick("playerInput ai runInteractions");
         a_system_draw("drawMap drawSprites drawHud");
     }
 

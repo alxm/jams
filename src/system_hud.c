@@ -46,7 +46,7 @@ void z_system_hudDraw(AEntity* Entity)
 
     ASprite* face = z_graphics_getFrame(z_graphics_get("goodbad"),
                                         moodType == Z_MOOD_GOOD ? 0 : 1);
-    a_sprite_blit(face, x, y);
+    a_sprite_blit(face, x, y + 2);
     x += a_sprite_width(face) + 4;
 
     unsigned universeX, universeY;

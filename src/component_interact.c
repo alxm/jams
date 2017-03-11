@@ -24,7 +24,7 @@
 
 typedef struct ZPendingAction {
     AEntity* actor;
-    ZActionType action;
+    ZInteractionType type;
 } ZPendingAction;
 
 struct ZCompInteract {
@@ -55,12 +55,12 @@ void z_comp_interact_free(void* Self)
     free(interact->name);
 }
 
-void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZActionType Action)
+void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZInteractionType Type)
 {
     ZPendingAction* pending = a_mem_malloc(sizeof(ZPendingAction));
 
     pending->actor = Actor;
-    pending->action = Action;
+    pending->type = Type;
 
     a_list_addLast(Interact->pending, pending);
 }
@@ -70,13 +70,13 @@ const char* z_comp_interact_getName(const ZCompInteract* Interact)
     return Interact->name;
 }
 
-bool z_comp_interact_getPending(ZCompInteract* Interact, AEntity** Actor, ZActionType* ActionType)
+bool z_comp_interact_getPending(ZCompInteract* Interact, AEntity** Actor, ZInteractionType* Type)
 {
     ZPendingAction* p = a_list_pop(Interact->pending);
 
     if(p) {
         *Actor = p->actor;
-        *ActionType = p->action;
+        *Type = p->type;
 
         free(p);
 

@@ -26,6 +26,7 @@
 #include "component_health.h"
 #include "component_input.h"
 #include "component_interact.h"
+#include "component_map.h"
 #include "component_mood.h"
 #include "component_position.h"
 #include "component_sprite.h"

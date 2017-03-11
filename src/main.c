@@ -66,7 +66,7 @@ A_MAIN
     a_system_declare("drawHud", "hud", z_system_hudDraw, NULL, false);
     a_system_declare("drawMap", "map", z_system_mapDraw, NULL, false);
     a_system_declare("drawSprites", "position sprite", z_system_sprite, NULL, false);
-    a_system_declare("getInputs", "input", z_system_input, NULL, false);
+    a_system_declare("playerInput", "input", z_system_input, NULL, false);
     a_system_declare("runInteractions", "interact", z_system_interact, NULL, false);
 
     a_state_new("load", load);

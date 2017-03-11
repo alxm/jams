@@ -30,6 +30,31 @@
 
 #include "state_game.h"
 
+AEntity* z_entity_macro_spawn(ZCompMap* Map, const char* Name, const char* Up, const char* Down, const char* Left, const char* Right)
+{
+    AEntity* e = a_entity_new();
+    a_entity_setId(e, Name);
+
+    int x, y;
+    ZCompPosition* position = a_entity_addComponent(e, "position");
+
+    do {
+        x = 1 + a_random_int(Z_MAP_TILES_W - 2);
+        y = 1 + a_random_int(Z_MAP_TILES_H - 2);
+    } while(z_comp_map_getTileEntity(Map, x, y) != NULL);
+
+    z_comp_position_init(position, x, y);
+    z_comp_map_setTileEntity(Map, x, y, e);
+
+    ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
+    z_comp_sprite_init(sprite, Up, Down, Left, Right);
+
+    ZCompInteract* interact = a_entity_addComponent(e, "interact");
+    z_comp_interact_init(interact, Name);
+
+    return e;
+}
+
 bool z_entity_macro_move(AEntity* Entity, ZMove Direction)
 {
     bool acted = false;
@@ -103,10 +128,10 @@ bool z_entity_macro_move(AEntity* Entity, ZMove Direction)
                 ZMoodType moodType = z_comp_mood_getType(mood);
 
                 if(moodType == Z_MOOD_EVIL) {
-                    z_comp_interact_action(targetInteract, Entity, Z_ACTION_ATTACK);
+                    z_comp_interact_action(targetInteract, Entity, Z_INTERACTION_AGGRESSIVE);
                     acted = true;
                 } else if(Entity == player) { // No need for AI-AI greeting :-)
-                    z_comp_interact_action(targetInteract, Entity, Z_ACTION_GREET);
+                    z_comp_interact_action(targetInteract, Entity, Z_INTERACTION_BENEVOLENT);
                     acted = true;
                 }
             }

@@ -94,7 +94,7 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
     const char* itsName = z_comp_interact_getName(itsInteract);
 
     switch(Type) {
-        case Z_AI_MESSAGE_GREETED: {
+        case Z_AI_MESSAGE_BENEVOLENT: {
             if(myCurrentMood == Z_MOOD_GOOD) {
                 z_game_log("Hello, %s", itsName);
             } else {
@@ -102,7 +102,7 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
             }
         } break;
 
-        case Z_AI_MESSAGE_ATTACKED: {
+        case Z_AI_MESSAGE_AGGRESSIVE: {
             z_comp_mood_setType(myMood, Z_MOOD_EVIL);
 
             ZCompHealth* myHealth = a_entity_requireComponent(Entity, "health");
@@ -247,31 +247,6 @@ static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
     }
 }
 
-static AEntity* spawn(ZCompMap* Map, const char* Name, const char* Up, const char* Down, const char* Left, const char* Right)
-{
-    AEntity* e = a_entity_new();
-    a_entity_setId(e, Name);
-
-    int x, y;
-    ZCompPosition* position = a_entity_addComponent(e, "position");
-
-    do {
-        x = 1 + a_random_int(Z_MAP_TILES_W - 2);
-        y = 1 + a_random_int(Z_MAP_TILES_H - 2);
-    } while(z_comp_map_getTileEntity(Map, x, y) != NULL);
-
-    z_comp_position_init(position, x, y);
-    z_comp_map_setTileEntity(Map, x, y, e);
-
-    ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, Up, Down, Left, Right);
-
-    ZCompInteract* interact = a_entity_addComponent(e, "interact");
-    z_comp_interact_init(interact, Name);
-
-    return e;
-}
-
 static void addAiShip(AEntity* Entity, ZShipAiPersonality Personality)
 {
     ZCompAi* ai = a_entity_addComponent(Entity, "ai");
@@ -313,12 +288,12 @@ static void addMood(AEntity* Entity, ZMoodType Type)
 
 AEntity* z_entity_ship_satellite(ZCompMap* Map)
 {
-    AEntity* e = spawn(Map,
-                       "Satellite",
-                       "satellite1",
-                       "satellite1",
-                       "satellite1",
-                       "satellite1");
+    AEntity* e = z_entity_macro_spawn(Map,
+                                      "Satellite",
+                                      "satellite1",
+                                      "satellite1",
+                                      "satellite1",
+                                      "satellite1");
 
     addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(3));
 
@@ -329,12 +304,12 @@ AEntity* z_entity_ship_satellite(ZCompMap* Map)
 
 AEntity* z_entity_ship_neutralShip(ZCompMap* Map)
 {
-    AEntity* e = spawn(Map,
-                       "Neutral Ship",
-                       "ship1Up",
-                       "ship1Down",
-                       "ship1Left",
-                       "ship1Right");
+    AEntity* e = z_entity_macro_spawn(Map,
+                                      "Neutral Ship",
+                                      "ship1Up",
+                                      "ship1Down",
+                                      "ship1Left",
+                                      "ship1Right");
 
     addAiShip(e, Z_AI_PERSONALITY_NEUTRAL);
     addMood(e, Z_MOOD_GOOD);
@@ -350,12 +325,12 @@ AEntity* z_entity_ship_neutralShip(ZCompMap* Map)
 
 AEntity* z_entity_ship_stubbornShip(ZCompMap* Map)
 {
-    AEntity* e = spawn(Map,
-                       "Stubborn Ship",
-                       "ship2Up",
-                       "ship2Down",
-                       "ship2Left",
-                       "ship2Right");
+    AEntity* e = z_entity_macro_spawn(Map,
+                                      "Stubborn Ship",
+                                      "ship2Up",
+                                      "ship2Down",
+                                      "ship2Left",
+                                      "ship2Right");
 
     addAiShip(e, Z_AI_PERSONALITY_STUBBORN);
     addMood(e, Z_MOOD_GOOD);
@@ -371,12 +346,12 @@ AEntity* z_entity_ship_stubbornShip(ZCompMap* Map)
 
 AEntity* z_entity_ship_aggressiveShip(ZCompMap* Map)
 {
-    AEntity* e = spawn(Map,
-                       "Aggressive Ship",
-                       "ship2Up",
-                       "ship2Down",
-                       "ship2Left",
-                       "ship2Right");
+    AEntity* e = z_entity_macro_spawn(Map,
+                                      "Aggressive Ship",
+                                      "ship2Up",
+                                      "ship2Down",
+                                      "ship2Left",
+                                      "ship2Right");
 
     addAiShip(e, Z_AI_PERSONALITY_AGGRESSIVE);
     addMood(e, Z_MOOD_EVIL);
