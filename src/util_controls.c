@@ -28,13 +28,6 @@ void z_controls_load(void)
     z_controls.down = a_button_new("generic.down");
     z_controls.left = a_button_new("generic.left");
     z_controls.right = a_button_new("generic.right");
-    z_controls.main = a_button_new("generic.b0");
+    z_controls.primary = a_button_new("generic.b0");
     z_controls.secondary = a_button_new("generic.b1");
-
-    unsigned repeatInterval = a_settings_getUnsigned("video.fps") / 5;
-
-    a_button_setRepeat(z_controls.up, repeatInterval);
-    a_button_setRepeat(z_controls.down, repeatInterval);
-    a_button_setRepeat(z_controls.left, repeatInterval);
-    a_button_setRepeat(z_controls.right, repeatInterval);
 }

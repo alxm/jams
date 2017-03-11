@@ -24,7 +24,7 @@
 
 void z_system_ai(AEntity* Entity)
 {
-    if(z_game_getWaitingForPlayer()) {
+    if(!z_game_isAiTurn()) {
         return;
     }
 

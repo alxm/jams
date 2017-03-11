@@ -23,7 +23,7 @@ struct ZControls {
     AInputButton* down;
     AInputButton* left;
     AInputButton* right;
-    AInputButton* main;
+    AInputButton* primary;
     AInputButton* secondary;
 };
 

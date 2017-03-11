@@ -45,7 +45,9 @@ typedef struct ZGame {
     ZLog* log;
     ZGameScreen current;
     ZGameScreen staging;
-    bool waitForPlayerTurn;
+    bool allowPlayer;
+    bool allowAi;
+    AFrameTimer* aiTurnDelay;
 } ZGame;
 
 static ZGame g_game;
@@ -181,7 +183,9 @@ static void z_game_flipStagingScreen(void)
     }
 
     g_game.moveAction = Z_SCREEN_MOVE_NONE;
-    g_game.waitForPlayerTurn = true;
+    g_game.allowPlayer = true;
+    g_game.allowAi = false;
+    a_frametimer_stop(g_game.aiTurnDelay);
 }
 
 bool z_game_moveScreen(ZScreenMove Direction)
@@ -247,14 +251,21 @@ void z_game_getUniverseCoords(unsigned* X, unsigned* Y)
     *Y = g_game.universeY;
 }
 
-bool z_game_getWaitingForPlayer(void)
+bool z_game_isPlayerTurn(void)
 {
-    return g_game.waitForPlayerTurn;
+    return g_game.allowPlayer;
 }
 
-void z_game_setWaitingForPlayer(bool Waiting)
+bool z_game_isAiTurn(void)
 {
-    g_game.waitForPlayerTurn = Waiting;
+    return g_game.allowAi;
+}
+
+void z_game_playerActed(void)
+{
+    // Player did something, it'll be AI's turn when the timer expires
+    g_game.allowPlayer = false;
+    a_frametimer_start(g_game.aiTurnDelay);
 }
 
 void z_game_removeEntity(AEntity* Entity)
@@ -299,13 +310,13 @@ A_STATE(playGame)
         g_game.moveAction = Z_SCREEN_MOVE_NONE;
         g_game.player = z_entity_player_new();
         g_game.log = z_log_new(6);
+        g_game.aiTurnDelay = a_frametimer_new(a_fps_msToFrames(250));
 
         z_game_initScreen(&g_game.current);
         z_game_initScreen(&g_game.staging);
         z_game_createStagingScreen();
 
-        // Player does something, process that, AI does something, process that
-        a_system_tick("getInputs runInteractions ai runInteractions");
+        a_system_tick("getInputs ai runInteractions");
         a_system_draw("drawMap drawSprites drawHud");
     }
 
@@ -313,7 +324,24 @@ A_STATE(playGame)
     {
         z_game_flipStagingScreen();
 
-        A_STATE_LOOP;
+        A_STATE_LOOP {
+            // This runs before the systems. Establish whether
+            // the Player or the AI can do anything this frame.
+
+            if(a_frametimer_expired(g_game.aiTurnDelay)) {
+                // AI can go now, player is already off if timer was running
+                g_game.allowAi = true;
+                a_frametimer_stop(g_game.aiTurnDelay);
+            } else {
+                if(g_game.allowAi) {
+                    // AI just went the last frame, player can go now
+                    g_game.allowPlayer = true;
+                }
+
+                // Timer is either pending or not running, so AI can't go
+                g_game.allowAi = false;
+            }
+        }
     }
 
     A_STATE_FREE

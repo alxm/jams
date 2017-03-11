@@ -36,6 +36,10 @@
 
 static void playerInput(AEntity* Entity)
 {
+    if(!z_game_isPlayerTurn()) {
+        return;
+    }
+
     bool acted = false;
 
     if(a_button_get(z_controls.up)) {
@@ -48,7 +52,7 @@ static void playerInput(AEntity* Entity)
         acted = z_entity_macro_move(Entity, Z_MOVE_RIGHT);
     }
 
-    if(a_button_getOnce(z_controls.main)) {
+    if(a_button_getOnce(z_controls.primary)) {
         ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
         ZMoodType moodType = z_comp_mood_getType(mood);
 
@@ -61,7 +65,9 @@ static void playerInput(AEntity* Entity)
         z_comp_mood_setType(mood, moodType);
     }
 
-    z_game_setWaitingForPlayer(!acted);
+    if(acted) {
+        z_game_playerActed();
+    }
 }
 
 AEntity* z_entity_player_new(void)

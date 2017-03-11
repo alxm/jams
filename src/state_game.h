@@ -31,8 +31,9 @@ extern AEntity* z_game_getMap(void);
 
 extern void z_game_getUniverseCoords(unsigned* X, unsigned* Y);
 
-extern bool z_game_getWaitingForPlayer(void);
-extern void z_game_setWaitingForPlayer(bool Waiting);
+extern bool z_game_isPlayerTurn(void);
+extern bool z_game_isAiTurn(void);
+extern void z_game_playerActed(void);
 
 extern void z_game_removeEntity(AEntity* Entity);
 
