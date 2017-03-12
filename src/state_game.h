@@ -40,5 +40,8 @@ extern void z_game_removeEntity(AEntity* Entity);
 extern void z_game_log(const char* Format, ...);
 extern AList* z_game_getLogLines(void);
 
+extern void z_game_tradeOn(AEntity* Merchant);
+extern void z_game_tradeOff(AEntity* Merchant);
+
 extern A_STATE(playGame);
 extern A_STATE(nextScreen);

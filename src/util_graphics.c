@@ -24,6 +24,7 @@ struct ZGraphic {
     ASpriteFrames* frames;
 };
 
+ZFont z_fonts;
 static APixel g_colorKey;
 static AStrHash* g_gfx;
 
@@ -69,6 +70,9 @@ void z_graphics_load(void)
     loadDir("tradingShip", sh, 0, 336, 1);
 
     a_sprite_free(sh);
+
+    z_fonts.lightOrange = a_font_copy(A_FONT_FACE_WHITE, a_pixel_hex(0xff9422));
+    z_fonts.lightBlue = a_font_copy(A_FONT_FACE_WHITE, a_pixel_hex(0x5ac3f9));
 }
 
 void z_graphics_unload(void)

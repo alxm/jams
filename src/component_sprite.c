@@ -47,6 +47,11 @@ ASprite* z_comp_sprite_getFrame(const ZCompSprite* Sprite)
     return z_graphics_getFrame(Sprite->graphics[Sprite->direction], 0);
 }
 
+ASprite* z_comp_sprite_getFrameFacing(const ZCompSprite* Sprite, ZSpriteDirection Direction)
+{
+    return z_graphics_getFrame(Sprite->graphics[Direction], 0);
+}
+
 void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZSpriteDirection Direction)
 {
     Sprite->direction = Direction;

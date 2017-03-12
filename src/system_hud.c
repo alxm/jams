@@ -93,7 +93,7 @@ void z_system_hudDraw(AEntity* Entity)
             alpha += alphaInc;
         }
 
-        a_font_setFace(A_FONT_FACE_GREEN);
+        a_font_setFace(z_fonts.lightBlue);
         a_font_text("> ");
         a_font_setFace(A_FONT_FACE_WHITE);
         a_font_text(line);

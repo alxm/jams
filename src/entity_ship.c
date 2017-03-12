@@ -29,6 +29,7 @@
 #include "component_mood.h"
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_trade.h"
 
 #include "entity_macros.h"
 
@@ -44,6 +45,7 @@ typedef enum {
     Z_AI_PERSONALITY_NEUTRAL,
     Z_AI_PERSONALITY_STUBBORN,
     Z_AI_PERSONALITY_AGGRESSIVE,
+    Z_AI_PERSONALITY_GREEDY,
 } ZShipAiPersonality;
 
 typedef struct ZShipAiContext {
@@ -95,10 +97,15 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
 
     switch(Type) {
         case Z_AI_MESSAGE_BENEVOLENT: {
-            if(myCurrentMood == Z_MOOD_GOOD) {
-                z_game_log("Hello, %s", itsName);
+            if(context->personality == Z_AI_PERSONALITY_GREEDY) {
+                z_game_log("Welcome to my store, %s", itsName);
+                z_game_tradeOn(Entity);
             } else {
-                z_game_log("* Radio silence *");
+                if(myCurrentMood == Z_MOOD_GOOD) {
+                    z_game_log("Hello, %s", itsName);
+                } else {
+                    z_game_log("* Radio silence *");
+                }
             }
         } break;
 
@@ -117,6 +124,7 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
             bool isItWeak = itsHealthPoints < itsHealthMax / 3;
 
             switch(context->personality) {
+                case Z_AI_PERSONALITY_GREEDY:
                 case Z_AI_PERSONALITY_NEUTRAL: {
                     if(amIWeak) {
                         // Flee
@@ -361,6 +369,31 @@ AEntity* z_entity_ship_aggressiveShip(ZCompMap* Map)
 
     addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(40));
     addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(40));
+
+    return e;
+}
+
+AEntity* z_entity_ship_tradeShip(ZCompMap* Map)
+{
+    AEntity* e = z_entity_macro_spawn(Map,
+                                      "Merchant Ship",
+                                      "tradingShipUp",
+                                      "tradingShipDown",
+                                      "tradingShipLeft",
+                                      "tradingShipRight");
+
+    addAiShip(e, Z_AI_PERSONALITY_GREEDY);
+    addMood(e, Z_MOOD_GOOD);
+
+    addDamage(e, 20);
+    addHealth(e, 80);
+
+    addCargo(e, Z_CARGO_TYPE_CREDS, 1000 + a_random_int(1000));
+    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(100));
+    addCargo(e, Z_CARGO_TYPE_MINERALS, a_random_int(100));
+
+    ZCompTrade* trade = a_entity_addComponent(e, "trade");
+    z_comp_trade_init(trade);
 
     return e;
 }

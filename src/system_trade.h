@@ -16,29 +16,5 @@
     along with SSP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define Z_MAP_TILES_W 16
-#define Z_MAP_TILES_H 9
-
-#define Z_MAP_TILE_DIM 20
-
-#define Z_MAP_PIXEL_W (Z_MAP_TILES_W * Z_MAP_TILE_DIM)
-#define Z_MAP_PIXEL_H (Z_MAP_TILES_H * Z_MAP_TILE_DIM)
-
-typedef struct ZGraphic ZGraphic;
-
-typedef struct ZFont {
-    unsigned lightOrange;
-    unsigned lightBlue;
-} ZFont;
-
-extern ZFont z_fonts;
-
-extern void z_graphics_load(void);
-extern void z_graphics_unload(void);
-
-extern const ZGraphic* z_graphics_get(const char* Name);
-
-extern unsigned z_graphics_numFrames(const ZGraphic* Graphic);
-extern ASprite* z_graphics_getFrame(const ZGraphic* Graphic, unsigned Frame);
-
-extern void z_graphics_drawBar(uint32_t Hexcode1, uint32_t Hexcode2, int Value, int OutOf, int X, int Y, int Width, int Height);
+extern ASystemHandler z_system_tradeTick;
+extern ASystemHandler z_system_tradeDraw;

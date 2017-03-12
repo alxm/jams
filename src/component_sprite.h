@@ -30,4 +30,5 @@ extern size_t z_comp_sprite_size(void);
 extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right);
 
 extern ASprite* z_comp_sprite_getFrame(const ZCompSprite* Sprite);
+extern ASprite* z_comp_sprite_getFrameFacing(const ZCompSprite* Sprite, ZSpriteDirection Direction);
 extern void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZSpriteDirection Direction);

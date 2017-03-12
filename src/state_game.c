@@ -21,8 +21,10 @@
 #include "util_graphics.h"
 #include "util_log.h"
 
+#include "component_cargo.h"
 #include "component_map.h"
 #include "component_position.h"
+#include "component_trade.h"
 
 #include "entity_asteroid.h"
 #include "entity_player.h"
@@ -137,6 +139,12 @@ static void z_game_createStagingScreen(void)
         AEntity* e = z_entity_ship_aggressiveShip(map);
         a_list_addLast(g_game.staging.entities, e);
     }
+
+    // Trade ships
+    for(int i = 1 + a_random_int(2); i--; ) {
+        AEntity* e = z_entity_ship_tradeShip(map);
+        a_list_addLast(g_game.staging.entities, e);
+    }
 }
 
 static void z_game_prepareNextScreen(void)
@@ -205,6 +213,8 @@ static void z_game_flipStagingScreen(void)
     g_game.allowPlayer = true;
     g_game.allowAi = false;
     a_frametimer_stop(g_game.aiTurnDelay);
+
+    z_game_tradeOff(NULL);
 }
 
 bool z_game_moveScreen(ZScreenMove Direction)
@@ -319,6 +329,26 @@ AList* z_game_getLogLines(void)
     return z_log_getLines(g_game.log);
 }
 
+void z_game_tradeOn(AEntity* Merchant)
+{
+    ZCompTrade* trade = a_entity_requireComponent(Merchant, "trade");
+    z_comp_trade_setOn(trade, true);
+
+    a_system_mute("playerInput ai runInteractions");
+    a_system_unmute("tradeTick tradeDraw");
+}
+
+void z_game_tradeOff(AEntity* Merchant)
+{
+    if(Merchant) {
+        ZCompTrade* trade = a_entity_requireComponent(Merchant, "trade");
+        z_comp_trade_setOn(trade, false);
+    }
+
+    a_system_mute("tradeTick tradeDraw");
+    a_system_unmute("playerInput ai runInteractions");
+}
+
 A_STATE(playGame)
 {
     A_STATE_INIT
@@ -335,8 +365,8 @@ A_STATE(playGame)
         z_game_initScreen(&g_game.staging);
         z_game_createStagingScreen();
 
-        a_system_tick("playerInput ai runInteractions");
-        a_system_draw("drawMap drawSprites drawHud");
+        a_system_tick("playerInput ai runInteractions tradeTick");
+        a_system_draw("drawMap drawSprites drawHud tradeDraw");
     }
 
     A_STATE_BODY

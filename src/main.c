@@ -28,6 +28,7 @@
 #include "component_mood.h"
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_trade.h"
 
 #include "system_ai.h"
 #include "system_input.h"
@@ -35,6 +36,7 @@
 #include "system_hud.h"
 #include "system_map.h"
 #include "system_sprite.h"
+#include "system_trade.h"
 
 #include "state_game.h"
 #include "state_load.h"
@@ -61,6 +63,7 @@ A_MAIN
     a_component_declare("mood", z_comp_mood_size(), NULL);
     a_component_declare("position", z_comp_position_size(), NULL);
     a_component_declare("sprite", z_comp_sprite_size(), NULL);
+    a_component_declare("trade", z_comp_trade_size(), z_comp_trade_free);
 
     a_system_declare("ai", "ai", z_system_ai, NULL, false);
     a_system_declare("drawHud", "hud", z_system_hudDraw, NULL, false);
@@ -68,6 +71,8 @@ A_MAIN
     a_system_declare("drawSprites", "position sprite", z_system_sprite, NULL, false);
     a_system_declare("playerInput", "input", z_system_input, NULL, false);
     a_system_declare("runInteractions", "interact", z_system_interact, NULL, false);
+    a_system_declare("tradeDraw", "trade", z_system_tradeDraw, NULL, NULL);
+    a_system_declare("tradeTick", "trade", z_system_tradeTick, NULL, NULL);
 
     a_state_new("load", load);
     a_state_new("playGame", playGame);
