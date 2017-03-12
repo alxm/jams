@@ -1,7 +1,14 @@
 Space Station Plunder
 =====================
 
-A roguelike game made for 7DRL 2017! Development happens March 5th-12th.
+A space roguelike game made for 7DRL 2017! Development happens March 5th-12th.
+
+Controls
+--------
+
+* Use the arrow keys to move the ship around. Move into things to interact with them.
+* Press Z to change your attitude toward others when interacting with them.
+* Use the arrows to navigate menus, Z to select an item, and X to go back.
 
 License
 -------
