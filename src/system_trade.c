@@ -21,6 +21,7 @@
 #include "util_graphics.h"
 
 #include "component_cargo.h"
+#include "component_health.h"
 #include "component_interact.h"
 #include "component_sprite.h"
 #include "component_trade.h"
@@ -52,6 +53,47 @@ static void transaction(ZCompTrade* Trade, AEntity* Buyer, AEntity* Seller, ZCar
 
         z_game_log("  [%s transaction complete]",
                    PlayerBuys ? "buy" : "sell");
+    }
+}
+
+static void repair(ZCompTrade* Trade, AEntity* Buyer, AEntity* Seller)
+{
+    if(!z_comp_trade_getDoesRepairs(Trade)) {
+        z_game_log("  Service unavailable");
+        return;
+    }
+
+    ZCompCargo* bCargo = a_entity_requireComponent(Buyer, "cargo");
+    ZCompCargo* sCargo = a_entity_requireComponent(Seller, "cargo");
+    ZCompHealth* bHealth = a_entity_requireComponent(Buyer, "health");
+    ZCompInteract* pInter = a_entity_requireComponent(Buyer, "interact");
+
+    int points, max;
+    z_comp_health_getStats(bHealth, &points, &max);
+
+    const char* bName = z_comp_interact_getName(pInter);
+
+    if(points >= max) {
+        z_game_log("  %s has max health %d/%d", bName, points, max);
+        return;
+    }
+
+    int price = z_comp_trade_getRepairPrice(Trade);
+
+    if(price > z_comp_cargo_getNum(bCargo, Z_CARGO_TYPE_CREDS)) {
+        z_game_log("  %s does not have enough creds", bName);
+        return;
+    }
+
+    z_comp_cargo_take(sCargo, bCargo, Z_CARGO_TYPE_CREDS, price);
+    z_comp_trade_doRepair(Trade);
+    z_comp_health_addPoints(bHealth, 1);
+    z_comp_health_getStats(bHealth, &points, &max);
+
+    if(points >= max) {
+        z_game_log("  Repaired %s to max health %d/%d", bName, points, max);
+    } else {
+        z_game_log("  Repaired %s to health %d/%d", bName, points, max);
     }
 }
 
@@ -97,7 +139,7 @@ void z_system_tradeTick(AEntity* Merchant)
                 } break;
 
                 case Z_TRADE_MENU_GET_REPAIRS: {
-                    z_game_log("  [service unavailable]");
+                    repair(trade, z_game_getPlayer(), Merchant);
                 } break;
             }
 
@@ -212,7 +254,12 @@ void z_system_tradeDraw(AEntity* Merchant)
             } break;
 
             case Z_TRADE_MENU_GET_REPAIRS: {
-                a_font_textf("Not available");
+                if(z_comp_trade_getDoesRepairs(trade)) {
+                    a_font_textf("1 health point for %d creds",
+                                 z_comp_trade_getRepairPrice(trade));
+                } else {
+                    a_font_textf("Not available");
+                }
             } break;
         }
 

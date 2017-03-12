@@ -37,3 +37,7 @@ extern void z_comp_trade_setOn(ZCompTrade* Trade, bool On);
 
 extern AMenu* z_comp_trade_getMenu(const ZCompTrade* Trade);
 extern int z_comp_trade_getPrice(const ZCompTrade* Trade, ZCargoType Product, bool PlayerBuys);
+extern bool z_comp_trade_getDoesRepairs(const ZCompTrade* Trade);
+extern void z_comp_trade_setDoesRepairs(ZCompTrade* Trade, bool DoesRepairs);
+extern int z_comp_trade_getRepairPrice(const ZCompTrade* Trade);
+extern void z_comp_trade_doRepair(ZCompTrade* Trade);

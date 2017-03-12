@@ -98,7 +98,7 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
     switch(Type) {
         case Z_AI_MESSAGE_BENEVOLENT: {
             if(context->personality == Z_AI_PERSONALITY_GREEDY) {
-                z_game_log("Welcome to my store, %s", itsName);
+                z_game_log("Welcome to my enterprise, %s", itsName);
                 z_game_tradeOn(Entity);
             } else {
                 if(myCurrentMood == Z_MOOD_GOOD) {
@@ -130,6 +130,13 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
                         // Flee
                         setGoal(context, Z_AI_GOAL_FLEE, 5, Relevant);
                         z_comp_mood_setType(myMood, Z_MOOD_GOOD);
+
+                        if(context->personality == Z_AI_PERSONALITY_GREEDY) {
+                            // Merchants hold grudges and won't offer repairs
+                            ZCompTrade* t = a_entity_requireComponent(Entity,
+                                                                      "trade");
+                            z_comp_trade_setDoesRepairs(t, false);
+                        }
                     } else if(isItWeak) {
                         // Retaliate several times
                         setGoal(context, Z_AI_GOAL_PURSUE, 3, Relevant);

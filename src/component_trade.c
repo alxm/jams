@@ -28,6 +28,9 @@ struct ZCompTrade {
     AMenu* menu;
     int buyPrices[Z_CARGO_TYPE_NUM]; // Merchant buys for this much creds
     int sellPrices[Z_CARGO_TYPE_NUM]; // Merchant sells for this much creds
+    bool doesRepairs;
+    int repairPrice;
+    int repairsLeft;
 };
 
 size_t z_comp_trade_size(void)
@@ -62,6 +65,10 @@ void z_comp_trade_init(ZCompTrade* Trade)
 
     Trade->buyPrices[Z_CARGO_TYPE_MINERALS] = 20;
     Trade->sellPrices[Z_CARGO_TYPE_MINERALS] = 30;
+
+    Trade->doesRepairs = true;
+    Trade->repairPrice = 10;
+    Trade->repairsLeft = 1 + a_random_int(4);
 }
 
 void z_comp_trade_free(void* Self)
@@ -92,5 +99,27 @@ int z_comp_trade_getPrice(const ZCompTrade* Trade, ZCargoType Product, bool Play
         return Trade->sellPrices[Product];
     } else {
         return Trade->buyPrices[Product];
+    }
+}
+
+bool z_comp_trade_getDoesRepairs(const ZCompTrade* Trade)
+{
+    return Trade->doesRepairs;
+}
+
+void z_comp_trade_setDoesRepairs(ZCompTrade* Trade, bool DoesRepairs)
+{
+    Trade->doesRepairs = DoesRepairs;
+}
+
+int z_comp_trade_getRepairPrice(const ZCompTrade* Trade)
+{
+    return Trade->repairPrice;
+}
+
+void z_comp_trade_doRepair(ZCompTrade* Trade)
+{
+    if(!Trade->repairsLeft--) {
+        Trade->doesRepairs = false;
     }
 }

@@ -78,6 +78,7 @@ AEntity* z_entity_player_new(void)
 
     ZCompCargo* cargo = a_entity_addComponent(e, "cargo");
     z_comp_cargo_init(cargo);
+    z_comp_cargo_add(cargo, Z_CARGO_TYPE_CREDS, 2);
 
     ZCompDamage* damage = a_entity_addComponent(e, "damage");
     z_comp_damage_init(damage, 4);
