@@ -23,6 +23,8 @@
 #include "component_damage.h"
 #include "component_health.h"
 #include "component_interact.h"
+#include "component_position.h"
+#include "component_sprite.h"
 
 #include "state_game.h"
 
@@ -114,6 +116,7 @@ void z_system_interact(AEntity* Target)
 
     AEntity* actor;
     ZInteractionType type;
+    int lastActorX = -1, lastActorY;
 
     while(z_comp_interact_getPending(targetInter, &actor, &type)) {
         if(a_entity_isRemoved(actor)) {
@@ -144,6 +147,27 @@ void z_system_interact(AEntity* Target)
 
         if(targetAi) {
             z_comp_ai_queueMessage(targetAi, type, actor);
+        }
+
+        ZCompPosition* actorPos = a_entity_requireComponent(actor, "position");
+        z_comp_position_getCoords(actorPos, &lastActorX, &lastActorY);
+    }
+
+    if(lastActorX != -1) {
+        ZCompPosition* targetP = a_entity_requireComponent(Target, "position");
+        ZCompSprite* targetSprite = a_entity_requireComponent(Target, "sprite");
+
+        int targetX, targetY;
+        z_comp_position_getCoords(targetP, &targetX, &targetY);
+
+        if(lastActorX < targetX) {
+            z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_LEFT);
+        } else if(lastActorX > targetX) {
+            z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_RIGHT);
+        } else if(lastActorY < targetY) {
+            z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_UP);
+        } else if(lastActorY > targetY) {
+            z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_DOWN);
         }
     }
 }
