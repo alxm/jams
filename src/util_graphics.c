@@ -17,6 +17,7 @@
 */
 
 #include <a2x.h>
+#include "a2x_gen/gfx.h"
 
 #include "util_graphics.h"
 
@@ -57,7 +58,7 @@ void z_graphics_load(void)
     g_colorKey = a_sprite_getColorKey();
     g_gfx = a_strhash_new();
 
-    ASprite* sh = a_sprite_fromFile("./gfx/sprites.png");
+    ASprite* sh = a_sprite_fromData(gfx_sprites, "sprites");
 
     loadGfx("spaceTiles", sh, 0, 0, 1);
     loadGfx("goodbad", sh, 0, 21, 1);
