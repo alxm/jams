@@ -27,13 +27,28 @@ struct ZGraphic {
 static APixel g_colorKey;
 static AStrHash* g_gfx;
 
-static void z_graphic_new(const char* Key, const ASprite* Sheet, int X, int Y, unsigned Speed)
+static void loadGfx(const char* Key, const ASprite* Sheet, int X, int Y, unsigned Speed)
 {
     ZGraphic* g = a_mem_malloc(sizeof(ZGraphic));
 
     g->frames = a_spriteframes_new(Sheet, X, Y, Speed);
 
     a_strhash_add(g_gfx, Key, g);
+}
+
+static void loadDir(const char* KeyPrefix, const ASprite* Sheet, int X, int Y, unsigned Speed)
+{
+    const char* directions[4] = {"Up", "Down", "Left", "Right"};
+    ASprite* probeSprite = a_sprite_fromSprite(Sheet, X, Y);
+    int height = a_sprite_height(probeSprite) + 1;
+    a_sprite_free(probeSprite);
+
+    for(int i = 0; i < 4; i++) {
+        char buffer[64];
+        sprintf(buffer, "%s%s", KeyPrefix, directions[i]);
+        loadGfx(buffer, Sheet, X, Y, Speed);
+        Y += height;
+    }
 }
 
 void z_graphics_load(void)
@@ -43,27 +58,15 @@ void z_graphics_load(void)
 
     ASprite* sh = a_sprite_fromFile("./gfx/sprites.png");
 
-    z_graphic_new("spaceTiles", sh, 0, 0, 1);
-    z_graphic_new("goodbad", sh, 0, 21, 1);
+    loadGfx("spaceTiles", sh, 0, 0, 1);
+    loadGfx("goodbad", sh, 0, 21, 1);
 
-    z_graphic_new("playerShipUp", sh, 0, 42, 1);
-    z_graphic_new("playerShipDown", sh, 0, 63, 1);
-    z_graphic_new("playerShipLeft", sh, 0, 84, 1);
-    z_graphic_new("playerShipRight", sh, 0, 105, 1);
-
-    z_graphic_new("satellite1", sh, 0, 126, 1);
-
-    z_graphic_new("ship1Up", sh, 0, 147, 1);
-    z_graphic_new("ship1Down", sh, 0, 168, 1);
-    z_graphic_new("ship1Left", sh, 0, 189, 1);
-    z_graphic_new("ship1Right", sh, 0, 210, 1);
-
-    z_graphic_new("ship2Up", sh, 0, 231, 1);
-    z_graphic_new("ship2Down", sh, 0, 252, 1);
-    z_graphic_new("ship2Left", sh, 0, 273, 1);
-    z_graphic_new("ship2Right", sh, 0, 294, 1);
-
-    z_graphic_new("asteroid", sh, 0, 315, 1);
+    loadDir("playerShip", sh, 0, 42, 1);
+    loadGfx("satellite1", sh, 0, 126, 1);
+    loadDir("ship1", sh, 0, 147, 1);
+    loadDir("ship2", sh, 0, 231, 1);
+    loadGfx("asteroid", sh, 0, 315, 1);
+    loadDir("tradingShip", sh, 0, 336, 1);
 
     a_sprite_free(sh);
 }
