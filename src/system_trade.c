@@ -41,11 +41,11 @@ static void transaction(ZCompTrade* Trade, AEntity* Buyer, AEntity* Seller, ZCar
     int price = z_comp_trade_getPrice(Trade, Product, PlayerBuys);
 
     if(z_comp_cargo_getNum(sCargo, Product) < 1) {
-        z_game_log("%s has no %s in stock",
+        z_game_log("  %s has no %s in stock",
                    sName,
                    z_comp_cargo_getName(Product, true));
     } else if(price > z_comp_cargo_getNum(bCargo, Z_CARGO_TYPE_CREDS)) {
-        z_game_log("%s does not have enough creds", bName);
+        z_game_log("  %s does not have enough creds", bName);
     } else {
         z_comp_cargo_take(sCargo, bCargo, Z_CARGO_TYPE_CREDS, price);
         z_comp_cargo_take(bCargo, sCargo, Product, 1);

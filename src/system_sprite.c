@@ -43,8 +43,8 @@ void z_system_sprite(AEntity* Entity)
         int points, max;
         z_comp_health_getStats(health, &points, &max);
 
-        z_graphics_drawBar(0x00bb00,
-                           0xbb0000,
+        z_graphics_drawBar(0xd4f65e,
+                           0xef1d07,
                            points,
                            max,
                            x * Z_MAP_TILE_DIM + 2,

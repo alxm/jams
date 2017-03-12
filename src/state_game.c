@@ -130,19 +130,19 @@ static void z_game_createStagingScreen(void)
 
     // Stronger space ships
     for(int i = 1 + a_random_int(4); i--; ) {
-        AEntity* e = z_entity_ship_stubbornShip(map);
+        AEntity* e = z_entity_ship_patrolShip(map);
         a_list_addLast(g_game.staging.entities, e);
     }
 
     // Strong ships that actively pursue player
     for(int i = 1 + a_random_int(2); i--; ) {
-        AEntity* e = z_entity_ship_aggressiveShip(map);
+        AEntity* e = z_entity_ship_fighterShip(map);
         a_list_addLast(g_game.staging.entities, e);
     }
 
     // Trade ships
     for(int i = 1 + a_random_int(2); i--; ) {
-        AEntity* e = z_entity_ship_tradeShip(map);
+        AEntity* e = z_entity_ship_merchantShip(map);
         a_list_addLast(g_game.staging.entities, e);
     }
 }

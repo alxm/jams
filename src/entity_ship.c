@@ -331,17 +331,17 @@ AEntity* z_entity_ship_neutralShip(ZCompMap* Map)
     return e;
 }
 
-AEntity* z_entity_ship_stubbornShip(ZCompMap* Map)
+AEntity* z_entity_ship_patrolShip(ZCompMap* Map)
 {
     AEntity* e = z_entity_macro_spawn(Map,
-                                      "Stubborn Ship",
+                                      "Patrol Ship",
                                       "ship2Up",
                                       "ship2Down",
                                       "ship2Left",
                                       "ship2Right");
 
     addAiShip(e, Z_AI_PERSONALITY_STUBBORN);
-    addMood(e, Z_MOOD_GOOD);
+    addMood(e, Z_MOOD_EVIL);
 
     addDamage(e, 12);
     addHealth(e, 30);
@@ -352,10 +352,10 @@ AEntity* z_entity_ship_stubbornShip(ZCompMap* Map)
     return e;
 }
 
-AEntity* z_entity_ship_aggressiveShip(ZCompMap* Map)
+AEntity* z_entity_ship_fighterShip(ZCompMap* Map)
 {
     AEntity* e = z_entity_macro_spawn(Map,
-                                      "Aggressive Ship",
+                                      "Fighter Ship",
                                       "ship2Up",
                                       "ship2Down",
                                       "ship2Left",
@@ -373,7 +373,7 @@ AEntity* z_entity_ship_aggressiveShip(ZCompMap* Map)
     return e;
 }
 
-AEntity* z_entity_ship_tradeShip(ZCompMap* Map)
+AEntity* z_entity_ship_merchantShip(ZCompMap* Map)
 {
     AEntity* e = z_entity_macro_spawn(Map,
                                       "Merchant Ship",

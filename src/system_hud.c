@@ -61,7 +61,7 @@ void z_system_hudDraw(AEntity* Entity)
     ZCompHealth* health = a_entity_requireComponent(Entity, "health");
     int points, max;
     z_comp_health_getStats(health, &points, &max);
-    z_graphics_drawBar(0x00bb00, 0xbb0000, points, max, x, y, 50, 8);
+    z_graphics_drawBar(0xd4f65e, 0xef1d07, points, max, x, y, 50, 8);
 
     ZCompCargo* cargo = a_entity_requireComponent(Entity, "cargo");
     a_font_setCoords(4, y + 8 + 4);
