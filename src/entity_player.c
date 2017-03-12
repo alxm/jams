@@ -81,10 +81,10 @@ AEntity* z_entity_player_new(void)
     z_comp_cargo_add(cargo, Z_CARGO_TYPE_CREDS, 2);
 
     ZCompDamage* damage = a_entity_addComponent(e, "damage");
-    z_comp_damage_init(damage, 4);
+    z_comp_damage_init(damage, 5);
 
     ZCompHealth* health = a_entity_addComponent(e, "health");
-    z_comp_health_init(health, 100);
+    z_comp_health_init(health, 20);
 
     ZCompInput* input = a_entity_addComponent(e, "input");
     z_comp_input_init(input, playerInput);

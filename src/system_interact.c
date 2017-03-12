@@ -44,7 +44,8 @@ static void attack(AEntity* Actor, AEntity* Target)
     int actorDamagePoints = z_comp_damage_getPoints(actorDamage);
 
     z_game_log("%s attacked %s", actorName, targetName);
-    z_comp_health_takeDamage(targetHealth, actorDamagePoints);
+    int dmg = z_comp_health_takeDamage(targetHealth, actorDamagePoints);
+    z_game_log("  Dealt %d damage", dmg);
 
     if(z_comp_health_isAlive(targetHealth)) {
         return;

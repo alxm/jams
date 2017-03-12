@@ -255,8 +255,11 @@ void z_system_tradeDraw(AEntity* Merchant)
 
             case Z_TRADE_MENU_GET_REPAIRS: {
                 if(z_comp_trade_getDoesRepairs(trade)) {
-                    a_font_textf("1 health point for %d creds",
-                                 z_comp_trade_getRepairPrice(trade));
+                    int price = z_comp_trade_getRepairPrice(trade);
+                    a_font_textf("1 health point for %d %s",
+                                 price,
+                                 z_comp_cargo_getName(Z_CARGO_TYPE_CREDS,
+                                                      price > 1));
                 } else {
                     a_font_textf("Not available");
                 }

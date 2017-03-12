@@ -124,19 +124,17 @@ static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEn
             bool isItWeak = itsHealthPoints < itsHealthMax / 3;
 
             switch(context->personality) {
-                case Z_AI_PERSONALITY_GREEDY:
+                case Z_AI_PERSONALITY_GREEDY: {
+                    // Merchants hold grudges and won't offer repairs
+                    ZCompTrade* t = a_entity_requireComponent(Entity, "trade");
+                    z_comp_trade_setDoesRepairs(t, false);
+                }
+
                 case Z_AI_PERSONALITY_NEUTRAL: {
                     if(amIWeak) {
                         // Flee
                         setGoal(context, Z_AI_GOAL_FLEE, 5, Relevant);
                         z_comp_mood_setType(myMood, Z_MOOD_GOOD);
-
-                        if(context->personality == Z_AI_PERSONALITY_GREEDY) {
-                            // Merchants hold grudges and won't offer repairs
-                            ZCompTrade* t = a_entity_requireComponent(Entity,
-                                                                      "trade");
-                            z_comp_trade_setDoesRepairs(t, false);
-                        }
                     } else if(isItWeak) {
                         // Retaliate several times
                         setGoal(context, Z_AI_GOAL_PURSUE, 3, Relevant);
@@ -329,10 +327,10 @@ AEntity* z_entity_ship_neutralShip(ZCompMap* Map)
     addAiShip(e, Z_AI_PERSONALITY_NEUTRAL);
     addMood(e, Z_MOOD_GOOD);
 
-    addDamage(e, 8);
-    addHealth(e, 20);
+    addDamage(e, 1);
+    addHealth(e, 15);
 
-    addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(5));
+    addCargo(e, Z_CARGO_TYPE_CREDS, 1 + a_random_int(3));
     addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(3));
 
     return e;
@@ -350,11 +348,11 @@ AEntity* z_entity_ship_patrolShip(ZCompMap* Map)
     addAiShip(e, Z_AI_PERSONALITY_STUBBORN);
     addMood(e, Z_MOOD_EVIL);
 
-    addDamage(e, 12);
-    addHealth(e, 30);
+    addDamage(e, 2);
+    addHealth(e, 25);
 
-    addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(20));
-    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(10));
+    addCargo(e, Z_CARGO_TYPE_CREDS, 2 + a_random_int(4));
+    addCargo(e, Z_CARGO_TYPE_FUEL, 1 + a_random_int(3));
 
     return e;
 }
@@ -371,11 +369,10 @@ AEntity* z_entity_ship_fighterShip(ZCompMap* Map)
     addAiShip(e, Z_AI_PERSONALITY_AGGRESSIVE);
     addMood(e, Z_MOOD_EVIL);
 
-    addDamage(e, 16);
-    addHealth(e, 40);
+    addDamage(e, 3);
+    addHealth(e, 30);
 
-    addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(40));
-    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(40));
+    addCargo(e, Z_CARGO_TYPE_CREDS, 0);
 
     return e;
 }
@@ -392,12 +389,12 @@ AEntity* z_entity_ship_merchantShip(ZCompMap* Map)
     addAiShip(e, Z_AI_PERSONALITY_GREEDY);
     addMood(e, Z_MOOD_GOOD);
 
-    addDamage(e, 20);
-    addHealth(e, 80);
+    addDamage(e, 5);
+    addHealth(e, 50);
 
     addCargo(e, Z_CARGO_TYPE_CREDS, 1000 + a_random_int(1000));
     addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(100));
-    addCargo(e, Z_CARGO_TYPE_MINERALS, a_random_int(100));
+    addCargo(e, Z_CARGO_TYPE_MINERALS, a_random_int(50));
 
     ZCompTrade* trade = a_entity_addComponent(e, "trade");
     z_comp_trade_init(trade);

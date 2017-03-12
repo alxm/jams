@@ -111,39 +111,51 @@ static void z_game_createStagingScreen(void)
     z_comp_map_setTileEntity(map, x, y, g_game.player);
 
     // Asteroids for mining
-    for(int i = 1 + a_random_int(2); i--; ) {
-        AEntity* e = z_entity_asteroid_new(map);
-        a_list_addLast(g_game.staging.entities, e);
+    if(a_random_int(2) == 0) {
+        for(int i = 1 + a_random_int(4); i--; ) {
+            AEntity* e = z_entity_asteroid_new(map);
+            a_list_addLast(g_game.staging.entities, e);
+        }
     }
 
     // Satellites
-    for(int i = 1 + a_random_int(4); i--; ) {
-        AEntity* e = z_entity_ship_satellite(map);
-        a_list_addLast(g_game.staging.entities, e);
+    if(a_random_int(2) == 0) {
+        for(int i = 1 + a_random_int(4); i--; ) {
+            AEntity* e = z_entity_ship_satellite(map);
+            a_list_addLast(g_game.staging.entities, e);
+        }
     }
 
     // Weak space ships
-    for(int i = 1 + a_random_int(4); i--; ) {
-        AEntity* e = z_entity_ship_neutralShip(map);
-        a_list_addLast(g_game.staging.entities, e);
+    if(a_random_int(2) == 0) {
+        for(int i = a_random_int(8); i--; ) {
+            AEntity* e = z_entity_ship_neutralShip(map);
+            a_list_addLast(g_game.staging.entities, e);
+        }
     }
 
     // Stronger space ships
-    for(int i = 1 + a_random_int(4); i--; ) {
-        AEntity* e = z_entity_ship_patrolShip(map);
-        a_list_addLast(g_game.staging.entities, e);
+    if(a_random_int(4) == 0) {
+        for(int i = 1 + a_random_int(5); i--; ) {
+            AEntity* e = z_entity_ship_patrolShip(map);
+            a_list_addLast(g_game.staging.entities, e);
+        }
     }
 
     // Strong ships that actively pursue player
-    for(int i = 1 + a_random_int(2); i--; ) {
-        AEntity* e = z_entity_ship_fighterShip(map);
-        a_list_addLast(g_game.staging.entities, e);
+    if(a_random_int(8) == 0) {
+        for(int i = 1 + a_random_int(3); i--; ) {
+            AEntity* e = z_entity_ship_fighterShip(map);
+            a_list_addLast(g_game.staging.entities, e);
+        }
     }
 
     // Trade ships
-    for(int i = 1 + a_random_int(2); i--; ) {
-        AEntity* e = z_entity_ship_merchantShip(map);
-        a_list_addLast(g_game.staging.entities, e);
+    if(a_random_int(6) == 0) {
+        for(int i = 1 + a_random_int(2); i--; ) {
+            AEntity* e = z_entity_ship_merchantShip(map);
+            a_list_addLast(g_game.staging.entities, e);
+        }
     }
 }
 

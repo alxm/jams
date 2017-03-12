@@ -31,7 +31,67 @@ A_STATE(load)
 
     A_STATE_BODY
     {
-        a_state_push("playGame");
+        A_STATE_LOOP {
+            A_STATE_LOOP_DRAW {
+                a_pixel_setHex(0x151225);
+                a_draw_fill();
+
+                a_font_push();
+
+                a_font_setFace(z_fonts.lightBlue);
+                a_font_setAlign(A_FONT_ALIGN_MIDDLE);
+                a_font_setCoords(a_screen_width() / 2,
+                                 a_screen_height() / 2
+                                    - a_font_getLineHeight() * 5);
+
+                ASprite* sprite;
+                const ZGraphic* graphic;
+
+                graphic = z_graphics_get("ship1Up");
+                sprite = z_graphics_getFrame(graphic, 0);
+                a_sprite_blit(sprite, 44, a_font_getY());
+
+                graphic = z_graphics_get("satellite1");
+                sprite = z_graphics_getFrame(graphic, 0);
+                a_sprite_blit(sprite,
+                              a_screen_width() - 44 - a_sprite_width(sprite),
+                              a_font_getY());
+
+                a_font_text("Space Station Plunder - 7DRL 2017");
+                a_font_newLine();
+                a_font_text("www.alxm.org");
+                a_font_newLine();
+                a_font_newLine();
+
+                a_pixel_setHex(0x432949);
+                a_draw_hline(40,
+                             a_screen_width() - 40,
+                             a_font_getY() + a_font_getLineHeight() / 2);
+                a_font_newLine();
+                a_font_newLine();
+
+                a_font_setFace(A_FONT_FACE_WHITE);
+                a_font_text("Use arrows to move");
+                a_font_newLine();
+                a_font_text("Z changes attitude");
+                a_font_newLine();
+                a_font_text("Z selects menus, X goes back");
+                a_font_newLine();
+                a_font_newLine();
+
+                a_font_text("Press Z to start, X to exit");
+                a_font_newLine();
+                a_font_text("ESC quits at any time");
+
+                a_font_pop();
+
+                if(a_button_getOnce(z_controls.primary)) {
+                    a_state_push("playGame");
+                } else if(a_button_getOnce(z_controls.secondary)) {
+                    a_state_pop();
+                }
+            }
+        }
     }
 
     A_STATE_FREE

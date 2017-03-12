@@ -42,9 +42,12 @@ void z_comp_health_getStats(const ZCompHealth* Health, int* Points, int* Max)
     *Max = Health->max;
 }
 
-void z_comp_health_takeDamage(ZCompHealth* Health, int Damage)
+int z_comp_health_takeDamage(ZCompHealth* Health, int Damage)
 {
+    Damage = a_math_max(Damage - 2 + a_random_int(5), 0);
     Health->points = a_math_max(Health->points - Damage, 0);
+
+    return Damage;
 }
 
 void z_comp_health_addPoints(ZCompHealth* Health, int Points)
