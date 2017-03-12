@@ -74,12 +74,7 @@ static void attack(AEntity* Actor, AEntity* Target)
         }
     }
 
-    if(Target == z_game_getPlayer()) {
-        z_game_log("*** THE PLAYER NEVER DIES ***");
-        z_comp_health_addPoints(targetHealth, 100);
-    } else {
-        z_game_removeEntity(Target);
-    }
+    z_game_removeEntity(Target);
 }
 
 static void mine(AEntity* Actor, AEntity* Target)

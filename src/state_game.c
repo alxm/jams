@@ -390,6 +390,10 @@ A_STATE(playGame)
                 // Timer is either pending or not running, so AI can't go
                 g_game.allowAi = false;
             }
+
+            if(a_entity_isRemoved(g_game.player)) {
+                a_state_pop();
+            }
         }
     }
 
