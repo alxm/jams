@@ -20,11 +20,14 @@
 
 #include "util_controls.h"
 
+#include "component_cargo.h"
 #include "component_trade.h"
 
 struct ZCompTrade {
     bool on;
     AMenu* menu;
+    int buyPrices[Z_CARGO_TYPE_NUM]; // Merchant buys for this much creds
+    int sellPrices[Z_CARGO_TYPE_NUM]; // Merchant sells for this much creds
 };
 
 size_t z_comp_trade_size(void)
@@ -39,12 +42,26 @@ void z_comp_trade_init(ZCompTrade* Trade)
                              z_controls.primary,
                              z_controls.secondary);
 
-    a_menu_addItem(Trade->menu, "Buy Fuel");
-    a_menu_addItem(Trade->menu, "Buy Minerals");
-    a_menu_addItem(Trade->menu, "Sell Fuel");
-    a_menu_addItem(Trade->menu, "Sell Minerals");
-    a_menu_addItem(Trade->menu, "Get Repairs");
-    a_menu_addItem(Trade->menu, "Leave");
+    char* menuItems[Z_TRADE_MENU_NUM];
+    menuItems[Z_TRADE_MENU_BUY_FUEL] = "Buy Fuel";
+    menuItems[Z_TRADE_MENU_BUY_MINERALS] = "Buy Minerals";
+    menuItems[Z_TRADE_MENU_SELL_FUEL] = "Sell Fuel";
+    menuItems[Z_TRADE_MENU_SELL_MINERALS] = "Sell Minerals";
+    menuItems[Z_TRADE_MENU_GET_REPAIRS] = "Get Repairs";
+    menuItems[Z_TRADE_MENU_LEAVE] = "Leave";
+
+    for(int i = 0; i < Z_TRADE_MENU_NUM; i++) {
+        a_menu_addItem(Trade->menu, menuItems[i]);
+    }
+
+    Trade->buyPrices[Z_CARGO_TYPE_CREDS] = 1;
+    Trade->sellPrices[Z_CARGO_TYPE_CREDS] = 1;
+
+    Trade->buyPrices[Z_CARGO_TYPE_FUEL] = 8;
+    Trade->sellPrices[Z_CARGO_TYPE_FUEL] = 12;
+
+    Trade->buyPrices[Z_CARGO_TYPE_MINERALS] = 20;
+    Trade->sellPrices[Z_CARGO_TYPE_MINERALS] = 30;
 }
 
 void z_comp_trade_free(void* Self)
@@ -67,4 +84,13 @@ void z_comp_trade_setOn(ZCompTrade* Trade, bool On)
 AMenu* z_comp_trade_getMenu(const ZCompTrade* Trade)
 {
     return Trade->menu;
+}
+
+int z_comp_trade_getPrice(const ZCompTrade* Trade, ZCargoType Product, bool PlayerBuys)
+{
+    if(PlayerBuys) {
+        return Trade->sellPrices[Product];
+    } else {
+        return Trade->buyPrices[Product];
+    }
 }

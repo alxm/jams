@@ -27,6 +27,34 @@
 
 #include "state_game.h"
 
+static void transaction(ZCompTrade* Trade, AEntity* Buyer, AEntity* Seller, ZCargoType Product, bool PlayerBuys)
+{
+    ZCompCargo* bCargo = a_entity_requireComponent(Buyer, "cargo");
+    ZCompCargo* sCargo = a_entity_requireComponent(Seller, "cargo");
+
+    ZCompInteract* pInter = a_entity_requireComponent(Buyer, "interact");
+    ZCompInteract* mInter = a_entity_requireComponent(Seller, "interact");
+
+    const char* bName = z_comp_interact_getName(pInter);
+    const char* sName = z_comp_interact_getName(mInter);
+
+    int price = z_comp_trade_getPrice(Trade, Product, PlayerBuys);
+
+    if(z_comp_cargo_getNum(sCargo, Product) < 1) {
+        z_game_log("%s has no %s in stock",
+                   sName,
+                   z_comp_cargo_getName(Product, true));
+    } else if(price > z_comp_cargo_getNum(bCargo, Z_CARGO_TYPE_CREDS)) {
+        z_game_log("%s does not have enough creds", bName);
+    } else {
+        z_comp_cargo_take(sCargo, bCargo, Z_CARGO_TYPE_CREDS, price);
+        z_comp_cargo_take(bCargo, sCargo, Product, 1);
+
+        z_game_log("  [%s transaction complete]",
+                   PlayerBuys ? "buy" : "sell");
+    }
+}
+
 void z_system_tradeTick(AEntity* Merchant)
 {
     ZCompTrade* trade = a_entity_requireComponent(Merchant, "trade");
@@ -46,9 +74,30 @@ void z_system_tradeTick(AEntity* Merchant)
             a_menu_reset(menu);
             z_game_tradeOff(Merchant);
         } else {
-            switch(a_menu_choice(menu)) {
-                case 0: {
-                    //
+            unsigned choice = a_menu_choice(menu);
+
+            switch(choice) {
+                case Z_TRADE_MENU_BUY_FUEL:
+                case Z_TRADE_MENU_BUY_MINERALS: {
+                    transaction(trade,
+                                z_game_getPlayer(),
+                                Merchant,
+                                Z_CARGO_TYPE_FUEL + choice,
+                                true);
+                } break;
+
+                case Z_TRADE_MENU_SELL_FUEL:
+                case Z_TRADE_MENU_SELL_MINERALS: {
+                    transaction(trade,
+                                Merchant,
+                                z_game_getPlayer(),
+                                Z_CARGO_TYPE_FUEL
+                                    + choice - Z_TRADE_MENU_SELL_FUEL,
+                                false);
+                } break;
+
+                case Z_TRADE_MENU_GET_REPAIRS: {
+                    z_game_log("  [service unavailable]");
                 } break;
             }
 
@@ -147,24 +196,22 @@ void z_system_tradeDraw(AEntity* Merchant)
         a_font_setFace(z_fonts.lightBlue);
 
         switch(A_LIST_INDEX()) {
-            // Buy Fuel
-            // Buy Minerals
-            case 0:
-            case 1: {
+            case Z_TRADE_MENU_BUY_FUEL:
+            case Z_TRADE_MENU_BUY_MINERALS: {
                 ZCargoType type = Z_CARGO_TYPE_FUEL + A_LIST_INDEX();
-                int numMinerals = z_comp_cargo_getNum(cargo, type);
-                a_font_textf("Has %d for $10 each", numMinerals);
+                int num = z_comp_cargo_getNum(cargo, type);
+                int price = z_comp_trade_getPrice(trade, type, true);
+                a_font_textf("Has %d for %d creds each", num, price);
             } break;
 
-            // Sell Fuel
-            // Sell Minerals
-            case 2:
-            case 3: {
-                a_font_textf("Will buy for $12 each");
+            case Z_TRADE_MENU_SELL_FUEL:
+            case Z_TRADE_MENU_SELL_MINERALS: {
+                ZCargoType type = Z_CARGO_TYPE_FUEL + A_LIST_INDEX() - 2;
+                int price = z_comp_trade_getPrice(trade, type, false);
+                a_font_textf("Will buy for %d creds each", price);
             } break;
 
-            // Get Repairs
-            case 4: {
+            case Z_TRADE_MENU_GET_REPAIRS: {
                 a_font_textf("Not available");
             } break;
         }

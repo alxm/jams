@@ -18,6 +18,16 @@
 
 typedef struct ZCompTrade ZCompTrade;
 
+typedef enum {
+    Z_TRADE_MENU_BUY_FUEL,
+    Z_TRADE_MENU_BUY_MINERALS,
+    Z_TRADE_MENU_SELL_FUEL,
+    Z_TRADE_MENU_SELL_MINERALS,
+    Z_TRADE_MENU_GET_REPAIRS,
+    Z_TRADE_MENU_LEAVE,
+    Z_TRADE_MENU_NUM
+} ZTradeMenuItem;
+
 extern size_t z_comp_trade_size(void);
 extern void z_comp_trade_init(ZCompTrade* Trade);
 AComponentFree z_comp_trade_free;
@@ -26,3 +36,4 @@ extern bool z_comp_trade_getOn(const ZCompTrade* Trade);
 extern void z_comp_trade_setOn(ZCompTrade* Trade, bool On);
 
 extern AMenu* z_comp_trade_getMenu(const ZCompTrade* Trade);
+extern int z_comp_trade_getPrice(const ZCompTrade* Trade, ZCargoType Product, bool PlayerBuys);
