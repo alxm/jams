@@ -33,8 +33,6 @@ AEntity* z_entity_asteroid_new(ZCompMap* Map)
                                       "asteroid");
 
     ZCompCargo* cargo = a_entity_addComponent(e, "cargo");
-    z_comp_cargo_init(cargo);
-
     z_comp_cargo_add(cargo, Z_CARGO_TYPE_MINERALS, 1 + a_random_int(4));
 
     return e;

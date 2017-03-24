@@ -29,11 +29,6 @@ size_t z_comp_cargo_size(void)
     return sizeof(ZCompCargo);
 }
 
-void z_comp_cargo_init(ZCompCargo* Cargo)
-{
-    memset(Cargo->contents, 0, sizeof(Cargo->contents));
-}
-
 int z_comp_cargo_getNum(const ZCompCargo* Cargo, ZCargoType Type)
 {
     return Cargo->contents[Type];

@@ -32,8 +32,7 @@
 
 AEntity* z_entity_macro_spawn(ZCompMap* Map, const char* Name, const char* Up, const char* Down, const char* Left, const char* Right)
 {
-    AEntity* e = a_entity_new();
-    a_entity_setId(e, Name);
+    AEntity* e = a_entity_new(Name);
 
     int x, y;
     ZCompPosition* position = a_entity_addComponent(e, "position");

@@ -73,13 +73,18 @@ A_STATE(load)
                 a_font_setFace(A_FONT_FACE_WHITE);
                 a_font_text("Use arrows to move");
                 a_font_newLine();
-                a_font_text("Z changes attitude");
+                a_font_textf("%s changes attitude",
+                             a_button_name(z_controls.primary));
                 a_font_newLine();
-                a_font_text("Z selects menus, X goes back");
+                a_font_textf("%s selects menus, %s goes back",
+                             a_button_name(z_controls.primary),
+                             a_button_name(z_controls.secondary));
                 a_font_newLine();
                 a_font_newLine();
 
-                a_font_text("Press Z to start, X to exit");
+                a_font_textf("Press %s to start, %s to exit",
+                             a_button_name(z_controls.primary),
+                             a_button_name(z_controls.secondary));
                 a_font_newLine();
                 a_font_text("ESC quits at any time");
 

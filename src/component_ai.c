@@ -42,9 +42,7 @@ void z_comp_ai_init(ZCompAi* Ai, ZAiMessageHandler* MessageHandler, ZAiTickHandl
     Ai->messageQueue = a_list_new();
     Ai->messageHandler = MessageHandler;
     Ai->tickHandler = TickHandler;
-
-    Ai->context = a_mem_malloc(ContextSize);
-    memset(Ai->context, 0, ContextSize);
+    Ai->context = a_mem_zalloc(ContextSize);
 }
 
 void z_comp_ai_free(void* Self)

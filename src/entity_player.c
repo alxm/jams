@@ -73,11 +73,9 @@ static void playerInput(AEntity* Entity)
 
 AEntity* z_entity_player_new(void)
 {
-    AEntity* e = a_entity_new();
-    a_entity_setId(e, "player");
+    AEntity* e = a_entity_new("player");
 
     ZCompCargo* cargo = a_entity_addComponent(e, "cargo");
-    z_comp_cargo_init(cargo);
     z_comp_cargo_add(cargo, Z_CARGO_TYPE_CREDS, 2);
 
     ZCompDamage* damage = a_entity_addComponent(e, "damage");

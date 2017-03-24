@@ -18,6 +18,7 @@
 
 #include <a2x.h>
 
+#include "util_controls.h"
 #include "util_graphics.h"
 #include "util_log.h"
 
@@ -50,7 +51,7 @@ typedef struct ZGame {
     ZGameScreen staging;
     bool allowPlayer;
     bool allowAi;
-    AFrameTimer* aiTurnDelay;
+    ATimer* aiTurnDelay;
 } ZGame;
 
 static ZGame g_game;
@@ -75,7 +76,7 @@ static void z_game_createStagingScreen(void)
                      + g_game.universeY * Z_UNIVERSE_DIM
                      + g_game.universeX);
 
-    g_game.staging.map = a_entity_new();
+    g_game.staging.map = a_entity_new("map");
     a_list_addLast(g_game.staging.entities, g_game.staging.map);
 
     ZCompMap* map = a_entity_addComponent(g_game.staging.map, "map");
@@ -224,7 +225,7 @@ static void z_game_flipStagingScreen(void)
     g_game.moveAction = Z_SCREEN_MOVE_NONE;
     g_game.allowPlayer = true;
     g_game.allowAi = false;
-    a_frametimer_stop(g_game.aiTurnDelay);
+    a_timer_stop(g_game.aiTurnDelay);
 
     z_game_tradeOff(NULL);
 }
@@ -306,7 +307,7 @@ void z_game_playerActed(void)
 {
     // Player did something, it'll be AI's turn when the timer expires
     g_game.allowPlayer = false;
-    a_frametimer_start(g_game.aiTurnDelay);
+    a_timer_start(g_game.aiTurnDelay);
 }
 
 void z_game_removeEntity(AEntity* Entity)
@@ -346,6 +347,9 @@ void z_game_tradeOn(AEntity* Merchant)
     ZCompTrade* trade = a_entity_requireComponent(Merchant, "trade");
     z_comp_trade_setOn(trade, true);
 
+    a_button_release(z_controls.up);
+    a_button_release(z_controls.down);
+
     a_system_mute("playerInput ai runInteractions");
     a_system_unmute("tradeTick tradeDraw");
 }
@@ -371,7 +375,7 @@ A_STATE(playGame)
         g_game.moveAction = Z_SCREEN_MOVE_NONE;
         g_game.player = z_entity_player_new();
         g_game.log = z_log_new(6);
-        g_game.aiTurnDelay = a_frametimer_new(a_fps_msToFrames(250));
+        g_game.aiTurnDelay = a_timer_new(A_TIMER_FRAMES, a_fps_msToFrames(250));
 
         z_game_initScreen(&g_game.current);
         z_game_initScreen(&g_game.staging);
@@ -389,10 +393,10 @@ A_STATE(playGame)
             // This runs before the systems. Establish whether
             // the Player or the AI can do anything this frame.
 
-            if(a_frametimer_expired(g_game.aiTurnDelay)) {
+            if(a_timer_expired(g_game.aiTurnDelay)) {
                 // AI can go now, player is already off if timer was running
                 g_game.allowAi = true;
-                a_frametimer_stop(g_game.aiTurnDelay);
+                a_timer_stop(g_game.aiTurnDelay);
             } else {
                 if(g_game.allowAi) {
                     // AI just went the last frame, player can go now

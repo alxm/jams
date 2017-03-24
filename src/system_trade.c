@@ -107,16 +107,16 @@ void z_system_tradeTick(AEntity* Merchant)
 
     AMenu* menu = z_comp_trade_getMenu(trade);
 
-    a_menu_input(menu);
+    a_menu_handleInput(menu);
 
-    if(a_menu_finished(menu)) {
-        if(a_menu_cancel(menu)
-            || a_menu_choice(menu) == a_menu_numItems(menu) - 1) {
+    if(a_menu_getState(menu) != A_MENU_STATE_RUNNING) {
+        if(a_menu_getState(menu) == A_MENU_STATE_CANCELED
+            || a_menu_getSelectedIndex(menu) == Z_TRADE_MENU_LEAVE) {
 
             a_menu_reset(menu);
             z_game_tradeOff(Merchant);
         } else {
-            unsigned choice = a_menu_choice(menu);
+            unsigned choice = a_menu_getSelectedIndex(menu);
 
             switch(choice) {
                 case Z_TRADE_MENU_BUY_FUEL:
@@ -211,7 +211,7 @@ void z_system_tradeDraw(AEntity* Merchant)
     int menuItemW = screenW - 8;
     int menuItemH = 4 + a_font_getLineHeight() + 4;
 
-    A_MENU_ITERATE(menu, char*, title) {
+    A_LIST_ITERATE(a_menu_getItems(menu), char*, title) {
         if(A_LIST_IS_LAST()) {
             y = Z_MAP_PIXEL_H - menuItemH - 4;
         }
@@ -219,7 +219,7 @@ void z_system_tradeDraw(AEntity* Merchant)
         a_pixel_push();
         a_pixel_setHex(0x432949);
 
-        if(a_menu_isSelected(menu, title)) {
+        if(a_menu_isItemSelected(menu, title)) {
             a_pixel_setBlend(A_PIXEL_BLEND_RGB50);
             a_font_setFace(z_fonts.lightOrange);
         } else {

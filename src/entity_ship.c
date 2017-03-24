@@ -275,7 +275,6 @@ static void addCargo(AEntity* Entity, ZCargoType Type, int Number)
 
     if(cargo == NULL) {
         cargo = a_entity_addComponent(Entity, "cargo");
-        z_comp_cargo_init(cargo);
     }
 
     z_comp_cargo_add(cargo, Type, Number);

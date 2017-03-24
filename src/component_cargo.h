@@ -26,7 +26,6 @@ typedef enum {
 } ZCargoType;
 
 extern size_t z_comp_cargo_size(void);
-extern void z_comp_cargo_init(ZCompCargo* Cargo);
 
 extern int z_comp_cargo_getNum(const ZCompCargo* Cargo, ZCargoType Type);
 extern const char* z_comp_cargo_getName(ZCargoType Type, bool Plural);
