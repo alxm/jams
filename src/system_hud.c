@@ -32,11 +32,11 @@ void z_system_hudDraw(AEntity* Entity)
     int y = Z_MAP_PIXEL_H;
 
     a_pixel_setHex(0x432949);
-    a_draw_hline(0, a_screen_width(), y);
+    a_draw_hline(0, a_screen_getWidth(), y);
     y++;
 
     a_pixel_setHex(0x151225);
-    a_draw_rectangle(x, y, a_screen_width(), a_screen_height() - y);
+    a_draw_rectangle(x, y, a_screen_getWidth(), a_screen_getHeight() - y);
 
     x += 4;
     y += 4;
@@ -47,14 +47,14 @@ void z_system_hudDraw(AEntity* Entity)
     ASprite* face = z_graphics_getFrame(z_graphics_get("goodbad"),
                                         moodType == Z_MOOD_GOOD ? 0 : 1);
     a_sprite_blit(face, x, y + 2);
-    x += a_sprite_width(face) + 4;
+    x += a_sprite_getWidth(face) + 4;
 
     unsigned universeX, universeY;
     z_game_getUniverseCoords(&universeX, &universeY);
 
     a_font_setFace(A_FONT_FACE_WHITE);
     a_font_setCoords(x, y);
-    a_font_textf("@ %u, %u", universeX, universeY);
+    a_font_printf("@ %u, %u", universeX, universeY);
     a_font_newLine();
     y = a_font_getY() + 2;
 
@@ -67,9 +67,9 @@ void z_system_hudDraw(AEntity* Entity)
     a_font_setCoords(4, y + 8 + 4);
 
     for(ZCargoType t = 0; t < Z_CARGO_TYPE_NUM; t++) {
-        a_font_textf("%s: %d",
-                     z_comp_cargo_getName(t, true),
-                     z_comp_cargo_getNum(cargo, t));
+        a_font_printf("%s: %d",
+                      z_comp_cargo_getName(t, true),
+                      z_comp_cargo_getNum(cargo, t));
         a_font_newLine();
     }
 
@@ -79,7 +79,7 @@ void z_system_hudDraw(AEntity* Entity)
     a_font_setCoords(x, y);
 
     int alphaInc = 32;
-    int numLines = (int)a_list_size(z_game_getLogLines());
+    int numLines = (int)a_list_getSize(z_game_getLogLines());
     int alpha = A_PIXEL_ALPHA_MAX - (numLines + 1) * alphaInc;
 
     a_pixel_push();
@@ -94,9 +94,9 @@ void z_system_hudDraw(AEntity* Entity)
         }
 
         a_font_setFace(z_fonts.lightBlue);
-        a_font_text("> ");
+        a_font_print("> ");
         a_font_setFace(A_FONT_FACE_WHITE);
-        a_font_text(line);
+        a_font_print(line);
         a_font_newLine();
     }
 

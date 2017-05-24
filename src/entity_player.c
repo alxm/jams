@@ -43,17 +43,17 @@ static void playerInput(AEntity* Entity)
 
     bool acted = false;
 
-    if(a_button_get(z_controls.up)) {
+    if(a_button_getPressed(z_controls.up)) {
         acted = z_entity_macro_move(Entity, Z_MOVE_UP);
-    } else if(a_button_get(z_controls.down)) {
+    } else if(a_button_getPressed(z_controls.down)) {
         acted = z_entity_macro_move(Entity, Z_MOVE_DOWN);
-    } else if(a_button_get(z_controls.left)) {
+    } else if(a_button_getPressed(z_controls.left)) {
         acted = z_entity_macro_move(Entity, Z_MOVE_LEFT);
-    } else if(a_button_get(z_controls.right)) {
+    } else if(a_button_getPressed(z_controls.right)) {
         acted = z_entity_macro_move(Entity, Z_MOVE_RIGHT);
     }
 
-    if(a_button_getOnce(z_controls.primary)) {
+    if(a_button_getPressedOnce(z_controls.primary)) {
         ZCompMood* mood = a_entity_requireComponent(Entity, "mood");
         ZMoodType moodType = z_comp_mood_getType(mood);
 

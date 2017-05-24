@@ -60,15 +60,15 @@ void z_comp_trade_init(ZCompTrade* Trade)
     Trade->buyPrices[Z_CARGO_TYPE_CREDS] = 1;
     Trade->sellPrices[Z_CARGO_TYPE_CREDS] = 1;
 
-    Trade->buyPrices[Z_CARGO_TYPE_FUEL] = 2 + a_random_int(5);
-    Trade->sellPrices[Z_CARGO_TYPE_FUEL] = 4 + a_random_int(5);
+    Trade->buyPrices[Z_CARGO_TYPE_FUEL] = 2 + a_random_getInt(5);
+    Trade->sellPrices[Z_CARGO_TYPE_FUEL] = 4 + a_random_getInt(5);
 
-    Trade->buyPrices[Z_CARGO_TYPE_MINERALS] = 4 + a_random_int(9);
-    Trade->sellPrices[Z_CARGO_TYPE_MINERALS] = 8 + a_random_int(9);
+    Trade->buyPrices[Z_CARGO_TYPE_MINERALS] = 4 + a_random_getInt(9);
+    Trade->sellPrices[Z_CARGO_TYPE_MINERALS] = 8 + a_random_getInt(9);
 
     Trade->doesRepairs = true;
     Trade->repairPrice = 1;
-    Trade->repairsLeft = 1 + a_random_int(5);
+    Trade->repairsLeft = 1 + a_random_getInt(5);
 }
 
 void z_comp_trade_free(void* Self)

@@ -1,9 +1,4 @@
-APP = ssp
-BIN_DIR = ..
-SRC_DIR = ../src
-GFX_DIR = ../gfx
-SFX_DIR =
-OBJ_DIR = ../obj
+A_APP_NAME = ssp
 
 #
 # You can set A2X_PATH to a hard-coded value

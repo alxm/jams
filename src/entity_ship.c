@@ -215,7 +215,7 @@ static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
             }
 
             if(myX == itsX) {
-                ZMove randDir = Z_MOVE_LEFT + a_random_int(2);
+                ZMove randDir = Z_MOVE_LEFT + a_random_getInt(2);
                 iMoved = z_entity_macro_move(Entity, randDir);
             }
 
@@ -224,7 +224,7 @@ static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
             }
 
             if(myY == itsY) {
-                ZMove randDir = Z_MOVE_UP + a_random_int(2);
+                ZMove randDir = Z_MOVE_UP + a_random_getInt(2);
                 iMoved = z_entity_macro_move(Entity, randDir);
             }
 
@@ -307,7 +307,7 @@ AEntity* z_entity_ship_satellite(ZCompMap* Map)
                                       "satellite1",
                                       "satellite1");
 
-    addCargo(e, Z_CARGO_TYPE_CREDS, a_random_int(3));
+    addCargo(e, Z_CARGO_TYPE_CREDS, a_random_getInt(3));
 
     addHealth(e, 15);
 
@@ -329,8 +329,8 @@ AEntity* z_entity_ship_neutralShip(ZCompMap* Map)
     addDamage(e, 1);
     addHealth(e, 15);
 
-    addCargo(e, Z_CARGO_TYPE_CREDS, 1 + a_random_int(3));
-    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(3));
+    addCargo(e, Z_CARGO_TYPE_CREDS, 1 + a_random_getInt(3));
+    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_getInt(3));
 
     return e;
 }
@@ -350,8 +350,8 @@ AEntity* z_entity_ship_patrolShip(ZCompMap* Map)
     addDamage(e, 2);
     addHealth(e, 25);
 
-    addCargo(e, Z_CARGO_TYPE_CREDS, 2 + a_random_int(4));
-    addCargo(e, Z_CARGO_TYPE_FUEL, 1 + a_random_int(3));
+    addCargo(e, Z_CARGO_TYPE_CREDS, 2 + a_random_getInt(4));
+    addCargo(e, Z_CARGO_TYPE_FUEL, 1 + a_random_getInt(3));
 
     return e;
 }
@@ -391,9 +391,9 @@ AEntity* z_entity_ship_merchantShip(ZCompMap* Map)
     addDamage(e, 5);
     addHealth(e, 50);
 
-    addCargo(e, Z_CARGO_TYPE_CREDS, 1000 + a_random_int(1000));
-    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_int(100));
-    addCargo(e, Z_CARGO_TYPE_MINERALS, a_random_int(50));
+    addCargo(e, Z_CARGO_TYPE_CREDS, 1000 + a_random_getInt(1000));
+    addCargo(e, Z_CARGO_TYPE_FUEL, a_random_getInt(100));
+    addCargo(e, Z_CARGO_TYPE_MINERALS, a_random_getInt(50));
 
     ZCompTrade* trade = a_entity_addComponent(e, "trade");
     z_comp_trade_init(trade);

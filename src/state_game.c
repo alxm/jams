@@ -60,7 +60,7 @@ static void z_game_initScreen(ZGameScreen* Screen)
 {
     Screen->map = NULL;
     Screen->entities = a_list_new();
-    Screen->mapScreen = a_sprite_blank(Z_MAP_PIXEL_W, Z_MAP_PIXEL_H, false);
+    Screen->mapScreen = a_sprite_newBlank(Z_MAP_PIXEL_W, Z_MAP_PIXEL_H, false);
 }
 
 static void z_game_freeScreen(ZGameScreen* Screen)
@@ -112,48 +112,48 @@ static void z_game_createStagingScreen(void)
     z_comp_map_setTileEntity(map, x, y, g_game.player);
 
     // Asteroids for mining
-    if(a_random_int(2) == 0) {
-        for(int i = 1 + a_random_int(4); i--; ) {
+    if(a_random_getInt(2) == 0) {
+        for(int i = 1 + a_random_getInt(4); i--; ) {
             AEntity* e = z_entity_asteroid_new(map);
             a_list_addLast(g_game.staging.entities, e);
         }
     }
 
     // Satellites
-    if(a_random_int(2) == 0) {
-        for(int i = 1 + a_random_int(4); i--; ) {
+    if(a_random_getInt(2) == 0) {
+        for(int i = 1 + a_random_getInt(4); i--; ) {
             AEntity* e = z_entity_ship_satellite(map);
             a_list_addLast(g_game.staging.entities, e);
         }
     }
 
     // Weak space ships
-    if(a_random_int(2) == 0) {
-        for(int i = a_random_int(8); i--; ) {
+    if(a_random_getInt(2) == 0) {
+        for(int i = a_random_getInt(8); i--; ) {
             AEntity* e = z_entity_ship_neutralShip(map);
             a_list_addLast(g_game.staging.entities, e);
         }
     }
 
     // Stronger space ships
-    if(a_random_int(4) == 0) {
-        for(int i = 1 + a_random_int(5); i--; ) {
+    if(a_random_getInt(4) == 0) {
+        for(int i = 1 + a_random_getInt(5); i--; ) {
             AEntity* e = z_entity_ship_patrolShip(map);
             a_list_addLast(g_game.staging.entities, e);
         }
     }
 
     // Strong ships that actively pursue player
-    if(a_random_int(8) == 0) {
-        for(int i = 1 + a_random_int(3); i--; ) {
+    if(a_random_getInt(8) == 0) {
+        for(int i = 1 + a_random_getInt(3); i--; ) {
             AEntity* e = z_entity_ship_fighterShip(map);
             a_list_addLast(g_game.staging.entities, e);
         }
     }
 
     // Trade ships
-    if(a_random_int(6) == 0) {
-        for(int i = 1 + a_random_int(2); i--; ) {
+    if(a_random_getInt(6) == 0) {
+        for(int i = 1 + a_random_getInt(2); i--; ) {
             AEntity* e = z_entity_ship_merchantShip(map);
             a_list_addLast(g_game.staging.entities, e);
         }
@@ -163,9 +163,9 @@ static void z_game_createStagingScreen(void)
 static void z_game_prepareNextScreen(void)
 {
     // Capture the old map, including the player ship
-    a_screen_setTargetSprite(g_game.current.mapScreen);
+    a_screen_targetPushSprite(g_game.current.mapScreen);
     a_system_execute("drawMap drawSprites");
-    a_screen_resetTarget();
+    a_screen_targetPop();
 
     // Mute current map entities and the map itself
     A_LIST_ITERATE(g_game.current.entities, AEntity*, e) {
@@ -177,13 +177,13 @@ static void z_game_prepareNextScreen(void)
     a_system_flushNewEntities();
 
     // Capture the new screen except for the HUD and player ship
-    a_screen_setTargetSprite(g_game.staging.mapScreen);
+    a_screen_targetPushSprite(g_game.staging.mapScreen);
 
     // Player ship gets unmuted in z_game_flipStagingScreen in the new screen
     a_entity_mute(g_game.player);
     a_system_execute("drawMap drawSprites");
 
-    a_screen_resetTarget();
+    a_screen_targetPop();
 
     // Mute new entities so they don't flash on screen before scroll
     A_LIST_ITERATE(g_game.staging.entities, AEntity*, e) {
@@ -324,7 +324,7 @@ void z_game_removeEntity(AEntity* Entity)
 
     a_entity_mute(Entity);
     a_entity_remove(Entity);
-    a_list_remove(g_game.current.entities, Entity);
+    a_list_removeItem(g_game.current.entities, Entity);
 }
 
 void z_game_log(const char* Format, ...)
@@ -393,7 +393,7 @@ A_STATE(playGame)
             // This runs before the systems. Establish whether
             // the Player or the AI can do anything this frame.
 
-            if(a_timer_expired(g_game.aiTurnDelay)) {
+            if(a_timer_isExpired(g_game.aiTurnDelay)) {
                 // AI can go now, player is already off if timer was running
                 g_game.allowAi = true;
                 a_timer_stop(g_game.aiTurnDelay);
@@ -458,7 +458,7 @@ A_STATE(nextScreen)
             default: break;
         }
 
-        a_screen_setClip(0, 0, Z_MAP_PIXEL_W, Z_MAP_PIXEL_H);
+        a_screen_clipSet(0, 0, Z_MAP_PIXEL_W, Z_MAP_PIXEL_H);
 
         A_STATE_LOOP
         {
@@ -476,6 +476,6 @@ A_STATE(nextScreen)
             }
         }
 
-        a_screen_resetClip();
+        a_screen_clipReset();
     }
 }

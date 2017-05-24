@@ -38,8 +38,8 @@ AEntity* z_entity_macro_spawn(ZCompMap* Map, const char* Name, const char* Up, c
     ZCompPosition* position = a_entity_addComponent(e, "position");
 
     do {
-        x = 1 + a_random_int(Z_MAP_TILES_W - 2);
-        y = 1 + a_random_int(Z_MAP_TILES_H - 2);
+        x = 1 + a_random_getInt(Z_MAP_TILES_W - 2);
+        y = 1 + a_random_getInt(Z_MAP_TILES_H - 2);
     } while(z_comp_map_getTileEntity(Map, x, y) != NULL);
 
     z_comp_position_init(position, x, y);

@@ -40,7 +40,7 @@ void z_comp_map_init(ZCompMap* Map)
 
     for(int i = 0; i < Z_MAP_TILES_H; i++) {
         for(int j = 0; j < Z_MAP_TILES_W; j++) {
-            Map->tiles[i][j] = a_random_int(numFrames);
+            Map->tiles[i][j] = a_random_getInt(numFrames);
             Map->entities[i][j] = NULL;
         }
     }

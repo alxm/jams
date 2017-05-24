@@ -157,7 +157,7 @@ static void drawHeader(AEntity* Entity, bool AlignLeft)
     ASprite* graphic = z_comp_sprite_getFrameFacing(
                 sprite,
                 AlignLeft ? Z_SPRITE_DIRECTION_RIGHT : Z_SPRITE_DIRECTION_LEFT);
-    int screenW = a_screen_width();
+    int screenW = a_screen_getWidth();
 
     a_font_push();
     a_font_setFace(A_FONT_FACE_WHITE);
@@ -169,14 +169,14 @@ static void drawHeader(AEntity* Entity, bool AlignLeft)
         a_sprite_blit(graphic, 8, 8);
         a_font_setCoords(8 + Z_MAP_TILE_DIM + 4,
                          10 + (Z_MAP_TILE_DIM - fontH) / 2);
-        a_font_text(name);
+        a_font_print(name);
         a_draw_hline(4, screenW / 2 - Z_MAP_TILE_DIM, 8 + Z_MAP_TILE_DIM + 4);
     } else {
         a_sprite_blit(graphic, screenW - 8 - Z_MAP_TILE_DIM, 8);
         a_font_setCoords(screenW - 8 - Z_MAP_TILE_DIM - 4,
                          10 + (Z_MAP_TILE_DIM - fontH) / 2);
         a_font_setAlign(A_FONT_ALIGN_RIGHT);
-        a_font_text(name);
+        a_font_print(name);
         a_draw_hline(screenW / 2 + Z_MAP_TILE_DIM,
                      screenW - 4,
                      8 + Z_MAP_TILE_DIM + 4);
@@ -198,7 +198,7 @@ void z_system_tradeDraw(AEntity* Merchant)
     a_pixel_setHex(0x151225);
     a_pixel_setBlend(A_PIXEL_BLEND_RGBA);
     a_pixel_setAlpha(9 * A_PIXEL_ALPHA_MAX / 10);
-    a_draw_rectangle(0, 0, a_screen_width(), Z_MAP_PIXEL_H);
+    a_draw_rectangle(0, 0, a_screen_getWidth(), Z_MAP_PIXEL_H);
     a_pixel_pop();
 
     drawHeader(z_game_getPlayer(), true);
@@ -207,7 +207,7 @@ void z_system_tradeDraw(AEntity* Merchant)
     AMenu* menu = z_comp_trade_getMenu(trade);
     int x = 4;
     int y = 8 + Z_MAP_TILE_DIM + 8;
-    int screenW = a_screen_width();
+    int screenW = a_screen_getWidth();
     int menuItemW = screenW - 8;
     int menuItemH = 4 + a_font_getLineHeight() + 4;
 
@@ -230,7 +230,7 @@ void z_system_tradeDraw(AEntity* Merchant)
         a_draw_rectangle(x, y, menuItemW, menuItemH);
         a_pixel_pop();
         a_font_setCoords(x + 4, y + 4);
-        a_font_text(title);
+        a_font_print(title);
 
         a_font_push();
         a_font_setCoords(screenW - 8, y + 4);
@@ -243,25 +243,25 @@ void z_system_tradeDraw(AEntity* Merchant)
                 ZCargoType type = Z_CARGO_TYPE_FUEL + A_LIST_INDEX();
                 int num = z_comp_cargo_getNum(cargo, type);
                 int price = z_comp_trade_getPrice(trade, type, true);
-                a_font_textf("Has %d for %d creds each", num, price);
+                a_font_printf("Has %d for %d creds each", num, price);
             } break;
 
             case Z_TRADE_MENU_SELL_FUEL:
             case Z_TRADE_MENU_SELL_MINERALS: {
                 ZCargoType type = Z_CARGO_TYPE_FUEL + A_LIST_INDEX() - 2;
                 int price = z_comp_trade_getPrice(trade, type, false);
-                a_font_textf("Will buy for %d creds each", price);
+                a_font_printf("Will buy for %d creds each", price);
             } break;
 
             case Z_TRADE_MENU_GET_REPAIRS: {
                 if(z_comp_trade_getDoesRepairs(trade)) {
                     int price = z_comp_trade_getRepairPrice(trade);
-                    a_font_textf("1 health point for %d %s",
-                                 price,
-                                 z_comp_cargo_getName(Z_CARGO_TYPE_CREDS,
-                                                      price > 1));
+                    a_font_printf("1 health point for %d %s",
+                                  price,
+                                  z_comp_cargo_getName(Z_CARGO_TYPE_CREDS,
+                                                       price > 1));
                 } else {
-                    a_font_textf("Not available");
+                    a_font_printf("Not available");
                 }
             } break;
         }

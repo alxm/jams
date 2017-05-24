@@ -24,10 +24,10 @@ ZControls z_controls;
 
 void z_controls_load(void)
 {
-    z_controls.up = a_button_new("generic.up");
-    z_controls.down = a_button_new("generic.down");
-    z_controls.left = a_button_new("generic.left");
-    z_controls.right = a_button_new("generic.right");
-    z_controls.primary = a_button_new("generic.b0");
-    z_controls.secondary = a_button_new("generic.b1");
+    z_controls.up = a_button_new("key.up gamepad.b.up");
+    z_controls.down = a_button_new("key.down gamepad.b.down");
+    z_controls.left = a_button_new("key.left gamepad.b.left");
+    z_controls.right = a_button_new("key.right gamepad.b.right");
+    z_controls.primary = a_button_new("key.z gamepad.b.a");
+    z_controls.secondary = a_button_new("key.x gamepad.b.b");
 }

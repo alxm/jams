@@ -61,9 +61,9 @@ void z_log_log(ZLog* Log, const char* Format, va_list Args)
 
         if(needed > 0 && (size_t)needed < size) {
             a_list_addLast(Log->lines, buffer);
-            a_out_textf(buffer);
+            a_out_printf(buffer);
 
-            if(a_list_size(Log->lines) > Log->maxLines) {
+            if(a_list_getSize(Log->lines) > Log->maxLines) {
                 free(a_list_pop(Log->lines));
             }
         } else {
