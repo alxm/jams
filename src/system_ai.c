@@ -28,14 +28,5 @@ void z_system_ai(AEntity* Entity)
         return;
     }
 
-    ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
-
-    ZAiMessageType type;
-    AEntity* relevant;
-
-    while(z_comp_ai_getMessage(ai, &type, &relevant)) {
-        z_comp_ai_runMessageHandler(ai, type, relevant);
-    }
-
-    z_comp_ai_runTickHandler(ai);
+    z_comp_ai_runTickHandler(a_entity_requireComponent(Entity, "ai"));
 }

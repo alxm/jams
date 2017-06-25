@@ -80,91 +80,87 @@ static bool clearGoal(ZShipAiContext* Context)
     return false;
 }
 
-static void shipMessageAi(AEntity* Entity, ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant)
+static void attackedAiHandler(AEntity* Defender, AEntity* Attacker)
 {
-    ZShipAiContext* context = z_comp_ai_getContext(Ai);
+    ZCompAi* ai = a_entity_requireComponent(Defender, "ai");
+    ZShipAiContext* context = z_comp_ai_getContext(ai);
 
     // A long-term goal is in progress, ignore this message
     if(context->goal != Z_AI_GOAL_NONE) {
         return;
     }
 
-    ZCompMood* myMood = a_entity_requireComponent(Entity, "mood");
-    ZMoodType myCurrentMood = z_comp_mood_getType(myMood);
+    ZCompMood* myMood = a_entity_requireComponent(Defender, "mood");
+    z_comp_mood_setType(myMood, Z_MOOD_EVIL);
 
-    ZCompInteract* itsInteract = a_entity_requireComponent(Relevant, "interact");
-    const char* itsName = z_comp_interact_getName(itsInteract);
+    ZCompHealth* myHealth = a_entity_requireComponent(Defender, "health");
+    int myHealthPoints, myHealthMax;
+    z_comp_health_getStats(myHealth, &myHealthPoints, &myHealthMax);
 
-    switch(Type) {
-        case Z_AI_MESSAGE_BENEVOLENT: {
-            if(context->personality == Z_AI_PERSONALITY_GREEDY) {
-                z_game_log("Welcome to my enterprise, %s", itsName);
-                z_game_tradeOn(Entity);
+    ZCompHealth* itsHealth = a_entity_requireComponent(Attacker, "health");
+    int itsHealthPoints, itsHealthMax;
+    z_comp_health_getStats(itsHealth, &itsHealthPoints, &itsHealthMax);
+
+    bool amIWeak = myHealthPoints < myHealthMax / 4;
+    bool isItWeak = itsHealthPoints < itsHealthMax / 3;
+
+    switch(context->personality) {
+        case Z_AI_PERSONALITY_GREEDY: {
+            // Merchants hold grudges and won't offer repairs
+            ZCompTrade* t = a_entity_requireComponent(Defender, "trade");
+            z_comp_trade_setDoesRepairs(t, false);
+        }
+
+        case Z_AI_PERSONALITY_NEUTRAL: {
+            if(amIWeak) {
+                // Flee
+                setGoal(context, Z_AI_GOAL_FLEE, 5, Attacker);
+                z_comp_mood_setType(myMood, Z_MOOD_GOOD);
+            } else if(isItWeak) {
+                // Retaliate several times
+                setGoal(context, Z_AI_GOAL_PURSUE, 3, Attacker);
             } else {
-                if(myCurrentMood == Z_MOOD_GOOD) {
-                    z_game_log("Hello, %s", itsName);
-                } else {
-                    z_game_log("* Radio silence *");
-                }
+                // Retaliate once
+                setGoal(context, Z_AI_GOAL_PURSUE, 1, Attacker);
             }
         } break;
 
-        case Z_AI_MESSAGE_AGGRESSIVE: {
-            z_comp_mood_setType(myMood, Z_MOOD_EVIL);
-
-            ZCompHealth* myHealth = a_entity_requireComponent(Entity, "health");
-            int myHealthPoints, myHealthMax;
-            z_comp_health_getStats(myHealth, &myHealthPoints, &myHealthMax);
-
-            ZCompHealth* itsHealth = a_entity_requireComponent(Relevant, "health");
-            int itsHealthPoints, itsHealthMax;
-            z_comp_health_getStats(itsHealth, &itsHealthPoints, &itsHealthMax);
-
-            bool amIWeak = myHealthPoints < myHealthMax / 4;
-            bool isItWeak = itsHealthPoints < itsHealthMax / 3;
-
-            switch(context->personality) {
-                case Z_AI_PERSONALITY_GREEDY: {
-                    // Merchants hold grudges and won't offer repairs
-                    ZCompTrade* t = a_entity_requireComponent(Entity, "trade");
-                    z_comp_trade_setDoesRepairs(t, false);
-                }
-
-                case Z_AI_PERSONALITY_NEUTRAL: {
-                    if(amIWeak) {
-                        // Flee
-                        setGoal(context, Z_AI_GOAL_FLEE, 5, Relevant);
-                        z_comp_mood_setType(myMood, Z_MOOD_GOOD);
-                    } else if(isItWeak) {
-                        // Retaliate several times
-                        setGoal(context, Z_AI_GOAL_PURSUE, 3, Relevant);
-                    } else {
-                        // Retaliate once
-                        setGoal(context, Z_AI_GOAL_PURSUE, 1, Relevant);
-                    }
-                } break;
-
-                case Z_AI_PERSONALITY_STUBBORN: {
-                    if(isItWeak) {
-                        // Retaliate several times
-                        setGoal(context, Z_AI_GOAL_PURSUE, 3, Relevant);
-                    } else if(amIWeak) {
-                        // Flee
-                        setGoal(context, Z_AI_GOAL_FLEE, 5, Relevant);
-                        z_comp_mood_setType(myMood, Z_MOOD_GOOD);
-                    } else {
-                        // Retaliate once
-                        setGoal(context, Z_AI_GOAL_PURSUE, 1, Relevant);
-                    }
-                } break;
-
-                case Z_AI_PERSONALITY_AGGRESSIVE: {
-                    // Retaliate several times regardless of anything
-                    setGoal(context, Z_AI_GOAL_PURSUE, 5, Relevant);
-                } break;
+        case Z_AI_PERSONALITY_STUBBORN: {
+            if(isItWeak) {
+                // Retaliate several times
+                setGoal(context, Z_AI_GOAL_PURSUE, 3, Attacker);
+            } else if(amIWeak) {
+                // Flee
+                setGoal(context, Z_AI_GOAL_FLEE, 5, Attacker);
+                z_comp_mood_setType(myMood, Z_MOOD_GOOD);
+            } else {
+                // Retaliate once
+                setGoal(context, Z_AI_GOAL_PURSUE, 1, Attacker);
             }
+        } break;
+
+        case Z_AI_PERSONALITY_AGGRESSIVE: {
+            // Retaliate several times regardless of anything
+            setGoal(context, Z_AI_GOAL_PURSUE, 5, Attacker);
         } break;
     }
+}
+
+static void merchantHandleGreeting(AEntity* Merchant, AEntity* Customer)
+{
+    ZCompAi* ai = a_entity_requireComponent(Merchant, "ai");
+    ZShipAiContext* context = z_comp_ai_getContext(ai);
+
+    // A long-term goal is in progress, ignore this message
+    if(context->goal != Z_AI_GOAL_NONE) {
+        return;
+    }
+
+    ZCompInteract* itsInteract = a_entity_requireComponent(Customer, "interact");
+    const char* itsName = z_comp_interact_getName(itsInteract);
+
+    z_game_log("Welcome to my enterprise, %s", itsName);
+    z_game_tradeOn(Merchant);
 }
 
 static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
@@ -263,10 +259,12 @@ static void shipTickAi(AEntity* Entity, ZCompAi* Ai)
 static void addAiShip(AEntity* Entity, ZShipAiPersonality Personality)
 {
     ZCompAi* ai = a_entity_addComponent(Entity, "ai");
-    z_comp_ai_init(ai, shipMessageAi, shipTickAi, sizeof(ZShipAiContext));
+    z_comp_ai_init(ai, shipTickAi, sizeof(ZShipAiContext));
 
     ZShipAiContext* context = z_comp_ai_getContext(ai);
     context->personality = Personality;
+
+    a_entity_setMessageHandler(Entity, "attacked", attackedAiHandler);
 }
 
 static void addCargo(AEntity* Entity, ZCargoType Type, int Number)
@@ -307,6 +305,9 @@ AEntity* z_entity_ship_satellite(ZCompMap* Map)
                                       "satellite1",
                                       "satellite1");
 
+    a_entity_setMessageHandler(e, "greeting", z_entity_macro_handleGreeting);
+    a_entity_setMessageHandler(e, "aggression", z_entity_macro_handleAttack);
+
     addCargo(e, Z_CARGO_TYPE_CREDS, a_random_getInt(3));
 
     addHealth(e, 15);
@@ -322,6 +323,9 @@ AEntity* z_entity_ship_neutralShip(ZCompMap* Map)
                                       "ship1Down",
                                       "ship1Left",
                                       "ship1Right");
+
+    a_entity_setMessageHandler(e, "greeting", z_entity_macro_handleGreeting);
+    a_entity_setMessageHandler(e, "aggression", z_entity_macro_handleAttack);
 
     addAiShip(e, Z_AI_PERSONALITY_NEUTRAL);
     addMood(e, Z_MOOD_GOOD);
@@ -344,6 +348,9 @@ AEntity* z_entity_ship_patrolShip(ZCompMap* Map)
                                       "ship2Left",
                                       "ship2Right");
 
+    a_entity_setMessageHandler(e, "greeting", z_entity_macro_handleGreeting);
+    a_entity_setMessageHandler(e, "aggression", z_entity_macro_handleAttack);
+
     addAiShip(e, Z_AI_PERSONALITY_STUBBORN);
     addMood(e, Z_MOOD_EVIL);
 
@@ -365,6 +372,9 @@ AEntity* z_entity_ship_fighterShip(ZCompMap* Map)
                                       "ship2Left",
                                       "ship2Right");
 
+    a_entity_setMessageHandler(e, "greeting", z_entity_macro_handleGreeting);
+    a_entity_setMessageHandler(e, "aggression", z_entity_macro_handleAttack);
+
     addAiShip(e, Z_AI_PERSONALITY_AGGRESSIVE);
     addMood(e, Z_MOOD_EVIL);
 
@@ -384,6 +394,9 @@ AEntity* z_entity_ship_merchantShip(ZCompMap* Map)
                                       "tradingShipDown",
                                       "tradingShipLeft",
                                       "tradingShipRight");
+
+    a_entity_setMessageHandler(e, "greeting", merchantHandleGreeting);
+    a_entity_setMessageHandler(e, "aggression", z_entity_macro_handleAttack);
 
     addAiShip(e, Z_AI_PERSONALITY_GREEDY);
     addMood(e, Z_MOOD_GOOD);

@@ -20,6 +20,10 @@
 
 #include "util_graphics.h"
 
+#include "component_ai.h"
+#include "component_cargo.h"
+#include "component_damage.h"
+#include "component_health.h"
 #include "component_interact.h"
 #include "component_map.h"
 #include "component_mood.h"
@@ -127,15 +131,105 @@ bool z_entity_macro_move(AEntity* Entity, ZMove Direction)
                 ZMoodType moodType = z_comp_mood_getType(mood);
 
                 if(moodType == Z_MOOD_EVIL) {
-                    z_comp_interact_action(targetInteract, Entity, Z_INTERACTION_AGGRESSIVE);
+                    a_entity_sendMessage(Entity, target, "aggression");
                     acted = true;
                 } else if(Entity == player) { // No need for AI-AI greeting :-)
-                    z_comp_interact_action(targetInteract, Entity, Z_INTERACTION_BENEVOLENT);
+                    a_entity_sendMessage(Entity, target, "greeting");
                     acted = true;
+                }
+            }
+
+            if(acted) {
+                // Target turns to face the actor
+                ZCompPosition* targetPos = a_entity_requireComponent(target, "position");
+                ZCompSprite* targetSprite = a_entity_requireComponent(target, "sprite");
+
+                int targetX, targetY;
+                z_comp_position_getCoords(targetPos, &targetX, &targetY);
+
+                if(originalX < targetX) {
+                    z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_LEFT);
+                } else if(originalX > targetX) {
+                    z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_RIGHT);
+                } else if(originalY < targetY) {
+                    z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_UP);
+                } else if(originalY > targetY) {
+                    z_comp_sprite_setDirection(targetSprite, Z_SPRITE_DIRECTION_DOWN);
                 }
             }
         }
     }
 
     return acted;
+}
+
+void z_entity_macro_handleGreeting(AEntity* Entity, AEntity* Sender)
+{
+    if(Sender == z_game_getPlayer()) {
+        ZCompInteract* tInter = a_entity_requireComponent(Entity, "interact");
+        ZCompInteract* sInter = a_entity_requireComponent(Sender, "interact");
+        z_game_log("Hello, %s!", z_comp_interact_getName(tInter));
+        z_game_log("  Hello, %s!", z_comp_interact_getName(sInter));
+    }
+}
+
+void z_entity_macro_handleAttack(AEntity* Defender, AEntity* Attacker)
+{
+    if(!a_entity_hasComponent(Defender, "health")
+        || !a_entity_hasComponent(Attacker, "damage")) {
+
+        return;
+    }
+
+    ZCompCargo* actorCargo = a_entity_getComponent(Attacker, "cargo");
+    ZCompDamage* actorDamage = a_entity_requireComponent(Attacker, "damage");
+    ZCompInteract* actorInter = a_entity_requireComponent(Attacker, "interact");
+
+    ZCompCargo* targetCargo = a_entity_getComponent(Defender, "cargo");
+    ZCompHealth* targetHealth = a_entity_requireComponent(Defender, "health");
+    ZCompInteract* targetInter = a_entity_requireComponent(Defender, "interact");
+    ZCompAi* targetAi = a_entity_getComponent(Defender, "ai");
+
+    const char* actorName = z_comp_interact_getName(actorInter);
+    const char* targetName = z_comp_interact_getName(targetInter);
+
+    int actorDamagePoints = z_comp_damage_getPoints(actorDamage);
+
+    z_game_log("%s attacked %s", actorName, targetName);
+    int dmg = z_comp_health_takeDamage(targetHealth, actorDamagePoints);
+    z_game_log("  Dealt %d damage", dmg);
+
+    if(z_comp_health_isAlive(targetHealth)) {
+        if(targetAi) {
+            a_entity_sendMessage(Attacker, Defender, "attacked");
+        }
+
+        return;
+    }
+
+    z_game_log("%s was destroyed", targetName);
+
+    if(targetCargo && actorCargo) {
+        int total = 0;
+
+        for(ZCargoType t = Z_CARGO_TYPE_NUM; t--; ) {
+            int num = z_comp_cargo_getNum(targetCargo, t);
+
+            if(num > 0) {
+                int n = z_comp_cargo_take(actorCargo, targetCargo, t, num);
+                total += n;
+
+                z_game_log("  %s plundered %d %s",
+                           actorName,
+                           n,
+                           z_comp_cargo_getName(t, n > 1));
+            }
+        }
+
+        if(total == 0) {
+            z_game_log("  %s had no cargo", targetName);
+        }
+    }
+
+    z_game_removeEntity(Defender);
 }

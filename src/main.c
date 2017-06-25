@@ -32,7 +32,6 @@
 
 #include "system_ai.h"
 #include "system_input.h"
-#include "system_interact.h"
 #include "system_hud.h"
 #include "system_map.h"
 #include "system_sprite.h"
@@ -70,7 +69,6 @@ A_MAIN
     a_system_declare("drawMap", "map", z_system_mapDraw, NULL, false);
     a_system_declare("drawSprites", "position sprite", z_system_sprite, NULL, false);
     a_system_declare("playerInput", "input", z_system_input, NULL, false);
-    a_system_declare("runInteractions", "interact", z_system_interact, NULL, false);
     a_system_declare("tradeDraw", "trade", z_system_tradeDraw, NULL, NULL);
     a_system_declare("tradeTick", "trade", z_system_tradeTick, NULL, NULL);
 

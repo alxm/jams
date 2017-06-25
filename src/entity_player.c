@@ -75,6 +75,8 @@ AEntity* z_entity_player_new(void)
 {
     AEntity* e = a_entity_new("player");
 
+    a_entity_setMessageHandler(e, "aggression", z_entity_macro_handleAttack);
+
     ZCompCargo* cargo = a_entity_addComponent(e, "cargo");
     z_comp_cargo_add(cargo, Z_CARGO_TYPE_CREDS, 2);
 

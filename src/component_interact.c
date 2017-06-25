@@ -22,14 +22,8 @@
 
 #include "state_game.h"
 
-typedef struct ZPendingAction {
-    AEntity* actor;
-    ZInteractionType type;
-} ZPendingAction;
-
 struct ZCompInteract {
     char* name;
-    AList* pending; // list of ZPendingAction
 };
 
 size_t z_comp_interact_size(void)
@@ -40,48 +34,16 @@ size_t z_comp_interact_size(void)
 void z_comp_interact_init(ZCompInteract* Interact, const char* Name)
 {
     Interact->name = a_str_dup(Name);
-    Interact->pending = a_list_new();
 }
 
 void z_comp_interact_free(void* Self)
 {
     ZCompInteract* interact = Self;
 
-    A_LIST_ITERATE(interact->pending, ZPendingAction*, a) {
-        free(a);
-    }
-
-    a_list_free(interact->pending);
     free(interact->name);
-}
-
-void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZInteractionType Type)
-{
-    ZPendingAction* pending = a_mem_malloc(sizeof(ZPendingAction));
-
-    pending->actor = Actor;
-    pending->type = Type;
-
-    a_list_addLast(Interact->pending, pending);
 }
 
 const char* z_comp_interact_getName(const ZCompInteract* Interact)
 {
     return Interact->name;
-}
-
-bool z_comp_interact_getPending(ZCompInteract* Interact, AEntity** Actor, ZInteractionType* Type)
-{
-    ZPendingAction* p = a_list_pop(Interact->pending);
-
-    if(p) {
-        *Actor = p->actor;
-        *Type = p->type;
-
-        free(p);
-
-        return true;
-    }
-
-    return false;
 }

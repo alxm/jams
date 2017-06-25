@@ -25,3 +25,6 @@ typedef enum {
 
 extern AEntity* z_entity_macro_spawn(ZCompMap* Map, const char* Name, const char* Up, const char* Down, const char* Left, const char* Right);
 extern bool z_entity_macro_move(AEntity* Entity, ZMove Direction);
+
+extern AMessageHandler z_entity_macro_handleGreeting;
+extern AMessageHandler z_entity_macro_handleAttack;

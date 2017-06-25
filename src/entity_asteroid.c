@@ -19,9 +19,39 @@
 #include <a2x.h>
 
 #include "component_cargo.h"
+#include "component_interact.h"
 #include "component_map.h"
 
 #include "entity_macros.h"
+
+#include "state_game.h"
+
+static void miningHandler(AEntity* Entity, AEntity* Sender)
+{
+    ZCompCargo* actorCargo = a_entity_requireComponent(Sender, "cargo");
+    ZCompInteract* actorInter = a_entity_requireComponent(Sender, "interact");
+
+    ZCompCargo* targetCargo = a_entity_requireComponent(Entity, "cargo");
+    ZCompInteract* targetInter = a_entity_requireComponent(Entity, "interact");
+
+    const char* actorName = z_comp_interact_getName(actorInter);
+    const char* targetName = z_comp_interact_getName(targetInter);
+
+    int n = z_comp_cargo_take(actorCargo,
+                              targetCargo,
+                              Z_CARGO_TYPE_MINERALS,
+                              1);
+
+    z_game_log("%s mined %s", actorName, targetName);
+
+    if(n > 0) {
+        z_game_log("  Extracted %d %s",
+                   n,
+                   z_comp_cargo_getName(Z_CARGO_TYPE_MINERALS, n > 1));
+    } else {
+        z_game_log("  %s is depleted", targetName);
+    }
+}
 
 AEntity* z_entity_asteroid_new(ZCompMap* Map)
 {
@@ -34,6 +64,9 @@ AEntity* z_entity_asteroid_new(ZCompMap* Map)
 
     ZCompCargo* cargo = a_entity_addComponent(e, "cargo");
     z_comp_cargo_add(cargo, Z_CARGO_TYPE_MINERALS, 1 + a_random_getInt(4));
+
+    a_entity_setMessageHandler(e, "greeting", z_entity_macro_handleGreeting);
+    a_entity_setMessageHandler(e, "aggression", miningHandler);
 
     return e;
 }

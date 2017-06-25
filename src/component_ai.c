@@ -21,26 +21,17 @@
 #include "component_ai.h"
 
 struct ZCompAi {
-    AList* messageQueue; // list of ZAiMessage
-    ZAiMessageHandler* messageHandler;
     ZAiTickHandler* tickHandler;
     void* context;
 };
-
-typedef struct ZAiMessage {
-    ZAiMessageType type;
-    AEntity* relevantEntity;
-} ZAiMessage;
 
 size_t z_comp_ai_size(void)
 {
     return sizeof(ZCompAi);
 }
 
-void z_comp_ai_init(ZCompAi* Ai, ZAiMessageHandler* MessageHandler, ZAiTickHandler* TickHandler, size_t ContextSize)
+void z_comp_ai_init(ZCompAi* Ai, ZAiTickHandler* TickHandler, size_t ContextSize)
 {
-    Ai->messageQueue = a_list_new();
-    Ai->messageHandler = MessageHandler;
     Ai->tickHandler = TickHandler;
     Ai->context = a_mem_zalloc(ContextSize);
 }
@@ -49,18 +40,7 @@ void z_comp_ai_free(void* Self)
 {
     ZCompAi* ai = Self;
 
-    A_LIST_ITERATE(ai->messageQueue, ZAiMessage*, m) {
-        a_entity_release(m->relevantEntity);
-        free(m);
-    }
-
-    a_list_free(ai->messageQueue);
     free(ai->context);
-}
-
-void z_comp_ai_runMessageHandler(ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant)
-{
-    Ai->messageHandler(a_component_getEntity(Ai), Ai, Type, Relevant);
 }
 
 void z_comp_ai_runTickHandler(ZCompAi* Ai)
@@ -71,33 +51,4 @@ void z_comp_ai_runTickHandler(ZCompAi* Ai)
 void* z_comp_ai_getContext(const ZCompAi* Ai)
 {
     return Ai->context;
-}
-
-void z_comp_ai_queueMessage(ZCompAi* Ai, ZAiMessageType Type, AEntity* Relevant)
-{
-    ZAiMessage* m = a_mem_malloc(sizeof(ZAiMessage));
-
-    m->type = Type;
-    m->relevantEntity = Relevant;
-
-    a_entity_reference(Relevant);
-
-    a_list_addLast(Ai->messageQueue, m);
-}
-
-bool z_comp_ai_getMessage(ZCompAi* Ai, ZAiMessageType* Type, AEntity** Relevant)
-{
-    ZAiMessage* m = a_list_pop(Ai->messageQueue);
-
-    if(m) {
-        *Type = m->type;
-        *Relevant = m->relevantEntity;
-
-        a_entity_release(*Relevant);
-        free(m);
-
-        return true;
-    }
-
-    return false;
 }

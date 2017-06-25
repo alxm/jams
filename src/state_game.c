@@ -350,7 +350,7 @@ void z_game_tradeOn(AEntity* Merchant)
     a_button_release(z_controls.up);
     a_button_release(z_controls.down);
 
-    a_system_mute("playerInput ai runInteractions");
+    a_system_mute("playerInput ai");
     a_system_unmute("tradeTick tradeDraw");
 }
 
@@ -362,7 +362,7 @@ void z_game_tradeOff(AEntity* Merchant)
     }
 
     a_system_mute("tradeTick tradeDraw");
-    a_system_unmute("playerInput ai runInteractions");
+    a_system_unmute("playerInput ai");
 }
 
 A_STATE(playGame)
@@ -381,7 +381,7 @@ A_STATE(playGame)
         z_game_initScreen(&g_game.staging);
         z_game_createStagingScreen();
 
-        a_system_tick("playerInput ai runInteractions tradeTick");
+        a_system_tick("playerInput ai tradeTick");
         a_system_draw("drawMap drawSprites drawHud tradeDraw");
     }
 

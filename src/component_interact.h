@@ -18,16 +18,8 @@
 
 typedef struct ZCompInteract ZCompInteract;
 
-typedef enum {
-    Z_INTERACTION_BENEVOLENT,
-    Z_INTERACTION_AGGRESSIVE
-} ZInteractionType;
-
 extern size_t z_comp_interact_size(void);
 extern void z_comp_interact_init(ZCompInteract* Interact, const char* Name);
 extern AComponentFree z_comp_interact_free;
 
-extern void z_comp_interact_action(ZCompInteract* Interact, AEntity* Actor, ZInteractionType Type);
 extern const char* z_comp_interact_getName(const ZCompInteract* Interact);
-
-extern bool z_comp_interact_getPending(ZCompInteract* Interact, AEntity** Actor, ZInteractionType* Type);
