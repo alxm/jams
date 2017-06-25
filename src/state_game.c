@@ -76,7 +76,7 @@ static void z_game_createStagingScreen(void)
                      + g_game.universeY * Z_UNIVERSE_DIM
                      + g_game.universeX);
 
-    g_game.staging.map = a_entity_new("map");
+    g_game.staging.map = a_entity_new("map", NULL);
     a_list_addLast(g_game.staging.entities, g_game.staging.map);
 
     ZCompMap* map = a_entity_addComponent(g_game.staging.map, "map");

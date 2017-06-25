@@ -73,7 +73,7 @@ static void playerInput(AEntity* Entity)
 
 AEntity* z_entity_player_new(void)
 {
-    AEntity* e = a_entity_new("player");
+    AEntity* e = a_entity_new("player", NULL);
 
     a_entity_setMessageHandler(e, "aggression", z_entity_macro_handleAttack);
 
