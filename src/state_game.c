@@ -17,6 +17,8 @@
 
 #include <a2x.h>
 
+#include "util_log.h"
+
 #define Z_YEARS_TO_MONTHS(Years)  ((Years) * 12)
 #define Z_MONTHS_TO_YEARS(Months) ((Months) / 12)
 
@@ -31,6 +33,7 @@ typedef struct ZDespot {
 typedef struct ZGame {
     int timeInMonths;
     ZDespot despot;
+    ZLog* log;
 } ZGame;
 
 static void game_init(ZGame* Game)
@@ -41,11 +44,22 @@ static void game_init(ZGame* Game)
     Game->despot.wealth = 1000;
     Game->despot.popularity = 50;
     Game->despot.loyalty = 50;
+    Game->log = z_log_new(8);
 }
 
 static void game_free(ZGame* Game)
 {
-    A_UNUSED(Game);
+    z_log_free(Game->log);
+}
+
+static void game_log(ZGame* Game, AFont* Font, const char* Format, ...)
+{
+    va_list args;
+    va_start(args, Format);
+
+    z_log_log(Game->log, Font, Format, args);
+
+    va_end(args);
 }
 
 A_STATE(game)
@@ -55,6 +69,7 @@ A_STATE(game)
     A_STATE_INIT
     {
         game_init(&game);
+        game_log(&game, NULL, "Hello, world");
     }
 
     A_STATE_BODY
@@ -82,6 +97,8 @@ A_STATE(game)
                 x++;
             }
 
+            z_log_tick(game.log);
+
             A_STATE_LOOP_DRAW
             {
                 a_pixel_setHex(0xaaff88);
@@ -89,6 +106,8 @@ A_STATE(game)
 
                 a_pixel_setHex(0xffaa44);
                 a_draw_rectangle(x - dim / 2, y - dim / 2, dim, dim);
+
+                z_log_draw(game.log, 0, 0);
             }
         }
     }
