@@ -63,6 +63,40 @@ static void game_log(ZGame* Game, AFont* Font, const char* Format, ...)
     va_end(args);
 }
 
+static void game_drawStats(const ZGame* Game)
+{
+    int startX = a_screen_getWidth() / 2;
+    int startY = 0;
+
+    a_pixel_setHex(0x88ffaa);
+    a_draw_rectangle(startX,
+                     startY,
+                     a_screen_getWidth() - startX,
+                     a_screen_getHeight() / 2);
+
+    a_font_setCoords(startX + 2, startY + 2);
+
+    a_font_printf("YEAR %d", Z_MONTHS_TO_YEARS(Game->timeInMonths));
+    a_font_newLine();
+
+    a_font_printf("AGE %d",
+                  Z_MONTHS_TO_YEARS(
+                    Game->timeInMonths - Game->despot.dobInMonths));
+    a_font_newLine();
+
+    a_font_printf("HEALTH %d/100", Game->despot.health);
+    a_font_newLine();
+
+    a_font_printf("WEALTH %d", Game->despot.wealth);
+    a_font_newLine();
+
+    a_font_printf("POPULARITY %d/100", Game->despot.popularity);
+    a_font_newLine();
+
+    a_font_printf("LOYALTY %d/100", Game->despot.loyalty);
+    a_font_newLine();
+}
+
 A_STATE(game)
 {
     static ZGame game;
@@ -90,6 +124,8 @@ A_STATE(game)
             {
                 a_pixel_setHex(0xaaff88);
                 a_draw_fill();
+
+                game_drawStats(&game);
 
                 int logX = 0;
                 int logY = a_screen_getHeight() / 2;
