@@ -20,8 +20,20 @@
 #include "util_controls.h"
 #include "util_log.h"
 
-#define Z_YEARS_TO_MONTHS(Years)  ((Years) * 12)
-#define Z_MONTHS_TO_YEARS(Months) ((Months) / 12)
+static inline int time_yearsToMonths(int Years)
+{
+    return Years * 12;
+}
+
+static inline int time_monthsToYears(int Months)
+{
+    return Months / 12;
+}
+
+static inline int time_monthsIntoYear(int Months)
+{
+    return Months % 12;
+}
 
 typedef struct ZDespot {
     int dobInMonths;
@@ -39,8 +51,8 @@ typedef struct ZGame {
 
 static void game_init(ZGame* Game)
 {
-    Game->timeInMonths = Z_YEARS_TO_MONTHS(3900);
-    Game->despot.dobInMonths = Game->timeInMonths - Z_YEARS_TO_MONTHS(30);
+    Game->timeInMonths = time_yearsToMonths(3900);
+    Game->despot.dobInMonths = Game->timeInMonths - time_yearsToMonths(30);
     Game->despot.health = 80;
     Game->despot.wealth = 1000;
     Game->despot.popularity = 50;
@@ -70,9 +82,9 @@ static void game_newTurn(ZGame* Game)
     game_log(Game,
              NULL,
              "A month passed. %d months into the year.",
-             Game->timeInMonths % 12);
+             time_monthsIntoYear(Game->timeInMonths));
 
-    int age = Z_MONTHS_TO_YEARS(Game->timeInMonths - Game->despot.dobInMonths);
+    int age = time_monthsToYears(Game->timeInMonths - Game->despot.dobInMonths);
     int healthDec = 0;
 
     if(age >= 90) {
@@ -108,11 +120,11 @@ static void game_drawStats(const ZGame* Game)
 
     a_font_setCoords(startX + 2, startY + 2);
 
-    a_font_printf("YEAR %d", Z_MONTHS_TO_YEARS(Game->timeInMonths));
+    a_font_printf("YEAR %d", time_monthsToYears(Game->timeInMonths));
     a_font_newLine();
 
     a_font_printf("AGE %d",
-                  Z_MONTHS_TO_YEARS(
+                  time_monthsToYears(
                     Game->timeInMonths - Game->despot.dobInMonths));
     a_font_newLine();
 
