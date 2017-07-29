@@ -45,7 +45,7 @@ static void game_init(ZGame* Game)
     Game->despot.wealth = 1000;
     Game->despot.popularity = 50;
     Game->despot.loyalty = 50;
-    Game->log = z_log_new(8);
+    Game->log = z_log_new(12);
 }
 
 static void game_free(ZGame* Game)
@@ -80,7 +80,8 @@ A_STATE(game)
         A_STATE_LOOP
         {
             if(a_button_getPressedOnce(z_controls.action)) {
-                game_log(&game, NULL, "New turn");
+                static int i = 0;
+                game_log(&game, NULL, "New turn %d", ++i);
             }
 
             z_log_tick(game.log);
@@ -90,7 +91,14 @@ A_STATE(game)
                 a_pixel_setHex(0xaaff88);
                 a_draw_fill();
 
-                z_log_draw(game.log, 0, 0);
+                int logX = 0;
+                int logY = a_screen_getHeight() / 2;
+                int logWidth = a_screen_getWidth();
+                int logHeight = a_screen_getHeight() / 2;
+
+                a_pixel_setHex(0xffff88);
+                a_draw_rectangle(logX, logY, logWidth, logHeight);
+                z_log_draw(game.log, logX + 2, logY + 6);
             }
         }
     }

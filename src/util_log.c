@@ -109,7 +109,7 @@ void z_log_draw(const ZLog* Log, int X, int Y)
 {
     a_font_setCoords(X, Y);
 
-    int alphaInc = 20;
+    int alphaInc = (3 * A_PIXEL_ALPHA_MAX / 4) / (int)Log->maxLines;
     int numLines = (int)a_list_getSize(Log->lines);
     int alpha = A_PIXEL_ALPHA_MAX - (numLines + 1) * alphaInc;
 
