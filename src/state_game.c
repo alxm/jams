@@ -17,6 +17,7 @@
 
 #include <a2x.h>
 
+#include "util_controls.h"
 #include "util_log.h"
 
 #define Z_YEARS_TO_MONTHS(Years)  ((Years) * 12)
@@ -74,27 +75,12 @@ A_STATE(game)
 
     A_STATE_BODY
     {
-        int x = a_screen_getWidth() / 2;
-        int y = a_screen_getHeight() / 2;
-        int dim = a_screen_getWidth() / 4;
-
-        AInputButton* up = a_button_new("key.up");
-        AInputButton* down = a_button_new("key.down");
-        AInputButton* left = a_button_new("key.left");
-        AInputButton* right = a_button_new("key.right");
+        z_controls_release();
 
         A_STATE_LOOP
         {
-            if(a_button_getPressed(up)) {
-                y--;
-            } else if(a_button_getPressed(down)) {
-                y++;
-            }
-
-            if(a_button_getPressed(left)) {
-                x--;
-            } else if(a_button_getPressed(right)) {
-                x++;
+            if(a_button_getPressedOnce(z_controls.action)) {
+                game_log(&game, NULL, "New turn");
             }
 
             z_log_tick(game.log);
@@ -103,9 +89,6 @@ A_STATE(game)
             {
                 a_pixel_setHex(0xaaff88);
                 a_draw_fill();
-
-                a_pixel_setHex(0xffaa44);
-                a_draw_rectangle(x - dim / 2, y - dim / 2, dim, dim);
 
                 z_log_draw(game.log, 0, 0);
             }

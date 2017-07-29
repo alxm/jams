@@ -14,24 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <a2x.h>
 
-#include "state_game.h"
+typedef struct ZControls ZControls;
 
-#include "util_controls.h"
+struct ZControls {
+    AInputButton* up;
+    AInputButton* down;
+    AInputButton* left;
+    AInputButton* right;
+    AInputButton* action;
+};
 
-A_SETUP
-{
-    a_settings_set("app.title", "Despot 3900");
-    a_settings_set("app.version", "1.0");
-    a_settings_set("app.author", "alxm");
-    a_settings_set("app.output.on", "yes");
-}
+extern ZControls z_controls;
 
-A_MAIN
-{
-    z_controls_load();
-
-    a_state_new("game", game);
-    a_state_push("game");
-}
+extern void z_controls_load(void);
+extern void z_controls_release(void);
