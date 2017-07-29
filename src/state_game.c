@@ -20,6 +20,12 @@
 #include "util_controls.h"
 #include "util_log.h"
 
+#define Z_REVOLT_THRESHOLD 50
+#define Z_REVOLT_COUNT_MAX 10
+
+#define Z_COUP_THRESHOLD   50
+#define Z_COUP_COUNT_MAX   10
+
 static inline int time_yearsToMonths(int Years)
 {
     return Years * 12;
@@ -45,6 +51,8 @@ typedef struct ZDespot {
 
 typedef struct ZGame {
     int timeInMonths;
+    unsigned revoltCounter;
+    unsigned coupCounter;
     ZDespot despot;
     ZLog* log;
 } ZGame;
@@ -52,11 +60,15 @@ typedef struct ZGame {
 static void game_init(ZGame* Game)
 {
     Game->timeInMonths = time_yearsToMonths(3900);
+    Game->revoltCounter = 0;
+    Game->coupCounter = 0;
+
     Game->despot.dobInMonths = Game->timeInMonths - time_yearsToMonths(30);
     Game->despot.health = 80;
     Game->despot.wealth = 1000;
     Game->despot.popularity = 50;
     Game->despot.loyalty = 50;
+
     Game->log = z_log_new(12);
 }
 
@@ -84,7 +96,9 @@ static void game_newTurn(ZGame* Game)
              "A month passed. %d months into the year.",
              time_monthsIntoYear(Game->timeInMonths));
 
-    int age = time_monthsToYears(Game->timeInMonths - Game->despot.dobInMonths);
+    ZDespot* despot = &Game->despot;
+
+    int age = time_monthsToYears(Game->timeInMonths - despot->dobInMonths);
     int healthDec = 0;
 
     if(age >= 90) {
@@ -97,14 +111,47 @@ static void game_newTurn(ZGame* Game)
         healthDec = 2;
     }
 
-    Game->despot.health -= healthDec;
+    despot->health -= healthDec;
 
     if(healthDec > 0) {
-        if(Game->despot.health <= 0) {
+        game_log(Game, NULL, "Despot lost %d health", healthDec);
+
+        if(despot->health <= 0) {
             game_log(Game, NULL, "Despot died");
-        } else {
-            game_log(Game, NULL, "Despot lost %d health", healthDec);
+            return;
         }
+    }
+
+    if(Game->revoltCounter > 0) {
+        if(Game->revoltCounter++ >= Z_REVOLT_COUNT_MAX) {
+            game_log(Game,
+                     NULL,
+                     "Revolt counter reached %d",
+                     Z_REVOLT_COUNT_MAX);
+        }
+    } else if(despot->popularity < Z_REVOLT_THRESHOLD) {
+        Game->revoltCounter = 1;
+
+        game_log(Game,
+                 NULL,
+                 "Despot's popularity slipped below %d%%",
+                 Z_REVOLT_THRESHOLD);
+    }
+
+    if(Game->coupCounter > 0) {
+        if(Game->coupCounter++ >= Z_COUP_COUNT_MAX) {
+            game_log(Game,
+                     NULL,
+                     "Coup counter reached %d",
+                     Z_COUP_COUNT_MAX);
+        }
+    } else if(despot->loyalty < Z_COUP_THRESHOLD) {
+        Game->coupCounter = 1;
+
+        game_log(Game,
+                 NULL,
+                 "Nobles' loyalty to the Despot slipped below %d%%",
+                 Z_COUP_THRESHOLD);
     }
 }
 
