@@ -71,6 +71,29 @@ static void game_newTurn(ZGame* Game)
              NULL,
              "A month passed. %d months into the year.",
              Game->timeInMonths % 12);
+
+    int age = Z_MONTHS_TO_YEARS(Game->timeInMonths - Game->despot.dobInMonths);
+    int healthDec = 0;
+
+    if(age >= 90) {
+        healthDec = 5;
+    } if(age >= 80) {
+        healthDec = 4;
+    } else if(age >= 70) {
+        healthDec = 3;
+    } else if(age >= 60) {
+        healthDec = 2;
+    }
+
+    Game->despot.health -= healthDec;
+
+    if(healthDec > 0) {
+        if(Game->despot.health <= 0) {
+            game_log(Game, NULL, "Despot died");
+        } else {
+            game_log(Game, NULL, "Despot lost %d health", healthDec);
+        }
+    }
 }
 
 static void game_drawStats(const ZGame* Game)
