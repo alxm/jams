@@ -63,6 +63,16 @@ static void game_log(ZGame* Game, AFont* Font, const char* Format, ...)
     va_end(args);
 }
 
+static void game_newTurn(ZGame* Game)
+{
+    Game->timeInMonths++;
+
+    game_log(Game,
+             NULL,
+             "A month passed. %d months into the year.",
+             Game->timeInMonths % 12);
+}
+
 static void game_drawStats(const ZGame* Game)
 {
     int startX = a_screen_getWidth() / 2;
@@ -126,8 +136,7 @@ A_STATE(game)
         A_STATE_LOOP
         {
             if(a_button_getPressedOnce(z_controls.action)) {
-                static int i = 0;
-                game_log(&game, NULL, "New turn %d", ++i);
+                game_newTurn(&game);
             }
 
             z_log_tick(game.log);
