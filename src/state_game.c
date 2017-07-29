@@ -67,12 +67,11 @@ static void game_drawStats(const ZGame* Game)
 {
     int startX = a_screen_getWidth() / 2;
     int startY = 0;
+    int width = a_screen_getWidth() - startX;
+    int height = a_screen_getHeight() / 2;
 
     a_pixel_setHex(0x88ffaa);
-    a_draw_rectangle(startX,
-                     startY,
-                     a_screen_getWidth() - startX,
-                     a_screen_getHeight() / 2);
+    a_draw_rectangle(startX, startY, width, height);
 
     a_font_setCoords(startX + 2, startY + 2);
 
@@ -95,6 +94,19 @@ static void game_drawStats(const ZGame* Game)
 
     a_font_printf("LOYALTY %d/100", Game->despot.loyalty);
     a_font_newLine();
+}
+
+static void game_drawLog(const ZGame* Game)
+{
+    int startX = 0;
+    int startY = a_screen_getHeight() / 2;
+    int width = a_screen_getWidth();
+    int height = a_screen_getHeight() / 2;
+
+    a_pixel_setHex(0xffff88);
+    a_draw_rectangle(startX, startY, width, height);
+
+    z_log_draw(Game->log, startX + 2, startY + 6);
 }
 
 A_STATE(game)
@@ -126,15 +138,7 @@ A_STATE(game)
                 a_draw_fill();
 
                 game_drawStats(&game);
-
-                int logX = 0;
-                int logY = a_screen_getHeight() / 2;
-                int logWidth = a_screen_getWidth();
-                int logHeight = a_screen_getHeight() / 2;
-
-                a_pixel_setHex(0xffff88);
-                a_draw_rectangle(logX, logY, logWidth, logHeight);
-                z_log_draw(game.log, logX + 2, logY + 6);
+                game_drawLog(&game);
             }
         }
     }
