@@ -293,9 +293,8 @@ void z_game_turn(ZGame* Game)
         z_game_log(Game, NULL, "Another month passed");
     }
 
-    z_game_logInc(Game);
-
     if(game_health(Game) && game_revolt(Game) && game_coup(Game)) {
+        z_game_logInc(Game);
         a_state_push("actionMenu");
     }
 }

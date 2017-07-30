@@ -54,9 +54,11 @@ void z_action_doNothing(ZGame* Game)
 
     ZDespot* despot = z_game_getDespot(Game);
 
+    z_game_logInc(Game);
     z_despot_setHealth(despot, z_despot_getHealth(despot) + 1);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    z_game_logDec(Game);
 }
 
 void z_action_collectTaxes(ZGame* Game)
@@ -68,16 +70,19 @@ void z_action_collectTaxes(ZGame* Game)
                    NULL,
                    "Despot taxed the peasants");
 
+        z_game_logInc(Game);
         z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
     } else {
         z_game_log(Game,
                    NULL,
                    "Despot taxed the nobles");
 
+        z_game_logInc(Game);
         z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
     }
 
     z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
+    z_game_logDec(Game);
 }
 
 void z_action_giveMoney(ZGame* Game)
@@ -89,6 +94,7 @@ void z_action_giveMoney(ZGame* Game)
                    NULL,
                    "Despot was generous to the peasants");
 
+        z_game_logInc(Game);
         z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 1);
         z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
     } else {
@@ -96,11 +102,13 @@ void z_action_giveMoney(ZGame* Game)
                    NULL,
                    "Despot was generous to the nobles");
 
+        z_game_logInc(Game);
         z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
         z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 1);
     }
 
     z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
+    z_game_logDec(Game);
 }
 
 void z_action_imprisonOpponents(ZGame* Game)
@@ -123,6 +131,7 @@ void z_action_imprisonOpponents(ZGame* Game)
                    NULL,
                    "Despot imprisoned a group of rebellious peasants");
 
+        z_game_logInc(Game);
         z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
         z_game_staveOffRevolt(Game);
     } else {
@@ -130,9 +139,12 @@ void z_action_imprisonOpponents(ZGame* Game)
                    NULL,
                    "Despot imprisoned a corrupt noble");
 
+        z_game_logInc(Game);
         z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
         z_game_staveOffCoup(Game);
     }
+
+    z_game_logDec(Game);
 }
 
 void z_action_wageWar(ZGame* Game)
