@@ -34,7 +34,6 @@ typedef struct ZGame {
     unsigned coupCounter;
     ZDespot* despot;
     ZLog* log;
-    bool gameOver;
 } ZGame;
 
 static void game_init(ZGame* Game)
@@ -50,8 +49,6 @@ static void game_init(ZGame* Game)
                                 50);
 
     Game->log = z_log_new(12);
-
-    Game->gameOver = false;
 }
 
 static void game_free(ZGame* Game)
@@ -69,14 +66,11 @@ static void game_log(ZGame* Game, AFont* Font, const char* Format, ...)
     va_end(args);
 }
 
-static void game_setGameOver(ZGame* Game)
-{
-    Game->gameOver = true;
-}
-
 static void game_checkGameOver(ZGame* Game)
 {
-    if(Game->gameOver) {
+    if(z_despot_getHealth(Game->despot) <= 0
+        || z_despot_getWealth(Game->despot) <= 0) {
+
         a_state_pop();
     }
 }
@@ -107,8 +101,6 @@ static bool game_health(ZGame* Game)
 
         if(health <= 0) {
             game_log(Game, NULL, "Despot died");
-            game_setGameOver(Game);
-
             return false;
         }
     }
