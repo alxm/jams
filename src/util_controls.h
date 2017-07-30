@@ -15,8 +15,6 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZControls ZControls;
-
 struct ZControls {
     AInputButton* up;
     AInputButton* down;

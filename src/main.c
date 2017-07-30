@@ -16,9 +16,12 @@
 */
 #include <a2x.h>
 
-#include "state_game.h"
+#include "util_types.h"
 
 #include "util_controls.h"
+
+#include "state_action.h"
+#include "state_game.h"
 
 A_SETUP
 {
@@ -32,8 +35,8 @@ A_MAIN
 {
     z_controls_load();
 
-    a_state_new("game", game);
     a_state_new("actionMenu", actionMenu);
+    a_state_new("game", game);
 
     a_state_push("game");
 }

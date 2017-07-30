@@ -17,9 +17,10 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
+#include "util_types.h"
 
 #include "util_despot.h"
+#include "util_game.h"
 #include "util_time.h"
 
 struct ZDespot {

@@ -15,8 +15,6 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZLog ZLog;
-
 extern ZLog* z_log_new(unsigned MaxLines);
 extern void z_log_free(ZLog* Log);
 

@@ -15,8 +15,6 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZDespot ZDespot;
-
 extern ZDespot* z_despot_new(ZGame* Game, int DobInMonths, int Health, int Wealth, int Popularity, int Loyalty);
 extern void z_despot_free(ZDespot* Despot);
 

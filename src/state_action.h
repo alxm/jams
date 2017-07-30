@@ -15,6 +15,10 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ZGame* z_game;
+extern A_STATE(actionMenu);
 
-extern A_STATE(game);
+extern void z_action_doNothing(ZGame* Game);
+extern void z_action_collectTaxes(ZGame* Game);
+extern void z_action_giveMoney(ZGame* Game);
+extern void z_action_imprisonOpponents(ZGame* Game);
+extern void z_action_wageWar(ZGame* Game);

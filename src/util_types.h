@@ -15,6 +15,7 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ZGame* z_game;
-
-extern A_STATE(game);
+typedef struct ZControls ZControls;
+typedef struct ZDespot ZDespot;
+typedef struct ZGame ZGame;
+typedef struct ZLog ZLog;

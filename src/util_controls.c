@@ -17,6 +17,8 @@
 
 #include <a2x.h>
 
+#include "util_types.h"
+
 #include "util_controls.h"
 
 ZControls z_controls;
