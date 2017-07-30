@@ -49,7 +49,10 @@ A_STATE(game)
         A_STATE_LOOP
         {
             if(a_button_getPressedOnce(z_controls.action)) {
+                z_game_setInstructions(z_game, "");
                 z_game_turn(z_game);
+            } else {
+                z_game_setInstructions(z_game, "Press SPACE BAR");
             }
 
             z_game_logTick(z_game);

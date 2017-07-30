@@ -33,6 +33,7 @@
 #define Z_COUP_COUNT_MAX   10
 
 struct ZGame {
+    const char* instructions;
     int timeInMonths;
     unsigned revoltCounter;
     unsigned coupCounter;
@@ -70,6 +71,7 @@ ZGame* z_game_init(void)
 {
     ZGame* g = a_mem_malloc(sizeof(ZGame));
 
+    g->instructions = "";
     g->timeInMonths = z_time_yearsToMonths(3900);
     g->revoltCounter = 0;
     g->coupCounter = 0;
@@ -82,7 +84,7 @@ ZGame* z_game_init(void)
                              50,
                              50);
 
-    g->log = z_log_new(12);
+    g->log = z_log_new(10);
 
     g->actionMenu = a_menu_new(z_controls.down,
                                z_controls.up,
@@ -126,6 +128,11 @@ void z_game_free(ZGame* Game)
     a_menu_free(Game->actionMenu);
     z_log_free(Game->log);
     free(Game);
+}
+
+void z_game_setInstructions(ZGame* Game, const char* Text)
+{
+    Game->instructions = Text;
 }
 
 int z_game_getTimeInMonths(const ZGame* Game)
@@ -356,12 +363,26 @@ static void game_drawLog(const ZGame* Game)
     int startX = 0;
     int startY = a_screen_getHeight() / 2;
     int width = a_screen_getWidth();
-    int height = a_screen_getHeight() / 2;
+    int height = a_screen_getHeight() / 2 - 27;
 
     a_pixel_setHex(0xffff88);
     a_draw_rectangle(startX, startY, width, height);
 
-    z_log_draw(Game->log, startX + 2, startY + 6);
+    z_log_draw(Game->log, startX + 2, startY + 2);
+}
+
+static void game_drawHelp(const ZGame* Game)
+{
+    int startX = 0;
+    int startY = a_screen_getHeight() - 27;
+    int width = a_screen_getWidth();
+    int height = 27;
+
+    a_pixel_setHex(0xaaffff);
+    a_draw_rectangle(startX, startY, width, height);
+
+    a_font_setCoords(startX + 2, startY + 10);
+    a_font_print(Game->instructions);
 }
 
 void z_game_draw(const ZGame* Game)
@@ -371,6 +392,7 @@ void z_game_draw(const ZGame* Game)
 
     game_drawStats(Game);
     game_drawLog(Game);
+    game_drawHelp(Game);
 }
 
 void z_game_drawMenu(const ZGame* Game)

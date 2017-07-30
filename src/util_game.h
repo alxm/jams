@@ -18,6 +18,7 @@
 extern ZGame* z_game_init(void);
 extern void z_game_free(ZGame* Game);
 
+extern void z_game_setInstructions(ZGame* Game, const char* Text);
 extern int z_game_getTimeInMonths(const ZGame* Game);
 extern unsigned z_game_getNumImprisoned(const ZGame* Game);
 extern void z_game_setNumImprisoned(ZGame* Game, unsigned Num);
