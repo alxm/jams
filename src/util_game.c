@@ -303,7 +303,7 @@ static bool game_revolt(ZGame* Game)
 
         z_game_log(Game,
                    NULL,
-                   "Despot's popularity amongst peasants slipped below %d%%",
+                   "Despot's popularity amongst peasants is below %d%%",
                    Z_REVOLT_THRESHOLD);
 
         z_game_logInc(Game);
@@ -335,7 +335,7 @@ static bool game_coup(ZGame* Game)
 
         z_game_log(Game,
                    NULL,
-                   "Nobles' loyalty to the Despot slipped below %d%%",
+                   "Nobles' loyalty to the Despot is below %d%%",
                    Z_COUP_THRESHOLD);
 
         z_game_logInc(Game);
@@ -351,7 +351,7 @@ bool z_game_turn(ZGame* Game)
     Game->timeInMonths++;
 
     if(z_time_monthsIntoYear(Game->timeInMonths) == 0) {
-        z_game_log(Game, NULL, "A year passed");
+        z_game_log(Game, NULL, "A year passed - GLORY TO THE DESPOT!");
 
         Game->numImprisonedThisYear = 0;
     } else {
@@ -398,7 +398,9 @@ static void game_drawStats(const ZGame* Game)
 
     a_font_setCoords(startX + 2, startY + 2);
 
-    a_font_printf("YEAR %d", z_time_monthsToYears(Game->timeInMonths));
+    a_font_printf("YEAR %d, month %d",
+                  z_time_monthsToYears(Game->timeInMonths),
+                  z_time_monthsIntoYear(Game->timeInMonths) + 1);
     a_font_newLine();
 
     a_font_printf("AGE %d", z_despot_getAgeInYears(Game->despot));
