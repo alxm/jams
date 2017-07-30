@@ -237,9 +237,9 @@ static bool game_revolt(ZGame* Game)
     if(Game->revoltCounter > 0) {
         if(Game->revoltCounter++ >= Z_REVOLT_COUNT_MAX) {
             z_game_log(Game,
-                     NULL,
-                     "Revolt counter reached %d",
-                     Z_REVOLT_COUNT_MAX);
+                       NULL,
+                       "Revolt counter reached %d",
+                       Z_REVOLT_COUNT_MAX);
 
             // Stage revolt
 
@@ -252,9 +252,9 @@ static bool game_revolt(ZGame* Game)
         Game->revoltCounter = 1;
 
         z_game_log(Game,
-                 NULL,
-                 "Despot's popularity slipped below %d%%",
-                 Z_REVOLT_THRESHOLD);
+                   NULL,
+                   "Despot's popularity slipped below %d%%",
+                   Z_REVOLT_THRESHOLD);
     }
 
     return true;
@@ -265,9 +265,9 @@ static bool game_coup(ZGame* Game)
     if(Game->coupCounter > 0) {
         if(Game->coupCounter++ >= Z_COUP_COUNT_MAX) {
             z_game_log(Game,
-                     NULL,
-                     "Coup counter reached %d",
-                     Z_COUP_COUNT_MAX);
+                       NULL,
+                       "Coup counter reached %d",
+                       Z_COUP_COUNT_MAX);
 
             // Stage coup
 
@@ -280,9 +280,9 @@ static bool game_coup(ZGame* Game)
         Game->coupCounter = 1;
 
         z_game_log(Game,
-                 NULL,
-                 "Nobles' loyalty to the Despot slipped below %d%%",
-                 Z_COUP_THRESHOLD);
+                   NULL,
+                   "Nobles' loyalty to the Despot slipped below %d%%",
+                   Z_COUP_THRESHOLD);
     }
 
     return true;
@@ -293,9 +293,11 @@ static void game_turn(ZGame* Game)
     Game->timeInMonths++;
 
     z_game_log(Game,
-             NULL,
-             "A month passed. %d months into the year.",
-             z_time_monthsIntoYear(Game->timeInMonths));
+               NULL,
+               "A month passed. %d months into the year.",
+               z_time_monthsIntoYear(Game->timeInMonths));
+
+    z_game_logInc(Game);
 
     if(game_health(Game) && game_revolt(Game) && game_coup(Game)) {
         a_state_push("actionMenu");
@@ -436,6 +438,11 @@ A_STATE(actionMenu)
             }
         }
     }
+
+    A_STATE_FREE
+    {
+        z_game_logDec(&g_game);
+    }
 }
 
 int z_game_getTimeInMonths(const ZGame* Game)
@@ -443,7 +450,7 @@ int z_game_getTimeInMonths(const ZGame* Game)
     return Game->timeInMonths;
 }
 
-void z_game_log(ZGame* Game, AFont* Font, const char* Format, ...)
+void z_game_log(const ZGame* Game, AFont* Font, const char* Format, ...)
 {
     va_list args;
     va_start(args, Format);
@@ -451,4 +458,15 @@ void z_game_log(ZGame* Game, AFont* Font, const char* Format, ...)
     z_log_log(Game->log, Font, Format, args);
 
     va_end(args);
+}
+
+void z_game_logInc(const ZGame* Game)
+{
+    z_log_inc(Game->log);
+}
+
+
+void z_game_logDec(const ZGame* Game)
+{
+    z_log_dec(Game->log);
 }

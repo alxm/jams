@@ -21,4 +21,7 @@ extern A_STATE(game);
 extern A_STATE(actionMenu);
 
 extern int z_game_getTimeInMonths(const ZGame* Game);
-extern void z_game_log(ZGame* Game, AFont* Font, const char* Format, ...);
+
+extern void z_game_log(const ZGame* Game, AFont* Font, const char* Format, ...);
+extern void z_game_logInc(const ZGame* Game);
+extern void z_game_logDec(const ZGame* Game);

@@ -22,5 +22,8 @@ extern void z_log_free(ZLog* Log);
 
 extern void z_log_log(ZLog* Log, AFont* Font, const char* Format, va_list Args);
 
+extern void z_log_inc(ZLog* Log);
+extern void z_log_dec(ZLog* Log);
+
 extern bool z_log_tick(ZLog* Log);
 extern void z_log_draw(const ZLog* Log, int X, int Y);

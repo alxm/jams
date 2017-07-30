@@ -23,10 +23,12 @@ struct ZLog {
     AList* lines;
     AList* backlog;
     unsigned maxLines;
+    int indent;
 };
 
 typedef struct ZLogLine {
     char* text;
+    int indent;
     AFont* font;
 } ZLogLine;
 
@@ -37,6 +39,7 @@ ZLog* z_log_new(unsigned MaxLines)
     l->lines = a_list_new();
     l->backlog = a_list_new();
     l->maxLines = MaxLines;
+    l->indent = 0;
 
     return l;
 }
@@ -76,7 +79,9 @@ void z_log_log(ZLog* Log, AFont* Font, const char* Format, va_list Args)
             a_out_printf(buffer);
 
             ZLogLine* line = a_mem_malloc(sizeof(ZLogLine));
+
             line->text = buffer;
+            line->indent = Log->indent;
             line->font = Font;
 
             a_list_addLast(Log->backlog, line);
@@ -84,6 +89,16 @@ void z_log_log(ZLog* Log, AFont* Font, const char* Format, va_list Args)
             free(buffer);
         }
     }
+}
+
+void z_log_inc(ZLog* Log)
+{
+    Log->indent++;
+}
+
+void z_log_dec(ZLog* Log)
+{
+    Log->indent = a_math_max(Log->indent - 1, 0);
 }
 
 bool z_log_tick(ZLog* Log)
@@ -125,7 +140,12 @@ void z_log_draw(const ZLog* Log, int X, int Y)
         }
 
         a_font_setFont(NULL);
-        a_font_print(">");
+
+        for(int i = 0; i < line->indent; i++) {
+            a_font_print("  ");
+        }
+
+        a_font_print("> ");
         a_font_setFont(line->font);
         a_font_print(line->text);
         a_font_newLine();
