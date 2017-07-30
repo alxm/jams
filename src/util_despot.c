@@ -45,12 +45,12 @@ void z_despot_free(ZDespot* Despot)
     free(Despot);
 }
 
-int z_despot_getDobInMonths(ZDespot* Despot)
+int z_despot_getDobInMonths(const ZDespot* Despot)
 {
     return Despot->dobInMonths;
 }
 
-int z_despot_getHealth(ZDespot* Despot)
+int z_despot_getHealth(const ZDespot* Despot)
 {
     return Despot->health;
 }
@@ -60,17 +60,32 @@ void z_despot_setHealth(ZDespot* Despot, int Health)
     Despot->health = Health;
 }
 
-int z_despot_getWealth(ZDespot* Despot)
+int z_despot_getWealth(const ZDespot* Despot)
 {
     return Despot->wealth;
 }
 
-int z_despot_getPopularity(ZDespot* Despot)
+void z_despot_setWealth(ZDespot* Despot, int Wealth)
+{
+    Despot->wealth = Wealth;
+}
+
+int z_despot_getPopularity(const ZDespot* Despot)
 {
     return Despot->popularity;
 }
 
-int z_despot_getLoyalty(ZDespot* Despot)
+void z_despot_setPopularity(ZDespot* Despot, int Popularity)
+{
+    Despot->popularity = Popularity;
+}
+
+int z_despot_getLoyalty(const ZDespot* Despot)
 {
     return Despot->loyalty;
+}
+
+void z_despot_setLoyalty(ZDespot* Despot, int Loyalty)
+{
+    Despot->loyalty = Loyalty;
 }

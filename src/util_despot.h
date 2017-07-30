@@ -20,9 +20,16 @@ typedef struct ZDespot ZDespot;
 extern ZDespot* z_despot_new(int DobInMonths, int Health, int Wealth, int Popularity, int Loyalty);
 extern void z_despot_free(ZDespot* Despot);
 
-extern int z_despot_getDobInMonths(ZDespot* Despot);
-extern int z_despot_getHealth(ZDespot* Despot);
+extern int z_despot_getDobInMonths(const ZDespot* Despot);
+
+extern int z_despot_getHealth(const ZDespot* Despot);
 extern void z_despot_setHealth(ZDespot* Despot, int Health);
-extern int z_despot_getWealth(ZDespot* Despot);
-extern int z_despot_getPopularity(ZDespot* Despot);
-extern int z_despot_getLoyalty(ZDespot* Despot);
+
+extern int z_despot_getWealth(const ZDespot* Despot);
+extern void z_despot_setWealth(ZDespot* Despot, int Wealth);
+
+extern int z_despot_getPopularity(const ZDespot* Despot);
+extern void z_despot_setPopularity(ZDespot* Despot, int Popularity);
+
+extern int z_despot_getLoyalty(const ZDespot* Despot);
+extern void z_despot_setLoyalty(ZDespot* Despot, int Loyalty);
