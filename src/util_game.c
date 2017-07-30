@@ -45,7 +45,7 @@ struct ZGame {
     ZMenu currentMenu;
 };
 
-typedef void ZMenuHandler(ZGame* Game);
+typedef bool ZMenuHandler(ZGame* Game);
 
 typedef struct ZMenuItem {
     const char* title;
@@ -369,10 +369,10 @@ bool z_game_handleMenu(ZGame* Game)
 
     if(a_menu_getState(menu) == A_MENU_STATE_SELECTED) {
         ZMenuItem* selected = a_menu_getSelectedItem(menu);
-        selected->handler(Game);
 
         a_menu_reset(menu);
-        return true;
+
+        return selected->handler(Game);;
     }
 
     return false;
@@ -472,4 +472,9 @@ void z_game_drawMenu(const ZGame* Game)
     ZMenuItem* selected = a_menu_getSelectedItem(menu);
     a_font_newLine();
     a_font_print(selected->blurb);
+}
+
+void z_game_setMenu(ZGame* Game, ZMenu Menu)
+{
+    Game->currentMenu = Menu;
 }

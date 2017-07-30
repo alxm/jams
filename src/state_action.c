@@ -56,7 +56,7 @@ A_STATE(actionMenu)
     }
 }
 
-void z_action_doNothing(ZGame* Game)
+bool z_action_doNothing(ZGame* Game)
 {
     z_game_log(Game,
                NULL,
@@ -69,9 +69,11 @@ void z_action_doNothing(ZGame* Game)
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
     z_game_logDec(Game);
+
+    return true;
 }
 
-void z_action_collectTaxes(ZGame* Game)
+bool z_action_collectTaxes(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
 
@@ -93,19 +95,23 @@ void z_action_collectTaxes(ZGame* Game)
 
     z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
     z_game_logDec(Game);
+
+    return true;
 }
 
-void z_action_collectTaxesFromPeasants(ZGame* Game)
+bool z_action_collectTaxesFromPeasants(ZGame* Game)
 {
-    A_UNUSED(Game);
+    z_game_setMenu(Game, Z_MENU_MAIN);
+    return true;
 }
 
-void z_action_collectTaxesFromNobles(ZGame* Game)
+bool z_action_collectTaxesFromNobles(ZGame* Game)
 {
-    A_UNUSED(Game);
+    z_game_setMenu(Game, Z_MENU_MAIN);
+    return true;
 }
 
-void z_action_giveMoney(ZGame* Game)
+bool z_action_giveMoney(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
 
@@ -129,19 +135,23 @@ void z_action_giveMoney(ZGame* Game)
 
     z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
     z_game_logDec(Game);
+
+    return true;
 }
 
-void z_action_giveMoneyToPeasants(ZGame* Game)
+bool z_action_giveMoneyToPeasants(ZGame* Game)
 {
     A_UNUSED(Game);
+    return true;
 }
 
-void z_action_giveMoneyToNobles(ZGame* Game)
+bool z_action_giveMoneyToNobles(ZGame* Game)
 {
     A_UNUSED(Game);
+    return true;
 }
 
-void z_action_imprison(ZGame* Game)
+bool z_action_imprison(ZGame* Game)
 {
     unsigned numImprisoned = z_game_getNumImprisoned(Game);
 
@@ -149,7 +159,7 @@ void z_action_imprison(ZGame* Game)
         z_game_log(Game,
                    NULL,
                    "Despot cannot imprison people again until next year");
-        return;
+        return true;
     }
 
     z_game_setNumImprisoned(Game, ++numImprisoned);
@@ -175,20 +185,24 @@ void z_action_imprison(ZGame* Game)
     }
 
     z_game_logDec(Game);
+
+    return true;
 }
 
-void z_action_imprisonPeasants(ZGame* Game)
+bool z_action_imprisonPeasants(ZGame* Game)
 {
     A_UNUSED(Game);
+    return true;
 }
 
-void z_action_imprisonNobles(ZGame* Game)
+bool z_action_imprisonNobles(ZGame* Game)
 {
     A_UNUSED(Game);
+    return true;
 }
 
-void z_action_wageWar(ZGame* Game)
+bool z_action_wageWar(ZGame* Game)
 {
     A_UNUSED(Game);
-    printf("z_action_wageWar\n");
+    return true;
 }

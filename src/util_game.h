@@ -45,3 +45,5 @@ extern bool z_game_handleMenu(ZGame* Game);
 
 extern void z_game_draw(const ZGame* Game);
 extern void z_game_drawMenu(const ZGame* Game);
+
+extern void z_game_setMenu(ZGame* Game, ZMenu Menu);
