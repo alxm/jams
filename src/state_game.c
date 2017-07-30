@@ -102,15 +102,8 @@ static void game_checkGameOver(ZGame* Game)
     }
 }
 
-static void game_newTurn(ZGame* Game)
+static bool game_health(ZGame* Game)
 {
-    Game->timeInMonths++;
-
-    game_log(Game,
-             NULL,
-             "A month passed. %d months into the year.",
-             time_monthsIntoYear(Game->timeInMonths));
-
     ZDespot* despot = &Game->despot;
 
     int age = time_monthsToYears(Game->timeInMonths - despot->dobInMonths);
@@ -134,9 +127,17 @@ static void game_newTurn(ZGame* Game)
         if(despot->health <= 0) {
             game_log(Game, NULL, "Despot died");
             game_setGameOver(Game);
-            return;
+
+            return false;
         }
     }
+
+    return true;
+}
+
+static bool game_revolt(ZGame* Game)
+{
+    ZDespot* despot = &Game->despot;
 
     if(Game->revoltCounter > 0) {
         if(Game->revoltCounter++ >= Z_REVOLT_COUNT_MAX) {
@@ -144,6 +145,8 @@ static void game_newTurn(ZGame* Game)
                      NULL,
                      "Revolt counter reached %d",
                      Z_REVOLT_COUNT_MAX);
+
+            // Stage revolt
         }
     } else if(despot->popularity < Z_REVOLT_THRESHOLD) {
         Game->revoltCounter = 1;
@@ -154,12 +157,21 @@ static void game_newTurn(ZGame* Game)
                  Z_REVOLT_THRESHOLD);
     }
 
+    return true;
+}
+
+static bool game_coup(ZGame* Game)
+{
+    ZDespot* despot = &Game->despot;
+
     if(Game->coupCounter > 0) {
         if(Game->coupCounter++ >= Z_COUP_COUNT_MAX) {
             game_log(Game,
                      NULL,
                      "Coup counter reached %d",
                      Z_COUP_COUNT_MAX);
+
+            // Stage coup
         }
     } else if(despot->loyalty < Z_COUP_THRESHOLD) {
         Game->coupCounter = 1;
@@ -169,6 +181,20 @@ static void game_newTurn(ZGame* Game)
                  "Nobles' loyalty to the Despot slipped below %d%%",
                  Z_COUP_THRESHOLD);
     }
+
+    return true;
+}
+
+static void game_newTurn(ZGame* Game)
+{
+    Game->timeInMonths++;
+
+    game_log(Game,
+             NULL,
+             "A month passed. %d months into the year.",
+             time_monthsIntoYear(Game->timeInMonths));
+
+    game_health(Game) && game_revolt(Game) && game_coup(Game);
 }
 
 static void game_drawStats(const ZGame* Game)
