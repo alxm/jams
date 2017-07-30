@@ -63,6 +63,18 @@ int z_despot_getHealth(const ZDespot* Despot)
 
 void z_despot_setHealth(ZDespot* Despot, int Health)
 {
+    if(Despot->health < Health) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot gained %d health",
+                   Health - Despot->health);
+    } else if(Despot->health > Health) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot lost %d health",
+                   Despot->health - Health);
+    }
+
     Despot->health = Health;
 }
 
@@ -73,6 +85,18 @@ int z_despot_getWealth(const ZDespot* Despot)
 
 void z_despot_setWealth(ZDespot* Despot, int Wealth)
 {
+    if(Despot->wealth < Wealth) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot gained %d wealth",
+                   Wealth - Despot->wealth);
+    } else if(Despot->wealth > Wealth) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot lost %d wealth",
+                   Despot->wealth - Wealth);
+    }
+
     Despot->wealth = Wealth;
 }
 
@@ -83,6 +107,18 @@ int z_despot_getPopularity(const ZDespot* Despot)
 
 void z_despot_setPopularity(ZDespot* Despot, int Popularity)
 {
+    if(Despot->popularity < Popularity) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot gained %d%% popularity among peasants",
+                   Popularity - Despot->popularity);
+    } else if(Despot->popularity > Popularity) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot lost %d%% popularity among peasants",
+                   Despot->popularity - Popularity);
+    }
+
     Despot->popularity = Popularity;
 }
 
@@ -93,5 +129,17 @@ int z_despot_getLoyalty(const ZDespot* Despot)
 
 void z_despot_setLoyalty(ZDespot* Despot, int Loyalty)
 {
+    if(Despot->loyalty < Loyalty) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot gained %d%% loyalty from nobles",
+                   Loyalty - Despot->loyalty);
+    } else if(Despot->loyalty > Loyalty) {
+        z_game_log(Despot->game,
+                   NULL,
+                   "Despot lost %d%% loyalty from nobles",
+                   Despot->loyalty - Loyalty);
+    }
+
     Despot->loyalty = Loyalty;
 }
