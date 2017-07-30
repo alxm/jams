@@ -37,19 +37,23 @@ typedef struct ZGame {
     AMenu* actionMenu;
 } ZGame;
 
+typedef void ZMenuHandler(ZGame* Game);
+
 typedef struct ZMenuItem {
     const char* title;
     const char* blurb;
+    ZMenuHandler* handler;
 } ZMenuItem;
 
 static ZGame g_game;
 
-static ZMenuItem* menu_item_new(const char* Title, const char* Blurb)
+static ZMenuItem* menu_item_new(const char* Title, const char* Blurb, ZMenuHandler Handler)
 {
     ZMenuItem* item = a_mem_malloc(sizeof(ZMenuItem));
 
     item->title = Title;
     item->blurb = Blurb;
+    item->handler = Handler;
 
     return item;
 }
@@ -57,6 +61,36 @@ static ZMenuItem* menu_item_new(const char* Title, const char* Blurb)
 static void menu_item_free(ZMenuItem* Item)
 {
     free(Item);
+}
+
+static void menu_handler_doNothing(ZGame* Game)
+{
+    A_UNUSED(Game);
+    printf("menu_handler_doNothing\n");
+}
+
+static void menu_handler_collectTaxes(ZGame* Game)
+{
+    A_UNUSED(Game);
+    printf("menu_handler_collectTaxes\n");
+}
+
+static void menu_handler_giveMoney(ZGame* Game)
+{
+    A_UNUSED(Game);
+    printf("menu_handler_giveMoney\n");
+}
+
+static void menu_handler_imprisonOpponents(ZGame* Game)
+{
+    A_UNUSED(Game);
+    printf("menu_handler_imprisonOpponents\n");
+}
+
+static void menu_handler_wageWar(ZGame* Game)
+{
+    A_UNUSED(Game);
+    printf("menu_handler_wageWar\n");
 }
 
 static void game_init(ZGame* Game)
@@ -80,19 +114,28 @@ static void game_init(ZGame* Game)
 
     a_menu_addItem(Game->actionMenu,
                    menu_item_new("Do Nothing",
-                                 "Relax to improve your health!"));
+                                 "Relax to improve your health!",
+                                 menu_handler_doNothing));
+
     a_menu_addItem(Game->actionMenu,
                    menu_item_new("Collect Taxes",
-                                 "Get some more money!"));
+                                 "Get some more money!",
+                                 menu_handler_collectTaxes));
+
     a_menu_addItem(Game->actionMenu,
                    menu_item_new("Give Money",
-                                 "Spread the wealth!"));
+                                 "Spread the wealth!",
+                                 menu_handler_giveMoney));
+
     a_menu_addItem(Game->actionMenu,
                    menu_item_new("Imprison Opponents",
-                                 "How dare they question you!"));
+                                 "How dare they question you!",
+                                 menu_handler_imprisonOpponents));
+
     a_menu_addItem(Game->actionMenu,
                    menu_item_new("Wage War",
-                                 "Always a coin toss!"));
+                                 "Always a coin toss!",
+                                 menu_handler_wageWar));
 }
 
 static void game_free(ZGame* Game)
@@ -337,8 +380,9 @@ A_STATE(actionMenu)
             a_menu_handleInput(menu);
 
             if(a_menu_getState(menu) == A_MENU_STATE_SELECTED) {
-                ZMenuItem* item = a_menu_getSelectedItem(menu);
-                printf("Selected %s\n", item->title);
+                ZMenuItem* selected = a_menu_getSelectedItem(menu);
+                selected->handler(&g_game);
+
                 a_menu_reset(menu);
                 a_state_pop();
             }
