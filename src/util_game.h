@@ -15,6 +15,14 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+typedef enum {
+    Z_MENU_MAIN,
+    Z_MENU_TAX,
+    Z_MENU_GIVE,
+    Z_MENU_IMPRISON,
+    Z_MENU_NUM
+} ZMenu;
+
 extern ZGame* z_game_init(void);
 extern void z_game_free(ZGame* Game);
 
