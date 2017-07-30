@@ -33,9 +33,9 @@ A_STATE(actionMenu)
             if(z_game_logTick(z_game)) {
                 z_game_setInstructions(z_game, "Wait...");
             } else {
-                z_game_setInstructions(
-                    z_game,
-                    "Choose an option with UP/DOWN, select with SPACE BAR");
+                z_game_setInstructions(z_game,
+                                       "Choose an option with UP/DOWN, "
+                                       "select with SPACE BAR");
 
                 if(z_game_handleMenu(z_game)) {
                     a_state_pop();

@@ -40,7 +40,7 @@ struct ZGame {
     unsigned numImprisonedThisYear;
     ZDespot* despot;
     ZLog* log;
-    AMenu* actionMenu;
+    AMenu* mainMenu;
     AMenu* submenuTax;
     AMenu* submenuGive;
     AMenu* submenuImprison;
@@ -89,17 +89,17 @@ ZGame* z_game_init(void)
 
     g->log = z_log_new(10);
 
-    g->actionMenu = a_menu_new(z_controls.down,
-                               z_controls.up,
-                               z_controls.action,
-                               NULL);
+    g->mainMenu = a_menu_new(z_controls.down,
+                             z_controls.up,
+                             z_controls.action,
+                             NULL);
 
-    a_menu_addItem(g->actionMenu,
+    a_menu_addItem(g->mainMenu,
                    menu_item_new("Do Nothing",
                                  "Relax to improve your health!",
                                  z_action_doNothing));
 
-    a_menu_addItem(g->actionMenu,
+    a_menu_addItem(g->mainMenu,
                    menu_item_new("Collect Taxes",
                                  "Get some more money!",
                                  z_action_collectTaxes));
@@ -120,7 +120,7 @@ ZGame* z_game_init(void)
                                      z_action_collectTaxesFromNobles));
     }
 
-    a_menu_addItem(g->actionMenu,
+    a_menu_addItem(g->mainMenu,
                    menu_item_new("Give Money",
                                  "Spread the wealth!",
                                  z_action_giveMoney));
@@ -141,7 +141,7 @@ ZGame* z_game_init(void)
                                      z_action_giveMoneyToNobles));
     }
 
-    a_menu_addItem(g->actionMenu,
+    a_menu_addItem(g->mainMenu,
                    menu_item_new("Imprison Opponents",
                                  "How dare they question you!",
                                  z_action_imprison));
@@ -162,7 +162,7 @@ ZGame* z_game_init(void)
                                      z_action_imprisonNobles));
     }
 
-    a_menu_addItem(g->actionMenu,
+    a_menu_addItem(g->mainMenu,
                    menu_item_new("Wage War",
                                  "Always a coin toss!",
                                  z_action_wageWar));
@@ -172,7 +172,7 @@ ZGame* z_game_init(void)
 
 void z_game_free(ZGame* Game)
 {
-    a_menu_freeEx(Game->actionMenu, (AListFree*)menu_item_free);
+    a_menu_freeEx(Game->mainMenu, (AListFree*)menu_item_free);
     a_menu_freeEx(Game->submenuTax, (AListFree*)menu_item_free);
     a_menu_freeEx(Game->submenuGive, (AListFree*)menu_item_free);
     a_menu_freeEx(Game->submenuImprison, (AListFree*)menu_item_free);
@@ -375,13 +375,13 @@ bool z_game_turn(ZGame* Game)
 
 bool z_game_handleMenu(ZGame* Game)
 {
-    a_menu_handleInput(Game->actionMenu);
+    a_menu_handleInput(Game->mainMenu);
 
-    if(a_menu_getState(Game->actionMenu) == A_MENU_STATE_SELECTED) {
-        ZMenuItem* selected = a_menu_getSelectedItem(Game->actionMenu);
+    if(a_menu_getState(Game->mainMenu) == A_MENU_STATE_SELECTED) {
+        ZMenuItem* selected = a_menu_getSelectedItem(Game->mainMenu);
         selected->handler(Game);
 
-        a_menu_reset(Game->actionMenu);
+        a_menu_reset(Game->mainMenu);
         return true;
     }
 
@@ -468,8 +468,8 @@ void z_game_drawMenu(const ZGame* Game)
 {
     a_font_setCoords(2, 2);
 
-    A_LIST_ITERATE(a_menu_getItems(Game->actionMenu), ZMenuItem*, item) {
-        if(a_menu_isItemSelected(Game->actionMenu, item)) {
+    A_LIST_ITERATE(a_menu_getItems(Game->mainMenu), ZMenuItem*, item) {
+        if(a_menu_isItemSelected(Game->mainMenu, item)) {
             a_font_print("> ");
         }
 
@@ -477,7 +477,7 @@ void z_game_drawMenu(const ZGame* Game)
         a_font_newLine();
     }
 
-    ZMenuItem* selected = a_menu_getSelectedItem(Game->actionMenu);
+    ZMenuItem* selected = a_menu_getSelectedItem(Game->mainMenu);
     a_font_newLine();
     a_font_print(selected->blurb);
 }
