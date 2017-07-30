@@ -15,5 +15,9 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+typedef struct ZGame ZGame;
+
 extern A_STATE(game);
 extern A_STATE(actionMenu);
+
+extern void z_game_log(ZGame* Game, AFont* Font, const char* Format, ...);

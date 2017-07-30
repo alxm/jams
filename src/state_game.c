@@ -17,6 +17,8 @@
 
 #include <a2x.h>
 
+#include "state_game.h"
+
 #include "util_controls.h"
 #include "util_despot.h"
 #include "util_log.h"
@@ -28,14 +30,14 @@
 #define Z_COUP_THRESHOLD   50
 #define Z_COUP_COUNT_MAX   10
 
-typedef struct ZGame {
+struct ZGame {
     int timeInMonths;
     unsigned revoltCounter;
     unsigned coupCounter;
     ZDespot* despot;
     ZLog* log;
     AMenu* actionMenu;
-} ZGame;
+};
 
 typedef void ZMenuHandler(ZGame* Game);
 
@@ -149,16 +151,6 @@ static void game_free(ZGame* Game)
     a_menu_free(Game->actionMenu);
 }
 
-static void game_log(ZGame* Game, AFont* Font, const char* Format, ...)
-{
-    va_list args;
-    va_start(args, Format);
-
-    z_log_log(Game->log, Font, Format, args);
-
-    va_end(args);
-}
-
 static void game_checkGameOver(ZGame* Game)
 {
     if(z_despot_getHealth(Game->despot) <= 0
@@ -190,10 +182,10 @@ static bool game_health(ZGame* Game)
         health -= healthDec;
         z_despot_setHealth(Game->despot, health);
 
-        game_log(Game, NULL, "Despot lost %d health", healthDec);
+        z_game_log(Game, NULL, "Despot lost %d health", healthDec);
 
         if(health <= 0) {
-            game_log(Game, NULL, "Despot died");
+            z_game_log(Game, NULL, "Despot died");
             return false;
         }
     }
@@ -205,7 +197,7 @@ static bool game_revolt(ZGame* Game)
 {
     if(Game->revoltCounter > 0) {
         if(Game->revoltCounter++ >= Z_REVOLT_COUNT_MAX) {
-            game_log(Game,
+            z_game_log(Game,
                      NULL,
                      "Revolt counter reached %d",
                      Z_REVOLT_COUNT_MAX);
@@ -220,7 +212,7 @@ static bool game_revolt(ZGame* Game)
     } else if(z_despot_getPopularity(Game->despot) < Z_REVOLT_THRESHOLD) {
         Game->revoltCounter = 1;
 
-        game_log(Game,
+        z_game_log(Game,
                  NULL,
                  "Despot's popularity slipped below %d%%",
                  Z_REVOLT_THRESHOLD);
@@ -233,7 +225,7 @@ static bool game_coup(ZGame* Game)
 {
     if(Game->coupCounter > 0) {
         if(Game->coupCounter++ >= Z_COUP_COUNT_MAX) {
-            game_log(Game,
+            z_game_log(Game,
                      NULL,
                      "Coup counter reached %d",
                      Z_COUP_COUNT_MAX);
@@ -248,7 +240,7 @@ static bool game_coup(ZGame* Game)
     } else if(z_despot_getLoyalty(Game->despot) < Z_COUP_THRESHOLD) {
         Game->coupCounter = 1;
 
-        game_log(Game,
+        z_game_log(Game,
                  NULL,
                  "Nobles' loyalty to the Despot slipped below %d%%",
                  Z_COUP_THRESHOLD);
@@ -261,7 +253,7 @@ static void game_turn(ZGame* Game)
 {
     Game->timeInMonths++;
 
-    game_log(Game,
+    z_game_log(Game,
              NULL,
              "A month passed. %d months into the year.",
              z_time_monthsIntoYear(Game->timeInMonths));
@@ -340,7 +332,7 @@ A_STATE(game)
     A_STATE_INIT
     {
         game_init(&g_game);
-        game_log(&g_game, NULL, "Hello, world");
+        z_game_log(&g_game, NULL, "Hello, world");
     }
 
     A_STATE_BODY
@@ -408,4 +400,14 @@ A_STATE(actionMenu)
             }
         }
     }
+}
+
+void z_game_log(ZGame* Game, AFont* Font, const char* Format, ...)
+{
+    va_list args;
+    va_start(args, Format);
+
+    z_log_log(Game->log, Font, Format, args);
+
+    va_end(args);
 }
