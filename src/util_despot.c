@@ -63,6 +63,8 @@ int z_despot_getHealth(const ZDespot* Despot)
 
 void z_despot_setHealth(ZDespot* Despot, int Health)
 {
+    Health = a_math_constrain(Health, 0, 100);
+
     if(Despot->health < Health) {
         z_game_log(Despot->game,
                    NULL,
@@ -107,6 +109,8 @@ int z_despot_getPopularity(const ZDespot* Despot)
 
 void z_despot_setPopularity(ZDespot* Despot, int Popularity)
 {
+    Popularity = a_math_constrain(Popularity, 0, 100);
+
     if(Despot->popularity < Popularity) {
         z_game_log(Despot->game,
                    NULL,
@@ -129,6 +133,8 @@ int z_despot_getLoyalty(const ZDespot* Despot)
 
 void z_despot_setLoyalty(ZDespot* Despot, int Loyalty)
 {
+    Loyalty = a_math_constrain(Loyalty, 0, 100);
+
     if(Despot->loyalty < Loyalty) {
         z_game_log(Despot->game,
                    NULL,
