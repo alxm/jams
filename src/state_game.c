@@ -34,7 +34,28 @@ typedef struct ZGame {
     unsigned coupCounter;
     ZDespot* despot;
     ZLog* log;
+    AMenu* actionMenu;
 } ZGame;
+
+typedef struct ZMenuItem {
+    const char* title;
+} ZMenuItem;
+
+static ZGame g_game;
+
+static ZMenuItem* menu_item_new(const char* Title)
+{
+    ZMenuItem* item = a_mem_malloc(sizeof(ZMenuItem));
+
+    item->title = Title;
+
+    return item;
+}
+
+static void menu_item_free(ZMenuItem* Item)
+{
+    free(Item);
+}
 
 static void game_init(ZGame* Game)
 {
@@ -49,11 +70,28 @@ static void game_init(ZGame* Game)
                                 50);
 
     Game->log = z_log_new(12);
+
+    Game->actionMenu = a_menu_new(z_controls.down,
+                                  z_controls.up,
+                                  z_controls.action,
+                                  NULL);
+
+    a_menu_addItem(Game->actionMenu, menu_item_new("Do Nothing"));
+    a_menu_addItem(Game->actionMenu, menu_item_new("Collect Taxes"));
+    a_menu_addItem(Game->actionMenu, menu_item_new("Give Money"));
+    a_menu_addItem(Game->actionMenu, menu_item_new("Imprison Opponents"));
+    a_menu_addItem(Game->actionMenu, menu_item_new("Wage War"));
 }
 
 static void game_free(ZGame* Game)
 {
     z_log_free(Game->log);
+
+    A_LIST_ITERATE(a_menu_getItems(Game->actionMenu), ZMenuItem*, item) {
+        menu_item_free(item);
+    }
+
+    a_menu_free(Game->actionMenu);
 }
 
 static void game_log(ZGame* Game, AFont* Font, const char* Format, ...)
@@ -164,7 +202,7 @@ static bool game_coup(ZGame* Game)
     return true;
 }
 
-static void game_newTurn(ZGame* Game)
+static void game_turn(ZGame* Game)
 {
     Game->timeInMonths++;
 
@@ -173,7 +211,9 @@ static void game_newTurn(ZGame* Game)
              "A month passed. %d months into the year.",
              z_time_monthsIntoYear(Game->timeInMonths));
 
-    game_health(Game) && game_revolt(Game) && game_coup(Game);
+    if(game_health(Game) && game_revolt(Game) && game_coup(Game)) {
+        a_state_push("actionMenu");
+    }
 }
 
 static void game_drawStats(const ZGame* Game)
@@ -231,14 +271,21 @@ static void game_drawLog(const ZGame* Game)
     z_log_draw(Game->log, startX + 2, startY + 6);
 }
 
+static void game_draw(const ZGame* Game)
+{
+    a_pixel_setHex(0xaaff88);
+    a_draw_fill();
+
+    game_drawStats(Game);
+    game_drawLog(Game);
+}
+
 A_STATE(game)
 {
-    static ZGame game;
-
     A_STATE_INIT
     {
-        game_init(&game);
-        game_log(&game, NULL, "Hello, world");
+        game_init(&g_game);
+        game_log(&g_game, NULL, "Hello, world");
     }
 
     A_STATE_BODY
@@ -248,25 +295,57 @@ A_STATE(game)
         A_STATE_LOOP
         {
             if(a_button_getPressedOnce(z_controls.action)) {
-                game_newTurn(&game);
+                game_turn(&g_game);
             }
 
-            z_log_tick(game.log);
-            game_checkGameOver(&game);
+            z_log_tick(g_game.log);
+            game_checkGameOver(&g_game);
 
             A_STATE_LOOP_DRAW
             {
-                a_pixel_setHex(0xaaff88);
-                a_draw_fill();
-
-                game_drawStats(&game);
-                game_drawLog(&game);
+                game_draw(&g_game);
             }
         }
     }
 
     A_STATE_FREE
     {
-        game_free(&game);
+        game_free(&g_game);
+    }
+}
+
+A_STATE(actionMenu)
+{
+    A_STATE_BODY
+    {
+        A_STATE_LOOP
+        {
+            AMenu* menu = g_game.actionMenu;
+
+            a_menu_handleInput(menu);
+
+            if(a_menu_getState(menu) == A_MENU_STATE_SELECTED) {
+                ZMenuItem* item = a_menu_getSelectedItem(menu);
+                printf("Selected %s\n", item->title);
+                a_menu_reset(menu);
+                a_state_pop();
+            }
+
+            A_STATE_LOOP_DRAW
+            {
+                game_draw(&g_game);
+
+                a_font_setCoords(0, 0);
+
+                A_LIST_ITERATE(a_menu_getItems(menu), ZMenuItem*, item) {
+                    if(a_menu_isItemSelected(menu, item)) {
+                        a_font_print("> ");
+                    }
+
+                    a_font_print(item->title);
+                    a_font_newLine();
+                }
+            }
+        }
     }
 }

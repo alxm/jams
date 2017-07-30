@@ -16,3 +16,4 @@
 */
 
 extern A_STATE(game);
+extern A_STATE(actionMenu);

@@ -33,5 +33,7 @@ A_MAIN
     z_controls_load();
 
     a_state_new("game", game);
+    a_state_new("actionMenu", actionMenu);
+
     a_state_push("game");
 }
