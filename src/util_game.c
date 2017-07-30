@@ -69,6 +69,13 @@ static void menu_item_free(ZMenuItem* Item)
     free(Item);
 }
 
+static bool menu_back(ZGame* Game)
+{
+    z_game_setMenu(Game, Z_MENU_MAIN);
+
+    return false;
+}
+
 ZGame* z_game_init(void)
 {
     ZGame* g = a_mem_malloc(sizeof(ZGame));
@@ -114,6 +121,11 @@ ZGame* z_game_init(void)
                        menu_item_new("Tax the nobles",
                                      "Despot giveth and Despot taketh away!",
                                      z_action_collectTaxesFromNobles));
+
+        a_menu_addItem(g->menus[Z_MENU_TAX],
+                       menu_item_new("Back",
+                                     "Go back to the main menu",
+                                     menu_back));
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
@@ -130,6 +142,11 @@ ZGame* z_game_init(void)
                        menu_item_new("Give to the nobles",
                                      "The rich get richer!",
                                      z_action_giveMoneyToNobles));
+
+        a_menu_addItem(g->menus[Z_MENU_GIVE],
+                       menu_item_new("Back",
+                                     "Go back to the main menu",
+                                     menu_back));
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
@@ -146,6 +163,11 @@ ZGame* z_game_init(void)
                        menu_item_new("Imprison a corrupt noble",
                                      "You made them, you break them!",
                                      z_action_imprisonNobles));
+
+        a_menu_addItem(g->menus[Z_MENU_IMPRISON],
+                       menu_item_new("Back",
+                                     "Go back to the main menu",
+                                     menu_back));
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
