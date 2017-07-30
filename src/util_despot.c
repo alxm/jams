@@ -45,7 +45,6 @@ void z_despot_free(ZDespot* Despot)
     free(Despot);
 }
 
-
 int z_despot_getDobInMonths(ZDespot* Despot)
 {
     return Despot->dobInMonths;

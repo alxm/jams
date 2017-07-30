@@ -20,27 +20,13 @@
 #include "util_controls.h"
 #include "util_despot.h"
 #include "util_log.h"
+#include "util_time.h"
 
 #define Z_REVOLT_THRESHOLD 50
 #define Z_REVOLT_COUNT_MAX 10
 
 #define Z_COUP_THRESHOLD   50
 #define Z_COUP_COUNT_MAX   10
-
-static inline int time_yearsToMonths(int Years)
-{
-    return Years * 12;
-}
-
-static inline int time_monthsToYears(int Months)
-{
-    return Months / 12;
-}
-
-static inline int time_monthsIntoYear(int Months)
-{
-    return Months % 12;
-}
 
 typedef struct ZGame {
     int timeInMonths;
@@ -53,11 +39,11 @@ typedef struct ZGame {
 
 static void game_init(ZGame* Game)
 {
-    Game->timeInMonths = time_yearsToMonths(3900);
+    Game->timeInMonths = z_time_yearsToMonths(3900);
     Game->revoltCounter = 0;
     Game->coupCounter = 0;
 
-    Game->despot = z_despot_new(Game->timeInMonths - time_yearsToMonths(30),
+    Game->despot = z_despot_new(Game->timeInMonths - z_time_yearsToMonths(30),
                                 80,
                                 1000,
                                 50,
@@ -97,7 +83,7 @@ static void game_checkGameOver(ZGame* Game)
 
 static bool game_health(ZGame* Game)
 {
-    int age = time_monthsToYears(Game->timeInMonths
+    int age = z_time_monthsToYears(Game->timeInMonths
                                  - z_despot_getDobInMonths(Game->despot));
 
     int health = z_despot_getHealth(Game->despot);
@@ -184,7 +170,7 @@ static void game_newTurn(ZGame* Game)
     game_log(Game,
              NULL,
              "A month passed. %d months into the year.",
-             time_monthsIntoYear(Game->timeInMonths));
+             z_time_monthsIntoYear(Game->timeInMonths));
 
     game_health(Game) && game_revolt(Game) && game_coup(Game);
 }
@@ -201,11 +187,11 @@ static void game_drawStats(const ZGame* Game)
 
     a_font_setCoords(startX + 2, startY + 2);
 
-    a_font_printf("YEAR %d", time_monthsToYears(Game->timeInMonths));
+    a_font_printf("YEAR %d", z_time_monthsToYears(Game->timeInMonths));
     a_font_newLine();
 
     a_font_printf("AGE %d",
-                  time_monthsToYears(
+                  z_time_monthsToYears(
                     Game->timeInMonths
                     - z_despot_getDobInMonths(Game->despot)));
     a_font_newLine();
