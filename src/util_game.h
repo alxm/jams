@@ -32,8 +32,8 @@ extern bool z_game_logTick(const ZGame* Game);
 extern void z_game_staveOffRevolt(ZGame* Game);
 extern void z_game_staveOffCoup(ZGame* Game);
 
-extern void z_game_turn(ZGame* Game);
-extern void z_game_handleMenu(ZGame* Game);
+extern bool z_game_turn(ZGame* Game);
+extern bool z_game_handleMenu(ZGame* Game);
 
 extern void z_game_draw(const ZGame* Game);
 extern void z_game_drawMenu(const ZGame* Game);

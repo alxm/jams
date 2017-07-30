@@ -36,7 +36,10 @@ A_STATE(actionMenu)
                 z_game_setInstructions(
                     z_game,
                     "Choose an option with UP/DOWN, select with SPACE BAR");
-                z_game_handleMenu(z_game);
+
+                if(z_game_handleMenu(z_game)) {
+                    a_state_pop();
+                }
             }
 
             A_STATE_LOOP_DRAW

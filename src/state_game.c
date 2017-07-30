@@ -52,7 +52,9 @@ A_STATE(game)
                 z_game_setInstructions(z_game, "Wait...");
             } else {
                 if(a_button_getPressedOnce(z_controls.action)) {
-                    z_game_turn(z_game);
+                    if(z_game_turn(z_game)) {
+                        a_state_push("actionMenu");
+                    }
                 } else {
                     z_game_setInstructions(z_game,
                                            "Press SPACE BAR for next turn");

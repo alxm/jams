@@ -288,7 +288,7 @@ static bool game_coup(ZGame* Game)
     return true;
 }
 
-void z_game_turn(ZGame* Game)
+bool z_game_turn(ZGame* Game)
 {
     Game->timeInMonths++;
 
@@ -303,14 +303,15 @@ void z_game_turn(ZGame* Game)
     z_game_logInc(Game);
 
     if(game_health(Game) && game_revolt(Game) && game_coup(Game)) {
-        z_game_logInc(Game);
-        a_state_push("actionMenu");
+        return true;
     }
 
     z_game_logDec(Game);
+
+    return false;
 }
 
-void z_game_handleMenu(ZGame* Game)
+bool z_game_handleMenu(ZGame* Game)
 {
     a_menu_handleInput(Game->actionMenu);
 
@@ -319,8 +320,10 @@ void z_game_handleMenu(ZGame* Game)
         selected->handler(Game);
 
         a_menu_reset(Game->actionMenu);
-        a_state_pop();
+        return true;
     }
+
+    return false;
 }
 
 static void game_drawStats(const ZGame* Game)
