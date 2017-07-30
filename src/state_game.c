@@ -39,15 +39,17 @@ typedef struct ZGame {
 
 typedef struct ZMenuItem {
     const char* title;
+    const char* blurb;
 } ZMenuItem;
 
 static ZGame g_game;
 
-static ZMenuItem* menu_item_new(const char* Title)
+static ZMenuItem* menu_item_new(const char* Title, const char* Blurb)
 {
     ZMenuItem* item = a_mem_malloc(sizeof(ZMenuItem));
 
     item->title = Title;
+    item->blurb = Blurb;
 
     return item;
 }
@@ -76,11 +78,21 @@ static void game_init(ZGame* Game)
                                   z_controls.action,
                                   NULL);
 
-    a_menu_addItem(Game->actionMenu, menu_item_new("Do Nothing"));
-    a_menu_addItem(Game->actionMenu, menu_item_new("Collect Taxes"));
-    a_menu_addItem(Game->actionMenu, menu_item_new("Give Money"));
-    a_menu_addItem(Game->actionMenu, menu_item_new("Imprison Opponents"));
-    a_menu_addItem(Game->actionMenu, menu_item_new("Wage War"));
+    a_menu_addItem(Game->actionMenu,
+                   menu_item_new("Do Nothing",
+                                 "Relax to improve your health!"));
+    a_menu_addItem(Game->actionMenu,
+                   menu_item_new("Collect Taxes",
+                                 "Get some more money!"));
+    a_menu_addItem(Game->actionMenu,
+                   menu_item_new("Give Money",
+                                 "Spread the wealth!"));
+    a_menu_addItem(Game->actionMenu,
+                   menu_item_new("Imprison Opponents",
+                                 "How dare they question you!"));
+    a_menu_addItem(Game->actionMenu,
+                   menu_item_new("Wage War",
+                                 "Always a coin toss!"));
 }
 
 static void game_free(ZGame* Game)
@@ -345,6 +357,10 @@ A_STATE(actionMenu)
                     a_font_print(item->title);
                     a_font_newLine();
                 }
+
+                ZMenuItem* selected = a_menu_getSelectedItem(menu);
+                a_font_newLine();
+                a_font_print(selected->blurb);
             }
         }
     }
