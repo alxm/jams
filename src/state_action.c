@@ -95,6 +95,16 @@ void z_action_collectTaxes(ZGame* Game)
     z_game_logDec(Game);
 }
 
+void z_action_collectTaxesFromPeasants(ZGame* Game)
+{
+    A_UNUSED(Game);
+}
+
+void z_action_collectTaxesFromNobles(ZGame* Game)
+{
+    A_UNUSED(Game);
+}
+
 void z_action_giveMoney(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
@@ -121,7 +131,17 @@ void z_action_giveMoney(ZGame* Game)
     z_game_logDec(Game);
 }
 
-void z_action_imprisonOpponents(ZGame* Game)
+void z_action_giveMoneyToPeasants(ZGame* Game)
+{
+    A_UNUSED(Game);
+}
+
+void z_action_giveMoneyToNobles(ZGame* Game)
+{
+    A_UNUSED(Game);
+}
+
+void z_action_imprison(ZGame* Game)
 {
     unsigned numImprisoned = z_game_getNumImprisoned(Game);
 
@@ -155,6 +175,16 @@ void z_action_imprisonOpponents(ZGame* Game)
     }
 
     z_game_logDec(Game);
+}
+
+void z_action_imprisonPeasants(ZGame* Game)
+{
+    A_UNUSED(Game);
+}
+
+void z_action_imprisonNobles(ZGame* Game)
+{
+    A_UNUSED(Game);
 }
 
 void z_action_wageWar(ZGame* Game)

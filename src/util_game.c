@@ -41,6 +41,9 @@ struct ZGame {
     ZDespot* despot;
     ZLog* log;
     AMenu* actionMenu;
+    AMenu* submenuTax;
+    AMenu* submenuGive;
+    AMenu* submenuImprison;
 };
 
 typedef void ZMenuHandler(ZGame* Game);
@@ -100,16 +103,64 @@ ZGame* z_game_init(void)
                    menu_item_new("Collect Taxes",
                                  "Get some more money!",
                                  z_action_collectTaxes));
+    {
+        g->submenuTax = a_menu_new(z_controls.down,
+                                   z_controls.up,
+                                   z_controls.action,
+                                   NULL);
+
+        a_menu_addItem(g->submenuTax,
+                       menu_item_new("Tax the peasants",
+                                     "There's a lot of them to tax!",
+                                     z_action_collectTaxesFromPeasants));
+
+        a_menu_addItem(g->submenuTax,
+                       menu_item_new("Tax the nobles",
+                                     "Despot giveth and Despot taketh away!",
+                                     z_action_collectTaxesFromNobles));
+    }
 
     a_menu_addItem(g->actionMenu,
                    menu_item_new("Give Money",
                                  "Spread the wealth!",
                                  z_action_giveMoney));
+    {
+        g->submenuGive = a_menu_new(z_controls.down,
+                                    z_controls.up,
+                                    z_controls.action,
+                                    NULL);
+
+        a_menu_addItem(g->submenuGive,
+                       menu_item_new("Give to the peasants",
+                                     "Throw some crumbs!",
+                                     z_action_giveMoneyToPeasants));
+
+        a_menu_addItem(g->submenuGive,
+                       menu_item_new("Give to the nobles",
+                                     "The rich get richer!",
+                                     z_action_giveMoneyToNobles));
+    }
 
     a_menu_addItem(g->actionMenu,
                    menu_item_new("Imprison Opponents",
                                  "How dare they question you!",
-                                 z_action_imprisonOpponents));
+                                 z_action_imprison));
+    {
+        g->submenuImprison = a_menu_new(z_controls.down,
+                                        z_controls.up,
+                                        z_controls.action,
+                                        NULL);
+
+        a_menu_addItem(g->submenuImprison,
+                       menu_item_new("Imprison rebellious peasants",
+                                     "That'll show them!",
+                                     z_action_imprisonPeasants));
+
+        a_menu_addItem(g->submenuImprison,
+                       menu_item_new("Imprison a corrupt noble",
+                                     "You made them, you break them!",
+                                     z_action_imprisonNobles));
+    }
 
     a_menu_addItem(g->actionMenu,
                    menu_item_new("Wage War",
@@ -121,11 +172,10 @@ ZGame* z_game_init(void)
 
 void z_game_free(ZGame* Game)
 {
-    A_LIST_ITERATE(a_menu_getItems(Game->actionMenu), ZMenuItem*, item) {
-        menu_item_free(item);
-    }
-
-    a_menu_free(Game->actionMenu);
+    a_menu_freeEx(Game->actionMenu, (AListFree*)menu_item_free);
+    a_menu_freeEx(Game->submenuTax, (AListFree*)menu_item_free);
+    a_menu_freeEx(Game->submenuGive, (AListFree*)menu_item_free);
+    a_menu_freeEx(Game->submenuImprison, (AListFree*)menu_item_free);
     z_log_free(Game->log);
     free(Game);
 }

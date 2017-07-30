@@ -18,7 +18,17 @@
 extern A_STATE(actionMenu);
 
 extern void z_action_doNothing(ZGame* Game);
+
 extern void z_action_collectTaxes(ZGame* Game);
+extern void z_action_collectTaxesFromPeasants(ZGame* Game);
+extern void z_action_collectTaxesFromNobles(ZGame* Game);
+
 extern void z_action_giveMoney(ZGame* Game);
-extern void z_action_imprisonOpponents(ZGame* Game);
+extern void z_action_giveMoneyToPeasants(ZGame* Game);
+extern void z_action_giveMoneyToNobles(ZGame* Game);
+
+extern void z_action_imprison(ZGame* Game);
+extern void z_action_imprisonPeasants(ZGame* Game);
+extern void z_action_imprisonNobles(ZGame* Game);
+
 extern void z_action_wageWar(ZGame* Game);
