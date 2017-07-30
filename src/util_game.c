@@ -404,16 +404,16 @@ static void game_drawStats(const ZGame* Game)
     a_font_printf("AGE %d", z_despot_getAgeInYears(Game->despot));
     a_font_newLine();
 
-    a_font_printf("HEALTH %d/100", z_despot_getHealth(Game->despot));
+    a_font_printf("HEALTH %d%%", z_despot_getHealth(Game->despot));
     a_font_newLine();
 
     a_font_printf("WEALTH %d", z_despot_getWealth(Game->despot));
     a_font_newLine();
 
-    a_font_printf("POPULARITY %d/100", z_despot_getPopularity(Game->despot));
+    a_font_printf("POPULARITY %d%%", z_despot_getPopularity(Game->despot));
     a_font_newLine();
 
-    a_font_printf("LOYALTY %d/100", z_despot_getLoyalty(Game->despot));
+    a_font_printf("LOYALTY %d%%", z_despot_getLoyalty(Game->despot));
     a_font_newLine();
 
     a_font_newLine();
