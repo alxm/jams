@@ -17,7 +17,7 @@
 
 typedef struct ZDespot ZDespot;
 
-extern ZDespot* z_despot_new(int DobInMonths, int Health, int Wealth, int Popularity, int Loyalty);
+extern ZDespot* z_despot_new(ZGame* Game, int DobInMonths, int Health, int Wealth, int Popularity, int Loyalty);
 extern void z_despot_free(ZDespot* Despot);
 
 extern int z_despot_getDobInMonths(const ZDespot* Despot);

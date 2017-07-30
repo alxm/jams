@@ -17,9 +17,12 @@
 
 #include <a2x.h>
 
+#include "state_game.h"
+
 #include "util_despot.h"
 
 struct ZDespot {
+    ZGame* game;
     int dobInMonths;
     int health;
     int wealth;
@@ -27,10 +30,11 @@ struct ZDespot {
     int loyalty;
 };
 
-ZDespot* z_despot_new(int DobInMonths, int Health, int Wealth, int Popularity, int Loyalty)
+ZDespot* z_despot_new(ZGame* Game, int DobInMonths, int Health, int Wealth, int Popularity, int Loyalty)
 {
     ZDespot* d = a_mem_malloc(sizeof(ZDespot));
 
+    d->game = Game;
     d->dobInMonths = DobInMonths;
     d->health = Health;
     d->wealth = Wealth;

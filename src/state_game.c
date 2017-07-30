@@ -101,7 +101,8 @@ static void game_init(ZGame* Game)
     Game->revoltCounter = 0;
     Game->coupCounter = 0;
 
-    Game->despot = z_despot_new(Game->timeInMonths - z_time_yearsToMonths(30),
+    Game->despot = z_despot_new(Game,
+                                Game->timeInMonths - z_time_yearsToMonths(30),
                                 80,
                                 1000,
                                 50,
