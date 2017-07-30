@@ -67,8 +67,15 @@ static void menu_item_free(ZMenuItem* Item)
 
 static void menu_handler_doNothing(ZGame* Game)
 {
-    A_UNUSED(Game);
-    printf("menu_handler_doNothing\n");
+    z_game_log(Game,
+               NULL,
+               "Despot got some well-earned rest");
+
+    ZDespot* despot = Game->despot;
+
+    z_despot_setHealth(despot, z_despot_getHealth(despot) + 1);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
 }
 
 static void menu_handler_collectTaxes(ZGame* Game)
