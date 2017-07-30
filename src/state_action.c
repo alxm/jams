@@ -34,6 +34,7 @@ A_STATE(actionMenu)
         A_STATE_LOOP
         {
             z_game_handleMenu(z_game);
+            z_game_logTick(z_game);
 
             A_STATE_LOOP_DRAW
             {
