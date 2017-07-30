@@ -53,7 +53,7 @@ A_STATE(game)
             } else {
                 if(a_button_getPressedOnce(z_controls.action)) {
                     if(z_game_turn(z_game)) {
-                        a_state_push("actionMenu");
+                        a_state_push("flushLog");
                     }
                 } else {
                     z_game_setInstructions(z_game,
@@ -73,5 +73,27 @@ A_STATE(game)
     A_STATE_FREE
     {
         z_game_free(z_game);
+    }
+}
+
+A_STATE(flushLog)
+{
+    A_STATE_BODY
+    {
+        z_controls_release();
+
+        A_STATE_LOOP
+        {
+            if(z_game_logTick(z_game)) {
+                z_game_setInstructions(z_game, "Wait...");
+            } else {
+                a_state_replace("actionMenu");
+            }
+
+            A_STATE_LOOP_DRAW
+            {
+                z_game_draw(z_game);
+            }
+        }
     }
 }

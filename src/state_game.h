@@ -18,3 +18,4 @@
 extern ZGame* z_game;
 
 extern A_STATE(game);
+extern A_STATE(flushLog);
