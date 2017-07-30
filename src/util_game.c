@@ -184,20 +184,32 @@ void z_game_staveOffRevolt(ZGame* Game)
 {
     Game->revoltCounter = a_math_minu(Game->revoltCounter, 1);
 
-    z_game_log(Game,
-               NULL,
-               "Staved off revolt for another %d months",
-               Z_REVOLT_COUNT_MAX - 1);
+    if(Game->revoltCounter > 0) {
+        z_game_log(Game,
+                   NULL,
+                   "Staved off revolt for another %d months",
+                   Z_REVOLT_COUNT_MAX - 1);
+    } else {
+        z_game_log(Game,
+                   NULL,
+                   "A needless effort");
+    }
 }
 
 void z_game_staveOffCoup(ZGame* Game)
 {
     Game->coupCounter = a_math_minu(Game->coupCounter, 1);
 
-    z_game_log(Game,
-               NULL,
-               "Staved off coup for another %d months",
-               Z_COUP_COUNT_MAX - 1);
+    if(Game->coupCounter > 0) {
+        z_game_log(Game,
+                   NULL,
+                   "Staved off coup for another %d months",
+                   Z_COUP_COUNT_MAX - 1);
+    } else {
+        z_game_log(Game,
+                   NULL,
+                   "A needless effort");
+    }
 }
 
 static bool game_health(ZGame* Game)
