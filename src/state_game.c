@@ -18,6 +18,7 @@
 #include <a2x.h>
 
 #include "util_controls.h"
+#include "util_despot.h"
 #include "util_log.h"
 
 #define Z_REVOLT_THRESHOLD 50
@@ -41,19 +42,11 @@ static inline int time_monthsIntoYear(int Months)
     return Months % 12;
 }
 
-typedef struct ZDespot {
-    int dobInMonths;
-    int health;
-    int wealth;
-    int popularity;
-    int loyalty;
-} ZDespot;
-
 typedef struct ZGame {
     int timeInMonths;
     unsigned revoltCounter;
     unsigned coupCounter;
-    ZDespot despot;
+    ZDespot* despot;
     ZLog* log;
     bool gameOver;
 } ZGame;
@@ -64,11 +57,11 @@ static void game_init(ZGame* Game)
     Game->revoltCounter = 0;
     Game->coupCounter = 0;
 
-    Game->despot.dobInMonths = Game->timeInMonths - time_yearsToMonths(30);
-    Game->despot.health = 80;
-    Game->despot.wealth = 1000;
-    Game->despot.popularity = 50;
-    Game->despot.loyalty = 50;
+    Game->despot = z_despot_new(Game->timeInMonths - time_yearsToMonths(30),
+                                80,
+                                1000,
+                                50,
+                                50);
 
     Game->log = z_log_new(12);
 
@@ -104,9 +97,10 @@ static void game_checkGameOver(ZGame* Game)
 
 static bool game_health(ZGame* Game)
 {
-    ZDespot* despot = &Game->despot;
+    int age = time_monthsToYears(Game->timeInMonths
+                                 - z_despot_getDobInMonths(Game->despot));
 
-    int age = time_monthsToYears(Game->timeInMonths - despot->dobInMonths);
+    int health = z_despot_getHealth(Game->despot);
     int healthDec = 0;
 
     if(age >= 90) {
@@ -119,12 +113,13 @@ static bool game_health(ZGame* Game)
         healthDec = 2;
     }
 
-    despot->health -= healthDec;
-
     if(healthDec > 0) {
+        health -= healthDec;
+        z_despot_setHealth(Game->despot, health);
+
         game_log(Game, NULL, "Despot lost %d health", healthDec);
 
-        if(despot->health <= 0) {
+        if(health <= 0) {
             game_log(Game, NULL, "Despot died");
             game_setGameOver(Game);
 
@@ -137,8 +132,6 @@ static bool game_health(ZGame* Game)
 
 static bool game_revolt(ZGame* Game)
 {
-    ZDespot* despot = &Game->despot;
-
     if(Game->revoltCounter > 0) {
         if(Game->revoltCounter++ >= Z_REVOLT_COUNT_MAX) {
             game_log(Game,
@@ -148,7 +141,7 @@ static bool game_revolt(ZGame* Game)
 
             // Stage revolt
         }
-    } else if(despot->popularity < Z_REVOLT_THRESHOLD) {
+    } else if(z_despot_getPopularity(Game->despot) < Z_REVOLT_THRESHOLD) {
         Game->revoltCounter = 1;
 
         game_log(Game,
@@ -162,7 +155,6 @@ static bool game_revolt(ZGame* Game)
 
 static bool game_coup(ZGame* Game)
 {
-    ZDespot* despot = &Game->despot;
 
     if(Game->coupCounter > 0) {
         if(Game->coupCounter++ >= Z_COUP_COUNT_MAX) {
@@ -173,7 +165,7 @@ static bool game_coup(ZGame* Game)
 
             // Stage coup
         }
-    } else if(despot->loyalty < Z_COUP_THRESHOLD) {
+    } else if(z_despot_getLoyalty(Game->despot) < Z_COUP_THRESHOLD) {
         Game->coupCounter = 1;
 
         game_log(Game,
@@ -214,19 +206,20 @@ static void game_drawStats(const ZGame* Game)
 
     a_font_printf("AGE %d",
                   time_monthsToYears(
-                    Game->timeInMonths - Game->despot.dobInMonths));
+                    Game->timeInMonths
+                    - z_despot_getDobInMonths(Game->despot)));
     a_font_newLine();
 
-    a_font_printf("HEALTH %d/100", Game->despot.health);
+    a_font_printf("HEALTH %d/100", z_despot_getHealth(Game->despot));
     a_font_newLine();
 
-    a_font_printf("WEALTH %d", Game->despot.wealth);
+    a_font_printf("WEALTH %d", z_despot_getWealth(Game->despot));
     a_font_newLine();
 
-    a_font_printf("POPULARITY %d/100", Game->despot.popularity);
+    a_font_printf("POPULARITY %d/100", z_despot_getPopularity(Game->despot));
     a_font_newLine();
 
-    a_font_printf("LOYALTY %d/100", Game->despot.loyalty);
+    a_font_printf("LOYALTY %d/100", z_despot_getLoyalty(Game->despot));
     a_font_newLine();
 }
 
