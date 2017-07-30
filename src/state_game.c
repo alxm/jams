@@ -126,6 +126,11 @@ static bool game_revolt(ZGame* Game)
                      Z_REVOLT_COUNT_MAX);
 
             // Stage revolt
+
+            Game->revoltCounter = 0;
+            Game->coupCounter = 0;
+
+            return false;
         }
     } else if(z_despot_getPopularity(Game->despot) < Z_REVOLT_THRESHOLD) {
         Game->revoltCounter = 1;
@@ -141,7 +146,6 @@ static bool game_revolt(ZGame* Game)
 
 static bool game_coup(ZGame* Game)
 {
-
     if(Game->coupCounter > 0) {
         if(Game->coupCounter++ >= Z_COUP_COUNT_MAX) {
             game_log(Game,
@@ -150,6 +154,11 @@ static bool game_coup(ZGame* Game)
                      Z_COUP_COUNT_MAX);
 
             // Stage coup
+
+            Game->revoltCounter /= 2;
+            Game->coupCounter = 0;
+
+            return false;
         }
     } else if(z_despot_getLoyalty(Game->despot) < Z_COUP_THRESHOLD) {
         Game->coupCounter = 1;
