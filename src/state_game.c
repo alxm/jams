@@ -216,6 +216,14 @@ static void game_drawStats(const ZGame* Game)
 
     a_font_printf("LOYALTY %d/100", z_despot_getLoyalty(Game->despot));
     a_font_newLine();
+
+    a_font_newLine();
+
+    a_font_printf("REVOLT IN %d/%d", Game->revoltCounter, Z_REVOLT_COUNT_MAX);
+    a_font_newLine();
+
+    a_font_printf("COUP IN %d/%d", Game->coupCounter, Z_COUP_COUNT_MAX);
+    a_font_newLine();
 }
 
 static void game_drawLog(const ZGame* Game)
