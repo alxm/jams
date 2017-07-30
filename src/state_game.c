@@ -163,8 +163,7 @@ static void game_checkGameOver(ZGame* Game)
 
 static bool game_health(ZGame* Game)
 {
-    int age = z_time_monthsToYears(Game->timeInMonths
-                                 - z_despot_getDobInMonths(Game->despot));
+    int age = z_despot_getAgeInYears(Game->despot);
 
     int health = z_despot_getHealth(Game->despot);
     int healthDec = 0;
@@ -279,10 +278,7 @@ static void game_drawStats(const ZGame* Game)
     a_font_printf("YEAR %d", z_time_monthsToYears(Game->timeInMonths));
     a_font_newLine();
 
-    a_font_printf("AGE %d",
-                  z_time_monthsToYears(
-                    Game->timeInMonths
-                    - z_despot_getDobInMonths(Game->despot)));
+    a_font_printf("AGE %d", z_despot_getAgeInYears(Game->despot));
     a_font_newLine();
 
     a_font_printf("HEALTH %d/100", z_despot_getHealth(Game->despot));
@@ -401,6 +397,11 @@ A_STATE(actionMenu)
             }
         }
     }
+}
+
+int z_game_getTimeInMonths(const ZGame* Game)
+{
+    return Game->timeInMonths;
 }
 
 void z_game_log(ZGame* Game, AFont* Font, const char* Format, ...)

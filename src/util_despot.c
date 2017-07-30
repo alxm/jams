@@ -20,6 +20,7 @@
 #include "state_game.h"
 
 #include "util_despot.h"
+#include "util_time.h"
 
 struct ZDespot {
     ZGame* game;
@@ -49,9 +50,10 @@ void z_despot_free(ZDespot* Despot)
     free(Despot);
 }
 
-int z_despot_getDobInMonths(const ZDespot* Despot)
+int z_despot_getAgeInYears(const ZDespot* Despot)
 {
-    return Despot->dobInMonths;
+    return z_time_monthsToYears(
+                z_game_getTimeInMonths(Despot->game) - Despot->dobInMonths);
 }
 
 int z_despot_getHealth(const ZDespot* Despot)
