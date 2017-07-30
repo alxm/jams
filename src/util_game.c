@@ -303,8 +303,12 @@ static bool game_revolt(ZGame* Game)
 
         z_game_log(Game,
                    NULL,
-                   "Despot's popularity slipped below %d%%",
+                   "Despot's popularity amongst peasants slipped below %d%%",
                    Z_REVOLT_THRESHOLD);
+
+        z_game_logInc(Game);
+        z_game_log(Game, NULL, "Revolt is imminent");
+        z_game_logDec(Game);
     }
 
     return true;
@@ -333,6 +337,10 @@ static bool game_coup(ZGame* Game)
                    NULL,
                    "Nobles' loyalty to the Despot slipped below %d%%",
                    Z_COUP_THRESHOLD);
+
+        z_game_logInc(Game);
+        z_game_log(Game, NULL, "A coup is imminent");
+        z_game_logDec(Game);
     }
 
     return true;
