@@ -419,7 +419,7 @@ A_STATE(actionMenu)
             {
                 game_draw(&g_game);
 
-                a_font_setCoords(0, 0);
+                a_font_setCoords(2, 2);
 
                 A_LIST_ITERATE(a_menu_getItems(menu), ZMenuItem*, item) {
                     if(a_menu_isItemSelected(menu, item)) {
