@@ -75,129 +75,136 @@ bool z_action_doNothing(ZGame* Game)
 
 bool z_action_collectTaxes(ZGame* Game)
 {
-    ZDespot* despot = z_game_getDespot(Game);
+    z_game_setMenu(Game, Z_MENU_TAX);
 
-    if(a_random_chance(1, 2)) {
-        z_game_log(Game,
-                   NULL,
-                   "Despot taxed the peasants");
-
-        z_game_logInc(Game);
-        z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
-    } else {
-        z_game_log(Game,
-                   NULL,
-                   "Despot taxed the nobles");
-
-        z_game_logInc(Game);
-        z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
-    }
-
-    z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
-    z_game_logDec(Game);
-
-    return true;
+    return false;
 }
 
 bool z_action_collectTaxesFromPeasants(ZGame* Game)
 {
+    ZDespot* despot = z_game_getDespot(Game);
+
+    z_game_log(Game, NULL, "Despot taxed the peasants");
+    z_game_logInc(Game);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
+    z_game_logDec(Game);
+
     z_game_setMenu(Game, Z_MENU_MAIN);
+
     return true;
 }
 
 bool z_action_collectTaxesFromNobles(ZGame* Game)
 {
+    ZDespot* despot = z_game_getDespot(Game);
+
+    z_game_log(Game, NULL, "Despot taxed the nobles");
+    z_game_logInc(Game);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
+    z_game_logDec(Game);
+
     z_game_setMenu(Game, Z_MENU_MAIN);
+
     return true;
 }
 
 bool z_action_giveMoney(ZGame* Game)
 {
-    ZDespot* despot = z_game_getDespot(Game);
+    z_game_setMenu(Game, Z_MENU_GIVE);
 
-    if(a_random_chance(1, 2)) {
-        z_game_log(Game,
-                   NULL,
-                   "Despot was generous to the peasants");
-
-        z_game_logInc(Game);
-        z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 1);
-        z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
-    } else {
-        z_game_log(Game,
-                   NULL,
-                   "Despot was generous to the nobles");
-
-        z_game_logInc(Game);
-        z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
-        z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 1);
-    }
-
-    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
-    z_game_logDec(Game);
-
-    return true;
+    return false;
 }
 
 bool z_action_giveMoneyToPeasants(ZGame* Game)
 {
-    A_UNUSED(Game);
+    ZDespot* despot = z_game_getDespot(Game);
+
+    z_game_log(Game, NULL, "Despot was generous to the peasants");
+    z_game_logInc(Game);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 1);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
+    z_game_logDec(Game);
+
+    z_game_setMenu(Game, Z_MENU_MAIN);
+
     return true;
 }
 
 bool z_action_giveMoneyToNobles(ZGame* Game)
 {
-    A_UNUSED(Game);
+    ZDespot* despot = z_game_getDespot(Game);
+
+    z_game_log(Game, NULL, "Despot was generous to the nobles");
+    z_game_logInc(Game);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
+    z_game_logDec(Game);
+
+    z_game_setMenu(Game, Z_MENU_MAIN);
+
     return true;
 }
 
 bool z_action_imprison(ZGame* Game)
 {
+    z_game_setMenu(Game, Z_MENU_IMPRISON);
+
+    return false;
+}
+
+bool z_action_imprisonPeasants(ZGame* Game)
+{
     unsigned numImprisoned = z_game_getNumImprisoned(Game);
 
-    if(numImprisoned >= 2) {
+    if(numImprisoned++ >= 2) {
         z_game_log(Game,
                    NULL,
                    "Despot cannot imprison people again until next year");
         return true;
     }
 
-    z_game_setNumImprisoned(Game, ++numImprisoned);
+    z_game_setNumImprisoned(Game, numImprisoned);
 
     ZDespot* despot = z_game_getDespot(Game);
 
-    if(a_random_chance(1, 2)) {
-        z_game_log(Game,
-                   NULL,
-                   "Despot imprisoned a group of rebellious peasants");
-
-        z_game_logInc(Game);
-        z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
-        z_game_staveOffRevolt(Game);
-    } else {
-        z_game_log(Game,
-                   NULL,
-                   "Despot imprisoned a corrupt noble");
-
-        z_game_logInc(Game);
-        z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
-        z_game_staveOffCoup(Game);
-    }
-
+    z_game_log(Game, NULL, "Despot imprisoned a group of rebellious peasants");
+    z_game_logInc(Game);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+    z_game_staveOffRevolt(Game);
     z_game_logDec(Game);
 
-    return true;
-}
+    z_game_setMenu(Game, Z_MENU_MAIN);
 
-bool z_action_imprisonPeasants(ZGame* Game)
-{
-    A_UNUSED(Game);
     return true;
 }
 
 bool z_action_imprisonNobles(ZGame* Game)
 {
-    A_UNUSED(Game);
+    unsigned numImprisoned = z_game_getNumImprisoned(Game);
+
+    if(numImprisoned++ >= 2) {
+        z_game_log(Game,
+                   NULL,
+                   "Despot cannot imprison people again until next year");
+        return true;
+    }
+
+    z_game_setNumImprisoned(Game, numImprisoned);
+
+    ZDespot* despot = z_game_getDespot(Game);
+
+    z_game_log(Game, NULL, "Despot imprisoned a corrupt noble");
+    z_game_logInc(Game);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    z_game_staveOffCoup(Game);
+    z_game_logDec(Game);
+
+    z_game_setMenu(Game, Z_MENU_MAIN);
+
     return true;
 }
 
