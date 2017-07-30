@@ -28,13 +28,16 @@ A_STATE(actionMenu)
 {
     A_STATE_BODY
     {
-        z_game_setInstructions(z_game,
-                               "Choose with UP/DOWN, select with SPACE BAR");
-
         A_STATE_LOOP
         {
-            z_game_handleMenu(z_game);
-            z_game_logTick(z_game);
+            if(z_game_logTick(z_game)) {
+                z_game_setInstructions(z_game, "Wait...");
+            } else {
+                z_game_setInstructions(
+                    z_game,
+                    "Choose an option with UP/DOWN, select with SPACE BAR");
+                z_game_handleMenu(z_game);
+            }
 
             A_STATE_LOOP_DRAW
             {
@@ -42,8 +45,6 @@ A_STATE(actionMenu)
                 z_game_drawMenu(z_game);
             }
         }
-
-        z_game_setInstructions(z_game, "");
     }
 
     A_STATE_FREE

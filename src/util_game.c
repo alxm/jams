@@ -175,11 +175,9 @@ void z_game_logDec(const ZGame* Game)
     z_log_dec(Game->log);
 }
 
-void z_game_logTick(const ZGame* Game)
+bool z_game_logTick(const ZGame* Game)
 {
-    if(a_fps_isNthFrame(a_fps_msToFrames(250))) {
-        z_log_tick(Game->log);
-    }
+    return z_log_tick(Game->log);
 }
 
 void z_game_staveOffRevolt(ZGame* Game)

@@ -27,7 +27,7 @@ extern ZDespot* z_game_getDespot(const ZGame* Game);
 extern void z_game_log(const ZGame* Game, AFont* Font, const char* Format, ...);
 extern void z_game_logInc(const ZGame* Game);
 extern void z_game_logDec(const ZGame* Game);
-extern void z_game_logTick(const ZGame* Game);
+extern bool z_game_logTick(const ZGame* Game);
 
 extern void z_game_staveOffRevolt(ZGame* Game);
 extern void z_game_staveOffCoup(ZGame* Game);

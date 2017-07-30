@@ -105,9 +105,14 @@ void z_log_dec(ZLog* Log)
 
 bool z_log_tick(ZLog* Log)
 {
-    ZLogLine* newLine = a_list_pop(Log->backlog);
+    ZLogLine* newLine = a_list_peek(Log->backlog);
 
-    if(newLine) {
+    if(newLine == NULL) {
+        return false;
+    }
+
+    if(a_fps_isNthFrame(a_fps_msToFrames(250))) {
+        a_list_pop(Log->backlog);
         a_list_addLast(Log->lines, newLine);
 
         if(a_list_getSize(Log->lines) > Log->maxLines) {
@@ -115,8 +120,6 @@ bool z_log_tick(ZLog* Log)
             free(line->text);
             free(line);
         }
-
-        return false;
     }
 
     return true;
