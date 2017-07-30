@@ -34,7 +34,7 @@ A_STATE(actionMenu)
                 z_game_setInstructions(z_game, "Wait...");
             } else {
                 z_game_setInstructions(z_game,
-                                       "Choose an option with UP/DOWN, "
+                                       "Choose an option with UP/DOWN and "
                                        "select with SPACE BAR");
 
                 if(z_game_handleMenu(z_game)) {
@@ -158,18 +158,27 @@ bool z_action_imprison(ZGame* Game)
 
 bool z_action_imprisonPeasants(ZGame* Game)
 {
+    bool ret = false;
     unsigned numImprisoned = z_game_getNumImprisoned(Game);
 
     if(numImprisoned++ >= 2) {
         z_game_log(Game,
                    NULL,
                    "Despot cannot imprison people again until next year");
-        return true;
+
+        goto done;
     }
 
-    z_game_setNumImprisoned(Game, numImprisoned);
-
     ZDespot* despot = z_game_getDespot(Game);
+
+    if(z_despot_getLoyalty(despot) < 50) {
+        z_game_log(Game, NULL, "Too many nobles oppose the Despot");
+        z_game_logInc(Game);
+        z_game_log(Game, NULL, "Cannot imprison peasants at this time (maybe just 1)");
+        z_game_logDec(Game);
+
+        goto done;
+    }
 
     z_game_log(Game, NULL, "Despot imprisoned a group of rebellious peasants");
     z_game_logInc(Game);
@@ -177,25 +186,37 @@ bool z_action_imprisonPeasants(ZGame* Game)
     z_game_staveOffRevolt(Game);
     z_game_logDec(Game);
 
-    z_game_setMenu(Game, Z_MENU_MAIN);
+    z_game_setNumImprisoned(Game, numImprisoned);
+    ret = true;
 
-    return true;
+done:
+    z_game_setMenu(Game, Z_MENU_MAIN);
+    return ret;
 }
 
 bool z_action_imprisonNobles(ZGame* Game)
 {
+    bool ret = false;
     unsigned numImprisoned = z_game_getNumImprisoned(Game);
 
     if(numImprisoned++ >= 2) {
         z_game_log(Game,
                    NULL,
                    "Despot cannot imprison people again until next year");
-        return true;
+
+        goto done;
     }
 
-    z_game_setNumImprisoned(Game, numImprisoned);
-
     ZDespot* despot = z_game_getDespot(Game);
+
+    if(z_despot_getPopularity(despot) < 50) {
+        z_game_log(Game, NULL, "Too many peasants oppose the Despot");
+        z_game_logInc(Game);
+        z_game_log(Game, NULL, "Cannot imprison nobles at this time");
+        z_game_logDec(Game);
+
+        goto done;
+    }
 
     z_game_log(Game, NULL, "Despot imprisoned a corrupt noble");
     z_game_logInc(Game);
@@ -203,9 +224,12 @@ bool z_action_imprisonNobles(ZGame* Game)
     z_game_staveOffCoup(Game);
     z_game_logDec(Game);
 
-    z_game_setMenu(Game, Z_MENU_MAIN);
+    z_game_setNumImprisoned(Game, numImprisoned);
+    ret = true;
 
-    return true;
+done:
+    z_game_setMenu(Game, Z_MENU_MAIN);
+    return ret;
 }
 
 bool z_action_wageWar(ZGame* Game)
