@@ -34,6 +34,7 @@ struct ZGame {
     int timeInMonths;
     unsigned revoltCounter;
     unsigned coupCounter;
+    unsigned numImprisonedThisYear;
     ZDespot* despot;
     ZLog* log;
     AMenu* actionMenu;
@@ -124,8 +125,30 @@ static void menu_handler_giveMoney(ZGame* Game)
 
 static void menu_handler_imprisonOpponents(ZGame* Game)
 {
-    A_UNUSED(Game);
-    printf("menu_handler_imprisonOpponents\n");
+    if(Game->numImprisonedThisYear++ >= 2) {
+        z_game_log(Game,
+                   NULL,
+                   "Despot cannot imprison people again until next year");
+        return;
+    }
+
+    ZDespot* despot = Game->despot;
+
+    if(a_random_chance(1, 2)) {
+        z_game_log(Game,
+                   NULL,
+                   "Despot imprisoned a group of rebellious peasants");
+
+        z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+        Game->revoltCounter = a_math_minu(Game->revoltCounter, 1);
+    } else {
+        z_game_log(Game,
+                   NULL,
+                   "Despot imprisoned a corrupt noble");
+
+        z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+        Game->coupCounter = a_math_minu(Game->coupCounter, 1);
+    }
 }
 
 static void menu_handler_wageWar(ZGame* Game)
@@ -139,6 +162,7 @@ static void game_init(ZGame* Game)
     Game->timeInMonths = z_time_yearsToMonths(3900);
     Game->revoltCounter = 0;
     Game->coupCounter = 0;
+    Game->numImprisonedThisYear = 0;
 
     Game->despot = z_despot_new(Game,
                                 Game->timeInMonths - z_time_yearsToMonths(30),
@@ -292,10 +316,13 @@ static void game_turn(ZGame* Game)
 {
     Game->timeInMonths++;
 
-    z_game_log(Game,
-               NULL,
-               "A month passed. %d months into the year.",
-               z_time_monthsIntoYear(Game->timeInMonths));
+    if(z_time_monthsIntoYear(Game->timeInMonths) == 0) {
+        z_game_log(Game, NULL, "A year passed");
+
+        Game->numImprisonedThisYear = 0;
+    } else {
+        z_game_log(Game, NULL, "Another month passed");
+    }
 
     z_game_logInc(Game);
 
