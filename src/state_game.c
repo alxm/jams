@@ -86,8 +86,25 @@ static void menu_handler_collectTaxes(ZGame* Game)
 
 static void menu_handler_giveMoney(ZGame* Game)
 {
-    A_UNUSED(Game);
-    printf("menu_handler_giveMoney\n");
+    ZDespot* despot = Game->despot;
+
+    if(a_random_chance(1, 2)) {
+        z_game_log(Game,
+                   NULL,
+                   "Despot was generous to the peasants");
+
+        z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 1);
+        z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    } else {
+        z_game_log(Game,
+                   NULL,
+                   "Despot was generous to the nobles");
+
+        z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+        z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 1);
+    }
+
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
 }
 
 static void menu_handler_imprisonOpponents(ZGame* Game)
