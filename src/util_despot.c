@@ -94,10 +94,16 @@ void z_despot_setWealth(ZDespot* Despot, int Wealth)
                    "Despot gained %d wealth",
                    Wealth - Despot->wealth);
     } else if(Despot->wealth > Wealth) {
-        z_game_log(Despot->game,
-                   Z_LOG_BAD,
-                   "Despot lost %d wealth",
-                   Despot->wealth - Wealth);
+        if(Wealth <= 0) {
+            z_game_log(Despot->game,
+                       Z_LOG_BAD,
+                       "Despot lost everything");
+        } else {
+            z_game_log(Despot->game,
+                       Z_LOG_BAD,
+                       "Despot lost %d wealth",
+                       Despot->wealth - Wealth);
+        }
     }
 
     Despot->wealth = Wealth;
