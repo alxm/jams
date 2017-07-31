@@ -264,7 +264,22 @@ A_STATE(game)
     A_STATE_INIT
     {
         z_game = z_game_init();
-        z_game_log(z_game, Z_LOG_NEUTRAL, "Hello, world");
+
+        z_game_log(z_game,
+                   Z_LOG_NEUTRAL,
+                   "Welcome to %s",
+                   a_settings_getString("app.title"));
+        z_game_log(z_game, Z_LOG_NEUTRAL, "");
+        z_game_log(z_game,
+                   Z_LOG_NEUTRAL,
+                   "You inherited your seat on the throne as is custom.");
+        z_game_log(z_game,
+                   Z_LOG_NEUTRAL,
+                   "You get to affect change on your country every month.");
+        z_game_log(z_game,
+                   Z_LOG_NEUTRAL,
+                   "See how rich you can get before you kick the bucket.");
+        z_game_log(z_game, Z_LOG_NEUTRAL, "");
 
         a_state_push("flushLog");
     }
