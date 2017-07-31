@@ -287,7 +287,10 @@ bool z_action_wageWar(ZGame* Game)
         if(popularity > 33) {
             z_despot_setPopularity(despot, popularity + 10);
         } else {
+            z_game_log(Game, Z_LOG_BAD, Z_STR_ACT_WAR_VICTORY_UNPOPULAR);
+            z_game_logInc(Game);
             z_despot_setPopularity(despot, popularity / 2);
+            z_game_logDec(Game);
         }
 
         z_despot_setWealth(despot, wealth + 20000);

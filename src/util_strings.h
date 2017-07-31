@@ -74,7 +74,7 @@
 
 // Game
 #define Z_STR_TURN_YEAR "A year passed - GLORY TO THE DESPOT!"
-#define Z_STR_TURN_MONTHS "Another %d months passed"
+#define Z_STR_TURN_MONTHS "%d months passed"
 #define Z_STR_TURN_NEXT "Press SPACE BAR for next turn"
 #define Z_STR_INTRO_1 "Welcome to %s"
 #define Z_STR_INTRO_2 "You inherited your seat on the throne as is custom."
@@ -107,4 +107,5 @@
 #define Z_STR_ACT_WAR_FAIL_INFO "Cannot wage war at this time"
 #define Z_STR_ACT_WAR_PROB "Despot is waging war with %d%% chance of success"
 #define Z_STR_ACT_WAR_VICTORY "Despot was victorious! GLORY TO THE DESPOT!"
+#define Z_STR_ACT_WAR_VICTORY_UNPOPULAR "War was nevertheless unpopular among the peasants"
 #define Z_STR_ACT_WAR_DEFEAT "Despot was defeated, what a disaster"
