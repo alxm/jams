@@ -361,6 +361,10 @@ static void game_drawFortress(const ZGame* Game)
 {
     A_UNUSED(Game);
     a_sprite_blit(z_sprites.fortress, 0, 0);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags1), 191, 34);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags2), 106, 12);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags3), 137, 14);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags4), 161, 14);
 }
 
 void z_game_draw(const ZGame* Game)

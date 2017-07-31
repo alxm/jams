@@ -41,6 +41,10 @@ typedef struct ZFonts {
 
 typedef struct ZSprites {
     ASprite* fortress;
+    ASpriteFrames* fortressFlags1;
+    ASpriteFrames* fortressFlags2;
+    ASpriteFrames* fortressFlags3;
+    ASpriteFrames* fortressFlags4;
 } ZSprites;
 
 extern ZColors z_colors;

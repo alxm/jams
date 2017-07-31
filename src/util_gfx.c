@@ -56,6 +56,12 @@ static void loadFonts(void)
 static void loadSprites(void)
 {
     z_sprites.fortress = a_sprite_newFromFile("gfx/fortress.png");
+
+    ASprite* flags = a_sprite_newFromFile("gfx/fortress_flags.png");
+    z_sprites.fortressFlags1 = a_spriteframes_new(flags, 0, 0, 8);
+    z_sprites.fortressFlags2 = a_spriteframes_new(flags, 0, 17, 16);
+    z_sprites.fortressFlags3 = a_spriteframes_new(flags, 18, 17, 16);
+    z_sprites.fortressFlags4 = a_spriteframes_new(flags, 36, 17, 16);
 }
 
 void z_gfx_load(void)
