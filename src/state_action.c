@@ -273,6 +273,14 @@ done:
 
 bool z_action_wageWar(ZGame* Game)
 {
+    unsigned numWars = z_game_getNumWars(Game);
+
+    if(numWars >= 1) {
+        z_game_log(Game, NULL, "Already waged a war this year, time flies");
+
+        return false;
+    }
+
     ZDespot* despot = z_game_getDespot(Game);
 
     int popularity = z_despot_getPopularity(despot);
@@ -321,6 +329,8 @@ bool z_action_wageWar(ZGame* Game)
     }
 
     z_game_logDec(Game);
+
+    z_game_setNumWars(Game, numWars + 1);
 
     return true;
 }

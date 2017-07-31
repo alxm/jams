@@ -33,6 +33,7 @@ struct ZGame {
     unsigned revoltCounter;
     unsigned coupCounter;
     unsigned numImprisonedThisYear;
+    unsigned numWarsThisYear;
     ZDespot* despot;
     ZLog* log;
     AMenu* menus[Z_MENU_NUM];
@@ -79,6 +80,7 @@ ZGame* z_game_init(void)
     g->revoltCounter = 0;
     g->coupCounter = 0;
     g->numImprisonedThisYear = 0;
+    g->numWarsThisYear = 0;
 
     g->despot = z_despot_new(g,
                              g->timeInMonths - z_time_yearsToMonths(30),
@@ -208,6 +210,16 @@ unsigned z_game_getNumImprisoned(const ZGame* Game)
 void z_game_setNumImprisoned(ZGame* Game, unsigned Num)
 {
     Game->numImprisonedThisYear = Num;
+}
+
+unsigned z_game_getNumWars(const ZGame* Game)
+{
+    return Game->numWarsThisYear;
+}
+
+void z_game_setNumWars(ZGame* Game, unsigned Num)
+{
+    Game->numWarsThisYear = Num;
 }
 
 unsigned z_game_getRevoltCounter(const ZGame* Game)

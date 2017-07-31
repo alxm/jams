@@ -40,6 +40,9 @@ extern void z_game_setTimeInMonths(ZGame* Game, int Value);
 extern unsigned z_game_getNumImprisoned(const ZGame* Game);
 extern void z_game_setNumImprisoned(ZGame* Game, unsigned Num);
 
+extern unsigned z_game_getNumWars(const ZGame* Game);
+extern void z_game_setNumWars(ZGame* Game, unsigned Num);
+
 extern unsigned z_game_getRevoltCounter(const ZGame* Game);
 extern void z_game_setRevoltCounter(ZGame* Game, unsigned Value);
 

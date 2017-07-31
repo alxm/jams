@@ -242,6 +242,7 @@ static bool game_turn(ZGame* Game)
     if(z_time_monthsIntoYear(timeInMonths) == 0) {
         z_game_log(Game, NULL, "A year passed - GLORY TO THE DESPOT!");
         z_game_setNumImprisoned(Game, 0);
+        z_game_setNumWars(Game, 0);
     } else {
         z_game_log(Game, NULL, "Another month passed");
     }
