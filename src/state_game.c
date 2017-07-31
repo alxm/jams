@@ -25,6 +25,8 @@
 #include "util_sfx.h"
 #include "util_time.h"
 
+#define Z_MONTHS_PER_TURN 6
+
 ZGame* z_game;
 
 static bool game_health(ZGame* Game)
@@ -235,7 +237,7 @@ static bool game_coup(ZGame* Game)
 
 static bool game_turn(ZGame* Game)
 {
-    int timeInMonths = z_game_getTimeInMonths(Game) + 1;
+    int timeInMonths = z_game_getTimeInMonths(Game) + Z_MONTHS_PER_TURN;
     z_game_setTimeInMonths(Game, timeInMonths);
 
     a_sfx_play(z_sfx.newTurn);
@@ -245,7 +247,10 @@ static bool game_turn(ZGame* Game)
         z_game_setNumImprisoned(Game, 0);
         z_game_setNumWars(Game, 0);
     } else {
-        z_game_log(Game, Z_LOG_NEUTRAL, "Another month passed");
+        z_game_log(Game,
+                   Z_LOG_NEUTRAL,
+                   "Another %d months passed",
+                   Z_MONTHS_PER_TURN);
     }
 
     z_game_logInc(Game);
@@ -275,7 +280,8 @@ A_STATE(game)
                    "You inherited your seat on the throne as is custom.");
         z_game_log(z_game,
                    Z_LOG_NEUTRAL,
-                   "You get to affect change on your country every month.");
+                   "You get to affect change on your country every %d months.",
+                   Z_MONTHS_PER_TURN);
         z_game_log(z_game,
                    Z_LOG_NEUTRAL,
                    "See how rich you can get before you kick the bucket.");
