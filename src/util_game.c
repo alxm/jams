@@ -27,12 +27,6 @@
 
 #include "state_action.h"
 
-#define Z_REVOLT_THRESHOLD 50
-#define Z_REVOLT_COUNT_MAX 10
-
-#define Z_COUP_THRESHOLD   50
-#define Z_COUP_COUNT_MAX   10
-
 struct ZGame {
     const char* instructions;
     int timeInMonths;
@@ -47,11 +41,11 @@ struct ZGame {
 
 typedef bool ZMenuHandler(ZGame* Game);
 
-typedef struct ZMenuItem {
+struct ZMenuItem {
     const char* title;
     const char* blurb;
     ZMenuHandler* handler;
-} ZMenuItem;
+};
 
 static ZMenuItem* menu_item_new(const char* Title, const char* Blurb, ZMenuHandler Handler)
 {
@@ -200,6 +194,11 @@ int z_game_getTimeInMonths(const ZGame* Game)
     return Game->timeInMonths;
 }
 
+void z_game_setTimeInMonths(ZGame* Game, int Value)
+{
+    Game->timeInMonths = Value;
+}
+
 unsigned z_game_getNumImprisoned(const ZGame* Game)
 {
     return Game->numImprisonedThisYear;
@@ -208,6 +207,31 @@ unsigned z_game_getNumImprisoned(const ZGame* Game)
 void z_game_setNumImprisoned(ZGame* Game, unsigned Num)
 {
     Game->numImprisonedThisYear = Num;
+}
+
+unsigned z_game_getRevoltCounter(const ZGame* Game)
+{
+    return Game->revoltCounter;
+}
+
+void z_game_setRevoltCounter(ZGame* Game, unsigned Value)
+{
+    Game->revoltCounter = Value;
+}
+
+unsigned z_game_getCoupCounter(const ZGame* Game)
+{
+    return Game->coupCounter;
+}
+
+void z_game_setCoupCounter(ZGame* Game, unsigned Value)
+{
+    Game->coupCounter = Value;
+}
+
+void z_game_isetCoupCounter(ZGame* Game, unsigned Value)
+{
+    Game->coupCounter = Value;
 }
 
 ZDespot* z_game_getDespot(const ZGame* Game)
@@ -238,174 +262,6 @@ void z_game_logDec(const ZGame* Game)
 bool z_game_logTick(const ZGame* Game)
 {
     return z_log_tick(Game->log);
-}
-
-void z_game_staveOffRevolt(ZGame* Game)
-{
-    Game->revoltCounter = a_math_minu(Game->revoltCounter, 1);
-
-    if(Game->revoltCounter > 0) {
-        z_game_log(Game,
-                   NULL,
-                   "Staved off revolt for another %d months",
-                   Z_REVOLT_COUNT_MAX - 1);
-    } else {
-        z_game_log(Game,
-                   NULL,
-                   "A needless effort");
-    }
-}
-
-void z_game_staveOffCoup(ZGame* Game)
-{
-    Game->coupCounter = a_math_minu(Game->coupCounter, 1);
-
-    if(Game->coupCounter > 0) {
-        z_game_log(Game,
-                   NULL,
-                   "Staved off coup for another %d months",
-                   Z_COUP_COUNT_MAX - 1);
-    } else {
-        z_game_log(Game,
-                   NULL,
-                   "A needless effort");
-    }
-}
-
-static bool game_health(ZGame* Game)
-{
-    int age = z_despot_getAgeInYears(Game->despot);
-
-    int health = z_despot_getHealth(Game->despot);
-    int healthDec = 0;
-
-    if(age >= 90) {
-        healthDec = 5;
-    } if(age >= 80) {
-        healthDec = 4;
-    } else if(age >= 70) {
-        healthDec = 3;
-    } else if(age >= 60) {
-        healthDec = 2;
-    }
-
-    if(healthDec > 0) {
-        health -= healthDec;
-        z_despot_setHealth(Game->despot, health);
-
-        z_game_log(Game, NULL, "Despot lost %d health", healthDec);
-
-        if(health <= 0) {
-            z_game_log(Game, NULL, "Despot died");
-            return false;
-        }
-    }
-
-    return true;
-}
-
-static bool game_revolt(ZGame* Game)
-{
-    if(Game->revoltCounter > 0) {
-        if(Game->revoltCounter++ >= Z_REVOLT_COUNT_MAX) {
-            z_game_log(Game,
-                       NULL,
-                       "Revolt counter reached %d",
-                       Z_REVOLT_COUNT_MAX);
-
-            // Stage revolt
-
-            Game->revoltCounter = 0;
-            Game->coupCounter = 0;
-
-            return false;
-        }
-    } else if(z_despot_getPopularity(Game->despot) < Z_REVOLT_THRESHOLD) {
-        Game->revoltCounter = 1;
-
-        z_game_log(Game,
-                   NULL,
-                   "Despot's popularity amongst peasants is below %d%%",
-                   Z_REVOLT_THRESHOLD);
-
-        z_game_logInc(Game);
-        z_game_log(Game, NULL, "Revolt is imminent");
-        z_game_logDec(Game);
-    }
-
-    return true;
-}
-
-static bool game_coup(ZGame* Game)
-{
-    if(Game->coupCounter > 0) {
-        if(Game->coupCounter++ >= Z_COUP_COUNT_MAX) {
-            z_game_log(Game,
-                       NULL,
-                       "Coup counter reached %d",
-                       Z_COUP_COUNT_MAX);
-
-            // Stage coup
-
-            Game->revoltCounter /= 2;
-            Game->coupCounter = 0;
-
-            return false;
-        }
-    } else if(z_despot_getLoyalty(Game->despot) < Z_COUP_THRESHOLD) {
-        Game->coupCounter = 1;
-
-        z_game_log(Game,
-                   NULL,
-                   "Nobles' loyalty to the Despot is below %d%%",
-                   Z_COUP_THRESHOLD);
-
-        z_game_logInc(Game);
-        z_game_log(Game, NULL, "A coup is imminent");
-        z_game_logDec(Game);
-    }
-
-    return true;
-}
-
-bool z_game_turn(ZGame* Game)
-{
-    Game->timeInMonths++;
-
-    if(z_time_monthsIntoYear(Game->timeInMonths) == 0) {
-        z_game_log(Game, NULL, "A year passed - GLORY TO THE DESPOT!");
-
-        Game->numImprisonedThisYear = 0;
-    } else {
-        z_game_log(Game, NULL, "Another month passed");
-    }
-
-    z_game_logInc(Game);
-
-    if(game_health(Game) && game_revolt(Game) && game_coup(Game)) {
-        return true;
-    }
-
-    z_game_logDec(Game);
-
-    return false;
-}
-
-bool z_game_handleMenu(ZGame* Game)
-{
-    AMenu* menu = Game->menus[Game->currentMenu];
-
-    a_menu_handleInput(menu);
-
-    if(a_menu_getState(menu) == A_MENU_STATE_SELECTED) {
-        ZMenuItem* selected = a_menu_getSelectedItem(menu);
-
-        a_menu_reset(menu);
-
-        return selected->handler(Game);;
-    }
-
-    return false;
 }
 
 static void game_drawStats(const ZGame* Game)
@@ -506,7 +362,17 @@ void z_game_drawMenu(const ZGame* Game)
     a_font_print(selected->blurb);
 }
 
+AMenu* z_game_getMenu(const ZGame* Game)
+{
+    return Game->menus[Game->currentMenu];
+}
+
 void z_game_setMenu(ZGame* Game, ZMenu Menu)
 {
     Game->currentMenu = Menu;
+}
+
+bool z_game_runMenuHandler(ZGame* Game, ZMenuItem* Item)
+{
+    return Item->handler(Game);
 }

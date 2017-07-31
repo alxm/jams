@@ -24,6 +24,23 @@
 
 #include "state_game.h"
 
+static bool game_handleMenu(ZGame* Game)
+{
+    AMenu* menu = z_game_getMenu(Game);
+
+    a_menu_handleInput(menu);
+
+    if(a_menu_getState(menu) == A_MENU_STATE_SELECTED) {
+        void* selected = a_menu_getSelectedItem(menu);
+
+        a_menu_reset(menu);
+
+        return z_game_runMenuHandler(Game, selected);
+    }
+
+    return false;
+}
+
 A_STATE(actionMenu)
 {
     A_STATE_BODY
@@ -36,7 +53,7 @@ A_STATE(actionMenu)
                                    "Choose an option with UP/DOWN and "
                                    "select with SPACE BAR");
 
-            if(z_game_handleMenu(z_game)) {
+            if(game_handleMenu(z_game)) {
                 a_state_pop();
                 a_state_push("flushLog");
             }
@@ -181,7 +198,19 @@ bool z_action_imprisonPeasants(ZGame* Game)
     z_game_log(Game, NULL, "Despot imprisoned a group of rebellious peasants");
     z_game_logInc(Game);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
-    z_game_staveOffRevolt(Game);
+
+    unsigned revoltCounter = a_math_minu(z_game_getRevoltCounter(Game), 1);
+    z_game_setRevoltCounter(Game, revoltCounter);
+
+    if(revoltCounter > 0) {
+        z_game_log(Game,
+                   NULL,
+                   "Staved off revolt for another %d months",
+                   Z_REVOLT_COUNT_MAX - 1);
+    } else {
+        z_game_log(Game, NULL, "A needless effort");
+    }
+
     z_game_logDec(Game);
 
     z_game_setNumImprisoned(Game, numImprisoned);
@@ -219,7 +248,19 @@ bool z_action_imprisonNobles(ZGame* Game)
     z_game_log(Game, NULL, "Despot imprisoned a corrupt noble");
     z_game_logInc(Game);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
-    z_game_staveOffCoup(Game);
+
+    unsigned coupCounter = a_math_minu(z_game_getCoupCounter(Game), 1);
+    z_game_setCoupCounter(Game, coupCounter);
+
+    if(coupCounter > 0) {
+        z_game_log(Game,
+                   NULL,
+                   "Staved off coup for another %d months",
+                   Z_COUP_COUNT_MAX - 1);
+    } else {
+        z_game_log(Game, NULL, "A needless effort");
+    }
+
     z_game_logDec(Game);
 
     z_game_setNumImprisoned(Game, numImprisoned);

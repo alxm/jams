@@ -23,13 +23,29 @@ typedef enum {
     Z_MENU_NUM
 } ZMenu;
 
+#define Z_REVOLT_THRESHOLD 50
+#define Z_REVOLT_COUNT_MAX 10
+
+#define Z_COUP_THRESHOLD   50
+#define Z_COUP_COUNT_MAX   10
+
 extern ZGame* z_game_init(void);
 extern void z_game_free(ZGame* Game);
 
 extern void z_game_setInstructions(ZGame* Game, const char* Text);
+
 extern int z_game_getTimeInMonths(const ZGame* Game);
+extern void z_game_setTimeInMonths(ZGame* Game, int Value);
+
 extern unsigned z_game_getNumImprisoned(const ZGame* Game);
 extern void z_game_setNumImprisoned(ZGame* Game, unsigned Num);
+
+extern unsigned z_game_getRevoltCounter(const ZGame* Game);
+extern void z_game_setRevoltCounter(ZGame* Game, unsigned Value);
+
+extern unsigned z_game_getCoupCounter(const ZGame* Game);
+extern void z_game_setCoupCounter(ZGame* Game, unsigned Value);
+
 extern ZDespot* z_game_getDespot(const ZGame* Game);
 
 extern void z_game_log(const ZGame* Game, AFont* Font, const char* Format, ...);
@@ -37,13 +53,11 @@ extern void z_game_logInc(const ZGame* Game);
 extern void z_game_logDec(const ZGame* Game);
 extern bool z_game_logTick(const ZGame* Game);
 
-extern void z_game_staveOffRevolt(ZGame* Game);
-extern void z_game_staveOffCoup(ZGame* Game);
-
-extern bool z_game_turn(ZGame* Game);
 extern bool z_game_handleMenu(ZGame* Game);
 
 extern void z_game_draw(const ZGame* Game);
 extern void z_game_drawMenu(const ZGame* Game);
 
+extern AMenu* z_game_getMenu(const ZGame* Game);
 extern void z_game_setMenu(ZGame* Game, ZMenu Menu);
+extern bool z_game_runMenuHandler(ZGame* Game, ZMenuItem* Item);

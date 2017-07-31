@@ -22,6 +22,7 @@
 #include "util_controls.h"
 #include "util_despot.h"
 #include "util_game.h"
+#include "util_time.h"
 
 ZGame* z_game;
 
@@ -32,6 +33,138 @@ static void game_checkGameOver(ZGame* Game)
     if(z_despot_getHealth(despot) <= 0 || z_despot_getWealth(despot) <= 0) {
         a_state_pop();
     }
+}
+
+static bool game_health(ZGame* Game)
+{
+    ZDespot* despot = z_game_getDespot(Game);
+
+    int age = z_despot_getAgeInYears(despot);
+    int health = z_despot_getHealth(despot);
+    int healthDec = 0;
+
+    if(age >= 90) {
+        healthDec = 5;
+    } if(age >= 80) {
+        healthDec = 4;
+    } else if(age >= 70) {
+        healthDec = 3;
+    } else if(age >= 60) {
+        healthDec = 2;
+    }
+
+    if(healthDec > 0) {
+        health -= healthDec;
+        z_despot_setHealth(despot, health);
+
+        z_game_log(Game, NULL, "Despot lost %d health", healthDec);
+
+        if(health <= 0) {
+            z_game_log(Game, NULL, "Despot died");
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool game_revolt(ZGame* Game)
+{
+    ZDespot* despot = z_game_getDespot(Game);
+    int popularity = z_despot_getPopularity(despot);
+    unsigned revoltCounter = z_game_getRevoltCounter(Game);
+
+    if(revoltCounter > 0) {
+        z_game_setRevoltCounter(Game, revoltCounter + 1);
+
+        if(revoltCounter == Z_REVOLT_COUNT_MAX) {
+            z_game_log(Game,
+                       NULL,
+                       "Revolt counter reached %d",
+                       Z_REVOLT_COUNT_MAX);
+
+            // Stage revolt
+
+            z_game_setRevoltCounter(Game, 0);
+            z_game_setCoupCounter(Game, 0);
+
+            return false;
+        }
+    } else if(popularity < Z_REVOLT_THRESHOLD) {
+        z_game_setRevoltCounter(Game, 1);
+
+        z_game_log(Game,
+                   NULL,
+                   "Despot's popularity amongst peasants is below %d%%",
+                   Z_REVOLT_THRESHOLD);
+
+        z_game_logInc(Game);
+        z_game_log(Game, NULL, "Revolt is imminent");
+        z_game_logDec(Game);
+    }
+
+    return true;
+}
+
+static bool game_coup(ZGame* Game)
+{
+    ZDespot* despot = z_game_getDespot(Game);
+    unsigned revoltCounter = z_game_getRevoltCounter(Game);
+    unsigned coupCounter = z_game_getCoupCounter(Game);
+
+    if(coupCounter > 0) {
+        z_game_setCoupCounter(Game, coupCounter + 1);
+
+        if(coupCounter++ >= Z_COUP_COUNT_MAX) {
+            z_game_log(Game,
+                       NULL,
+                       "Coup counter reached %d",
+                       Z_COUP_COUNT_MAX);
+
+            // Stage coup
+
+            z_game_setRevoltCounter(Game, revoltCounter / 2);
+            z_game_setCoupCounter(Game, 0);
+
+            return false;
+        }
+    } else if(z_despot_getLoyalty(despot) < Z_COUP_THRESHOLD) {
+        z_game_setCoupCounter(Game, 1);
+
+        z_game_log(Game,
+                   NULL,
+                   "Nobles' loyalty to the Despot is below %d%%",
+                   Z_COUP_THRESHOLD);
+
+        z_game_logInc(Game);
+        z_game_log(Game, NULL, "A coup is imminent");
+        z_game_logDec(Game);
+    }
+
+    return true;
+}
+
+static bool game_turn(ZGame* Game)
+{
+    int timeInMonths = z_game_getTimeInMonths(Game) + 1;
+    z_game_setTimeInMonths(Game, timeInMonths);
+
+    if(z_time_monthsIntoYear(timeInMonths) == 0) {
+        z_game_log(Game, NULL, "A year passed - GLORY TO THE DESPOT!");
+        z_game_setNumImprisoned(Game, 0);
+    } else {
+        z_game_log(Game, NULL, "Another month passed");
+    }
+
+    z_game_logInc(Game);
+
+    if(game_health(Game) && game_revolt(Game) && game_coup(Game)) {
+        return true;
+    }
+
+    z_game_logDec(Game);
+
+    return false;
 }
 
 A_STATE(game)
@@ -53,7 +186,7 @@ A_STATE(game)
             z_game_logTick(z_game);
 
             if(a_button_getPressedOnce(z_controls.action)) {
-                if(z_game_turn(z_game)) {
+                if(game_turn(z_game)) {
                     a_state_push("actionMenu");
                 }
 

@@ -19,3 +19,4 @@ typedef struct ZControls ZControls;
 typedef struct ZDespot ZDespot;
 typedef struct ZGame ZGame;
 typedef struct ZLog ZLog;
+typedef struct ZMenuItem ZMenuItem;
