@@ -24,6 +24,7 @@
 #include "util_game.h"
 #include "util_log.h"
 #include "util_sfx.h"
+#include "util_strings.h"
 #include "util_time.h"
 
 #include "state_action.h"
@@ -102,76 +103,76 @@ ZGame* z_game_init(void)
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
-                   menu_item_new("Do Nothing",
-                                 "Relax to improve your health!",
+                   menu_item_new(Z_STR_MENU_NOTHING_TITLE,
+                                 Z_STR_MENU_NOTHING_BLURB,
                                  z_action_doNothing));
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
-                   menu_item_new("Collect Taxes",
-                                 "Get some more money!",
+                   menu_item_new(Z_STR_MENU_TAX_TITLE,
+                                 Z_STR_MENU_TAX_BLURB,
                                  z_action_collectTaxes));
     {
         a_menu_addItem(g->menus[Z_MENU_TAX],
-                       menu_item_new("Tax the peasants",
-                                     "There's a lot of them to tax!",
+                       menu_item_new(Z_STR_MENU_TAX_P_TITLE,
+                                     Z_STR_MENU_TAX_P_BLURB,
                                      z_action_collectTaxesFromPeasants));
 
         a_menu_addItem(g->menus[Z_MENU_TAX],
-                       menu_item_new("Tax the nobles",
-                                     "Despot giveth and Despot taketh away!",
+                       menu_item_new(Z_STR_MENU_TAX_N_TITLE,
+                                     Z_STR_MENU_TAX_N_BLURB,
                                      z_action_collectTaxesFromNobles));
 
         a_menu_addItem(g->menus[Z_MENU_TAX],
-                       menu_item_new("Back",
-                                     "Go back to the main menu",
+                       menu_item_new(Z_STR_MENU_BACK_TITLE,
+                                     Z_STR_MENU_BACK_BLURB,
                                      menu_back));
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
-                   menu_item_new("Give Money",
-                                 "Spread the wealth!",
+                   menu_item_new(Z_STR_MENU_GIVE_TITLE,
+                                 Z_STR_MENU_GIVE_BLURB,
                                  z_action_giveMoney));
     {
         a_menu_addItem(g->menus[Z_MENU_GIVE],
-                       menu_item_new("Give to the peasants",
-                                     "Throw some crumbs!",
+                       menu_item_new(Z_STR_MENU_GIVE_P_TITLE,
+                                     Z_STR_MENU_GIVE_P_BLURB,
                                      z_action_giveMoneyToPeasants));
 
         a_menu_addItem(g->menus[Z_MENU_GIVE],
-                       menu_item_new("Give to the nobles",
-                                     "The rich get richer!",
+                       menu_item_new(Z_STR_MENU_GIVE_N_TTLE,
+                                     Z_STR_MENU_GIVE_N_BLURB,
                                      z_action_giveMoneyToNobles));
 
         a_menu_addItem(g->menus[Z_MENU_GIVE],
-                       menu_item_new("Back",
-                                     "Go back to the main menu",
+                       menu_item_new(Z_STR_MENU_BACK_TITLE,
+                                     Z_STR_MENU_BACK_BLURB,
                                      menu_back));
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
-                   menu_item_new("Imprison Opponents",
-                                 "How dare they question you!",
+                   menu_item_new(Z_STR_MENU_IMP_TITLE,
+                                 Z_STR_MENU_IMP_BLURB,
                                  z_action_imprison));
     {
         a_menu_addItem(g->menus[Z_MENU_IMPRISON],
-                       menu_item_new("Imprison rebellious peasants",
-                                     "That'll show them!",
+                       menu_item_new(Z_STR_MENU_IMP_P_TITLE,
+                                     Z_STR_MENU_IMP_P_BLURB,
                                      z_action_imprisonPeasants));
 
         a_menu_addItem(g->menus[Z_MENU_IMPRISON],
-                       menu_item_new("Imprison a corrupt noble",
-                                     "You made them, you break them!",
+                       menu_item_new(Z_STR_MENU_IMP_N_TITLE,
+                                     Z_STR_MENU_IMP_N_BLURB,
                                      z_action_imprisonNobles));
 
         a_menu_addItem(g->menus[Z_MENU_IMPRISON],
-                       menu_item_new("Back",
-                                     "Go back to the main menu",
+                       menu_item_new(Z_STR_MENU_BACK_TITLE,
+                                     Z_STR_MENU_BACK_BLURB,
                                      menu_back));
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
-                   menu_item_new("Wage War",
-                                 "Always a coin toss!",
+                   menu_item_new(Z_STR_MENU_WAR_TITLE,
+                                 Z_STR_MENU_WAR_BLURB,
                                  z_action_wageWar));
 
     g->currentMenu = Z_MENU_MAIN;
