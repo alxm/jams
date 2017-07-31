@@ -164,7 +164,13 @@ bool z_action_giveMoneyToNobles(ZGame* Game)
 
 bool z_action_imprison(ZGame* Game)
 {
-    z_game_setMenu(Game, Z_MENU_IMPRISON);
+    if(z_game_getNumImprisoned(Game) >= 2) {
+        z_game_log(Game,
+                   NULL,
+                   "Despot cannot imprison more people until next year");
+    } else {
+        z_game_setMenu(Game, Z_MENU_IMPRISON);
+    }
 
     return false;
 }
@@ -172,16 +178,6 @@ bool z_action_imprison(ZGame* Game)
 bool z_action_imprisonPeasants(ZGame* Game)
 {
     bool ret = false;
-    unsigned numImprisoned = z_game_getNumImprisoned(Game);
-
-    if(numImprisoned++ >= 2) {
-        z_game_log(Game,
-                   NULL,
-                   "Despot cannot imprison people again until next year");
-
-        goto done;
-    }
-
     ZDespot* despot = z_game_getDespot(Game);
 
     if(z_despot_getLoyalty(despot) < 50) {
@@ -213,7 +209,7 @@ bool z_action_imprisonPeasants(ZGame* Game)
 
     z_game_logDec(Game);
 
-    z_game_setNumImprisoned(Game, numImprisoned);
+    z_game_setNumImprisoned(Game, z_game_getNumImprisoned(Game) + 1);
     ret = true;
 
 done:
@@ -224,16 +220,6 @@ done:
 bool z_action_imprisonNobles(ZGame* Game)
 {
     bool ret = false;
-    unsigned numImprisoned = z_game_getNumImprisoned(Game);
-
-    if(numImprisoned++ >= 2) {
-        z_game_log(Game,
-                   NULL,
-                   "Despot cannot imprison people again until next year");
-
-        goto done;
-    }
-
     ZDespot* despot = z_game_getDespot(Game);
 
     if(z_despot_getPopularity(despot) < 50) {
@@ -263,7 +249,7 @@ bool z_action_imprisonNobles(ZGame* Game)
 
     z_game_logDec(Game);
 
-    z_game_setNumImprisoned(Game, numImprisoned);
+    z_game_setNumImprisoned(Game, z_game_getNumImprisoned(Game) + 1);
     ret = true;
 
 done:
