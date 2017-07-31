@@ -21,6 +21,7 @@
 
 #include "util_despot.h"
 #include "util_game.h"
+#include "util_strings.h"
 #include "util_time.h"
 
 struct ZDespot {
@@ -69,12 +70,12 @@ void z_despot_setHealth(ZDespot* Despot, int Health)
     if(Despot->health < Health) {
         z_game_log(Despot->game,
                    Z_LOG_GOOD,
-                   "Despot gained %d%% health",
+                   Z_STR_DESPOT_HEALTH_GAINED,
                    Health - Despot->health);
     } else if(Despot->health > Health) {
         z_game_log(Despot->game,
                    Z_LOG_BAD,
-                   "Despot lost %d%% health",
+                   Z_STR_DESPOT_HEALTH_LOST,
                    Despot->health - Health);
     }
 
@@ -91,17 +92,17 @@ void z_despot_setWealth(ZDespot* Despot, int Wealth)
     if(Despot->wealth < Wealth) {
         z_game_log(Despot->game,
                    Z_LOG_GOOD,
-                   "Despot gained %d wealth",
+                   Z_STR_DESPOT_WEALTH_GAINED,
                    Wealth - Despot->wealth);
     } else if(Despot->wealth > Wealth) {
         if(Wealth <= 0) {
             z_game_log(Despot->game,
                        Z_LOG_BAD,
-                       "Despot lost everything");
+                       Z_STR_DESPOT_WEALTH_LOST_ALL);
         } else {
             z_game_log(Despot->game,
                        Z_LOG_BAD,
-                       "Despot lost %d wealth",
+                       Z_STR_DESPOT_WEALTH_LOST,
                        Despot->wealth - Wealth);
         }
     }
@@ -121,12 +122,12 @@ void z_despot_setPopularity(ZDespot* Despot, int Popularity)
     if(Despot->popularity < Popularity) {
         z_game_log(Despot->game,
                    Z_LOG_GOOD,
-                   "Despot gained %d%% popularity among peasants",
+                   Z_STR_DESPOT_POP_GAINED,
                    Popularity - Despot->popularity);
     } else if(Despot->popularity > Popularity) {
         z_game_log(Despot->game,
                    Z_LOG_BAD,
-                   "Despot lost %d%% popularity among peasants",
+                   Z_STR_DESPOT_POP_LOST,
                    Despot->popularity - Popularity);
     }
 
@@ -145,12 +146,12 @@ void z_despot_setLoyalty(ZDespot* Despot, int Loyalty)
     if(Despot->loyalty < Loyalty) {
         z_game_log(Despot->game,
                    Z_LOG_GOOD,
-                   "Despot gained %d%% loyalty from nobles",
+                   Z_STR_DESPOT_LOY_GAINED,
                    Loyalty - Despot->loyalty);
     } else if(Despot->loyalty > Loyalty) {
         z_game_log(Despot->game,
                    Z_LOG_BAD,
-                   "Despot lost %d%% loyalty from nobles",
+                   Z_STR_DESPOT_LOY_LOST,
                    Despot->loyalty - Loyalty);
     }
 

@@ -15,7 +15,7 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Menu strings
+// Menus
 #define Z_STR_MENU_BACK_TITLE "Back"
 #define Z_STR_MENU_BACK_BLURB "Go back to the main menu"
 #define Z_STR_MENU_NOTHING_TITLE "Do Nothing"
@@ -40,3 +40,14 @@
 #define Z_STR_MENU_IMP_N_BLURB "You made them, you break them!"
 #define Z_STR_MENU_WAR_TITLE "Wage War"
 #define Z_STR_MENU_WAR_BLURB "Always a coin toss!"
+
+// Despot
+#define Z_STR_DESPOT_HEALTH_GAINED "Despot gained %d%% health"
+#define Z_STR_DESPOT_HEALTH_LOST "Despot lost %d%% health"
+#define Z_STR_DESPOT_WEALTH_GAINED "Despot gained %d wealth"
+#define Z_STR_DESPOT_WEALTH_LOST_ALL "Despot lost everything"
+#define Z_STR_DESPOT_WEALTH_LOST "Despot lost %d wealth"
+#define Z_STR_DESPOT_POP_GAINED "Despot gained %d%% popularity among peasants"
+#define Z_STR_DESPOT_POP_LOST "Despot lost %d%% popularity among peasants"
+#define Z_STR_DESPOT_LOY_GAINED "Despot gained %d%% loyalty from nobles"
+#define Z_STR_DESPOT_LOY_LOST "Despot lost %d%% loyalty from nobles"
