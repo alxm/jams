@@ -26,15 +26,6 @@
 
 ZGame* z_game;
 
-static void game_checkGameOver(ZGame* Game)
-{
-    ZDespot* despot = z_game_getDespot(Game);
-
-    if(z_despot_getHealth(despot) <= 0 || z_despot_getWealth(despot) <= 0) {
-        a_state_pop();
-    }
-}
-
 static bool game_health(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
@@ -278,24 +269,30 @@ A_STATE(game)
 
     A_STATE_BODY
     {
+        ZDespot* despot = z_game_getDespot(z_game);
+
         z_controls_release();
 
         A_STATE_LOOP
         {
-            z_game_logTick(z_game);
+            if(z_despot_getHealth(despot) <= 0
+                || z_despot_getWealth(despot) <= 0) {
 
-            if(a_button_getPressedOnce(z_controls.action)) {
-                if(game_turn(z_game)) {
-                    a_state_push("actionMenu");
-                }
-
-                a_state_push("flushLog");
+                a_state_push("gameOver");
             } else {
-                z_game_setInstructions(z_game,
-                                       "Press SPACE BAR for next turn");
-            }
+                z_game_logTick(z_game);
 
-            game_checkGameOver(z_game);
+                if(a_button_getPressedOnce(z_controls.action)) {
+                    if(game_turn(z_game)) {
+                        a_state_push("actionMenu");
+                    }
+
+                    a_state_push("flushLog");
+                } else {
+                    z_game_setInstructions(z_game,
+                                           "Press SPACE BAR for next turn");
+                }
+            }
 
             A_STATE_LOOP_DRAW
             {
@@ -307,6 +304,35 @@ A_STATE(game)
     A_STATE_FREE
     {
         z_game_free(z_game);
+    }
+}
+
+A_STATE(gameOver)
+{
+    A_STATE_INIT
+    {
+        z_game_log(z_game, NULL, "GAME OVER");
+        a_state_push("flushLog");
+    }
+
+    A_STATE_BODY
+    {
+        z_controls_release();
+        z_game_setInstructions(z_game, "Press SPACE BAR to start a new game");
+
+        A_STATE_LOOP
+        {
+            if(a_button_getPressedOnce(z_controls.action)) {
+                a_state_pop();
+                a_state_pop();
+                a_state_push("game");
+            }
+
+            A_STATE_LOOP_DRAW
+            {
+                z_game_draw(z_game);
+            }
+        }
     }
 }
 

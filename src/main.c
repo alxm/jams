@@ -39,6 +39,7 @@ A_MAIN
     a_state_new("actionMenu", actionMenu);
     a_state_new("flushLog", flushLog);
     a_state_new("game", game);
+    a_state_new("gameOver", gameOver);
 
     a_state_push("game");
 }
