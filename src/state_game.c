@@ -40,6 +40,8 @@ A_STATE(game)
     {
         z_game = z_game_init();
         z_game_log(z_game, NULL, "Hello, world");
+
+        a_state_push("flushLog");
     }
 
     A_STATE_BODY
@@ -48,17 +50,17 @@ A_STATE(game)
 
         A_STATE_LOOP
         {
-            if(z_game_logTick(z_game)) {
-                z_game_setInstructions(z_game, "Wait...");
-            } else {
-                if(a_button_getPressedOnce(z_controls.action)) {
-                    if(z_game_turn(z_game)) {
-                        a_state_push("flushLog");
-                    }
-                } else {
-                    z_game_setInstructions(z_game,
-                                           "Press SPACE BAR for next turn");
+            z_game_logTick(z_game);
+
+            if(a_button_getPressedOnce(z_controls.action)) {
+                if(z_game_turn(z_game)) {
+                    a_state_push("actionMenu");
                 }
+
+                a_state_push("flushLog");
+            } else {
+                z_game_setInstructions(z_game,
+                                       "Press SPACE BAR for next turn");
             }
 
             game_checkGameOver(z_game);
@@ -87,7 +89,7 @@ A_STATE(flushLog)
             if(z_game_logTick(z_game)) {
                 z_game_setInstructions(z_game, "Wait...");
             } else {
-                a_state_replace("actionMenu");
+                a_state_pop();
             }
 
             A_STATE_LOOP_DRAW

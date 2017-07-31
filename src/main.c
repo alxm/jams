@@ -29,6 +29,7 @@ A_SETUP
     a_settings_set("app.version", "1.0");
     a_settings_set("app.author", "alxm");
     a_settings_set("app.output.on", "yes");
+    a_settings_set("app.output.verbose", "yes");
 }
 
 A_MAIN

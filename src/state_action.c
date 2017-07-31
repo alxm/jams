@@ -30,16 +30,15 @@ A_STATE(actionMenu)
     {
         A_STATE_LOOP
         {
-            if(z_game_logTick(z_game)) {
-                z_game_setInstructions(z_game, "Wait...");
-            } else {
-                z_game_setInstructions(z_game,
-                                       "Choose an option with UP/DOWN and "
-                                       "select with SPACE BAR");
+            z_game_logTick(z_game);
 
-                if(z_game_handleMenu(z_game)) {
-                    a_state_pop();
-                }
+            z_game_setInstructions(z_game,
+                                   "Choose an option with UP/DOWN and "
+                                   "select with SPACE BAR");
+
+            if(z_game_handleMenu(z_game)) {
+                a_state_pop();
+                a_state_push("flushLog");
             }
 
             A_STATE_LOOP_DRAW
@@ -58,12 +57,9 @@ A_STATE(actionMenu)
 
 bool z_action_doNothing(ZGame* Game)
 {
-    z_game_log(Game,
-               NULL,
-               "Despot got some well-earned rest");
-
     ZDespot* despot = z_game_getDespot(Game);
 
+    z_game_log(Game, NULL, "Despot got some well-earned rest");
     z_game_logInc(Game);
     z_despot_setHealth(despot, z_despot_getHealth(despot) + 1);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
@@ -174,7 +170,9 @@ bool z_action_imprisonPeasants(ZGame* Game)
     if(z_despot_getLoyalty(despot) < 50) {
         z_game_log(Game, NULL, "Too many nobles oppose the Despot");
         z_game_logInc(Game);
-        z_game_log(Game, NULL, "Cannot imprison peasants at this time (maybe just 1)");
+        z_game_log(Game,
+                   NULL,
+                   "Cannot imprison peasants at this time (maybe just 1)");
         z_game_logDec(Game);
 
         goto done;
