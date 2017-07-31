@@ -280,17 +280,8 @@ bool z_action_wageWar(ZGame* Game)
     int wealth = z_despot_getWealth(despot);
     int health = z_despot_getHealth(despot);
 
-    if(popularity < 50) {
-        z_game_log(Game, NULL, "Too many peasants oppose the Despot");
-        z_game_logInc(Game);
-        z_game_log(Game, NULL, "Cannot wage war at this time");
-        z_game_logDec(Game);
-
-        return false;
-    }
-
-    if(loyalty < 50) {
-        z_game_log(Game, NULL, "Too many nobles oppose the Despot");
+    if(popularity + loyalty < 50) {
+        z_game_log(Game, NULL, "Too many people oppose the Despot");
         z_game_logInc(Game);
         z_game_log(Game, NULL, "Cannot wage war at this time");
         z_game_logDec(Game);
@@ -310,7 +301,13 @@ bool z_action_wageWar(ZGame* Game)
     if(a_random_chance(chance, 21)) {
         z_game_log(Game, NULL, "Despot was victorious! GLORY TO THE DESPOT!");
         z_game_logInc(Game);
-        z_despot_setPopularity(despot, popularity + 1);
+
+        if(popularity > 33) {
+            z_despot_setPopularity(despot, popularity + 1);
+        } else {
+            z_despot_setPopularity(despot, popularity - 1);
+        }
+
         z_despot_setWealth(despot, wealth + 1000);
         z_game_logDec(Game);
     } else {
