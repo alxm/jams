@@ -332,7 +332,7 @@ static void game_drawStats(const ZGame* Game)
 static void game_drawLog(const ZGame* Game)
 {
     int startX = 0;
-    int startY = a_screen_getHeight() / 2 + 27;
+    int startY = a_screen_getHeight() / 2;
     int width = a_screen_getWidth();
     int height = a_screen_getHeight() / 2 - 27;
 
@@ -345,7 +345,7 @@ static void game_drawLog(const ZGame* Game)
 static void game_drawHelp(const ZGame* Game)
 {
     int startX = 0;
-    int startY = a_screen_getHeight() / 2;
+    int startY = a_screen_getHeight() - 27;
     int width = a_screen_getWidth();
     int height = 27;
 
