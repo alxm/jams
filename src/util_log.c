@@ -149,7 +149,7 @@ void z_log_draw(const ZLog* Log, int X, int Y)
             a_font_print("  ");
         }
 
-        a_font_setFont(z_fonts.greenMedium);
+        a_font_setFont(z_fonts.greenDark);
         a_font_print("> ");
         a_font_setFont(line->font);
         a_font_print(line->text);
