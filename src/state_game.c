@@ -76,29 +76,30 @@ static bool game_revolt(ZGame* Game)
                        "The peasants revolt against the Despot");
 
             int chance = 1;
-            chance += age >= 60;
-            chance += age >= 70;
-            chance += age >= 80;
-            chance += health < 50;
-            chance += health < 40;
-            chance += health < 30;
-            chance += health < 20;
-            chance += health < 10;
-            chance += popularity < 50;
-            chance += popularity < 40;
-            chance += popularity < 30;
-            chance += popularity < 20;
-            chance += popularity < 10;
-            chance += loyalty < 50;
+            int total = 1;
+            chance += age >= 60; total++;
+            chance += age >= 70; total++;
+            chance += age >= 80; total++;
+            chance += health < 50; total++;
+            chance += health < 40; total++;
+            chance += health < 30; total++;
+            chance += health < 20; total++;
+            chance += health < 10; total++;
+            chance += popularity < 50; total++;
+            chance += popularity < 40; total++;
+            chance += popularity < 30; total++;
+            chance += popularity < 20; total++;
+            chance += popularity < 10; total++;
+            chance += loyalty < 50; total++;
 
             z_game_logInc(Game);
 
             z_game_log(Game,
                        Z_LOG_NEUTRAL,
                        "Peasants have a %d%% probability of success",
-                       100 * chance / 15);
+                       100 * chance / total);
 
-            if(a_random_chance(chance, 15)) {
+            if(a_random_chance(chance, total)) {
                 z_game_log(Game,
                            Z_LOG_BAD,
                            "The revolt was successful, Despot is history",
@@ -168,29 +169,30 @@ static bool game_coup(ZGame* Game)
                        "The nobles stage a coup against the Despot");
 
             int chance = 1;
-            chance += age >= 60;
-            chance += age >= 70;
-            chance += age >= 80;
-            chance += health < 50;
-            chance += health < 40;
-            chance += health < 30;
-            chance += health < 20;
-            chance += health < 10;
-            chance += popularity < 50;
-            chance += loyalty < 50;
-            chance += loyalty < 40;
-            chance += loyalty < 30;
-            chance += loyalty < 20;
-            chance += loyalty < 10;
+            int total = 1;
+            chance += age >= 60; total++;
+            chance += age >= 70; total++;
+            chance += age >= 80; total++;
+            chance += health < 50; total++;
+            chance += health < 40; total++;
+            chance += health < 30; total++;
+            chance += health < 20; total++;
+            chance += health < 10; total++;
+            chance += popularity < 50; total++;
+            chance += loyalty < 50; total++;
+            chance += loyalty < 40; total++;
+            chance += loyalty < 30; total++;
+            chance += loyalty < 20; total++;
+            chance += loyalty < 10; total++;
 
             z_game_logInc(Game);
 
             z_game_log(Game,
                        Z_LOG_NEUTRAL,
                        "Nobles have a %d%% probability of success",
-                       100 * chance / 15);
+                       100 * chance / total);
 
-            if(a_random_chance(chance, 15)) {
+            if(a_random_chance(chance, total)) {
                 z_game_log(Game,
                            Z_LOG_BAD,
                            "The coup was successful, Despot is history",
