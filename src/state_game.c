@@ -35,7 +35,6 @@ static bool game_health(ZGame* Game)
     ZDespot* despot = z_game_getDespot(Game);
 
     int age = z_despot_getAgeInYears(despot);
-    int health = z_despot_getHealth(despot);
     int healthDec = 0;
 
     if(age >= 90) {
@@ -48,17 +47,10 @@ static bool game_health(ZGame* Game)
         healthDec = 2;
     }
 
-    if(healthDec > 0) {
-        health -= healthDec;
-        z_despot_setHealth(despot, health);
+    int newHealth = z_despot_getHealth(despot) - healthDec;
+    z_despot_setHealth(despot, newHealth);
 
-        if(health <= 0) {
-            z_game_log(Game, Z_LOG_BAD, Z_STR_DESPOT_DIED);
-            return false;
-        }
-    }
-
-    return true;
+    return newHealth > 0;
 }
 
 static bool game_revolt(ZGame* Game)

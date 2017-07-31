@@ -77,6 +77,10 @@ void z_despot_setHealth(ZDespot* Despot, int Health)
                    Z_LOG_BAD,
                    Z_STR_DESPOT_HEALTH_LOST,
                    Despot->health - Health);
+
+        if(Health <= 0) {
+            z_game_log(Despot->game, Z_LOG_BAD, Z_STR_DESPOT_DIED);
+        }
     }
 
     Despot->health = Health;
