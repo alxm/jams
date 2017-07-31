@@ -19,21 +19,41 @@
 
 #include "util_gfx.h"
 
+ZColors z_colors;
 ZFonts z_fonts;
 
-void z_gfx_load(void)
+static void loadColors(void)
+{
+    z_colors.grayDark = a_pixel_hex(0x222222);
+    z_colors.grayMedium = a_pixel_hex(0x505050);
+    z_colors.grayLight = a_pixel_hex(0xc9c9c9);
+    z_colors.greenDark = a_pixel_hex(0x18875e);
+    z_colors.greenMedium = a_pixel_hex(0x26dc9a);
+    z_colors.greenLight = a_pixel_hex(0x70ffcb);
+    z_colors.redDark = a_pixel_hex(0x5e0749);
+    z_colors.redMedium = a_pixel_hex(0xb72a94);
+    z_colors.redLight = a_pixel_hex(0xdc6cc0);
+}
+
+static void loadFonts(void)
 {
     ASprite* fontSprite = a_sprite_newFromFile("gfx/font.png");
     AFont* font = a_font_new(fontSprite, 0, 0, A_FONT_LOAD_ALL);
     a_sprite_free(fontSprite);
 
-    z_fonts.fontGrayDark = a_font_dup(font, a_pixel_hex(0x121212));
-    z_fonts.fontGrayMedium = a_font_dup(font, a_pixel_hex(0x505050));
-    z_fonts.fontGrayLight = a_font_dup(font, a_pixel_hex(0xc9c9c9));
-    z_fonts.fontGreenDark = a_font_dup(font, a_pixel_hex(0x18875e));
-    z_fonts.fontGreenMedium = a_font_dup(font, a_pixel_hex(0x26dc9a));
-    z_fonts.fontGreenLight = a_font_dup(font, a_pixel_hex(0x70ffcb));
-    z_fonts.fontRedDark = a_font_dup(font, a_pixel_hex(0x5e0749));
-    z_fonts.fontRedMedium = a_font_dup(font, a_pixel_hex(0xb72a94));
-    z_fonts.fontRedLight = a_font_dup(font, a_pixel_hex(0xdc6cc0));
+    z_fonts.grayDark = a_font_dup(font, z_colors.grayDark);
+    z_fonts.grayMedium = a_font_dup(font, z_colors.grayMedium);
+    z_fonts.grayLight = a_font_dup(font, z_colors.grayLight);
+    z_fonts.greenDark = a_font_dup(font, z_colors.greenDark);
+    z_fonts.greenMedium = a_font_dup(font, z_colors.greenMedium);
+    z_fonts.greenLight = a_font_dup(font, z_colors.greenLight);
+    z_fonts.redDark = a_font_dup(font, z_colors.redDark);
+    z_fonts.redMedium = a_font_dup(font, z_colors.redMedium);
+    z_fonts.redLight = a_font_dup(font, z_colors.redLight);
+}
+
+void z_gfx_load(void)
+{
+    loadColors();
+    loadFonts();
 }

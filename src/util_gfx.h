@@ -15,18 +15,31 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+typedef struct ZColors {
+    APixel grayDark;
+    APixel grayMedium;
+    APixel grayLight;
+    APixel greenDark;
+    APixel greenMedium;
+    APixel greenLight;
+    APixel redDark;
+    APixel redMedium;
+    APixel redLight;
+} ZColors;
+
 typedef struct ZFonts {
-    AFont* fontGrayDark;
-    AFont* fontGrayMedium;
-    AFont* fontGrayLight;
-    AFont* fontGreenDark;
-    AFont* fontGreenMedium;
-    AFont* fontGreenLight;
-    AFont* fontRedDark;
-    AFont* fontRedMedium;
-    AFont* fontRedLight;
+    AFont* grayDark;
+    AFont* grayMedium;
+    AFont* grayLight;
+    AFont* greenDark;
+    AFont* greenMedium;
+    AFont* greenLight;
+    AFont* redDark;
+    AFont* redMedium;
+    AFont* redLight;
 } ZFonts;
 
+extern ZColors z_colors;
 extern ZFonts z_fonts;
 
 extern void z_gfx_load(void);

@@ -22,6 +22,7 @@
 #include "util_controls.h"
 #include "util_despot.h"
 #include "util_game.h"
+#include "util_gfx.h"
 #include "util_log.h"
 #include "util_sfx.h"
 #include "util_strings.h"
@@ -289,7 +290,7 @@ static void game_drawStats(const ZGame* Game)
     int width = a_screen_getWidth() - startX;
     int height = a_screen_getHeight() / 2;
 
-    a_pixel_setHex(0x18875e);
+    a_pixel_setPixel(z_colors.greenMedium);
     a_draw_rectangle(startX, startY, width, height);
 
     a_font_setCoords(startX + 2, startY + 2);
@@ -330,7 +331,7 @@ static void game_drawLog(const ZGame* Game)
     int width = a_screen_getWidth();
     int height = a_screen_getHeight() / 2 - 27;
 
-    a_pixel_setHex(0x5e0749);
+    a_pixel_setPixel(z_colors.redDark);
     a_draw_rectangle(startX, startY, width, height);
 
     z_log_draw(Game->log, startX + 2, startY + 2);
@@ -343,7 +344,7 @@ static void game_drawHelp(const ZGame* Game)
     int width = a_screen_getWidth();
     int height = 27;
 
-    a_pixel_setHex(0x26dc9a);
+    a_pixel_setPixel(z_colors.greenLight);
     a_draw_rectangle(startX, startY, width, height);
 
     a_font_setCoords(startX + 2, startY + 10);
@@ -352,7 +353,7 @@ static void game_drawHelp(const ZGame* Game)
 
 void z_game_draw(const ZGame* Game)
 {
-    a_pixel_setHex(0x222222);
+    a_pixel_setPixel(z_colors.grayDark);
     a_draw_fill();
 
     game_drawStats(Game);
