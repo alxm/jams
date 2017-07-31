@@ -19,6 +19,7 @@
 #include "util_types.h"
 
 #include "util_controls.h"
+#include "util_sfx.h"
 
 #include "state_action.h"
 #include "state_game.h"
@@ -35,6 +36,7 @@ A_SETUP
 A_MAIN
 {
     z_controls_load();
+    z_sfx_load();
 
     a_state_new("actionMenu", actionMenu);
     a_state_new("flushLog", flushLog);

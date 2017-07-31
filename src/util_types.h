@@ -15,7 +15,6 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZControls ZControls;
 typedef struct ZDespot ZDespot;
 typedef struct ZGame ZGame;
 typedef struct ZLog ZLog;

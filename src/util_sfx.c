@@ -17,24 +17,12 @@
 
 #include <a2x.h>
 
-#include "util_controls.h"
+#include "util_sfx.h"
 
-ZControls z_controls;
+ZSfx z_sfx;
 
-void z_controls_load(void)
+void z_sfx_load(void)
 {
-    z_controls.up = a_button_new("key.up gamepad.b.up");
-    z_controls.down = a_button_new("key.down gamepad.b.down");
-    z_controls.left = a_button_new("key.left gamepad.b.left");
-    z_controls.right = a_button_new("key.right gamepad.b.right");
-    z_controls.action = a_button_new("key.space gamepad.b.a");
-}
-
-void z_controls_release(void)
-{
-    a_button_release(z_controls.up);
-    a_button_release(z_controls.down);
-    a_button_release(z_controls.left);
-    a_button_release(z_controls.right);
-    a_button_release(z_controls.action);
+    z_sfx.menuBrowse = a_sfx_newFromFile("sfx/menu_browse.wav");
+    z_sfx.menuSelect = a_sfx_newFromFile("sfx/menu_select.wav");
 }

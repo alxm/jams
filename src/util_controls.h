@@ -15,13 +15,13 @@
     along with Despot 3900.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-struct ZControls {
+typedef struct ZControls {
     AInputButton* up;
     AInputButton* down;
     AInputButton* left;
     AInputButton* right;
     AInputButton* action;
-};
+} ZControls;
 
 extern ZControls z_controls;
 

@@ -23,6 +23,7 @@
 #include "util_despot.h"
 #include "util_game.h"
 #include "util_log.h"
+#include "util_sfx.h"
 #include "util_time.h"
 
 #include "state_action.h"
@@ -93,9 +94,11 @@ ZGame* z_game_init(void)
 
     for(ZMenu s = Z_MENU_NUM; s--; ) {
         g->menus[s] = a_menu_new(z_controls.down,
-                                z_controls.up,
-                                z_controls.action,
-                                NULL);
+                                 z_controls.up,
+                                 z_controls.action,
+                                 NULL);
+
+        a_menu_addSounds(g->menus[s], z_sfx.menuSelect, NULL, z_sfx.menuBrowse);
     }
 
     a_menu_addItem(g->menus[Z_MENU_MAIN],
