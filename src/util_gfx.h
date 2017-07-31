@@ -46,6 +46,7 @@ typedef struct ZSprites {
     ASpriteFrames* fortressFlags3;
     ASpriteFrames* fortressFlags4;
     ASprite* iconControls;
+    ASprite* iconWait;
 } ZSprites;
 
 extern ZColors z_colors;

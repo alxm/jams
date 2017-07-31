@@ -32,6 +32,7 @@
 
 struct ZGame {
     const char* instructions;
+    ASprite* icon;
     int timeInMonths;
     unsigned revoltCounter;
     unsigned coupCounter;
@@ -79,6 +80,7 @@ ZGame* z_game_init(void)
     ZGame* g = a_mem_malloc(sizeof(ZGame));
 
     g->instructions = "";
+    g->icon = z_sprites.iconWait;
     g->timeInMonths = z_time_yearsToMonths(3900);
     g->revoltCounter = 0;
     g->coupCounter = 0;
@@ -195,6 +197,11 @@ void z_game_free(ZGame* Game)
 void z_game_setInstructions(ZGame* Game, const char* Text)
 {
     Game->instructions = Text;
+}
+
+void z_game_setIcon(ZGame* Game, ASprite* Icon)
+{
+    Game->icon = Icon;
 }
 
 int z_game_getTimeInMonths(const ZGame* Game)
@@ -344,8 +351,6 @@ static void game_drawHelp(const ZGame* Game)
     int width = a_screen_getWidth();
     int height = 27;
 
-    ASprite* icon = z_sprites.iconControls;
-
     a_pixel_setPixel(z_colors.greenMedium);
     a_draw_rectangle(x, y, width, height);
 
@@ -355,8 +360,8 @@ static void game_drawHelp(const ZGame* Game)
     x += 4;
     y += 10;
 
-    a_sprite_blit(icon, x, y - 4);
-    x += a_sprite_getWidth(icon) + 2;
+    a_sprite_blit(Game->icon, x, y - 4);
+    x += a_sprite_getWidth(Game->icon) + 2;
 
     a_font_setFont(z_fonts.grayDark);
     a_font_setCoords(x, y);

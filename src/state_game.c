@@ -22,6 +22,7 @@
 #include "util_controls.h"
 #include "util_despot.h"
 #include "util_game.h"
+#include "util_gfx.h"
 #include "util_sfx.h"
 #include "util_strings.h"
 #include "util_time.h"
@@ -275,6 +276,7 @@ A_STATE(game)
                     a_state_push("flushLog");
                 } else {
                     z_game_setInstructions(z_game, Z_STR_HELP_NEXT);
+                    z_game_setIcon(z_game, z_sprites.iconControls);
                 }
             }
 
@@ -303,6 +305,7 @@ A_STATE(gameOver)
     {
         z_controls_release();
         z_game_setInstructions(z_game, Z_STR_HELP_NEW);
+        z_game_setIcon(z_game, z_sprites.iconControls);
 
         A_STATE_LOOP
         {
@@ -330,6 +333,7 @@ A_STATE(flushLog)
         {
             if(z_game_logTick(z_game)) {
                 z_game_setInstructions(z_game, Z_STR_HELP_WAIT);
+                z_game_setIcon(z_game, z_sprites.iconWait);
             } else {
                 a_state_pop();
             }

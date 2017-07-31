@@ -39,6 +39,7 @@ extern ZGame* z_game_init(void);
 extern void z_game_free(ZGame* Game);
 
 extern void z_game_setInstructions(ZGame* Game, const char* Text);
+extern void z_game_setIcon(ZGame* Game, ASprite* Icon);
 
 extern int z_game_getTimeInMonths(const ZGame* Game);
 extern void z_game_setTimeInMonths(ZGame* Game, int Value);

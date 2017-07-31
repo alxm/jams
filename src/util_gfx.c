@@ -64,6 +64,7 @@ static void loadSprites(void)
     z_sprites.fortressFlags4 = a_spriteframes_new(flags, 36, 17, 16);
 
     z_sprites.iconControls = a_sprite_newFromFile("gfx/icon_help.png");
+    z_sprites.iconWait = a_sprite_newFromFile("gfx/icon_wait.png");
 }
 
 void z_gfx_load(void)

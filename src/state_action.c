@@ -21,6 +21,7 @@
 
 #include "util_despot.h"
 #include "util_game.h"
+#include "util_gfx.h"
 #include "util_sfx.h"
 #include "util_strings.h"
 
@@ -50,7 +51,9 @@ A_STATE(actionMenu)
         A_STATE_LOOP
         {
             z_game_logTick(z_game);
+
             z_game_setInstructions(z_game, Z_STR_HELP_MENU);
+            z_game_setIcon(z_game, z_sprites.iconControls);
 
             if(game_handleMenu(z_game)) {
                 a_state_pop();
