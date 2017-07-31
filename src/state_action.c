@@ -97,10 +97,10 @@ bool z_action_collectTaxesFromPeasants(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
 
-    z_game_log(Game, NULL, "Despot taxed the peasants");
+    z_game_log(Game, NULL, "Despot taxed the peasants, they'll like that");
     z_game_logInc(Game);
-    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
     z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -112,10 +112,10 @@ bool z_action_collectTaxesFromNobles(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
 
-    z_game_log(Game, NULL, "Despot taxed the nobles");
+    z_game_log(Game, NULL, "Despot taxed the nobles, they'll like that");
     z_game_logInc(Game);
-    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
     z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -136,9 +136,9 @@ bool z_action_giveMoneyToPeasants(ZGame* Game)
 
     z_game_log(Game, NULL, "Despot was generous to the peasants");
     z_game_logInc(Game);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 1);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
-    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -152,9 +152,9 @@ bool z_action_giveMoneyToNobles(ZGame* Game)
 
     z_game_log(Game, NULL, "Despot was generous to the nobles");
     z_game_logInc(Game);
-    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
-    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 1);
     z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 1);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
