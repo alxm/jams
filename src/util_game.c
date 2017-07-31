@@ -89,7 +89,7 @@ ZGame* z_game_init(void)
     g->despot = z_despot_new(g,
                              g->timeInMonths - z_time_yearsToMonths(30),
                              80,
-                             1000,
+                             10000,
                              50,
                              50);
 
