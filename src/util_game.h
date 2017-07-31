@@ -24,6 +24,7 @@ typedef enum {
 } ZMenu;
 
 typedef enum {
+    Z_LOG_NEUTRAL,
     Z_LOG_GOOD,
     Z_LOG_BAD,
 } ZLogHint;

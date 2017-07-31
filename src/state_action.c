@@ -98,7 +98,10 @@ bool z_action_collectTaxesFromPeasants(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
 
-    z_game_log(Game, Z_LOG_GOOD, "Despot taxed the peasants, they'll like that");
+    z_game_log(Game,
+               Z_LOG_NEUTRAL,
+               "Despot taxed the peasants, they'll like that");
+
     z_game_logInc(Game);
     z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
@@ -113,7 +116,10 @@ bool z_action_collectTaxesFromNobles(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
 
-    z_game_log(Game, Z_LOG_GOOD, "Despot taxed the nobles, they'll like that");
+    z_game_log(Game,
+               Z_LOG_NEUTRAL,
+               "Despot taxed the nobles, they'll like that");
+
     z_game_logInc(Game);
     z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
@@ -169,7 +175,7 @@ bool z_action_imprison(ZGame* Game)
         a_sfx_play(z_sfx.denied);
 
         z_game_log(Game,
-                   Z_LOG_GOOD,
+                   Z_LOG_NEUTRAL,
                    "Despot cannot imprison more people until next year");
     } else {
         z_game_setMenu(Game, Z_MENU_IMPRISON);
@@ -184,10 +190,10 @@ bool z_action_imprisonPeasants(ZGame* Game)
     ZDespot* despot = z_game_getDespot(Game);
 
     if(z_despot_getLoyalty(despot) < 50) {
-        z_game_log(Game, Z_LOG_GOOD, "Too many nobles oppose the Despot");
+        z_game_log(Game, Z_LOG_BAD, "Too many nobles oppose the Despot");
         z_game_logInc(Game);
         z_game_log(Game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Cannot imprison peasants at this time (maybe just 1)");
         z_game_logDec(Game);
 
@@ -207,10 +213,9 @@ bool z_action_imprisonPeasants(ZGame* Game)
     if(revoltCounter > 0) {
         z_game_log(Game,
                    Z_LOG_GOOD,
-                   "Staved off revolt for another %d months",
-                   Z_REVOLT_COUNT_MAX - 1);
+                   "Staved off revolt for another few months");
     } else {
-        z_game_log(Game, Z_LOG_GOOD, "A needless effort");
+        z_game_log(Game, Z_LOG_NEUTRAL, "A needless effort");
     }
 
     z_game_logDec(Game);
@@ -229,9 +234,9 @@ bool z_action_imprisonNobles(ZGame* Game)
     ZDespot* despot = z_game_getDespot(Game);
 
     if(z_despot_getPopularity(despot) < 50) {
-        z_game_log(Game, Z_LOG_GOOD, "Too many peasants oppose the Despot");
+        z_game_log(Game, Z_LOG_BAD, "Too many peasants oppose the Despot");
         z_game_logInc(Game);
-        z_game_log(Game, Z_LOG_GOOD, "Cannot imprison nobles at this time");
+        z_game_log(Game, Z_LOG_BAD, "Cannot imprison nobles at this time");
         z_game_logDec(Game);
 
         goto done;
@@ -247,10 +252,9 @@ bool z_action_imprisonNobles(ZGame* Game)
     if(coupCounter > 0) {
         z_game_log(Game,
                    Z_LOG_GOOD,
-                   "Staved off coup for another %d months",
-                   Z_COUP_COUNT_MAX - 1);
+                   "Staved off coup for another few months");
     } else {
-        z_game_log(Game, Z_LOG_GOOD, "A needless effort");
+        z_game_log(Game, Z_LOG_NEUTRAL, "A needless effort");
     }
 
     z_game_logDec(Game);
@@ -271,7 +275,7 @@ bool z_action_wageWar(ZGame* Game)
         a_sfx_play(z_sfx.denied);
 
         z_game_log(Game,
-                   Z_LOG_GOOD,
+                   Z_LOG_NEUTRAL,
                    "Already waged a war this year, time flies huh");
 
         return false;
@@ -285,9 +289,9 @@ bool z_action_wageWar(ZGame* Game)
     int health = z_despot_getHealth(despot);
 
     if(popularity + loyalty < 50) {
-        z_game_log(Game, Z_LOG_GOOD, "Too many people oppose the Despot");
+        z_game_log(Game, Z_LOG_BAD, "Too many people oppose the Despot");
         z_game_logInc(Game);
-        z_game_log(Game, Z_LOG_GOOD, "Cannot wage war at this time");
+        z_game_log(Game, Z_LOG_BAD, "Cannot wage war at this time");
         z_game_logDec(Game);
 
         return false;
@@ -296,7 +300,7 @@ bool z_action_wageWar(ZGame* Game)
     int chance = 1 + (popularity + loyalty) / 10;
 
     z_game_log(Game,
-               Z_LOG_GOOD,
+               Z_LOG_NEUTRAL,
                "Despot is waging war with %d%% chance of success",
                100 * chance / 21);
 
@@ -319,7 +323,7 @@ bool z_action_wageWar(ZGame* Game)
         z_game_logDec(Game);
     } else {
         z_game_log(Game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Despot was defeated, but it was YOUR fault");
 
         z_game_logInc(Game);

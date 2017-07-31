@@ -73,7 +73,7 @@ void z_despot_setHealth(ZDespot* Despot, int Health)
                    Health - Despot->health);
     } else if(Despot->health > Health) {
         z_game_log(Despot->game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Despot lost %d%% health",
                    Despot->health - Health);
     }
@@ -95,7 +95,7 @@ void z_despot_setWealth(ZDespot* Despot, int Wealth)
                    Wealth - Despot->wealth);
     } else if(Despot->wealth > Wealth) {
         z_game_log(Despot->game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Despot lost %d wealth",
                    Despot->wealth - Wealth);
     }
@@ -119,7 +119,7 @@ void z_despot_setPopularity(ZDespot* Despot, int Popularity)
                    Popularity - Despot->popularity);
     } else if(Despot->popularity > Popularity) {
         z_game_log(Despot->game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Despot lost %d%% popularity among peasants",
                    Despot->popularity - Popularity);
     }
@@ -143,7 +143,7 @@ void z_despot_setLoyalty(ZDespot* Despot, int Loyalty)
                    Loyalty - Despot->loyalty);
     } else if(Despot->loyalty > Loyalty) {
         z_game_log(Despot->game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Despot lost %d%% loyalty from nobles",
                    Despot->loyalty - Loyalty);
     }

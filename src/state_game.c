@@ -49,10 +49,8 @@ static bool game_health(ZGame* Game)
         health -= healthDec;
         z_despot_setHealth(despot, health);
 
-        z_game_log(Game, Z_LOG_GOOD, "Despot lost %d health", healthDec);
-
         if(health <= 0) {
-            z_game_log(Game, Z_LOG_GOOD, "Despot died");
+            z_game_log(Game, Z_LOG_BAD, "Despot died");
             return false;
         }
     }
@@ -77,7 +75,7 @@ static bool game_revolt(ZGame* Game)
 
         if(revoltCounter >= Z_REVOLT_COUNT_MAX) {
             z_game_log(Game,
-                       Z_LOG_GOOD,
+                       Z_LOG_BAD,
                        "The peasants revolt against the Despot");
 
             int chance = 1;
@@ -99,13 +97,13 @@ static bool game_revolt(ZGame* Game)
             z_game_logInc(Game);
 
             z_game_log(Game,
-                       Z_LOG_GOOD,
+                       Z_LOG_NEUTRAL,
                        "Peasants have a %d%% probability of success",
                        100 * chance / 15);
 
             if(a_random_chance(chance, 15)) {
                 z_game_log(Game,
-                           Z_LOG_GOOD,
+                           Z_LOG_BAD,
                            "The revolt was successful, Despot is history",
                            Z_REVOLT_COUNT_MAX);
                 z_despot_setHealth(despot, 0);
@@ -135,12 +133,12 @@ static bool game_revolt(ZGame* Game)
         z_game_setRevoltCounter(Game, 1);
 
         z_game_log(Game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Despot's popularity amongst peasants is below %d%%",
                    Z_REVOLT_THRESHOLD);
 
         z_game_logInc(Game);
-        z_game_log(Game, Z_LOG_GOOD, "Revolt is imminent");
+        z_game_log(Game, Z_LOG_BAD, "Revolt is imminent");
         z_game_logDec(Game);
     }
 
@@ -165,7 +163,7 @@ static bool game_coup(ZGame* Game)
 
         if(coupCounter >= Z_COUP_COUNT_MAX) {
             z_game_log(Game,
-                       Z_LOG_GOOD,
+                       Z_LOG_BAD,
                        "The nobles stage a coup against the Despot");
 
             int chance = 1;
@@ -187,13 +185,13 @@ static bool game_coup(ZGame* Game)
             z_game_logInc(Game);
 
             z_game_log(Game,
-                       Z_LOG_GOOD,
+                       Z_LOG_NEUTRAL,
                        "Nobles have a %d%% probability of success",
                        100 * chance / 15);
 
             if(a_random_chance(chance, 15)) {
                 z_game_log(Game,
-                           Z_LOG_GOOD,
+                           Z_LOG_BAD,
                            "The coup was successful, Despot is history",
                            Z_REVOLT_COUNT_MAX);
                 z_despot_setHealth(despot, 0);
@@ -223,12 +221,12 @@ static bool game_coup(ZGame* Game)
         z_game_setCoupCounter(Game, 1);
 
         z_game_log(Game,
-                   Z_LOG_GOOD,
+                   Z_LOG_BAD,
                    "Nobles' loyalty to the Despot is below %d%%",
                    Z_COUP_THRESHOLD);
 
         z_game_logInc(Game);
-        z_game_log(Game, Z_LOG_GOOD, "A coup is imminent");
+        z_game_log(Game, Z_LOG_BAD, "A coup is imminent");
         z_game_logDec(Game);
     }
 
@@ -243,11 +241,11 @@ static bool game_turn(ZGame* Game)
     a_sfx_play(z_sfx.newTurn);
 
     if(z_time_monthsIntoYear(timeInMonths) == 0) {
-        z_game_log(Game, Z_LOG_GOOD, "A year passed - GLORY TO THE DESPOT!");
+        z_game_log(Game, Z_LOG_NEUTRAL, "A year passed - GLORY TO THE DESPOT!");
         z_game_setNumImprisoned(Game, 0);
         z_game_setNumWars(Game, 0);
     } else {
-        z_game_log(Game, Z_LOG_GOOD, "Another month passed");
+        z_game_log(Game, Z_LOG_NEUTRAL, "Another month passed");
     }
 
     z_game_logInc(Game);
@@ -266,7 +264,7 @@ A_STATE(game)
     A_STATE_INIT
     {
         z_game = z_game_init();
-        z_game_log(z_game, Z_LOG_GOOD, "Hello, world");
+        z_game_log(z_game, Z_LOG_NEUTRAL, "Hello, world");
 
         a_state_push("flushLog");
     }
@@ -315,7 +313,7 @@ A_STATE(gameOver)
 {
     A_STATE_INIT
     {
-        z_game_log(z_game, Z_LOG_GOOD, "GAME OVER");
+        z_game_log(z_game, Z_LOG_BAD, "GAME OVER");
         a_state_push("flushLog");
     }
 
