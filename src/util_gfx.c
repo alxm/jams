@@ -21,6 +21,7 @@
 
 ZColors z_colors;
 ZFonts z_fonts;
+ZSprites z_sprites;
 
 static void loadColors(void)
 {
@@ -52,8 +53,14 @@ static void loadFonts(void)
     z_fonts.redLight = a_font_dup(font, z_colors.redLight);
 }
 
+static void loadSprites(void)
+{
+    z_sprites.fortress = a_sprite_newFromFile("gfx/fortress.png");
+}
+
 void z_gfx_load(void)
 {
     loadColors();
     loadFonts();
+    loadSprites();
 }

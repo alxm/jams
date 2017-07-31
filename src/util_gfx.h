@@ -39,7 +39,12 @@ typedef struct ZFonts {
     AFont* redLight;
 } ZFonts;
 
+typedef struct ZSprites {
+    ASprite* fortress;
+} ZSprites;
+
 extern ZColors z_colors;
 extern ZFonts z_fonts;
+extern ZSprites z_sprites;
 
 extern void z_gfx_load(void);

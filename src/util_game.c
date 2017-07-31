@@ -289,7 +289,7 @@ bool z_game_logTick(const ZGame* Game)
 
 static void game_drawStats(const ZGame* Game)
 {
-    int startX = 3 * a_screen_getWidth() / 4;
+    int startX = a_sprite_getWidth(z_sprites.fortress);
     int startY = 0;
     int width = a_screen_getWidth() - startX;
     int height = a_screen_getHeight() / 2;
@@ -357,6 +357,12 @@ static void game_drawHelp(const ZGame* Game)
     a_font_print(Game->instructions);
 }
 
+static void game_drawFortress(const ZGame* Game)
+{
+    A_UNUSED(Game);
+    a_sprite_blit(z_sprites.fortress, 0, 0);
+}
+
 void z_game_draw(const ZGame* Game)
 {
     a_pixel_setPixel(z_colors.grayDark);
@@ -365,6 +371,7 @@ void z_game_draw(const ZGame* Game)
     game_drawStats(Game);
     game_drawLog(Game);
     game_drawHelp(Game);
+    game_drawFortress(Game);
 }
 
 void z_game_drawMenu(const ZGame* Game)
