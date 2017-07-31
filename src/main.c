@@ -31,6 +31,7 @@ A_SETUP
     a_settings_set("app.author", "alxm");
     a_settings_set("app.output.on", "yes");
     a_settings_set("app.output.verbose", "yes");
+    a_settings_set("video.fps", "30");
     a_settings_set("sound.on", "no");
 }
 
