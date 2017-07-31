@@ -159,7 +159,9 @@ bool z_action_giveMoneyToNobles(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
 
-    z_game_log(Game, Z_LOG_GOOD, "Despot was generous to the nobles");
+    z_game_log(Game,
+               Z_LOG_GOOD,
+               "Despot was generous to the nobles, they needed it");
 
     z_game_logInc(Game);
     z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
