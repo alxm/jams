@@ -75,6 +75,7 @@ static bool game_revolt(ZGame* Game)
     int loyalty = z_despot_getLoyalty(despot);
     int health = z_despot_getHealth(despot);
     int age = z_despot_getAgeInYears(despot);
+    int wealth = z_despot_getWealth(despot);
 
     unsigned revoltCounter = z_game_getRevoltCounter(Game);
 
@@ -85,8 +86,7 @@ static bool game_revolt(ZGame* Game)
         if(revoltCounter >= Z_REVOLT_COUNT_MAX) {
             z_game_log(Game,
                        NULL,
-                       "The peasants revolt against the Despot",
-                       Z_REVOLT_COUNT_MAX);
+                       "The peasants revolt against the Despot");
 
             int chance = 1;
             chance += age >= 60;
@@ -124,6 +124,7 @@ static bool game_revolt(ZGame* Game)
                            Z_REVOLT_COUNT_MAX);
 
                 z_game_logInc(Game);
+                z_despot_setWealth(despot, wealth + 1000);
                 z_game_log(Game,
                            NULL,
                            "GLORY TO DESPOT!",
@@ -157,6 +158,12 @@ static bool game_revolt(ZGame* Game)
 static bool game_coup(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
+    int popularity = z_despot_getPopularity(despot);
+    int loyalty = z_despot_getLoyalty(despot);
+    int health = z_despot_getHealth(despot);
+    int age = z_despot_getAgeInYears(despot);
+    int wealth = z_despot_getWealth(despot);
+
     unsigned revoltCounter = z_game_getRevoltCounter(Game);
     unsigned coupCounter = z_game_getCoupCounter(Game);
 
@@ -167,10 +174,53 @@ static bool game_coup(ZGame* Game)
         if(coupCounter >= Z_COUP_COUNT_MAX) {
             z_game_log(Game,
                        NULL,
-                       "Coup counter reached %d",
-                       Z_COUP_COUNT_MAX);
+                       "The nobles stage a coup against the Despot");
 
-            // Stage coup
+            int chance = 1;
+            chance += age >= 60;
+            chance += age >= 70;
+            chance += age >= 80;
+            chance += health < 50;
+            chance += health < 40;
+            chance += health < 30;
+            chance += health < 20;
+            chance += health < 10;
+            chance += popularity < 50;
+            chance += loyalty < 50;
+            chance += loyalty < 40;
+            chance += loyalty < 30;
+            chance += loyalty < 20;
+            chance += loyalty < 10;
+
+            z_game_logInc(Game);
+
+            z_game_log(Game,
+                       NULL,
+                       "Nobles have a %d%% probability of success",
+                       100 * chance / 15);
+
+            if(a_random_chance(chance, 15)) {
+                z_game_log(Game,
+                           NULL,
+                           "The coup was successful, Despot is history",
+                           Z_REVOLT_COUNT_MAX);
+                z_despot_setHealth(despot, 0);
+            } else {
+                z_game_log(Game,
+                           NULL,
+                           "The Despot squashed the nobles' coup",
+                           Z_REVOLT_COUNT_MAX);
+
+                z_game_logInc(Game);
+                z_despot_setWealth(despot, wealth + 2000);
+                z_game_log(Game,
+                           NULL,
+                           "GLORY TO DESPOT!",
+                           Z_REVOLT_COUNT_MAX);
+                z_game_logDec(Game);
+            }
+
+            z_game_logDec(Game);
 
             z_game_setRevoltCounter(Game, revoltCounter / 2);
             z_game_setCoupCounter(Game, 0);
