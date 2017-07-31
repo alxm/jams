@@ -22,6 +22,7 @@
 #include "util_controls.h"
 #include "util_despot.h"
 #include "util_game.h"
+#include "util_sfx.h"
 #include "util_time.h"
 
 ZGame* z_game;
@@ -238,6 +239,8 @@ static bool game_turn(ZGame* Game)
 {
     int timeInMonths = z_game_getTimeInMonths(Game) + 1;
     z_game_setTimeInMonths(Game, timeInMonths);
+
+    a_sfx_play(z_sfx.newTurn);
 
     if(z_time_monthsIntoYear(timeInMonths) == 0) {
         z_game_log(Game, NULL, "A year passed - GLORY TO THE DESPOT!");

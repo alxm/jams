@@ -25,4 +25,5 @@ void z_sfx_load(void)
 {
     z_sfx.menuBrowse = a_sfx_newFromFile("sfx/menu_browse.wav");
     z_sfx.menuSelect = a_sfx_newFromFile("sfx/menu_select.wav");
+    z_sfx.newTurn = a_sfx_newFromFile("sfx/new_turn.wav");
 }
