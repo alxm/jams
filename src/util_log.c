@@ -111,7 +111,7 @@ bool z_log_tick(ZLog* Log)
         return false;
     }
 
-    if(a_fps_isNthFrame(a_fps_msToFrames(250))) {
+    if(a_fps_isNthFrame(a_fps_msToFrames(200))) {
         a_list_pop(Log->backlog);
         a_list_addLast(Log->lines, newLine);
 
