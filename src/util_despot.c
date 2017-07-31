@@ -69,12 +69,12 @@ void z_despot_setHealth(ZDespot* Despot, int Health)
     if(Despot->health < Health) {
         z_game_log(Despot->game,
                    NULL,
-                   "Despot gained %d health",
+                   "Despot gained %d%% health",
                    Health - Despot->health);
     } else if(Despot->health > Health) {
         z_game_log(Despot->game,
                    NULL,
-                   "Despot lost %d health",
+                   "Despot lost %d%% health",
                    Despot->health - Health);
     }
 

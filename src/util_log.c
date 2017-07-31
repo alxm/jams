@@ -78,7 +78,7 @@ void z_log_log(ZLog* Log, AFont* Font, const char* Format, va_list Args)
         needed = vsnprintf(buffer, size, Format, Args);
 
         if(needed >= 0 && (size_t)needed < size) {
-            a_out_printf(buffer);
+            a_out_print(buffer);
 
             ZLogLine* line = a_mem_malloc(sizeof(ZLogLine));
 
