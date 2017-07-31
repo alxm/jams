@@ -255,12 +255,18 @@ ZDespot* z_game_getDespot(const ZGame* Game)
     return Game->despot;
 }
 
-void z_game_log(const ZGame* Game, AFont* Font, const char* Format, ...)
+void z_game_log(const ZGame* Game, ZLogHint Hint, const char* Format, ...)
 {
     va_list args;
     va_start(args, Format);
 
-    z_log_log(Game->log, Font, Format, args);
+    if(Hint == Z_LOG_GOOD) {
+        a_sfx_play(z_sfx.outcomeGood);
+    } else {
+        a_sfx_play(z_sfx.outcomeBad);
+    }
+
+    z_log_log(Game->log, NULL, Format, args);
 
     va_end(args);
 }

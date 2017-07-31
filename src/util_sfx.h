@@ -19,6 +19,9 @@ typedef struct ZSfx {
     ASound* menuBrowse;
     ASound* menuSelect;
     ASound* newTurn;
+    ASound* outcomeGood;
+    ASound* outcomeBad;
+    ASound* denied;
 } ZSfx;
 
 extern ZSfx z_sfx;
