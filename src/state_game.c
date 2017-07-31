@@ -72,18 +72,66 @@ static bool game_revolt(ZGame* Game)
 {
     ZDespot* despot = z_game_getDespot(Game);
     int popularity = z_despot_getPopularity(despot);
+    int loyalty = z_despot_getLoyalty(despot);
+    int health = z_despot_getHealth(despot);
+    int age = z_despot_getAgeInYears(despot);
+
     unsigned revoltCounter = z_game_getRevoltCounter(Game);
 
     if(revoltCounter > 0) {
-        z_game_setRevoltCounter(Game, revoltCounter + 1);
+        revoltCounter++;
+        z_game_setRevoltCounter(Game, revoltCounter);
 
-        if(revoltCounter == Z_REVOLT_COUNT_MAX) {
+        if(revoltCounter >= Z_REVOLT_COUNT_MAX) {
             z_game_log(Game,
                        NULL,
-                       "Revolt counter reached %d",
+                       "The peasants revolt against the Despot",
                        Z_REVOLT_COUNT_MAX);
 
-            // Stage revolt
+            int chance = 1;
+            chance += age >= 60;
+            chance += age >= 70;
+            chance += age >= 80;
+            chance += health < 50;
+            chance += health < 40;
+            chance += health < 30;
+            chance += health < 20;
+            chance += health < 10;
+            chance += popularity < 50;
+            chance += popularity < 40;
+            chance += popularity < 30;
+            chance += popularity < 20;
+            chance += popularity < 10;
+            chance += loyalty < 50;
+
+            z_game_logInc(Game);
+
+            z_game_log(Game,
+                       NULL,
+                       "Peasants have a %d%% probability of success",
+                       100 * chance / 15);
+
+            if(a_random_chance(chance, 15)) {
+                z_game_log(Game,
+                           NULL,
+                           "The revolt was successful, Despot is history",
+                           Z_REVOLT_COUNT_MAX);
+                z_despot_setHealth(despot, 0);
+            } else {
+                z_game_log(Game,
+                           NULL,
+                           "The Despot squashed the peasants' rebellion",
+                           Z_REVOLT_COUNT_MAX);
+
+                z_game_logInc(Game);
+                z_game_log(Game,
+                           NULL,
+                           "GLORY TO DESPOT!",
+                           Z_REVOLT_COUNT_MAX);
+                z_game_logDec(Game);
+            }
+
+            z_game_logDec(Game);
 
             z_game_setRevoltCounter(Game, 0);
             z_game_setCoupCounter(Game, 0);
@@ -113,9 +161,10 @@ static bool game_coup(ZGame* Game)
     unsigned coupCounter = z_game_getCoupCounter(Game);
 
     if(coupCounter > 0) {
-        z_game_setCoupCounter(Game, coupCounter + 1);
+        coupCounter++;
+        z_game_setCoupCounter(Game, coupCounter);
 
-        if(coupCounter++ >= Z_COUP_COUNT_MAX) {
+        if(coupCounter >= Z_COUP_COUNT_MAX) {
             z_game_log(Game,
                        NULL,
                        "Coup counter reached %d",
