@@ -98,8 +98,8 @@ bool z_action_collectTaxesFromPeasants(ZGame* Game)
 
     z_game_log(Game, Z_LOG_NEUTRAL, Z_STR_ACT_TAX_PEASANTS);
     z_game_logInc(Game);
-    z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
-    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) + 1000);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 4);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -113,8 +113,8 @@ bool z_action_collectTaxesFromNobles(ZGame* Game)
 
     z_game_log(Game, Z_LOG_NEUTRAL, Z_STR_ACT_TAX_NOBLES);
     z_game_logInc(Game);
-    z_despot_setWealth(despot, z_despot_getWealth(despot) + 100);
-    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) + 1000);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 4);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -135,9 +135,9 @@ bool z_action_giveMoneyToPeasants(ZGame* Game)
 
     z_game_log(Game, Z_LOG_GOOD, Z_STR_ACT_GIVE_PEASANTS);
     z_game_logInc(Game);
-    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
-    z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 1);
-    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 1000);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 4);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 2);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -151,9 +151,9 @@ bool z_action_giveMoneyToNobles(ZGame* Game)
 
     z_game_log(Game, Z_LOG_GOOD, Z_STR_ACT_GIVE_NOBLES);
     z_game_logInc(Game);
-    z_despot_setWealth(despot, z_despot_getWealth(despot) - 100);
-    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 1);
-    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 1000);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 4);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 2);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -189,7 +189,7 @@ bool z_action_imprisonPeasants(ZGame* Game)
 
     z_game_log(Game, Z_LOG_GOOD, Z_STR_ACT_IMP_P_SUCCESS);
     z_game_logInc(Game);
-    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 1);
+    z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 10);
 
     unsigned revoltCounter = a_math_minu(z_game_getRevoltCounter(Game), 1);
     z_game_setRevoltCounter(Game, revoltCounter);
@@ -226,7 +226,7 @@ bool z_action_imprisonNobles(ZGame* Game)
 
     z_game_log(Game, Z_LOG_GOOD, Z_STR_ACT_IMP_N_SUCCESS);
     z_game_logInc(Game);
-    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 1);
+    z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 10);
 
     unsigned coupCounter = a_math_minu(z_game_getCoupCounter(Game), 1);
     z_game_setCoupCounter(Game, coupCounter);
@@ -275,11 +275,12 @@ bool z_action_wageWar(ZGame* Game)
     }
 
     int chance = 1 + (popularity + loyalty) / 10;
+    int total =  1 + (100        + 100)     / 10;
 
-    z_game_log(Game, Z_LOG_NEUTRAL, Z_STR_ACT_WAR_PROB, 100 * chance / 21);
+    z_game_log(Game, Z_LOG_NEUTRAL, Z_STR_ACT_WAR_PROB, 100 * chance / total);
     z_game_logInc(Game);
 
-    if(a_random_chance(chance, 21)) {
+    if(a_random_chance(chance, total)) {
         z_game_log(Game, Z_LOG_GOOD, Z_STR_ACT_WAR_VICTORY);
         z_game_logInc(Game);
 
@@ -289,7 +290,7 @@ bool z_action_wageWar(ZGame* Game)
             z_despot_setPopularity(despot, popularity / 2);
         }
 
-        z_despot_setWealth(despot, wealth + 10000);
+        z_despot_setWealth(despot, wealth + 20000);
         z_game_logDec(Game);
     } else {
         z_game_log(Game, Z_LOG_BAD, Z_STR_ACT_WAR_DEFEAT);
@@ -297,7 +298,7 @@ bool z_action_wageWar(ZGame* Game)
         z_despot_setPopularity(despot, popularity / 2);
         z_despot_setLoyalty(despot, loyalty / 2);
         z_despot_setWealth(despot, wealth - 10000);
-        z_despot_setHealth(despot, health - 10);
+        z_despot_setHealth(despot, health - 20);
         z_game_setRevoltCounter(Game, z_game_getRevoltCounter(Game) + 2);
         z_game_setCoupCounter(Game, z_game_getCoupCounter(Game) + 2);
         z_game_logDec(Game);
