@@ -19,6 +19,7 @@
 #include "util_types.h"
 
 #include "util_controls.h"
+#include "util_gfx.h"
 #include "util_sfx.h"
 
 #include "state_action.h"
@@ -41,6 +42,7 @@ A_SETUP
 A_MAIN
 {
     z_controls_load();
+    z_gfx_load();
     z_sfx_load();
 
     a_state_new("actionMenu", actionMenu);
