@@ -32,6 +32,9 @@ A_SETUP
     a_settings_set("app.output.on", "yes");
     a_settings_set("app.output.verbose", "yes");
     a_settings_set("video.fps", "30");
+    a_settings_set("video.width", "400");
+    a_settings_set("video.height", "240");
+    a_settings_set("video.borderColor", "0x222222");
     a_settings_set("sound.on", "no");
 }
 

@@ -284,12 +284,12 @@ bool z_game_logTick(const ZGame* Game)
 
 static void game_drawStats(const ZGame* Game)
 {
-    int startX = a_screen_getWidth() / 2;
+    int startX = 3 * a_screen_getWidth() / 4;
     int startY = 0;
     int width = a_screen_getWidth() - startX;
     int height = a_screen_getHeight() / 2;
 
-    a_pixel_setHex(0x88ffaa);
+    a_pixel_setHex(0x18875e);
     a_draw_rectangle(startX, startY, width, height);
 
     a_font_setCoords(startX + 2, startY + 2);
@@ -326,11 +326,11 @@ static void game_drawStats(const ZGame* Game)
 static void game_drawLog(const ZGame* Game)
 {
     int startX = 0;
-    int startY = a_screen_getHeight() / 2;
+    int startY = a_screen_getHeight() / 2 + 27;
     int width = a_screen_getWidth();
     int height = a_screen_getHeight() / 2 - 27;
 
-    a_pixel_setHex(0xffff88);
+    a_pixel_setHex(0x5e0749);
     a_draw_rectangle(startX, startY, width, height);
 
     z_log_draw(Game->log, startX + 2, startY + 2);
@@ -339,11 +339,11 @@ static void game_drawLog(const ZGame* Game)
 static void game_drawHelp(const ZGame* Game)
 {
     int startX = 0;
-    int startY = a_screen_getHeight() - 27;
+    int startY = a_screen_getHeight() / 2;
     int width = a_screen_getWidth();
     int height = 27;
 
-    a_pixel_setHex(0xaaffff);
+    a_pixel_setHex(0x26dc9a);
     a_draw_rectangle(startX, startY, width, height);
 
     a_font_setCoords(startX + 2, startY + 10);
@@ -352,7 +352,7 @@ static void game_drawHelp(const ZGame* Game)
 
 void z_game_draw(const ZGame* Game)
 {
-    a_pixel_setHex(0xaaff88);
+    a_pixel_setHex(0x222222);
     a_draw_fill();
 
     game_drawStats(Game);
