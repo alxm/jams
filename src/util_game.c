@@ -380,24 +380,58 @@ void z_game_draw(const ZGame* Game)
 
 void z_game_drawMenu(const ZGame* Game)
 {
+    int width = a_sprite_getWidth(z_sprites.fortress);
+    int height = a_sprite_getHeight(z_sprites.fortress);
+
+    a_pixel_push();
+    a_pixel_setPixel(z_colors.grayDark);
+    a_pixel_setBlend(A_PIXEL_BLEND_RGB75);
+    a_draw_rectangle(0, 0, width, height);
+    a_pixel_pop();
+
     AMenu* menu = Game->menus[Game->currentMenu];
 
-    a_font_setCoords(2, 2);
+    int x = 2;
+    int y = 2;
+
+    a_font_push();
 
     A_LIST_ITERATE(a_menu_getItems(menu), ZMenuItem*, item) {
-        if(a_menu_isItemSelected(menu, item)) {
-            a_font_setFont(z_fonts.redLight);
+        bool selected = a_menu_isItemSelected(menu, item);
+
+        if(selected) {
+            a_pixel_setPixel(z_colors.redMedium);
+            a_pixel_setBlend(A_PIXEL_BLEND_RGB75);
+        } else {
+            a_pixel_setPixel(z_colors.redDark);
+            a_pixel_setBlend(A_PIXEL_BLEND_RGB50);
+        }
+
+        a_draw_rectangle(x, y, width - 4, a_font_getLineHeight() + 4);
+        a_pixel_setBlend(A_PIXEL_BLEND_PLAIN);
+
+        a_font_setCoords(x + 2, y + 3);
+        a_font_setAlign(A_FONT_ALIGN_LEFT);
+
+        if(selected) {
+            a_font_setFont(z_fonts.greenLight);
             a_font_print("> ");
         }
 
         a_font_setFont(z_fonts.grayLight);
         a_font_print(item->title);
-        a_font_newLine();
+
+        if(selected) {
+            a_font_setFont(z_fonts.redLight);
+            a_font_setCoords(x + width - 4 - 2, y + 3);
+            a_font_setAlign(A_FONT_ALIGN_RIGHT);
+            a_font_print(item->blurb);
+        }
+
+        y += a_font_getLineHeight() + 6;
     }
 
-    ZMenuItem* selected = a_menu_getSelectedItem(menu);
-    a_font_newLine();
-    a_font_print(selected->blurb);
+    a_font_pop();
 }
 
 AMenu* z_game_getMenu(const ZGame* Game)
