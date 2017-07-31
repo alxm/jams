@@ -232,7 +232,7 @@ unsigned z_game_getRevoltCounter(const ZGame* Game)
 
 void z_game_setRevoltCounter(ZGame* Game, unsigned Value)
 {
-    Game->revoltCounter = Value;
+    Game->revoltCounter = a_math_minu(Value, Z_REVOLT_COUNT_MAX);
 }
 
 unsigned z_game_getCoupCounter(const ZGame* Game)
@@ -242,12 +242,7 @@ unsigned z_game_getCoupCounter(const ZGame* Game)
 
 void z_game_setCoupCounter(ZGame* Game, unsigned Value)
 {
-    Game->coupCounter = Value;
-}
-
-void z_game_isetCoupCounter(ZGame* Game, unsigned Value)
-{
-    Game->coupCounter = Value;
+    Game->coupCounter = a_math_minu(Value, Z_COUP_COUNT_MAX);
 }
 
 ZDespot* z_game_getDespot(const ZGame* Game)

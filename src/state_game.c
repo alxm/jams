@@ -70,10 +70,7 @@ static bool game_revolt(ZGame* Game)
     unsigned revoltCounter = z_game_getRevoltCounter(Game);
 
     if(revoltCounter > 0) {
-        revoltCounter++;
-        z_game_setRevoltCounter(Game, revoltCounter);
-
-        if(revoltCounter >= Z_REVOLT_COUNT_MAX) {
+        if(revoltCounter == Z_REVOLT_COUNT_MAX) {
             z_game_log(Game,
                        Z_LOG_BAD,
                        "The peasants revolt against the Despot");
@@ -128,6 +125,13 @@ static bool game_revolt(ZGame* Game)
             z_game_setCoupCounter(Game, 0);
 
             return false;
+        } else {
+            z_game_setRevoltCounter(Game, ++revoltCounter);
+
+            z_game_log(Game,
+                       Z_LOG_BAD,
+                       "%d%% of the way to a peasant's revolt",
+                       100 * revoltCounter / Z_REVOLT_COUNT_MAX);
         }
     } else if(popularity < Z_REVOLT_THRESHOLD) {
         z_game_setRevoltCounter(Game, 1);
@@ -158,10 +162,7 @@ static bool game_coup(ZGame* Game)
     unsigned coupCounter = z_game_getCoupCounter(Game);
 
     if(coupCounter > 0) {
-        coupCounter++;
-        z_game_setCoupCounter(Game, coupCounter);
-
-        if(coupCounter >= Z_COUP_COUNT_MAX) {
+        if(coupCounter == Z_COUP_COUNT_MAX) {
             z_game_log(Game,
                        Z_LOG_BAD,
                        "The nobles stage a coup against the Despot");
@@ -216,6 +217,13 @@ static bool game_coup(ZGame* Game)
             z_game_setCoupCounter(Game, 0);
 
             return false;
+        } else {
+            z_game_setCoupCounter(Game, ++coupCounter);
+
+            z_game_log(Game,
+                       Z_LOG_BAD,
+                       "%d%% of the way to a noble's coup",
+                       100 * coupCounter / Z_COUP_COUNT_MAX);
         }
     } else if(z_despot_getLoyalty(despot) < Z_COUP_THRESHOLD) {
         z_game_setCoupCounter(Game, 1);
