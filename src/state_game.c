@@ -130,7 +130,6 @@ static bool game_revolt(ZGame* Game)
         z_game_setRevoltCounter(Game, 1);
 
         z_game_log(Game, Z_LOG_BAD, Z_STR_REVOLT_THRESHOLD, Z_REVOLT_THRESHOLD);
-
         z_game_logInc(Game);
         z_game_log(Game, Z_LOG_BAD, Z_STR_REVOLT_IMMINENT);
         z_game_logDec(Game);
@@ -173,7 +172,6 @@ static bool game_coup(ZGame* Game)
             chance += loyalty < 10; total++;
 
             z_game_logInc(Game);
-
             z_game_log(Game,
                        Z_LOG_NEUTRAL,
                        Z_STR_COUP_PROB,
@@ -209,7 +207,6 @@ static bool game_coup(ZGame* Game)
         z_game_setCoupCounter(Game, 1);
 
         z_game_log(Game, Z_LOG_BAD, Z_STR_COUP_THRESHOLD, Z_COUP_THRESHOLD);
-
         z_game_logInc(Game);
         z_game_log(Game, Z_LOG_BAD, Z_STR_COUP_IMMINENT);
         z_game_logDec(Game);
