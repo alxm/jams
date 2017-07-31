@@ -262,7 +262,7 @@ void z_game_log(const ZGame* Game, ZLogHint Hint, const char* Format, ...)
 
     if(Hint == Z_LOG_GOOD) {
         a_sfx_play(z_sfx.outcomeGood);
-    } else {
+    } else if(Hint == Z_LOG_BAD) {
         a_sfx_play(z_sfx.outcomeBad);
     }
 
