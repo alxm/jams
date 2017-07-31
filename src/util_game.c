@@ -289,15 +289,10 @@ bool z_game_logTick(const ZGame* Game)
 
 static void game_drawStats(const ZGame* Game)
 {
-    int startX = a_sprite_getWidth(z_sprites.fortress);
-    int startY = 0;
-    int width = a_screen_getWidth() - startX;
-    int height = a_screen_getHeight() / 2;
+    int startX = 256;
+    int startY = 27;
 
-    a_pixel_setPixel(z_colors.greenMedium);
-    a_draw_rectangle(startX, startY, width, height);
-
-    a_font_setFont(z_fonts.grayDark);
+    a_font_setFont(z_fonts.greenLight);
     a_font_setCoords(startX + 2, startY + 2);
 
     a_font_printf("YEAR %d, month %d",
@@ -332,7 +327,7 @@ static void game_drawStats(const ZGame* Game)
 static void game_drawLog(const ZGame* Game)
 {
     int startX = 0;
-    int startY = a_screen_getHeight() / 2;
+    int startY = a_screen_getHeight() / 2 + 27;
     int width = a_screen_getWidth();
     int height = a_screen_getHeight() / 2 - 27;
 
@@ -345,7 +340,7 @@ static void game_drawLog(const ZGame* Game)
 static void game_drawHelp(const ZGame* Game)
 {
     int startX = 0;
-    int startY = a_screen_getHeight() - 27;
+    int startY = 0;
     int width = a_screen_getWidth();
     int height = 27;
 
@@ -359,12 +354,24 @@ static void game_drawHelp(const ZGame* Game)
 
 static void game_drawFortress(const ZGame* Game)
 {
+    int x = 0;
+    int y = 27;
+
     A_UNUSED(Game);
-    a_sprite_blit(z_sprites.fortress, 0, 0);
-    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags1), 191, 34);
-    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags2), 106, 12);
-    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags3), 137, 14);
-    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags4), 161, 14);
+
+    a_sprite_blit(z_sprites.fortress, x, y);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags1),
+                  x + 191,
+                  y + 34);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags2),
+                  x + 106,
+                  y + 12);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags3),
+                  x + 137,
+                  y + 14);
+    a_sprite_blit(a_spriteframes_next(z_sprites.fortressFlags4),
+                  x + 161,
+                  y + 14);
 }
 
 void z_game_draw(const ZGame* Game)
@@ -372,39 +379,35 @@ void z_game_draw(const ZGame* Game)
     a_pixel_setPixel(z_colors.grayDark);
     a_draw_fill();
 
-    game_drawStats(Game);
-    game_drawLog(Game);
     game_drawHelp(Game);
     game_drawFortress(Game);
+    game_drawStats(Game);
+    game_drawLog(Game);
 }
 
 void z_game_drawMenu(const ZGame* Game)
 {
-    int width = a_sprite_getWidth(z_sprites.fortress);
-    int height = a_sprite_getHeight(z_sprites.fortress);
-
-    a_pixel_push();
-    a_pixel_setPixel(z_colors.grayDark);
-    a_pixel_setBlend(A_PIXEL_BLEND_RGB75);
-    a_draw_rectangle(0, 0, width, height);
-    a_pixel_pop();
+    int x = 0;
+    int y = 27 + 10;
+    int width = 256;
 
     AMenu* menu = Game->menus[Game->currentMenu];
 
-    int x = 2;
-    int y = 2;
+    x += 2;
+    y += 2;
 
     a_font_push();
 
     A_LIST_ITERATE(a_menu_getItems(menu), ZMenuItem*, item) {
         bool selected = a_menu_isItemSelected(menu, item);
 
+        a_pixel_setBlend(A_PIXEL_BLEND_RGBA);
+        a_pixel_setAlpha(224);
+
         if(selected) {
             a_pixel_setPixel(z_colors.redMedium);
-            a_pixel_setBlend(A_PIXEL_BLEND_RGB75);
         } else {
             a_pixel_setPixel(z_colors.redDark);
-            a_pixel_setBlend(A_PIXEL_BLEND_RGB50);
         }
 
         a_draw_rectangle(x, y, width - 4, a_font_getLineHeight() + 4);
