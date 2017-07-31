@@ -180,6 +180,7 @@ void z_game_free(ZGame* Game)
         a_menu_freeEx(Game->menus[s], (AListFree*)menu_item_free);
     }
 
+    z_despot_free(Game->despot);
     z_log_free(Game->log);
     free(Game);
 }
