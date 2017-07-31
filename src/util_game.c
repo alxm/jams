@@ -257,13 +257,15 @@ void z_game_log(const ZGame* Game, ZLogHint Hint, const char* Format, ...)
     va_list args;
     va_start(args, Format);
 
+    AFont* font = z_fonts.grayLight;
+
     if(Hint == Z_LOG_GOOD) {
         a_sfx_play(z_sfx.outcomeGood);
     } else if(Hint == Z_LOG_BAD) {
         a_sfx_play(z_sfx.outcomeBad);
     }
 
-    z_log_log(Game->log, NULL, Format, args);
+    z_log_log(Game->log, font, Format, args);
 
     va_end(args);
 }
@@ -293,6 +295,7 @@ static void game_drawStats(const ZGame* Game)
     a_pixel_setPixel(z_colors.greenMedium);
     a_draw_rectangle(startX, startY, width, height);
 
+    a_font_setFont(z_fonts.grayDark);
     a_font_setCoords(startX + 2, startY + 2);
 
     a_font_printf("YEAR %d, month %d",
@@ -331,7 +334,7 @@ static void game_drawLog(const ZGame* Game)
     int width = a_screen_getWidth();
     int height = a_screen_getHeight() / 2 - 27;
 
-    a_pixel_setPixel(z_colors.redDark);
+    a_pixel_setPixel(z_colors.grayDark);
     a_draw_rectangle(startX, startY, width, height);
 
     z_log_draw(Game->log, startX + 2, startY + 2);
@@ -347,6 +350,7 @@ static void game_drawHelp(const ZGame* Game)
     a_pixel_setPixel(z_colors.greenLight);
     a_draw_rectangle(startX, startY, width, height);
 
+    a_font_setFont(z_fonts.grayDark);
     a_font_setCoords(startX + 2, startY + 10);
     a_font_print(Game->instructions);
 }
@@ -369,9 +373,11 @@ void z_game_drawMenu(const ZGame* Game)
 
     A_LIST_ITERATE(a_menu_getItems(menu), ZMenuItem*, item) {
         if(a_menu_isItemSelected(menu, item)) {
+            a_font_setFont(z_fonts.redLight);
             a_font_print("> ");
         }
 
+        a_font_setFont(z_fonts.grayLight);
         a_font_print(item->title);
         a_font_newLine();
     }

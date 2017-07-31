@@ -19,6 +19,7 @@
 
 #include "util_types.h"
 
+#include "util_gfx.h"
 #include "util_log.h"
 
 struct ZLog {
@@ -144,12 +145,11 @@ void z_log_draw(const ZLog* Log, int X, int Y)
             alpha += alphaInc;
         }
 
-        a_font_setFont(NULL);
-
         for(int i = 0; i < line->indent; i++) {
             a_font_print("  ");
         }
 
+        a_font_setFont(z_fonts.greenMedium);
         a_font_print("> ");
         a_font_setFont(line->font);
         a_font_print(line->text);
