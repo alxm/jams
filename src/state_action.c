@@ -314,23 +314,25 @@ bool z_action_wageWar(ZGame* Game)
         z_game_logInc(Game);
 
         if(popularity > 33) {
-            z_despot_setPopularity(despot, popularity + 1);
+            z_despot_setPopularity(despot, popularity + 10);
         } else {
-            z_despot_setPopularity(despot, popularity - 1);
+            z_despot_setPopularity(despot, popularity / 2);
         }
 
-        z_despot_setWealth(despot, wealth + 1000);
+        z_despot_setWealth(despot, wealth + 10000);
         z_game_logDec(Game);
     } else {
         z_game_log(Game,
                    Z_LOG_BAD,
-                   "Despot was defeated, but it was YOUR fault");
+                   "Despot was defeated, what a disaster");
 
         z_game_logInc(Game);
-        z_despot_setPopularity(despot, popularity - 1);
-        z_despot_setLoyalty(despot, loyalty - 1);
-        z_despot_setWealth(despot, wealth - 1000);
-        z_despot_setHealth(despot, health - 1);
+        z_despot_setPopularity(despot, popularity / 2);
+        z_despot_setLoyalty(despot, loyalty / 2);
+        z_despot_setWealth(despot, wealth - 10000);
+        z_despot_setHealth(despot, health - 10);
+        z_game_setRevoltCounter(Game, z_game_getRevoltCounter(Game) + 2);
+        z_game_setCoupCounter(Game, z_game_getCoupCounter(Game) + 2);
         z_game_logDec(Game);
     }
 
