@@ -339,16 +339,27 @@ static void game_drawLog(const ZGame* Game)
 
 static void game_drawHelp(const ZGame* Game)
 {
-    int startX = 0;
-    int startY = 0;
+    int x = 0;
+    int y = 0;
     int width = a_screen_getWidth();
     int height = 27;
 
-    a_pixel_setPixel(z_colors.greenLight);
-    a_draw_rectangle(startX, startY, width, height);
+    ASprite* icon = z_sprites.iconControls;
+
+    a_pixel_setPixel(z_colors.greenMedium);
+    a_draw_rectangle(x, y, width, height);
+
+    a_pixel_setPixel(z_colors.greenDark);
+    a_draw_hline(0, width, height - 1);
+
+    x += 4;
+    y += 10;
+
+    a_sprite_blit(icon, x, y - 4);
+    x += a_sprite_getWidth(icon) + 2;
 
     a_font_setFont(z_fonts.grayDark);
-    a_font_setCoords(startX + 2, startY + 10);
+    a_font_setCoords(x, y);
     a_font_print(Game->instructions);
 }
 

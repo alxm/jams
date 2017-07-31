@@ -274,7 +274,7 @@ A_STATE(game)
 
                     a_state_push("flushLog");
                 } else {
-                    z_game_setInstructions(z_game, Z_STR_TURN_NEXT);
+                    z_game_setInstructions(z_game, Z_STR_HELP_NEXT);
                 }
             }
 
@@ -302,7 +302,7 @@ A_STATE(gameOver)
     A_STATE_BODY
     {
         z_controls_release();
-        z_game_setInstructions(z_game, Z_STR_GAME_NEW);
+        z_game_setInstructions(z_game, Z_STR_HELP_NEW);
 
         A_STATE_LOOP
         {
@@ -329,7 +329,7 @@ A_STATE(flushLog)
         A_STATE_LOOP
         {
             if(z_game_logTick(z_game)) {
-                z_game_setInstructions(z_game, Z_STR_GAME_WAIT);
+                z_game_setInstructions(z_game, Z_STR_HELP_WAIT);
             } else {
                 a_state_pop();
             }

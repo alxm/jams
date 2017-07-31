@@ -62,6 +62,8 @@ static void loadSprites(void)
     z_sprites.fortressFlags2 = a_spriteframes_new(flags, 0, 17, 16);
     z_sprites.fortressFlags3 = a_spriteframes_new(flags, 18, 17, 16);
     z_sprites.fortressFlags4 = a_spriteframes_new(flags, 36, 17, 16);
+
+    z_sprites.iconControls = a_sprite_newFromFile("gfx/icon_help.png");
 }
 
 void z_gfx_load(void)

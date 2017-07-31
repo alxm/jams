@@ -50,7 +50,7 @@ A_STATE(actionMenu)
         A_STATE_LOOP
         {
             z_game_logTick(z_game);
-            z_game_setInstructions(z_game, Z_STR_MENU_HELP);
+            z_game_setInstructions(z_game, Z_STR_HELP_MENU);
 
             if(game_handleMenu(z_game)) {
                 a_state_pop();

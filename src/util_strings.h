@@ -75,17 +75,13 @@
 // Game
 #define Z_STR_TURN_YEAR "A year passed - GLORY TO THE DESPOT!"
 #define Z_STR_TURN_MONTHS "%d months passed"
-#define Z_STR_TURN_NEXT "Press SPACE BAR for next turn"
 #define Z_STR_INTRO_1 "Welcome to %s"
 #define Z_STR_INTRO_2 "You inherited your seat on the throne as is custom."
 #define Z_STR_INTRO_3 "You get to affect change on your country every %d months."
 #define Z_STR_INTRO_4 "See how rich you can get before you kick the bucket."
 #define Z_STR_GAME_OVER "GAME OVER"
-#define Z_STR_GAME_NEW "Press SPACE BAR to start a new game"
-#define Z_STR_GAME_WAIT "Wait..."
 
 // Actions
-#define Z_STR_MENU_HELP "Choose an option with UP/DOWN and select with SPACE BAR"
 #define Z_STR_ACT_NOTHING "Despot got some well-earned rest"
 #define Z_STR_ACT_TAX_PEASANTS "Despot taxed the peasants, they'll like that"
 #define Z_STR_ACT_TAX_NOBLES "Despot taxed the nobles, they'll like that"
@@ -109,3 +105,9 @@
 #define Z_STR_ACT_WAR_VICTORY "Despot was victorious! GLORY TO THE DESPOT!"
 #define Z_STR_ACT_WAR_VICTORY_UNPOPULAR "War was nevertheless unpopular among the peasants"
 #define Z_STR_ACT_WAR_DEFEAT "Despot was defeated, what a disaster"
+
+// Help
+#define Z_STR_HELP_WAIT "Wait..."
+#define Z_STR_HELP_NEW "Press the SPACE BAR to start a new game"
+#define Z_STR_HELP_NEXT "Press the SPACE BAR for next turn"
+#define Z_STR_HELP_MENU "Choose an option with the UP/DOWN arrows and select with the SPACE BAR"
