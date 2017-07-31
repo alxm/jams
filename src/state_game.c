@@ -102,21 +102,16 @@ static bool game_revolt(ZGame* Game)
             if(a_random_chance(chance, total)) {
                 z_game_log(Game,
                            Z_LOG_BAD,
-                           "The revolt was successful, Despot is history",
-                           Z_REVOLT_COUNT_MAX);
+                           "The revolt was successful, Despot is history");
                 z_despot_setHealth(despot, 0);
             } else {
                 z_game_log(Game,
                            Z_LOG_GOOD,
-                           "The Despot squashed the peasants' rebellion",
-                           Z_REVOLT_COUNT_MAX);
+                           "The Despot squashed the peasants' rebellion");
 
                 z_game_logInc(Game);
                 z_despot_setWealth(despot, wealth + 1000);
-                z_game_log(Game,
-                           Z_LOG_GOOD,
-                           "GLORY TO DESPOT!",
-                           Z_REVOLT_COUNT_MAX);
+                z_game_log(Game, Z_LOG_GOOD, "GLORY TO DESPOT!");
                 z_game_logDec(Game);
             }
 
@@ -195,21 +190,16 @@ static bool game_coup(ZGame* Game)
             if(a_random_chance(chance, total)) {
                 z_game_log(Game,
                            Z_LOG_BAD,
-                           "The coup was successful, Despot is history",
-                           Z_REVOLT_COUNT_MAX);
+                           "The coup was successful, Despot is history");
                 z_despot_setHealth(despot, 0);
             } else {
                 z_game_log(Game,
                            Z_LOG_GOOD,
-                           "The Despot squashed the nobles' coup",
-                           Z_REVOLT_COUNT_MAX);
+                           "The Despot squashed the nobles' coup");
 
                 z_game_logInc(Game);
                 z_despot_setWealth(despot, wealth + 2000);
-                z_game_log(Game,
-                           Z_LOG_GOOD,
-                           "GLORY TO DESPOT!",
-                           Z_REVOLT_COUNT_MAX);
+                z_game_log(Game, Z_LOG_GOOD, "GLORY TO DESPOT!");
                 z_game_logDec(Game);
             }
 
