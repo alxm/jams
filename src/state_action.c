@@ -138,9 +138,9 @@ bool z_action_giveMoneyToPeasants(ZGame* Game)
 
     z_game_log(Game, Z_LOG_GOOD, Z_STR_ACT_GIVE_PEASANTS);
     z_game_logInc(Game);
-    z_despot_setWealth(despot, z_despot_getWealth(despot) - 1000);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) + 10);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 4);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 1000);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
@@ -154,9 +154,9 @@ bool z_action_giveMoneyToNobles(ZGame* Game)
 
     z_game_log(Game, Z_LOG_GOOD, Z_STR_ACT_GIVE_NOBLES);
     z_game_logInc(Game);
-    z_despot_setWealth(despot, z_despot_getWealth(despot) - 1000);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) + 10);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 4);
+    z_despot_setWealth(despot, z_despot_getWealth(despot) - 1000);
     z_game_logDec(Game);
 
     z_game_setMenu(Game, Z_MENU_MAIN);
