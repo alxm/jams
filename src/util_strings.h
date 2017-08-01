@@ -75,14 +75,17 @@
 // Game
 #define Z_STR_TURN_YEAR "A year passed - GLORY TO THE DESPOT!"
 #define Z_STR_TURN_MONTHS "%d months passed"
-#define Z_STR_INTRO_1 "%s"
+#define Z_STR_INTRO_1 "%s - Hiscore %d (%d wealth, lived %d years)"
 #define Z_STR_INTRO_1B "Made for LUDUM DARE 39"
 #define Z_STR_INTRO_1C "alxm 2017 www.alxm.org"
-#define Z_STR_INTRO_2 "You inherited your seat on the throne as is custom."
+#define Z_STR_INTRO_2 "You inherited your seat on the throne as is the custom."
 #define Z_STR_INTRO_3 "You get to affect change on your country every %d months."
 #define Z_STR_INTRO_4 "See how rich you can get before you kick the bucket."
 #define Z_STR_INTRO_5 "Check the top of the screen for help and hints"
 #define Z_STR_GAME_OVER "GAME OVER"
+#define Z_STR_NO_HISCORE "You did not get a hiscore"
+#define Z_STR_NEW_HISCORE "You got a new hiscore!"
+#define Z_STR_FINAL_SCORE "Final score: %d (%d wealth, lived %d years)"
 
 // Actions
 #define Z_STR_ACT_NOTHING "Despot got some well-earned rest"

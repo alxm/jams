@@ -88,7 +88,7 @@ ZGame* z_game_init(void)
     g->numWarsThisYear = 0;
 
     g->despot = z_despot_new(g,
-                             g->timeInMonths - z_time_yearsToMonths(50),
+                             g->timeInMonths - z_time_yearsToMonths(55),
                              80,
                              1100,
                              50,

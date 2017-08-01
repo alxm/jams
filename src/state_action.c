@@ -194,7 +194,7 @@ bool z_action_imprisonPeasants(ZGame* Game)
     z_game_logInc(Game);
     z_despot_setPopularity(despot, z_despot_getPopularity(despot) - 20);
 
-    unsigned revoltCounter = a_math_minu(z_game_getRevoltCounter(Game), 1);
+    unsigned revoltCounter = a_math_minu(z_game_getRevoltCounter(Game), 2);
     z_game_setRevoltCounter(Game, revoltCounter);
 
     if(revoltCounter > 0) {
@@ -231,7 +231,7 @@ bool z_action_imprisonNobles(ZGame* Game)
     z_game_logInc(Game);
     z_despot_setLoyalty(despot, z_despot_getLoyalty(despot) - 20);
 
-    unsigned coupCounter = a_math_minu(z_game_getCoupCounter(Game), 1);
+    unsigned coupCounter = a_math_minu(z_game_getCoupCounter(Game), 2);
     z_game_setCoupCounter(Game, coupCounter);
 
     if(coupCounter > 0) {
@@ -306,7 +306,7 @@ bool z_action_wageWar(ZGame* Game)
         z_despot_setWealth(despot, wealth - 5000);
         z_despot_setHealth(despot, health - 20);
         z_game_setRevoltCounter(Game, z_game_getRevoltCounter(Game) + 2);
-        z_game_setCoupCounter(Game, z_game_getCoupCounter(Game) + 2);
+        z_game_setCoupCounter(Game, z_game_getCoupCounter(Game) + 4);
         z_game_logDec(Game);
     }
 
