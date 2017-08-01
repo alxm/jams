@@ -244,10 +244,14 @@ A_STATE(game)
                    Z_LOG_NEUTRAL,
                    Z_STR_INTRO_1,
                    a_settings_getString("app.title"));
+        z_game_log(z_game, Z_LOG_NEUTRAL, Z_STR_INTRO_1B);
+        z_game_log(z_game, Z_LOG_NEUTRAL, Z_STR_INTRO_1C);
         z_game_log(z_game, Z_LOG_NEUTRAL, "");
         z_game_log(z_game, Z_LOG_NEUTRAL, Z_STR_INTRO_2);
         z_game_log(z_game, Z_LOG_NEUTRAL, Z_STR_INTRO_3, Z_MONTHS_PER_TURN);
         z_game_log(z_game, Z_LOG_NEUTRAL, Z_STR_INTRO_4);
+        z_game_log(z_game, Z_LOG_NEUTRAL, "");
+        z_game_log(z_game, Z_LOG_NEUTRAL, Z_STR_INTRO_5);
         z_game_log(z_game, Z_LOG_NEUTRAL, "");
 
         a_state_push("flushLog");
