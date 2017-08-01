@@ -296,29 +296,36 @@ bool z_game_logTick(const ZGame* Game)
 
 static void game_drawStats(const ZGame* Game)
 {
-    int startX = 256;
-    int startY = 27;
+    int iconOff = a_sprite_getWidth(z_sprites.iconTime) + 2;
+    int x = 256 + 2 + iconOff;
+    int y = 32 + 2;
 
+    a_font_setCoords(x, y);
     a_font_setFont(z_fonts.greenLight);
-    a_font_setCoords(startX + 2, startY + 2);
 
+    a_sprite_blit(z_sprites.iconTime, a_font_getX() - iconOff, a_font_getY());
     a_font_printf("YEAR %d, month %d",
                   z_time_monthsToYears(Game->timeInMonths),
                   z_time_monthsIntoYear(Game->timeInMonths) + 1);
     a_font_newLine();
 
+    a_sprite_blit(z_sprites.iconAge, a_font_getX() - iconOff, a_font_getY());
     a_font_printf("AGE %d", z_despot_getAgeInYears(Game->despot));
     a_font_newLine();
 
+    a_sprite_blit(z_sprites.iconHealth, a_font_getX() - iconOff, a_font_getY());
     a_font_printf("HEALTH %d%%", z_despot_getHealth(Game->despot));
     a_font_newLine();
 
+    a_sprite_blit(z_sprites.iconMoney, a_font_getX() - iconOff, a_font_getY());
     a_font_printf("WEALTH %d", z_despot_getWealth(Game->despot));
     a_font_newLine();
 
+    a_sprite_blit(z_sprites.iconHeart, a_font_getX() - iconOff, a_font_getY());
     a_font_printf("POPULARITY %d%%", z_despot_getPopularity(Game->despot));
     a_font_newLine();
 
+    a_sprite_blit(z_sprites.iconLoyalty, a_font_getX() - iconOff, a_font_getY());
     a_font_printf("LOYALTY %d%%", z_despot_getLoyalty(Game->despot));
     a_font_newLine();
 

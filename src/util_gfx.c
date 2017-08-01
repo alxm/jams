@@ -65,6 +65,12 @@ static void loadSprites(void)
 
     z_sprites.iconControls = a_sprite_newFromFile("gfx/icon_help.png");
     z_sprites.iconWait = a_sprite_newFromFile("gfx/icon_wait.png");
+    z_sprites.iconTime = a_sprite_newFromFile("gfx/icon_time.png");
+    z_sprites.iconHeart = a_sprite_newFromFile("gfx/icon_heart.png");
+    z_sprites.iconMoney = a_sprite_newFromFile("gfx/icon_money.png");
+    z_sprites.iconAge = a_sprite_newFromFile("gfx/icon_age.png");
+    z_sprites.iconHealth = a_sprite_newFromFile("gfx/icon_health.png");
+    z_sprites.iconLoyalty = a_sprite_newFromFile("gfx/icon_loyalty.png");
 }
 
 void z_gfx_load(void)
