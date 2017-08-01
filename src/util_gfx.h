@@ -53,6 +53,8 @@ typedef struct ZSprites {
     ASprite* iconAge;
     ASprite* iconHealth;
     ASprite* iconLoyalty;
+    ASprite* iconRevolt;
+    ASprite* iconCoup;
 } ZSprites;
 
 extern ZColors z_colors;
@@ -60,3 +62,5 @@ extern ZFonts z_fonts;
 extern ZSprites z_sprites;
 
 extern void z_gfx_load(void);
+
+extern void z_gfx_drawBar(APixel Border, APixel Color1, APixel Color2, int Value, int OutOf, int X, int Y, int Width, int Height);

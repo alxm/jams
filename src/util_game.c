@@ -328,13 +328,32 @@ static void game_drawStats(const ZGame* Game)
     a_sprite_blit(z_sprites.iconLoyalty, a_font_getX() - iconOff, a_font_getY());
     a_font_printf("LOYALTY %d%%", z_despot_getLoyalty(Game->despot));
     a_font_newLine();
-
     a_font_newLine();
 
-    a_font_printf("REVOLT IN %d/%d", Game->revoltCounter, Z_REVOLT_COUNT_MAX);
+    a_sprite_blit(z_sprites.iconRevolt, a_font_getX() - iconOff, a_font_getY());
+    a_font_printf("REVOLT METER ");
+    z_gfx_drawBar(z_colors.greenMedium,
+                  z_colors.redMedium,
+                  z_colors.grayMedium,
+                  (int)Game->revoltCounter,
+                  Z_REVOLT_COUNT_MAX,
+                  a_font_getX(),
+                  a_font_getY(),
+                  a_screen_getWidth() - 8 - a_font_getX(),
+                  7);
     a_font_newLine();
 
-    a_font_printf("COUP IN %d/%d", Game->coupCounter, Z_COUP_COUNT_MAX);
+    a_sprite_blit(z_sprites.iconCoup, a_font_getX() - iconOff, a_font_getY());
+    a_font_printf("COUP METER ");
+    z_gfx_drawBar(z_colors.greenMedium,
+                  z_colors.redMedium,
+                  z_colors.grayMedium,
+                  (int)Game->coupCounter,
+                  Z_COUP_COUNT_MAX,
+                  a_font_getX(),
+                  a_font_getY(),
+                  a_screen_getWidth() - 8 - a_font_getX(),
+                  7);
     a_font_newLine();
 }
 

@@ -71,6 +71,8 @@ static void loadSprites(void)
     z_sprites.iconAge = a_sprite_newFromFile("gfx/icon_age.png");
     z_sprites.iconHealth = a_sprite_newFromFile("gfx/icon_health.png");
     z_sprites.iconLoyalty = a_sprite_newFromFile("gfx/icon_loyalty.png");
+    z_sprites.iconRevolt = a_sprite_newFromFile("gfx/icon_revolt.png");
+    z_sprites.iconCoup = a_sprite_newFromFile("gfx/icon_coup.png");
 }
 
 void z_gfx_load(void)
@@ -78,4 +80,22 @@ void z_gfx_load(void)
     loadColors();
     loadFonts();
     loadSprites();
+}
+
+void z_gfx_drawBar(APixel Border, APixel Color1, APixel Color2, int Value, int OutOf, int X, int Y, int Width, int Height)
+{
+    int part1Width = a_math_min(Width * Value / OutOf, Width);
+    int part2Width = Width - part1Width;
+
+    a_pixel_setPixel(Color1);
+    a_draw_rectangle(X, Y, part1Width, Height);
+
+    a_pixel_setPixel(Color2);
+    a_draw_rectangle(X + part1Width, Y, part2Width, Height);
+
+    a_pixel_setPixel(Border);
+    a_draw_hline(X, X + Width, Y);
+    a_draw_hline(X, X + Width, Y + Height - 1);
+    a_draw_vline(X, Y, Y + Height);
+    a_draw_vline(X + Width - 1, Y, Y + Height);
 }
