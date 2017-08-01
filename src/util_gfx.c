@@ -17,6 +17,12 @@
 
 #include <a2x.h>
 
+#define Z_LOAD_FROM_DATA
+
+#ifdef Z_LOAD_FROM_DATA
+    #include "a2x_gen/gfx.h"
+#endif
+
 #include "util_gfx.h"
 
 ZColors z_colors;
@@ -38,7 +44,12 @@ static void loadColors(void)
 
 static void loadFonts(void)
 {
-    ASprite* fontSprite = a_sprite_newFromFile("gfx/font.png");
+    #ifdef Z_LOAD_FROM_DATA
+        ASprite* fontSprite = a_sprite_newFromData(gfx_font, "gfx_font");
+    #else
+        ASprite* fontSprite = a_sprite_newFromFile("gfx/font.png");
+    #endif
+
     AFont* font = a_font_new(fontSprite, 0, 0, A_FONT_LOAD_ALL);
     a_sprite_free(fontSprite);
 
@@ -55,24 +66,38 @@ static void loadFonts(void)
 
 static void loadSprites(void)
 {
-    z_sprites.fortress = a_sprite_newFromFile("gfx/fortress.png");
+    #ifdef Z_LOAD_FROM_DATA
+        z_sprites.fortress = a_sprite_newFromData(gfx_fortress, "gfx_fortress");
+        z_sprites.iconControls = a_sprite_newFromData(gfx_icon_help, "icon_help");
+        z_sprites.iconWait = a_sprite_newFromData(gfx_icon_wait, "gfx_icon_wait");
+        z_sprites.iconTime = a_sprite_newFromData(gfx_icon_time, "gfx_icon_time");
+        z_sprites.iconHeart = a_sprite_newFromData(gfx_icon_heart, "gfx_icon_heart");
+        z_sprites.iconMoney = a_sprite_newFromData(gfx_icon_money, "gfx_icon_money");
+        z_sprites.iconAge = a_sprite_newFromData(gfx_icon_age, "gfx_icon_age");
+        z_sprites.iconHealth = a_sprite_newFromData(gfx_icon_health, "gfx_icon_health");
+        z_sprites.iconLoyalty = a_sprite_newFromData(gfx_icon_loyalty, "gfx_icon_loyalty");
+        z_sprites.iconRevolt = a_sprite_newFromData(gfx_icon_revolt, "gfx_icon_revolt");
+        z_sprites.iconCoup = a_sprite_newFromData(gfx_icon_coup, "gfx_icon_coup");
+        ASprite* flags = a_sprite_newFromData(gfx_fortress_flags, "gfx_fortress_flags");
+    #else
+        z_sprites.fortress = a_sprite_newFromFile("gfx/fortress.png");
+        z_sprites.iconControls = a_sprite_newFromFile("gfx/icon_help.png");
+        z_sprites.iconWait = a_sprite_newFromFile("gfx/icon_wait.png");
+        z_sprites.iconTime = a_sprite_newFromFile("gfx/icon_time.png");
+        z_sprites.iconHeart = a_sprite_newFromFile("gfx/icon_heart.png");
+        z_sprites.iconMoney = a_sprite_newFromFile("gfx/icon_money.png");
+        z_sprites.iconAge = a_sprite_newFromFile("gfx/icon_age.png");
+        z_sprites.iconHealth = a_sprite_newFromFile("gfx/icon_health.png");
+        z_sprites.iconLoyalty = a_sprite_newFromFile("gfx/icon_loyalty.png");
+        z_sprites.iconRevolt = a_sprite_newFromFile("gfx/icon_revolt.png");
+        z_sprites.iconCoup = a_sprite_newFromFile("gfx/icon_coup.png");
+        ASprite* flags = a_sprite_newFromFile("gfx/fortress_flags.png");
+    #endif
 
-    ASprite* flags = a_sprite_newFromFile("gfx/fortress_flags.png");
     z_sprites.fortressFlags1 = a_spriteframes_new(flags, 0, 0, 8);
     z_sprites.fortressFlags2 = a_spriteframes_new(flags, 0, 17, 16);
     z_sprites.fortressFlags3 = a_spriteframes_new(flags, 18, 17, 16);
     z_sprites.fortressFlags4 = a_spriteframes_new(flags, 36, 17, 16);
-
-    z_sprites.iconControls = a_sprite_newFromFile("gfx/icon_help.png");
-    z_sprites.iconWait = a_sprite_newFromFile("gfx/icon_wait.png");
-    z_sprites.iconTime = a_sprite_newFromFile("gfx/icon_time.png");
-    z_sprites.iconHeart = a_sprite_newFromFile("gfx/icon_heart.png");
-    z_sprites.iconMoney = a_sprite_newFromFile("gfx/icon_money.png");
-    z_sprites.iconAge = a_sprite_newFromFile("gfx/icon_age.png");
-    z_sprites.iconHealth = a_sprite_newFromFile("gfx/icon_health.png");
-    z_sprites.iconLoyalty = a_sprite_newFromFile("gfx/icon_loyalty.png");
-    z_sprites.iconRevolt = a_sprite_newFromFile("gfx/icon_revolt.png");
-    z_sprites.iconCoup = a_sprite_newFromFile("gfx/icon_coup.png");
 }
 
 void z_gfx_load(void)

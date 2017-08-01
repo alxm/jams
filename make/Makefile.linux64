@@ -1,4 +1,4 @@
-A_APP_NAME = despot3900
+A_APP_NAME = despot3900.linux64.bin
 
 A_BIN_MEDIA = true
 
@@ -7,4 +7,4 @@ A_BIN_MEDIA = true
 # if you do not have a2x/bin in your $PATH
 #
 A2X_PATH := $(shell a2x_path)
-include $(A2X_PATH)/make/project/Makefile.linux
+include $(A2X_PATH)/make/project/Makefile.linux64
