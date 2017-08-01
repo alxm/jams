@@ -90,9 +90,9 @@ ZGame* z_game_init(void)
     g->despot = z_despot_new(g,
                              g->timeInMonths - z_time_yearsToMonths(50),
                              80,
-                             10000,
-                             75,
-                             75);
+                             1000,
+                             50,
+                             50);
 
     g->log = z_log_new(10);
 
