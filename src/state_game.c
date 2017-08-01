@@ -241,7 +241,7 @@ A_STATE(game)
         z_game = z_game_init();
 
         z_game_log(z_game,
-                   Z_LOG_NEUTRAL,
+                   Z_LOG_GOOD,
                    Z_STR_INTRO_1,
                    a_settings_getString("app.title"));
         z_game_log(z_game, Z_LOG_NEUTRAL, Z_STR_INTRO_1B);

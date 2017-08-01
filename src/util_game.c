@@ -298,7 +298,7 @@ static void game_drawStats(const ZGame* Game)
 {
     int iconOff = a_sprite_getWidth(z_sprites.iconTime) + 2;
     int x = 256 + 2 + iconOff;
-    int y = 32 + 2;
+    int y = 36 + 2;
 
     a_font_setCoords(x, y);
     a_font_setFont(z_fonts.greenLight);

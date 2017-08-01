@@ -36,7 +36,7 @@ A_SETUP
     a_settings_set("video.width", "400");
     a_settings_set("video.height", "240");
     a_settings_set("video.borderColor", "0x222222");
-    a_settings_set("sound.on", "no");
+    //a_settings_set("sound.on", "no");
 }
 
 A_MAIN
