@@ -25,29 +25,41 @@
 #include "component_input.h"
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_velocity.h"
+
+static void move(AEntity* Entity, AFix Ddx, AFix Ddy)
+{
+    ZCompVelocity* vel = a_entity_requireComponent(Entity, "velocity");
+
+    AFix dx, dy;
+    z_comp_velocity_getValues(vel, &dx, &dy);
+
+    dx += Ddx;
+    dy += Ddy;
+
+    z_comp_velocity_setValues(vel,
+                              a_math_constrain(dx, -A_FIX_ONE, A_FIX_ONE),
+                              a_math_constrain(dy, -A_FIX_ONE, A_FIX_ONE));
+}
 
 static void moveUp(AEntity* Entity)
 {
-    A_UNUSED(Entity);
-    puts("move up");
+    move(Entity, 0, -A_FIX_ONE);
 }
 
 static void moveDown(AEntity* Entity)
 {
-    A_UNUSED(Entity);
-    puts("move down");
+    move(Entity, 0, +A_FIX_ONE);
 }
 
 static void moveLeft(AEntity* Entity)
 {
-    A_UNUSED(Entity);
-    puts("move left");
+    move(Entity, -A_FIX_ONE, 0);
 }
 
 static void moveRight(AEntity* Entity)
 {
-    A_UNUSED(Entity);
-    puts("move right");
+    move(Entity, +A_FIX_ONE, 0);
 }
 
 AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
@@ -74,6 +86,8 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
                        "playerDown",
                        "playerLeft",
                        "playerRight");
+
+    a_entity_addComponent(e, "velocity");
 
     return e;
 }

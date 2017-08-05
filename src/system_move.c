@@ -17,44 +17,24 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
-
 #include "component_position.h"
+#include "component_velocity.h"
 
-#include "entity_map.h"
-#include "entity_player.h"
-
-struct ZStateGame {
-    AEntity* map;
-    AEntity* player;
-};
-
-static ZStateGame g_game;
-
-A_STATE(game)
+void z_system_move(AEntity* Entity)
 {
-    A_STATE_INIT
-    {
-        a_system_tick("input move mapTick");
-        a_system_draw("mapDraw spriteDraw");
+    ZCompPosition* pos = a_entity_requireComponent(Entity, "position");
+    ZCompVelocity* vel = a_entity_requireComponent(Entity, "velocity");
 
-        g_game.map = z_entity_map_new(&g_game, "gfx/level00.png");
-        g_game.player = z_entity_player_new(&g_game, 2, 5);
+    AFix dx, dy;
+    z_comp_velocity_getValues(vel, &dx, &dy);
+
+    if(dx == 0 && dy == 0) {
+        return;
     }
-
-    A_STATE_BODY
-    {
-        A_STATE_LOOP;
-    }
-}
-
-void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y)
-{
-    ZCompPosition* pos = a_entity_requireComponent(Game->player, "position");
 
     AFix x, y;
     z_comp_position_getCoords(pos, &x, &y);
 
-    *X = a_fix_fixtoi(x);
-    *Y = a_fix_fixtoi(y);
+    z_comp_position_setCoords(pos, x + dx, y + dy);
+    z_comp_velocity_setValues(vel, dx / 2, dy / 2);
 }
