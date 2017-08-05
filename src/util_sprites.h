@@ -15,5 +15,7 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapTick;
-extern ASystemHandler z_system_mapDraw;
+extern void z_util_sprites_load(void);
+extern void z_util_sprites_free(void);
+
+extern ASpriteFrames* z_util_sprites_get(const char* Key);

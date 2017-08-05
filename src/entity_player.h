@@ -15,5 +15,4 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapTick;
-extern ASystemHandler z_system_mapDraw;
+extern AEntity* z_entity_player_new(int TileX, int TileY);

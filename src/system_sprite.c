@@ -15,5 +15,20 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapTick;
-extern ASystemHandler z_system_mapDraw;
+#include <a2x.h>
+
+#include "component_position.h"
+#include "component_sprite.h"
+
+void z_system_sprite(AEntity* Entity)
+{
+    ZCompPosition* position = a_entity_requireComponent(Entity, "position");
+    ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
+
+    AFix x, y;
+    z_comp_position_getCoords(position, &x, &y);
+
+    ASprite* graphic = z_comp_sprite_getGraphic(sprite);
+
+    a_sprite_blit(graphic, a_fix_fixtoi(x), a_fix_fixtoi(y));
+}

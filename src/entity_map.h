@@ -15,6 +15,4 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
-
 extern AEntity* z_entity_map_new(const char* DataFile);

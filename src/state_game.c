@@ -18,15 +18,17 @@
 #include <a2x.h>
 
 #include "entity_map.h"
+#include "entity_player.h"
 
 A_STATE(game)
 {
     A_STATE_INIT
     {
         a_system_tick("mapTick");
-        a_system_draw("mapDraw");
+        a_system_draw("mapDraw spriteDraw");
 
         z_entity_map_new("gfx/level00.png");
+        z_entity_player_new(2, 5);
     }
 
     A_STATE_BODY

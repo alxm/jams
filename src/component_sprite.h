@@ -15,5 +15,17 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapTick;
-extern ASystemHandler z_system_mapDraw;
+typedef struct ZCompSprite ZCompSprite;
+
+typedef enum {
+    Z_COMP_SPRITE_UP,
+    Z_COMP_SPRITE_DOWN,
+    Z_COMP_SPRITE_LEFT,
+    Z_COMP_SPRITE_RIGHT,
+    Z_COMP_SPRITE_NUM
+} ZCompSpriteDirection;
+
+extern size_t z_comp_sprite_size(void);
+extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right);
+
+extern ASprite* z_comp_sprite_getGraphic(const ZCompSprite* Sprite);

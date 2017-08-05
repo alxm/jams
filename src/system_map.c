@@ -31,7 +31,7 @@ void z_system_mapDraw(AEntity* Entity)
     a_pixel_setHex(0x111122);
     a_draw_fill();
 
-    ZCompMap* map = a_entity_getComponent(Entity, "map");
+    ZCompMap* map = a_entity_requireComponent(Entity, "map");
 
     int w, h;
     z_comp_map_getDim(map, &w, &h);

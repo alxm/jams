@@ -21,8 +21,11 @@
 #include "state_load.h"
 
 #include "component_map.h"
+#include "component_position.h"
+#include "component_sprite.h"
 
 #include "system_map.h"
+#include "system_sprite.h"
 
 A_SETUP
 {
@@ -37,9 +40,12 @@ A_SETUP
 A_MAIN
 {
     a_component_declare("map", z_comp_map_size(), z_comp_map_free);
+    a_component_declare("position", z_comp_position_size(), NULL);
+    a_component_declare("sprite", z_comp_sprite_size(), NULL);
 
     a_system_declare("mapDraw", "map", z_system_mapDraw, NULL, false);
     a_system_declare("mapTick", "map", z_system_mapTick, NULL, false);
+    a_system_declare("spriteDraw", "position sprite", z_system_sprite, NULL, false);
 
     a_state_new("game", game);
     a_state_new("load", load);

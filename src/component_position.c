@@ -15,5 +15,27 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapTick;
-extern ASystemHandler z_system_mapDraw;
+#include <a2x.h>
+
+#include "component_position.h"
+
+struct ZCompPosition {
+    AFix x, y;
+};
+
+size_t z_comp_position_size(void)
+{
+    return sizeof(ZCompPosition);
+}
+
+void z_comp_position_init(ZCompPosition* Position, AFix X, AFix Y)
+{
+    Position->x = X;
+    Position->y = Y;
+}
+
+void z_comp_position_getCoords(const ZCompPosition* Position, AFix* X, AFix* Y)
+{
+    *X = Position->x;
+    *Y = Position->y;
+}
