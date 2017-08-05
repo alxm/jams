@@ -51,13 +51,7 @@ void z_comp_map_init(ZCompMap* Map, ASprite* Data)
             ZTile* tile = &Map->tiles[i][j];
             APixel pixel = a_sprite_getPixel(Data, j, i);
 
-            if(pixel == 0) {
-                // Not walkable
-                tile->utilTile = z_util_tiles_getTile(0);
-            } else {
-                // Walkable
-                tile->utilTile = z_util_tiles_getTile(1);
-            }
+            tile->utilTile = z_util_tiles_getTile(pixel);
         }
     }
 }

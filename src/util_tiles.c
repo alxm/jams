@@ -21,6 +21,7 @@
 
 struct ZUtilTile {
     ASprite* sprite;
+    APixel colorCode;
     bool walkable;
 };
 
@@ -38,7 +39,8 @@ void z_util_tiles_load(void)
         int x = (int)A_LIST_INDEX() * (Z_UTIL_TILE_DIM + 1);
 
         tile->sprite = s;
-        tile->walkable = a_sprite_getPixel(sheet, x, 0) == 0;
+        tile->colorCode = a_sprite_getPixel(sheet, x, 0);
+        tile->walkable = a_sprite_getPixel(sheet, x + 1, 0) == 0;
 
         a_list_addLast(g_tiles, tile);
     }
@@ -51,9 +53,15 @@ void z_util_tiles_free(void)
     a_list_freeEx(g_tiles, free);
 }
 
-const ZUtilTile* z_util_tiles_getTile(unsigned Index)
+const ZUtilTile* z_util_tiles_getTile(APixel ColorCode)
 {
-    return a_list_getIndex(g_tiles, Index);
+    A_LIST_ITERATE(g_tiles, ZUtilTile*, t) {
+        if(t->colorCode == ColorCode) {
+            return t;
+        }
+    }
+
+    return NULL;
 }
 
 ASprite* z_util_tiles_getSprite(const ZUtilTile* Tile)

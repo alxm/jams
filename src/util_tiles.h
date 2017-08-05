@@ -22,7 +22,7 @@ typedef struct ZUtilTile ZUtilTile;
 extern void z_util_tiles_load(void);
 extern void z_util_tiles_free(void);
 
-extern const ZUtilTile* z_util_tiles_getTile(unsigned Index);
+extern const ZUtilTile* z_util_tiles_getTile(APixel ColorCode);
 
 extern ASprite* z_util_tiles_getSprite(const ZUtilTile* Tile);
 extern bool z_util_tiles_isWalkable(const ZUtilTile* Tile);
