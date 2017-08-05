@@ -21,9 +21,8 @@ AStrHash* g_sprites; // table of ASpriteFrames
 
 static void new(ASprite* Sheet, int X, int Y, const char* Key, unsigned SpeedMs)
 {
-    a_strhash_add(g_sprites,
-                  Key,
-                  a_spriteframes_new(Sheet, X, Y, a_fps_msToFrames(SpeedMs)));
+    unsigned speed = a_math_maxu(a_fps_msToFrames(SpeedMs), 1);
+    a_strhash_add(g_sprites, Key, a_spriteframes_new(Sheet, X, Y, speed));
 }
 
 void z_util_sprites_load(void)
@@ -36,6 +35,7 @@ void z_util_sprites_load(void)
     new(sheet, 0, 17, "playerDown", 250);
     new(sheet, 0, 34, "playerLeft", 250);
     new(sheet, 0, 51, "playerRight", 250);
+    new(sheet, 0, 68, "coffer", 0);
 }
 
 void z_util_sprites_free(void)

@@ -21,6 +21,7 @@
 
 #include "component_position.h"
 
+#include "entity_item.h"
 #include "entity_map.h"
 #include "entity_player.h"
 
@@ -40,6 +41,10 @@ A_STATE(game)
 
         g_game.map = z_entity_map_new(&g_game, "gfx/level00.png");
         g_game.player = z_entity_player_new(&g_game, 2, 5);
+
+        z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 3, 5);
+        z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 5, 5);
+        z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 4, 6);
     }
 
     A_STATE_BODY
