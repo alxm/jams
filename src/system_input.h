@@ -15,26 +15,4 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
-
-#include "util_controls.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
-
-A_STATE(load)
-{
-    A_STATE_INIT
-    {
-        z_util_controls_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
-
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
-    }
-}
+extern ASystemHandler z_system_input;

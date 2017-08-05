@@ -18,23 +18,13 @@
 #include <a2x.h>
 
 #include "util_controls.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
 
-A_STATE(load)
+ZUtilControls z_util_controls;
+
+void z_util_controls_load(void)
 {
-    A_STATE_INIT
-    {
-        z_util_controls_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
-
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
-    }
+    z_util_controls.up = a_button_new("key.up gamepad.b.up");
+    z_util_controls.down = a_button_new("key.down gamepad.b.down");
+    z_util_controls.left = a_button_new("key.left gamepad.b.left");
+    z_util_controls.right = a_button_new("key.right gamepad.b.right");
 }

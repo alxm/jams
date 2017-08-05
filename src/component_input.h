@@ -15,26 +15,16 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef struct ZCompInput ZCompInput;
+typedef struct ZCompInputBinding ZCompInputBinding;
+typedef void ZCompInputHandler(AEntity* Entity);
 
-#include "util_controls.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
+extern size_t z_comp_input_size(void);
+extern void z_comp_input_init(ZCompInput* Input);
+extern AComponentFree z_comp_input_free;
 
-A_STATE(load)
-{
-    A_STATE_INIT
-    {
-        z_util_controls_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
+extern AList* z_comp_input_getBindings(const ZCompInput* Input);
+extern AInputButton* z_comp_input_bindingGetButton(const ZCompInputBinding* Binding);
+extern ZCompInputHandler* z_comp_input_bindingGetHandler(const ZCompInputBinding* Binding);
 
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
-    }
-}
+extern void z_comp_input_addBinding(ZCompInput* Input, AInputButton* Button, ZCompInputHandler* Handler);

@@ -19,14 +19,47 @@
 
 #include "state_game.h"
 
+#include "util_controls.h"
 #include "util_tiles.h"
 
+#include "component_input.h"
 #include "component_position.h"
 #include "component_sprite.h"
+
+static void moveUp(AEntity* Entity)
+{
+    A_UNUSED(Entity);
+    puts("move up");
+}
+
+static void moveDown(AEntity* Entity)
+{
+    A_UNUSED(Entity);
+    puts("move down");
+}
+
+static void moveLeft(AEntity* Entity)
+{
+    A_UNUSED(Entity);
+    puts("move left");
+}
+
+static void moveRight(AEntity* Entity)
+{
+    A_UNUSED(Entity);
+    puts("move right");
+}
 
 AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
 {
     AEntity* e = a_entity_new("player", Game);
+
+    ZCompInput* input = a_entity_addComponent(e, "input");
+    z_comp_input_init(input);
+    z_comp_input_addBinding(input, z_util_controls.up, moveUp);
+    z_comp_input_addBinding(input, z_util_controls.down, moveDown);
+    z_comp_input_addBinding(input, z_util_controls.left, moveLeft);
+    z_comp_input_addBinding(input, z_util_controls.right, moveRight);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position,

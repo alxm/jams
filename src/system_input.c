@@ -17,24 +17,16 @@
 
 #include <a2x.h>
 
-#include "util_controls.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
+#include "component_input.h"
 
-A_STATE(load)
+void z_system_input(AEntity* Entity)
 {
-    A_STATE_INIT
-    {
-        z_util_controls_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
+    ZCompInput* input = a_entity_requireComponent(Entity, "input");
+    AList* bindings = z_comp_input_getBindings(input);
 
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
+    A_LIST_ITERATE(bindings, ZCompInputBinding*, b) {
+        if(a_button_getPressed(z_comp_input_bindingGetButton(b))) {
+            z_comp_input_bindingGetHandler(b)(Entity);
+        }
     }
 }
