@@ -17,29 +17,17 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
-
 #include "component_map.h"
 
-#include "system_map.h"
-
-A_SETUP
+AEntity* z_entity_map_new(const char* DataFile)
 {
-    a_settings_set("app.title", "Pestering Peddler");
-    a_settings_set("app.version", "1.0");
-    a_settings_set("app.author", "alxm");
-    a_settings_set("app.output.on", "yes");
-    a_settings_set("video.width", "400");
-    a_settings_set("video.height", "240");
-}
+    AEntity* e = a_entity_new("map", NULL);
+    ASprite* sprite = a_sprite_newFromFile(DataFile);
 
-A_MAIN
-{
-    a_component_declare("map", z_comp_map_size(), z_comp_map_free);
+    ZCompMap* map = a_entity_addComponent(e, "map");
+    z_comp_map_init(map, sprite);
 
-    a_system_declare("mapDraw", "map", z_system_mapDraw, NULL, false);
-    a_system_declare("mapTick", "map", z_system_mapTick, NULL, false);
+    a_sprite_free(sprite);
 
-    a_state_new("game", game);
-    a_state_push("game");
+    return e;
 }

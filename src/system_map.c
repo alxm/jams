@@ -17,29 +17,36 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
-
 #include "component_map.h"
 
-#include "system_map.h"
+#define Z_TILE_DIM 8
 
-A_SETUP
+void z_system_mapTick(AEntity* Entity)
 {
-    a_settings_set("app.title", "Pestering Peddler");
-    a_settings_set("app.version", "1.0");
-    a_settings_set("app.author", "alxm");
-    a_settings_set("app.output.on", "yes");
-    a_settings_set("video.width", "400");
-    a_settings_set("video.height", "240");
+    A_UNUSED(Entity);
 }
 
-A_MAIN
+void z_system_mapDraw(AEntity* Entity)
 {
-    a_component_declare("map", z_comp_map_size(), z_comp_map_free);
+    a_pixel_setHex(0x111122);
+    a_draw_fill();
 
-    a_system_declare("mapDraw", "map", z_system_mapDraw, NULL, false);
-    a_system_declare("mapTick", "map", z_system_mapTick, NULL, false);
+    ZCompMap* map = a_entity_getComponent(Entity, "map");
 
-    a_state_new("game", game);
-    a_state_push("game");
+    int w, h;
+    z_comp_map_getDim(map, &w, &h);
+
+    for(int y = h; y--; ) {
+        for(int x = w; x--; ) {
+            if(z_comp_map_isWalkable(map, x, y)) {
+                a_pixel_setHex(0xeeeedd);
+            } else {
+                a_pixel_setHex(0x448822);
+            }
+            a_draw_rectangle(x * Z_TILE_DIM,
+                             y * Z_TILE_DIM,
+                             Z_TILE_DIM,
+                             Z_TILE_DIM);
+        }
+    }
 }

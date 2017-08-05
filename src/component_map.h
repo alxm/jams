@@ -17,29 +17,11 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
+typedef struct ZCompMap ZCompMap;
 
-#include "component_map.h"
+extern size_t z_comp_map_size(void);
+extern void z_comp_map_init(ZCompMap* Map, ASprite* Data);
+extern AComponentFree z_comp_map_free;
 
-#include "system_map.h"
-
-A_SETUP
-{
-    a_settings_set("app.title", "Pestering Peddler");
-    a_settings_set("app.version", "1.0");
-    a_settings_set("app.author", "alxm");
-    a_settings_set("app.output.on", "yes");
-    a_settings_set("video.width", "400");
-    a_settings_set("video.height", "240");
-}
-
-A_MAIN
-{
-    a_component_declare("map", z_comp_map_size(), z_comp_map_free);
-
-    a_system_declare("mapDraw", "map", z_system_mapDraw, NULL, false);
-    a_system_declare("mapTick", "map", z_system_mapTick, NULL, false);
-
-    a_state_new("game", game);
-    a_state_push("game");
-}
+extern void z_comp_map_getDim(const ZCompMap* Map, int* Width, int* Height);
+extern bool z_comp_map_isWalkable(const ZCompMap* Map, int X, int Y);
