@@ -29,17 +29,26 @@
 
 static void move(AEntity* Entity, AFix Ddx, AFix Ddy)
 {
-    ZCompVelocity* vel = a_entity_requireComponent(Entity, "velocity");
+    ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
+    ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
 
     AFix dx, dy;
-    z_comp_velocity_getValues(vel, &dx, &dy);
+    z_comp_velocity_getValues(velocity, &dx, &dy);
 
-    dx += Ddx;
-    dy += Ddy;
+    dx = a_math_constrain(dx + Ddx, -A_FIX_ONE, A_FIX_ONE);
+    dy = a_math_constrain(dy + Ddy, -A_FIX_ONE, A_FIX_ONE);
 
-    z_comp_velocity_setValues(vel,
-                              a_math_constrain(dx, -A_FIX_ONE, A_FIX_ONE),
-                              a_math_constrain(dy, -A_FIX_ONE, A_FIX_ONE));
+    z_comp_velocity_setValues(velocity, dx, dy);
+
+    if(Ddy < 0) {
+        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_UP);
+    } else if(Ddy > 0) {
+        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_DOWN);
+    } else if(Ddx < 0) {
+        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_LEFT);
+    } else if(Ddx > 0) {
+        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_RIGHT);
+    }
 }
 
 static void moveUp(AEntity* Entity)

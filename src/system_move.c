@@ -23,28 +23,31 @@
 
 #include "component_map.h"
 #include "component_position.h"
+#include "component_sprite.h"
 #include "component_velocity.h"
 
 void z_system_move(AEntity* Entity)
 {
-    ZCompPosition* pos = a_entity_requireComponent(Entity, "position");
-    ZCompVelocity* vel = a_entity_requireComponent(Entity, "velocity");
+    ZCompPosition* position = a_entity_requireComponent(Entity, "position");
+    ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
+    ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
 
     AFix dx, dy;
-    z_comp_velocity_getValues(vel, &dx, &dy);
+    z_comp_velocity_getValues(velocity, &dx, &dy);
 
     if(dx == 0 && dy == 0) {
+        z_comp_sprite_frameReset(sprite);
         return;
     }
 
     AFix x, y;
-    z_comp_position_getCoords(pos, &x, &y);
+    z_comp_position_getCoords(position, &x, &y);
 
     AFix newX = x + dx;
     AFix newY = y + dy;
 
-    z_comp_position_setCoords(pos, newX, newY);
-    z_comp_velocity_setValues(vel, dx / 2, dy / 2);
+    z_comp_position_setCoords(position, newX, newY);
+    z_comp_velocity_setValues(velocity, 0, 0);
 
     ZStateGame* game = a_entity_getContext(Entity);
     ZCompMap* map = a_entity_requireComponent(z_state_game_getMap(game), "map");
@@ -53,6 +56,8 @@ void z_system_move(AEntity* Entity)
     int tileY = a_fix_fixtoi(newY) / Z_UTIL_TILE_DIM;
 
     if(!z_comp_map_isWalkable(map, tileX, tileY)) {
-        z_comp_position_setCoords(pos, x, y);
+        z_comp_position_setCoords(position, x, y);
     }
+
+    z_comp_sprite_frameNext(sprite);
 }

@@ -49,3 +49,22 @@ ASprite* z_comp_sprite_getGraphic(const ZCompSprite* Sprite)
 {
     return a_spriteframes_getCurrent(Sprite->frames[Sprite->direction]);
 }
+
+void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction)
+{
+    Sprite->direction = Direction;
+}
+
+void z_comp_sprite_frameReset(ZCompSprite* Sprite)
+{
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_NUM; d--; ) {
+        a_spriteframes_reset(Sprite->frames[d]);
+    }
+}
+
+void z_comp_sprite_frameNext(ZCompSprite* Sprite)
+{
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_NUM; d--; ) {
+        a_spriteframes_next(Sprite->frames[d]);
+    }
+}
