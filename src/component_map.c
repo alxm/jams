@@ -17,11 +17,12 @@
 
 #include <a2x.h>
 
+#include "util_tiles.h"
+
 #include "component_map.h"
 
 typedef struct ZTile {
-    ASprite* sprite;
-    bool walkable;
+    const ZUtilTile* utilTile;
 } ZTile;
 
 struct ZCompMap {
@@ -50,8 +51,13 @@ void z_comp_map_init(ZCompMap* Map, ASprite* Data)
             ZTile* tile = &Map->tiles[i][j];
             APixel pixel = a_sprite_getPixel(Data, j, i);
 
-            tile->sprite = NULL;
-            tile->walkable = pixel != 0;
+            if(pixel == 0) {
+                // Not walkable
+                tile->utilTile = z_util_tiles_getTile(0);
+            } else {
+                // Walkable
+                tile->utilTile = z_util_tiles_getTile(1);
+            }
         }
     }
 }
@@ -70,7 +76,12 @@ void z_comp_map_getDim(const ZCompMap* Map, int* Width, int* Height)
     *Height = Map->h;
 }
 
+ASprite* z_comp_map_getSprite(const ZCompMap* Map, int X, int Y)
+{
+    return z_util_tiles_getSprite(Map->tiles[Y][X].utilTile);
+}
+
 bool z_comp_map_isWalkable(const ZCompMap* Map, int X, int Y)
 {
-    return Map->tiles[Y][X].walkable;
+    return z_util_tiles_isWalkable(Map->tiles[Y][X].utilTile);
 }

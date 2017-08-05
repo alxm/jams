@@ -18,6 +18,7 @@
 #include <a2x.h>
 
 #include "state_game.h"
+#include "state_load.h"
 
 #include "component_map.h"
 
@@ -41,5 +42,7 @@ A_MAIN
     a_system_declare("mapTick", "map", z_system_mapTick, NULL, false);
 
     a_state_new("game", game);
-    a_state_push("game");
+    a_state_new("load", load);
+
+    a_state_push("load");
 }

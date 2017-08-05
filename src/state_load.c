@@ -19,27 +19,17 @@
 
 #include "util_tiles.h"
 
-#include "component_map.h"
-
-void z_system_mapTick(AEntity* Entity)
+A_STATE(load)
 {
-    A_UNUSED(Entity);
-}
+    A_STATE_INIT
+    {
+        z_util_tiles_load();
 
-void z_system_mapDraw(AEntity* Entity)
-{
-    a_pixel_setHex(0x111122);
-    a_draw_fill();
+        a_state_push("game");
+    }
 
-    ZCompMap* map = a_entity_getComponent(Entity, "map");
-
-    int w, h;
-    z_comp_map_getDim(map, &w, &h);
-
-    for(int y = h; y--; ) {
-        for(int x = w; x--; ) {
-            ASprite* tile = z_comp_map_getSprite(map, x, y);
-            a_sprite_blit(tile, x * Z_UTIL_TILE_DIM, y * Z_UTIL_TILE_DIM);
-        }
+    A_STATE_FREE
+    {
+        z_util_tiles_free();
     }
 }

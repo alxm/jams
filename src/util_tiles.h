@@ -15,31 +15,14 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+#define Z_UTIL_TILE_DIM 16
 
-#include "util_tiles.h"
+typedef struct ZUtilTile ZUtilTile;
 
-#include "component_map.h"
+extern void z_util_tiles_load(void);
+extern void z_util_tiles_free(void);
 
-void z_system_mapTick(AEntity* Entity)
-{
-    A_UNUSED(Entity);
-}
+extern const ZUtilTile* z_util_tiles_getTile(unsigned Index);
 
-void z_system_mapDraw(AEntity* Entity)
-{
-    a_pixel_setHex(0x111122);
-    a_draw_fill();
-
-    ZCompMap* map = a_entity_getComponent(Entity, "map");
-
-    int w, h;
-    z_comp_map_getDim(map, &w, &h);
-
-    for(int y = h; y--; ) {
-        for(int x = w; x--; ) {
-            ASprite* tile = z_comp_map_getSprite(map, x, y);
-            a_sprite_blit(tile, x * Z_UTIL_TILE_DIM, y * Z_UTIL_TILE_DIM);
-        }
-    }
-}
+extern ASprite* z_util_tiles_getSprite(const ZUtilTile* Tile);
+extern bool z_util_tiles_isWalkable(const ZUtilTile* Tile);

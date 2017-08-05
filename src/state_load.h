@@ -17,29 +17,4 @@
 
 #include <a2x.h>
 
-#include "util_tiles.h"
-
-#include "component_map.h"
-
-void z_system_mapTick(AEntity* Entity)
-{
-    A_UNUSED(Entity);
-}
-
-void z_system_mapDraw(AEntity* Entity)
-{
-    a_pixel_setHex(0x111122);
-    a_draw_fill();
-
-    ZCompMap* map = a_entity_getComponent(Entity, "map");
-
-    int w, h;
-    z_comp_map_getDim(map, &w, &h);
-
-    for(int y = h; y--; ) {
-        for(int x = w; x--; ) {
-            ASprite* tile = z_comp_map_getSprite(map, x, y);
-            a_sprite_blit(tile, x * Z_UTIL_TILE_DIM, y * Z_UTIL_TILE_DIM);
-        }
-    }
-}
+extern A_STATE(load);
