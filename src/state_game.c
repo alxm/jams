@@ -58,3 +58,8 @@ void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y)
     *X = a_fix_fixtoi(x);
     *Y = a_fix_fixtoi(y);
 }
+
+AEntity* z_state_game_getMap(const ZStateGame* Game)
+{
+    return Game->map;
+}

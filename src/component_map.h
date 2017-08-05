@@ -22,5 +22,5 @@ extern void z_comp_map_init(ZCompMap* Map, ASprite* Data);
 extern AComponentFree z_comp_map_free;
 
 extern void z_comp_map_getDim(const ZCompMap* Map, int* Width, int* Height);
-extern ASprite* z_comp_map_getSprite(const ZCompMap* Map, int X, int Y);
-extern bool z_comp_map_isWalkable(const ZCompMap* Map, int X, int Y);
+extern ASprite* z_comp_map_getSprite(const ZCompMap* Map, int TileX, int TileY);
+extern bool z_comp_map_isWalkable(const ZCompMap* Map, int TileX, int TileY);

@@ -70,12 +70,12 @@ void z_comp_map_getDim(const ZCompMap* Map, int* Width, int* Height)
     *Height = Map->h;
 }
 
-ASprite* z_comp_map_getSprite(const ZCompMap* Map, int X, int Y)
+ASprite* z_comp_map_getSprite(const ZCompMap* Map, int TileX, int TileY)
 {
-    return z_util_tiles_getSprite(Map->tiles[Y][X].utilTile);
+    return z_util_tiles_getSprite(Map->tiles[TileY][TileX].utilTile);
 }
 
-bool z_comp_map_isWalkable(const ZCompMap* Map, int X, int Y)
+bool z_comp_map_isWalkable(const ZCompMap* Map, int TileX, int TileY)
 {
-    return z_util_tiles_isWalkable(Map->tiles[Y][X].utilTile);
+    return z_util_tiles_isWalkable(Map->tiles[TileY][TileX].utilTile);
 }

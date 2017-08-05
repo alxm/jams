@@ -17,6 +17,11 @@
 
 #include <a2x.h>
 
+#include "state_game.h"
+
+#include "util_tiles.h"
+
+#include "component_map.h"
 #include "component_position.h"
 #include "component_velocity.h"
 
@@ -35,6 +40,19 @@ void z_system_move(AEntity* Entity)
     AFix x, y;
     z_comp_position_getCoords(pos, &x, &y);
 
-    z_comp_position_setCoords(pos, x + dx, y + dy);
+    AFix newX = x + dx;
+    AFix newY = y + dy;
+
+    z_comp_position_setCoords(pos, newX, newY);
     z_comp_velocity_setValues(vel, dx / 2, dy / 2);
+
+    ZStateGame* game = a_entity_getContext(Entity);
+    ZCompMap* map = a_entity_requireComponent(z_state_game_getMap(game), "map");
+
+    int tileX = a_fix_fixtoi(newX) / Z_UTIL_TILE_DIM;
+    int tileY = a_fix_fixtoi(newY) / Z_UTIL_TILE_DIM;
+
+    if(!z_comp_map_isWalkable(map, tileX, tileY)) {
+        z_comp_position_setCoords(pos, x, y);
+    }
 }

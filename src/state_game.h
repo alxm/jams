@@ -20,3 +20,4 @@ typedef struct ZStateGame ZStateGame;
 extern A_STATE(game);
 
 extern void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y);
+extern AEntity* z_state_game_getMap(const ZStateGame* Game);
