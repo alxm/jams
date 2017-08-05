@@ -56,7 +56,7 @@ A_MAIN
     a_system_declare("mapDraw", "map", z_system_mapDraw, NULL, false);
     a_system_declare("mapTick", "map", z_system_mapTick, NULL, false);
     a_system_declare("move", "position velocity", z_system_move, NULL, false);
-    a_system_declare("spriteDraw", "position sprite", z_system_sprite, NULL, false);
+    a_system_declare("spriteDraw", "position sprite", z_system_sprite, z_system_sprite_sort, false);
 
     a_state_new("game", game);
     a_state_new("load", load);

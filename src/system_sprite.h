@@ -16,3 +16,4 @@
 */
 
 extern ASystemHandler z_system_sprite;
+extern ASystemSort z_system_sprite_sort;

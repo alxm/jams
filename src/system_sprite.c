@@ -44,3 +44,17 @@ void z_system_sprite(AEntity* Entity)
                   scrOriginX + a_fix_fixtoi(x) - originX - gWidth / 2,
                   scrOriginY + a_fix_fixtoi(y) - originY - gHeight / 2);
 }
+
+int z_system_sprite_sort(AEntity* A, AEntity* B)
+{
+    ZCompPosition* positionA = a_entity_requireComponent(A, "position");
+    ZCompPosition* positionB = a_entity_requireComponent(B, "position");
+
+    AFix xA, yA;
+    z_comp_position_getCoords(positionA, &xA, &yA);
+
+    AFix xB, yB;
+    z_comp_position_getCoords(positionB, &xB, &yB);
+
+    return yA - yB;
+}
