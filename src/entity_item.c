@@ -23,27 +23,44 @@
 
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_volume.h"
 
 #include "entity_item.h"
 
 AEntity* z_entity_item_new(ZStateGame* Game, ZEntityItemType Type, int TileX, int TileY)
 {
+    const char* spriteId;
+    int volumeRadius;
+
+    switch(Type) {
+        case Z_ENTITY_ITEM_COFFER:
+            spriteId = "coffer";
+            volumeRadius = 4;
+            break;
+
+        default:
+            spriteId = NULL;
+            volumeRadius = 0;
+            break;
+    }
+
     AEntity* e = a_entity_new("item", Game);
 
-    ZCompPosition* position = a_entity_addComponent(e, "position");
-    z_comp_position_init(position,
-                         a_fix_itofix(TileX * Z_UTIL_TILE_DIM
-                                        + Z_UTIL_TILE_DIM / 2),
-                         a_fix_itofix(TileY * Z_UTIL_TILE_DIM
-                                        + Z_UTIL_TILE_DIM / 2));
+    AFix x = a_fix_itofix(TileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
+    AFix y = a_fix_itofix(TileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
 
-    static const char* sprites[Z_ENTITY_ITEM_NUM] = {
-        "coffer",
-    };
+    ZCompPosition* position = a_entity_addComponent(e, "position");
+    z_comp_position_init(position, x, y);
 
     ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
-    const char* spriteId = sprites[Type];
     z_comp_sprite_init(sprite, spriteId, spriteId, spriteId, spriteId);
+
+    ZCompVolume* volume = a_entity_addComponent(e, "volume");
+    z_comp_volume_init(volume,
+                       z_state_game_getVolumeColMap(Game),
+                       x,
+                       y,
+                       volumeRadius);
 
     return e;
 }

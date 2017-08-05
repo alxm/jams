@@ -15,10 +15,12 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZStateGame ZStateGame;
+typedef struct ZCompVolume ZCompVolume;
 
-extern A_STATE(game);
+extern size_t z_comp_volume_size(void);
+extern void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, AFix X, AFix Y, int Radius);
+extern AComponentFree z_comp_volume_free;
 
-extern void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y);
-extern AEntity* z_state_game_getMap(const ZStateGame* Game);
-extern AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game);
+extern int z_comp_volume_getRadius(const ZCompVolume* Volume);
+extern AColObject* z_comp_volume_getColObject(const ZCompVolume* Volume);
+extern void z_comp_volume_setCoords(const ZCompVolume* Volume, AFix X, AFix Y);

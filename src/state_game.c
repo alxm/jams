@@ -19,6 +19,9 @@
 
 #include "state_game.h"
 
+#include "util_tiles.h"
+
+#include "component_map.h"
 #include "component_position.h"
 
 #include "entity_item.h"
@@ -26,6 +29,7 @@
 #include "entity_player.h"
 
 struct ZStateGame {
+    AColMap* volumeColMap;
     AEntity* map;
     AEntity* player;
 };
@@ -40,6 +44,15 @@ A_STATE(game)
         a_system_draw("mapDraw spriteDraw");
 
         g_game.map = z_entity_map_new(&g_game, "gfx/level00.png");
+        ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
+
+        int mapWidth, mapHeight;
+        z_comp_map_getDim(map, &mapWidth, &mapHeight);
+
+        g_game.volumeColMap = a_colmap_new(mapWidth * Z_UTIL_TILE_DIM,
+                                           mapHeight * Z_UTIL_TILE_DIM,
+                                           Z_UTIL_TILE_DIM);
+
         g_game.player = z_entity_player_new(&g_game, 2, 5);
 
         z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 3, 5);
@@ -50,6 +63,11 @@ A_STATE(game)
     A_STATE_BODY
     {
         A_STATE_LOOP;
+    }
+
+    A_STATE_FREE
+    {
+        a_colmap_free(g_game.volumeColMap);
     }
 }
 
@@ -67,4 +85,9 @@ void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y)
 AEntity* z_state_game_getMap(const ZStateGame* Game)
 {
     return Game->map;
+}
+
+AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game)
+{
+    return Game->volumeColMap;
 }

@@ -25,12 +25,14 @@
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
+#include "component_volume.h"
 
 void z_system_move(AEntity* Entity)
 {
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
     ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
+    ZCompVolume* volume = a_entity_requireComponent(Entity, "volume");
 
     AFix dx, dy;
     z_comp_velocity_getValues(velocity, &dx, &dy);
@@ -40,14 +42,16 @@ void z_system_move(AEntity* Entity)
         return;
     }
 
+    z_comp_sprite_frameNext(sprite);
+    z_comp_velocity_setValues(velocity, 0, 0);
+
     AFix x, y;
     z_comp_position_getCoords(position, &x, &y);
 
+    AFix oldX = x;
+    AFix oldY = y;
     AFix newX = x + dx;
     AFix newY = y + dy;
-
-    z_comp_position_setCoords(position, newX, newY);
-    z_comp_velocity_setValues(velocity, 0, 0);
 
     ZStateGame* game = a_entity_getContext(Entity);
     ZCompMap* map = a_entity_requireComponent(z_state_game_getMap(game), "map");
@@ -56,8 +60,31 @@ void z_system_move(AEntity* Entity)
     int tileY = a_fix_fixtoi(newY) / Z_UTIL_TILE_DIM;
 
     if(!z_comp_map_isWalkable(map, tileX, tileY)) {
-        z_comp_position_setCoords(position, x, y);
+        return;
     }
 
-    z_comp_sprite_frameNext(sprite);
+    int x1 = a_fix_fixtoi(newX);
+    int y1 = a_fix_fixtoi(newY);
+    int r1 = z_comp_volume_getRadius(volume);
+
+    z_comp_volume_setCoords(volume, newX, newY);
+
+    A_COL_ITERATE(z_comp_volume_getColObject(volume), AEntity*, entity) {
+        ZCompPosition* pos = a_entity_requireComponent(entity, "position");
+        ZCompVolume* vol = a_entity_requireComponent(entity, "volume");
+
+        AFix x, y;
+        z_comp_position_getCoords(pos, &x, &y);
+
+        int x2 = a_fix_fixtoi(x);
+        int y2 = a_fix_fixtoi(y);
+        int r2 = z_comp_volume_getRadius(vol);
+
+        if(a_collide_circleAndCircle(x1, y1, r1, x2, y2, r2)) {
+            z_comp_volume_setCoords(volume, oldX, oldY);
+            return;
+        }
+    }
+
+    z_comp_position_setCoords(position, newX, newY);
 }

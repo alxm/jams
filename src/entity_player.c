@@ -26,11 +26,12 @@
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
+#include "component_volume.h"
 
 static void move(AEntity* Entity, AFix Ddx, AFix Ddy)
 {
-    ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
+    ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
 
     AFix dx, dy;
     z_comp_velocity_getValues(velocity, &dx, &dy);
@@ -75,6 +76,9 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
 {
     AEntity* e = a_entity_new("player", Game);
 
+    AFix x = a_fix_itofix(TileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
+    AFix y = a_fix_itofix(TileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
+
     ZCompInput* input = a_entity_addComponent(e, "input");
     z_comp_input_init(input);
     z_comp_input_addBinding(input, z_util_controls.up, moveUp);
@@ -83,11 +87,7 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
     z_comp_input_addBinding(input, z_util_controls.right, moveRight);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
-    z_comp_position_init(position,
-                         a_fix_itofix(TileX * Z_UTIL_TILE_DIM
-                                        + Z_UTIL_TILE_DIM / 2),
-                         a_fix_itofix(TileY * Z_UTIL_TILE_DIM
-                                        + Z_UTIL_TILE_DIM / 2));
+    z_comp_position_init(position, x, y);
 
     ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
     z_comp_sprite_init(sprite,
@@ -97,6 +97,9 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
                        "playerRight");
 
     a_entity_addComponent(e, "velocity");
+
+    ZCompVolume* volume = a_entity_addComponent(e, "volume");
+    z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), x, y, 4);
 
     return e;
 }
