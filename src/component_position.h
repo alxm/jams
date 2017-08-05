@@ -21,3 +21,4 @@ extern size_t z_comp_position_size(void);
 extern void z_comp_position_init(ZCompPosition* Position, AFix X, AFix Y);
 
 extern void z_comp_position_getCoords(const ZCompPosition* Position, AFix* X, AFix* Y);
+extern void z_comp_position_setCoords(ZCompPosition* Position, AFix X, AFix Y);

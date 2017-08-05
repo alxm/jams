@@ -17,9 +17,12 @@
 
 #include <a2x.h>
 
+#include "state_game.h"
+
 #include "util_tiles.h"
 
 #include "component_map.h"
+#include "component_position.h"
 
 void z_system_mapTick(AEntity* Entity)
 {
@@ -31,15 +34,56 @@ void z_system_mapDraw(AEntity* Entity)
     a_pixel_setHex(0x111122);
     a_draw_fill();
 
+    int screenWidth = a_screen_getWidth();
+    int screenHeight = a_screen_getHeight();
+
     ZCompMap* map = a_entity_requireComponent(Entity, "map");
 
-    int w, h;
-    z_comp_map_getDim(map, &w, &h);
+    int mapWidth, mapHeight;
+    z_comp_map_getDim(map, &mapWidth, &mapHeight);
 
-    for(int y = h; y--; ) {
-        for(int x = w; x--; ) {
-            ASprite* tile = z_comp_map_getSprite(map, x, y);
-            a_sprite_blit(tile, x * Z_UTIL_TILE_DIM, y * Z_UTIL_TILE_DIM);
+    int originX, originY;
+    z_state_game_getOrigin(a_entity_getContext(Entity), &originX, &originY);
+
+    int startX = originX - screenWidth / 2;
+    int startY = originY - screenHeight / 2;
+
+    int startTileX = startX >> Z_UTIL_TILE_SHIFT;
+    int startTileY = startY >> Z_UTIL_TILE_SHIFT;
+
+    int offsetX = startX & Z_UTIL_TILE_MASK;
+    int offsetY = startY & Z_UTIL_TILE_MASK;
+
+    int startDrawX = -offsetX;
+    int startDrawY = -offsetY;
+
+    if(startTileX < 0) {
+        startDrawX += -startTileX * Z_UTIL_TILE_DIM;
+        startTileX = 0;
+    }
+
+    if(startTileY < 0) {
+        startDrawY += -startTileY * Z_UTIL_TILE_DIM;
+        startTileY = 0;
+    }
+
+    int endTileX = a_math_min(mapWidth,
+                              startTileX + (screenWidth - startDrawX) / Z_UTIL_TILE_DIM + 1);
+    int endTileY = a_math_min(mapHeight,
+                              startTileY + (screenHeight - startDrawY) / Z_UTIL_TILE_DIM + 1);
+
+    for(int tileY = startTileY, drawY = startDrawY;
+        tileY < endTileY;
+        tileY++, drawY += Z_UTIL_TILE_DIM) {
+
+        for(int tileX = startTileX, drawX = startDrawX;
+            tileX < endTileX;
+            tileX++, drawX += Z_UTIL_TILE_DIM) {
+
+            if(tileX >= 0 && tileY >= 0) {
+                ASprite* tile = z_comp_map_getSprite(map, tileX, tileY);
+                a_sprite_blit(tile, drawX, drawY);
+            }
         }
     }
 }

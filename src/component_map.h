@@ -15,8 +15,6 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
-
 typedef struct ZCompMap ZCompMap;
 
 extern size_t z_comp_map_size(void);

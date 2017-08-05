@@ -15,4 +15,4 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern AEntity* z_entity_map_new(const char* DataFile);
+extern AEntity* z_entity_map_new(ZStateGame* Game, const char* DataFile);

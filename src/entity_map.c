@@ -17,11 +17,13 @@
 
 #include <a2x.h>
 
+#include "state_game.h"
+
 #include "component_map.h"
 
-AEntity* z_entity_map_new(const char* DataFile)
+AEntity* z_entity_map_new(ZStateGame* Game, const char* DataFile)
 {
-    AEntity* e = a_entity_new("map", NULL);
+    AEntity* e = a_entity_new("map", Game);
     ASprite* sprite = a_sprite_newFromFile(DataFile);
 
     ZCompMap* map = a_entity_addComponent(e, "map");

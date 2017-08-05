@@ -17,14 +17,16 @@
 
 #include <a2x.h>
 
+#include "state_game.h"
+
 #include "util_tiles.h"
 
 #include "component_position.h"
 #include "component_sprite.h"
 
-AEntity* z_entity_player_new(int TileX, int TileY)
+AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
 {
-    AEntity* e = a_entity_new("player", NULL);
+    AEntity* e = a_entity_new("player", Game);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position,

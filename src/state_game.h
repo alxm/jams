@@ -15,6 +15,8 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef struct ZStateGame ZStateGame;
 
 extern A_STATE(game);
+
+extern void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y);

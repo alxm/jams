@@ -17,6 +17,8 @@
 
 #include <a2x.h>
 
+#include "state_game.h"
+
 #include "component_position.h"
 #include "component_sprite.h"
 
@@ -28,7 +30,17 @@ void z_system_sprite(AEntity* Entity)
     AFix x, y;
     z_comp_position_getCoords(position, &x, &y);
 
-    ASprite* graphic = z_comp_sprite_getGraphic(sprite);
+    int originX, originY;
+    z_state_game_getOrigin(a_entity_getContext(Entity), &originX, &originY);
 
-    a_sprite_blit(graphic, a_fix_fixtoi(x), a_fix_fixtoi(y));
+    int scrOriginX = a_screen_getWidth() / 2;
+    int scrOriginY = a_screen_getHeight() / 2;
+
+    ASprite* graphic = z_comp_sprite_getGraphic(sprite);
+    int gWidth = a_sprite_getWidth(graphic);
+    int gHeight = a_sprite_getHeight(graphic);
+
+    a_sprite_blit(graphic,
+                  scrOriginX + a_fix_fixtoi(x) - originX - gWidth / 2,
+                  scrOriginY + a_fix_fixtoi(y) - originY - gHeight / 2);
 }

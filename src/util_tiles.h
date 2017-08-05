@@ -15,7 +15,9 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define Z_UTIL_TILE_DIM 16
+#define Z_UTIL_TILE_SHIFT (4)
+#define Z_UTIL_TILE_DIM   (1 << Z_UTIL_TILE_SHIFT)
+#define Z_UTIL_TILE_MASK  (Z_UTIL_TILE_DIM - 1)
 
 typedef struct ZUtilTile ZUtilTile;
 

@@ -15,4 +15,4 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern AEntity* z_entity_player_new(int TileX, int TileY);
+extern AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY);

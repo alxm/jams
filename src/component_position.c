@@ -39,3 +39,9 @@ void z_comp_position_getCoords(const ZCompPosition* Position, AFix* X, AFix* Y)
     *X = Position->x;
     *Y = Position->y;
 }
+
+void z_comp_position_setCoords(ZCompPosition* Position, AFix X, AFix Y)
+{
+    Position->x = X;
+    Position->y = Y;
+}
