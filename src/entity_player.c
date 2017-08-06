@@ -29,49 +29,7 @@
 #include "component_velocity.h"
 #include "component_volume.h"
 
-static void move(AEntity* Entity, AFix Ddx, AFix Ddy)
-{
-    ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
-    ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
-
-    AFix dx, dy;
-    z_comp_velocity_getValues(velocity, &dx, &dy);
-
-    dx = a_math_constrain(dx + Ddx, -A_FIX_ONE, A_FIX_ONE);
-    dy = a_math_constrain(dy + Ddy, -A_FIX_ONE, A_FIX_ONE);
-
-    z_comp_velocity_setValues(velocity, dx, dy);
-
-    if(Ddy < 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_UP);
-    } else if(Ddy > 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_DOWN);
-    } else if(Ddx < 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_LEFT);
-    } else if(Ddx > 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_RIGHT);
-    }
-}
-
-static void moveUp(AEntity* Entity)
-{
-    move(Entity, 0, -A_FIX_ONE);
-}
-
-static void moveDown(AEntity* Entity)
-{
-    move(Entity, 0, +A_FIX_ONE);
-}
-
-static void moveLeft(AEntity* Entity)
-{
-    move(Entity, -A_FIX_ONE, 0);
-}
-
-static void moveRight(AEntity* Entity)
-{
-    move(Entity, +A_FIX_ONE, 0);
-}
+#include "entity_macros.h"
 
 AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
 {
@@ -85,10 +43,10 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
 
     ZCompInput* input = a_entity_addComponent(e, "input");
     z_comp_input_init(input);
-    z_comp_input_addBinding(input, z_util_controls.up, moveUp);
-    z_comp_input_addBinding(input, z_util_controls.down, moveDown);
-    z_comp_input_addBinding(input, z_util_controls.left, moveLeft);
-    z_comp_input_addBinding(input, z_util_controls.right, moveRight);
+    z_comp_input_bind(input, z_util_controls.up, z_entity_macro_moveUp);
+    z_comp_input_bind(input, z_util_controls.down, z_entity_macro_moveDown);
+    z_comp_input_bind(input, z_util_controls.left, z_entity_macro_moveLeft);
+    z_comp_input_bind(input, z_util_controls.right, z_entity_macro_moveRight);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, x, y);

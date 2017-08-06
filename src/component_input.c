@@ -60,7 +60,7 @@ ZCompInputHandler* z_comp_input_bindingGetHandler(const ZCompInputBinding* Bindi
     return Binding->handler;
 }
 
-void z_comp_input_addBinding(ZCompInput* Input, AInputButton* Button, ZCompInputHandler* Handler)
+void z_comp_input_bind(ZCompInput* Input, AInputButton* Button, ZCompInputHandler* Handler)
 {
     ZCompInputBinding* b = a_mem_malloc(sizeof(ZCompInputBinding));
 

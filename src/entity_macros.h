@@ -15,16 +15,7 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompInput ZCompInput;
-typedef struct ZCompInputBinding ZCompInputBinding;
-typedef void ZCompInputHandler(AEntity* Entity);
-
-extern size_t z_comp_input_size(void);
-extern void z_comp_input_init(ZCompInput* Input);
-extern AComponentFree z_comp_input_free;
-
-extern AList* z_comp_input_getBindings(const ZCompInput* Input);
-extern AInputButton* z_comp_input_bindingGetButton(const ZCompInputBinding* Binding);
-extern ZCompInputHandler* z_comp_input_bindingGetHandler(const ZCompInputBinding* Binding);
-
-extern void z_comp_input_bind(ZCompInput* Input, AInputButton* Button, ZCompInputHandler* Handler);
+extern void z_entity_macro_moveUp(AEntity* Entity);
+extern void z_entity_macro_moveDown(AEntity* Entity);
+extern void z_entity_macro_moveLeft(AEntity* Entity);
+extern void z_entity_macro_moveRight(AEntity* Entity);
