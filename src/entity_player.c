@@ -24,6 +24,7 @@
 
 #include "component_bag.h"
 #include "component_input.h"
+#include "component_motion.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
@@ -47,6 +48,8 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
     z_comp_input_bind(input, z_util_controls.down, z_entity_macro_moveDown);
     z_comp_input_bind(input, z_util_controls.left, z_entity_macro_moveLeft);
     z_comp_input_bind(input, z_util_controls.right, z_entity_macro_moveRight);
+
+    a_entity_addComponent(e, "motion");
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, x, y);

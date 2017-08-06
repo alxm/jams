@@ -23,7 +23,7 @@
 
 static void move(AEntity* Entity, AFix Ddx, AFix Ddy, ZCompMotionDirection MotionDir, ZCompSpriteDirection SpriteDir)
 {
-    ZCompMotion* motion = a_entity_getComponent(Entity, "motion");
+    ZCompMotion* motion = a_entity_requireComponent(Entity, "motion");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
     ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
 
@@ -35,10 +35,7 @@ static void move(AEntity* Entity, AFix Ddx, AFix Ddy, ZCompMotionDirection Motio
 
     z_comp_velocity_setValues(velocity, dx, dy);
 
-    if(motion) {
-        z_comp_motion_setDirection(motion, MotionDir);
-    }
-
+    z_comp_motion_setDirection(motion, MotionDir);
     z_comp_sprite_setDirection(sprite, SpriteDir);
 }
 

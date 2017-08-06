@@ -77,7 +77,7 @@ static void pigeonAi(AEntity* Entity)
             int goalTileY = tileY;;
 
             if(ctx->oldState != Z_PIGEON_AI_BLANK
-                && motionState == Z_COMP_MOTION_STATE_OK
+                && motionState == Z_COMP_MOTION_STATE_MOVING
                 && a_random_chance(3, 4)) {
 
                 switch(z_comp_motion_getDirection(motion)) {
@@ -110,9 +110,8 @@ static void pigeonAi(AEntity* Entity)
                 setState(ctx, Z_PIGEON_AI_WALKING);
                 ctx->goalX = goalTileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
                 ctx->goalY = goalTileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
+                ctx->moveCounter = 0;
             }
-
-            ctx->moveCounter = 0;
         } break;
 
         case Z_PIGEON_AI_WALKING: {

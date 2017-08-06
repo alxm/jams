@@ -18,7 +18,8 @@
 typedef struct ZCompMotion ZCompMotion;
 
 typedef enum {
-    Z_COMP_MOTION_STATE_OK,
+    Z_COMP_MOTION_STATE_RESTING,
+    Z_COMP_MOTION_STATE_MOVING,
     Z_COMP_MOTION_STATE_BLOCKED,
 } ZCompMotionState;
 

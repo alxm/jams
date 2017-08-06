@@ -19,11 +19,13 @@
 
 #include "state_game.h"
 
+#include "component_motion.h"
 #include "component_position.h"
 #include "component_sprite.h"
 
 void z_system_sprite(AEntity* Entity)
 {
+    ZCompMotion* motion = a_entity_getComponent(Entity, "motion");
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
 
@@ -36,7 +38,16 @@ void z_system_sprite(AEntity* Entity)
     int scrOriginX = a_screen_getWidth() / 2;
     int scrOriginY = a_screen_getHeight() / 2;
 
-    ASprite* graphic = z_comp_sprite_getGraphic(sprite);
+    ASprite* graphic;
+
+    if(motion
+        && z_comp_motion_getState(motion) == Z_COMP_MOTION_STATE_RESTING) {
+
+        graphic = z_comp_sprite_getGraphic0(sprite);
+    } else {
+        graphic = z_comp_sprite_getGraphic(sprite);
+    }
+
     int gWidth = a_sprite_getWidth(graphic);
     int gHeight = a_sprite_getHeight(graphic);
 

@@ -66,23 +66,14 @@ ASprite* z_comp_sprite_getGraphic(const ZCompSprite* Sprite)
     return a_spriteframes_getCurrent(Sprite->frames[Sprite->direction]);
 }
 
+ASprite* z_comp_sprite_getGraphic0(const ZCompSprite* Sprite)
+{
+    return a_spriteframes_getIndex(Sprite->frames[Sprite->direction], 0);
+}
+
 void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction)
 {
     Sprite->direction = Direction;
-}
-
-void z_comp_sprite_frameReset(ZCompSprite* Sprite)
-{
-    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
-        a_spriteframes_reset(Sprite->frames[d]);
-    }
-}
-
-void z_comp_sprite_frameNext(ZCompSprite* Sprite)
-{
-    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
-        a_spriteframes_next(Sprite->frames[d]);
-    }
 }
 
 ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite)
@@ -93,4 +84,11 @@ ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite)
 bool z_comp_sprite_getAutoPlay(const ZCompSprite* Sprite)
 {
     return Sprite->autoPlay;
+}
+
+void z_comp_sprite_frameNext(ZCompSprite* Sprite)
+{
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
+        a_spriteframes_next(Sprite->frames[d]);
+    }
 }

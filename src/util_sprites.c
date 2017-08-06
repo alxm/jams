@@ -31,14 +31,17 @@ void z_util_sprites_load(void)
 
     ASprite* sheet = a_sprite_newFromFile("gfx/sprites.png");
 
-    new(sheet, 0, 0, "playerUp", 250);
-    new(sheet, 0, 17, "playerDown", 250);
-    new(sheet, 0, 34, "playerLeft", 250);
-    new(sheet, 0, 51, "playerRight", 250);
-    new(sheet, 68, 0, "pigeonUp", 250);
-    new(sheet, 68, 17, "pigeonDown", 250);
-    new(sheet, 68, 34, "pigeonLeft", 250);
-    new(sheet, 68, 51, "pigeonRight", 250);
+    #define Z_PLAYER_MS 250
+    #define Z_PIGEON_MS 250
+
+    new(sheet, 0, 0, "playerUp", Z_PLAYER_MS);
+    new(sheet, 0, 17, "playerDown", Z_PLAYER_MS);
+    new(sheet, 0, 34, "playerLeft", Z_PLAYER_MS);
+    new(sheet, 0, 51, "playerRight", Z_PLAYER_MS);
+    new(sheet, 68, 0, "pigeonUp", Z_PIGEON_MS);
+    new(sheet, 68, 17, "pigeonDown", Z_PIGEON_MS);
+    new(sheet, 68, 34, "pigeonLeft", Z_PIGEON_MS);
+    new(sheet, 68, 51, "pigeonRight", Z_PIGEON_MS);
     new(sheet, 0, 77, "bubble1", 0);
     new(sheet, 0, 87, "bubble2", 0);
     new(sheet, 0, 97, "poof", 100);
