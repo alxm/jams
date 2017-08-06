@@ -71,70 +71,78 @@ static void pigeonAi(AEntity* Entity)
     ZPigeonAiContext* ctx = z_comp_ai_getContext(ai);
     ZCompMotionState motionState = z_comp_motion_getState(motion);
 
-    switch(ctx->state) {
-        case Z_PIGEON_AI_BLANK: {
-            int goalTileX = tileX;
-            int goalTileY = tileY;;
+    bool done = false;
 
-            if(ctx->oldState != Z_PIGEON_AI_BLANK
-                && motionState == Z_COMP_MOTION_STATE_MOVING
-                && a_random_chance(3, 4)) {
+    while(!done) {
+        switch(ctx->state) {
+            case Z_PIGEON_AI_BLANK: {
+                int goalTileX = tileX;
+                int goalTileY = tileY;;
 
-                switch(z_comp_motion_getDirection(motion)) {
-                    case Z_COMP_MOTION_DIR_UP: {
-                        goalTileY--;
-                    } break;
+                if(ctx->oldState != Z_PIGEON_AI_BLANK
+                    && motionState == Z_COMP_MOTION_STATE_MOVING
+                    && a_random_chance(3, 4)) {
 
-                    case Z_COMP_MOTION_DIR_DOWN: {
-                        goalTileY++;
-                    } break;
+                    switch(z_comp_motion_getDirection(motion)) {
+                        case Z_COMP_MOTION_DIR_UP: {
+                            goalTileY--;
+                        } break;
 
-                    case Z_COMP_MOTION_DIR_LEFT: {
-                        goalTileX--;
-                    } break;
+                        case Z_COMP_MOTION_DIR_DOWN: {
+                            goalTileY++;
+                        } break;
 
-                    case Z_COMP_MOTION_DIR_RIGHT: {
-                        goalTileX++;
-                    } break;
-                }
-            } else {
-                goalTileX += -1 + a_random_getInt(3);
-                goalTileY += -1 + a_random_getInt(3);
-            }
+                        case Z_COMP_MOTION_DIR_LEFT: {
+                            goalTileX--;
+                        } break;
 
-            if(goalTileX >= 0 && goalTileX < mapWidth
-                && goalTileY >= 0 && goalTileY < mapHeight
-                && (goalTileX != tileX || goalTileY != tileY)
-                && z_comp_map_isWalkable(map, goalTileX, goalTileY)) {
-
-                setState(ctx, Z_PIGEON_AI_WALKING);
-                ctx->goalX = goalTileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
-                ctx->goalY = goalTileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
-                ctx->moveCounter = 0;
-            }
-        } break;
-
-        case Z_PIGEON_AI_WALKING: {
-            if(motionState == Z_COMP_MOTION_STATE_BLOCKED
-                && ctx->moveCounter > Z_UTIL_TILE_DIM / 2) {
-
-                setState(ctx, Z_PIGEON_AI_BLANK);
-            } else {
-                if(a_fix_fixtoi(x) < ctx->goalX) {
-                    z_entity_macro_moveRight(Entity);
-                } else if(a_fix_fixtoi(x) > ctx->goalX) {
-                    z_entity_macro_moveLeft(Entity);
-                } else if(a_fix_fixtoi(y) < ctx->goalY) {
-                    z_entity_macro_moveDown(Entity);
-                } else if(a_fix_fixtoi(y) > ctx->goalY) {
-                    z_entity_macro_moveUp(Entity);
+                        case Z_COMP_MOTION_DIR_RIGHT: {
+                            goalTileX++;
+                        } break;
+                    }
                 } else {
+                    goalTileX += -1 + a_random_getInt(3);
+                    goalTileY += -1 + a_random_getInt(3);
+                }
+
+                if(goalTileX >= 0 && goalTileX < mapWidth
+                    && goalTileY >= 0 && goalTileY < mapHeight
+                    && (goalTileX != tileX || goalTileY != tileY)
+                    && z_comp_map_isWalkable(map, goalTileX, goalTileY)) {
+
+                    setState(ctx, Z_PIGEON_AI_WALKING);
+                    ctx->goalX = goalTileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
+                    ctx->goalY = goalTileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
+                    ctx->moveCounter = 0;
+                }
+            } break;
+
+            case Z_PIGEON_AI_WALKING: {
+                if(motionState == Z_COMP_MOTION_STATE_BLOCKED
+                    && ctx->moveCounter > Z_UTIL_TILE_DIM / 2) {
+
                     setState(ctx, Z_PIGEON_AI_BLANK);
+                } else {
+                    if(a_fix_fixtoi(x) < ctx->goalX) {
+                        z_entity_macro_moveRight(Entity);
+                        done = true;
+                    } else if(a_fix_fixtoi(x) > ctx->goalX) {
+                        z_entity_macro_moveLeft(Entity);
+                        done = true;
+                    } else if(a_fix_fixtoi(y) < ctx->goalY) {
+                        z_entity_macro_moveDown(Entity);
+                        done = true;
+                    } else if(a_fix_fixtoi(y) > ctx->goalY) {
+                        z_entity_macro_moveUp(Entity);
+                        done = true;
+                    } else {
+                        setState(ctx, Z_PIGEON_AI_BLANK);
+                    }
                 }
 
                 ctx->moveCounter++;
-            }
-        } break;
+            } break;
+        }
     }
 }
 
