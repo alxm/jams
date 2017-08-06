@@ -26,7 +26,7 @@
 
 #include "entity_item.h"
 #include "entity_map.h"
-#include "entity_person.h"
+#include "entity_pigeon.h"
 #include "entity_player.h"
 
 struct ZStateGame {
@@ -60,9 +60,9 @@ A_STATE(game)
         z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 5, 5);
         z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 4, 6);
 
-        z_entity_person_new(&g_game, 4, 7);
-        z_entity_person_new(&g_game, 6, 7);
-        z_entity_person_new(&g_game, 6, 6);
+        z_entity_pigeon_new(&g_game, 4, 7);
+        z_entity_pigeon_new(&g_game, 6, 7);
+        z_entity_pigeon_new(&g_game, 6, 6);
     }
 
     A_STATE_BODY
