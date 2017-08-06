@@ -21,12 +21,35 @@
 
 #include "util_tiles.h"
 
+#include "component_bag.h"
 #include "component_item.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_volume.h"
 
 #include "entity_item.h"
+#include "entity_poof.h"
+
+static void collided(AEntity* Item, AEntity* Actor)
+{
+    ZCompBag* bag = a_entity_getComponent(Actor, "bag");
+
+    if(!bag) {
+        return;
+    }
+
+    ZCompItem* item = a_entity_requireComponent(Item, "item");
+    ZCompPosition* position = a_entity_requireComponent(Item, "position");
+
+    AFix x, y;
+    z_comp_position_getCoords(position, &x, &y);
+
+    z_comp_bag_add(bag, Item);
+    z_entity_poof_new(a_entity_getContext(Item), x, y);
+    a_entity_mute(Item);
+
+    printf("Bagged %s\n", z_comp_item_getName(item));
+}
 
 AEntity* z_entity_item_new(ZStateGame* Game, ZEntityItemType Type, int TileX, int TileY)
 {
@@ -74,6 +97,8 @@ AEntity* z_entity_item_new(ZStateGame* Game, ZEntityItemType Type, int TileX, in
                        x,
                        y,
                        volumeRadius);
+
+    a_entity_setMessageHandler(e, "collided", collided);
 
     return e;
 }

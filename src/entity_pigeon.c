@@ -166,7 +166,7 @@ static void pigeonAi(AEntity* Entity)
 
 AEntity* z_entity_pigeon_new(ZStateGame* Game, int TileX, int TileY)
 {
-    AEntity* e = a_entity_new("player", Game);
+    AEntity* e = a_entity_new("pigeon", Game);
 
     AFix x = a_fix_itofix(TileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
     AFix y = a_fix_itofix(TileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);

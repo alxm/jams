@@ -21,8 +21,6 @@
 
 #include "util_tiles.h"
 
-#include "component_bag.h"
-#include "component_item.h"
 #include "component_map.h"
 #include "component_motion.h"
 #include "component_position.h"
@@ -30,11 +28,8 @@
 #include "component_velocity.h"
 #include "component_volume.h"
 
-#include "entity_poof.h"
-
 void z_system_move(AEntity* Entity)
 {
-    ZCompBag* bag = a_entity_getComponent(Entity, "bag");
     ZCompMotion* motion = a_entity_requireComponent(Entity, "motion");
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
@@ -82,7 +77,6 @@ void z_system_move(AEntity* Entity)
             continue;
         }
 
-        ZCompItem* eItem = a_entity_getComponent(e, "item");
         ZCompPosition* ePosition = a_entity_requireComponent(e, "position");
         ZCompVolume* eVolume = a_entity_requireComponent(e, "volume");
 
@@ -97,12 +91,7 @@ void z_system_move(AEntity* Entity)
             z_comp_volume_setCoords(volume, oldX, oldY);
             z_comp_motion_setState(motion, Z_COMP_MOTION_STATE_BLOCKED);
 
-            if(bag && eItem) {
-                z_comp_bag_add(bag, e);
-                a_entity_mute(e);
-                printf("Bagged %s\n", z_comp_item_getName(eItem));
-                z_entity_poof_new(game, x, y);
-            }
+            a_entity_sendMessage(Entity, e, "collided");
 
             return;
         }
