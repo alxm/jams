@@ -15,30 +15,12 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef struct ZUtilFonts {
+    AFont* gray;
+    AFont* blue;
+    AFont* red;
+} ZUtilFonts;
 
-#include "util_colors.h"
-#include "util_controls.h"
-#include "util_fonts.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
+extern ZUtilFonts z_util_fonts;
 
-A_STATE(load)
-{
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_controls_load();
-        z_util_fonts_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
-
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
-    }
-}
+extern void z_util_fonts_load(void);

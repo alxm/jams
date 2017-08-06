@@ -20,6 +20,7 @@
 #include "state_game.h"
 
 #include "util_controls.h"
+#include "util_fonts.h"
 #include "util_tiles.h"
 
 #include "component_accosted.h"
@@ -185,8 +186,9 @@ static void collided(AEntity* Pigeon, AEntity* Actor)
     ZCompAccosted* accosted = a_entity_requireComponent(Pigeon, "accosted");
     int convinced = z_comp_accosted_getConvinced(accosted);
 
-    if(convinced == 100) {
+    if(convinced >= 100) {
         printf("You got me\n");
+        z_comp_alarm_toggle(alarm, false);
     } else {
         z_comp_alarm_toggle(alarm, true);
 
@@ -201,13 +203,13 @@ static void collided(AEntity* Pigeon, AEntity* Actor)
                 spr = a_entity_requireComponent(Actor, "sprite");
                 bubbleSprite = "bubble2";
 
-                z_entity_log_write(log, NULL, 0, "Just hear me out!");
+                z_entity_log_write(log, z_util_fonts.red, 0, "Just hear me out!");
             } else {
                 pos = a_entity_requireComponent(Pigeon, "position");
                 spr = a_entity_requireComponent(Pigeon, "sprite");
                 bubbleSprite = "bubble1";
 
-                z_entity_log_write(log, NULL, 0, "Leave me alone!");
+                z_entity_log_write(log, z_util_fonts.blue, 0, "Leave me alone!");
             }
 
             AFix x, y;

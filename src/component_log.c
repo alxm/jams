@@ -17,6 +17,8 @@
 
 #include <a2x.h>
 
+#include "util_fonts.h"
+
 #include "component_log.h"
 
 typedef struct ZCompLogLine {
@@ -95,7 +97,7 @@ void z_comp_log_draw(const ZCompLog* Log)
             a_font_print("  ");
         }
 
-        a_font_setFont(NULL);
+        a_font_setFont(z_util_fonts.gray);
         a_font_print("> ");
         a_font_setFont(line->font);
         a_font_print(line->text);

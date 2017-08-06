@@ -18,27 +18,17 @@
 #include <a2x.h>
 
 #include "util_colors.h"
-#include "util_controls.h"
 #include "util_fonts.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
 
-A_STATE(load)
+ZUtilFonts z_util_fonts;
+
+void z_util_fonts_load(void)
 {
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_controls_load();
-        z_util_fonts_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
+    ASprite* fontSprite = a_sprite_newFromFile("gfx/font.png");
+    AFont* font = a_font_new(fontSprite, 0, 0, A_FONT_LOAD_ALL);
+    a_sprite_free(fontSprite);
 
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
-    }
+    z_util_fonts.gray = a_font_dup(font, z_util_colors.gray4);
+    z_util_fonts.blue = a_font_dup(font, z_util_colors.blue2);
+    z_util_fonts.red = a_font_dup(font, z_util_colors.red2);
 }

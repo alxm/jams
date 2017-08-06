@@ -123,4 +123,11 @@ AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game)
 void z_state_game_gameOver(ZStateGame* Game)
 {
     A_UNUSED(Game);
+
+    a_system_mute("ttl input ai move animate alarmTick");
+
+    z_entity_log_write(Game->log,
+                       NULL,
+                       0,
+                       "GAME OVER");
 }
