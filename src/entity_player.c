@@ -22,6 +22,7 @@
 #include "util_controls.h"
 #include "util_tiles.h"
 
+#include "component_bag.h"
 #include "component_input.h"
 #include "component_position.h"
 #include "component_sprite.h"
@@ -78,6 +79,9 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
 
     AFix x = a_fix_itofix(TileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
     AFix y = a_fix_itofix(TileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
+
+    ZCompBag* bag = a_entity_addComponent(e, "bag");
+    z_comp_bag_init(bag);
 
     ZCompInput* input = a_entity_addComponent(e, "input");
     z_comp_input_init(input);

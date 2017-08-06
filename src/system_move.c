@@ -21,6 +21,8 @@
 
 #include "util_tiles.h"
 
+#include "component_bag.h"
+#include "component_item.h"
 #include "component_map.h"
 #include "component_position.h"
 #include "component_sprite.h"
@@ -29,6 +31,7 @@
 
 void z_system_move(AEntity* Entity)
 {
+    ZCompBag* bag = a_entity_getComponent(Entity, "bag");
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
     ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
@@ -69,19 +72,31 @@ void z_system_move(AEntity* Entity)
 
     z_comp_volume_setCoords(volume, newX, newY);
 
-    A_COL_ITERATE(z_comp_volume_getColObject(volume), AEntity*, entity) {
-        ZCompPosition* pos = a_entity_requireComponent(entity, "position");
-        ZCompVolume* vol = a_entity_requireComponent(entity, "volume");
+    A_COL_ITERATE(z_comp_volume_getColObject(volume), AEntity*, e) {
+        if(a_entity_isMuted(e)) {
+            continue;
+        }
+
+        ZCompItem* eItem = a_entity_getComponent(e, "item");
+        ZCompPosition* ePosition = a_entity_requireComponent(e, "position");
+        ZCompVolume* eVolume = a_entity_requireComponent(e, "volume");
 
         AFix x, y;
-        z_comp_position_getCoords(pos, &x, &y);
+        z_comp_position_getCoords(ePosition, &x, &y);
 
         int x2 = a_fix_fixtoi(x);
         int y2 = a_fix_fixtoi(y);
-        int r2 = z_comp_volume_getRadius(vol);
+        int r2 = z_comp_volume_getRadius(eVolume);
 
         if(a_collide_circleAndCircle(x1, y1, r1, x2, y2, r2)) {
             z_comp_volume_setCoords(volume, oldX, oldY);
+
+            if(bag && eItem) {
+                z_comp_bag_add(bag, e);
+                a_entity_mute(e);
+                printf("Bagged %s\n", z_comp_item_getName(eItem));
+            }
+
             return;
         }
     }

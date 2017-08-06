@@ -21,6 +21,7 @@
 
 #include "util_tiles.h"
 
+#include "component_item.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_volume.h"
@@ -29,25 +30,31 @@
 
 AEntity* z_entity_item_new(ZStateGame* Game, ZEntityItemType Type, int TileX, int TileY)
 {
+    const char* name;
     const char* spriteId;
     int volumeRadius;
 
     switch(Type) {
-        case Z_ENTITY_ITEM_COFFER:
+        case Z_ENTITY_ITEM_COFFER: {
+            name = "Treasure";
             spriteId = "coffer";
             volumeRadius = 4;
-            break;
+        } break;
 
-        default:
+        default: {
+            name = NULL;
             spriteId = NULL;
             volumeRadius = 0;
-            break;
+        } break;
     }
 
     AEntity* e = a_entity_new("item", Game);
 
     AFix x = a_fix_itofix(TileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
     AFix y = a_fix_itofix(TileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
+
+    ZCompItem* item = a_entity_addComponent(e, "item");
+    z_comp_item_init(item, name);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, x, y);
