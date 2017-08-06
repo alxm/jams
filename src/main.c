@@ -20,6 +20,7 @@
 #include "state_game.h"
 #include "state_load.h"
 
+#include "component_accosted.h"
 #include "component_ai.h"
 #include "component_bag.h"
 #include "component_input.h"
@@ -54,6 +55,7 @@ A_SETUP
 
 A_MAIN
 {
+    a_component_declare("accosted", z_comp_accosted_size(), NULL);
     a_component_declare("ai", z_comp_ai_size(), z_comp_ai_free);
     a_component_declare("bag", z_comp_bag_size(), z_comp_bag_free);
     a_component_declare("input", z_comp_input_size(), z_comp_input_free);

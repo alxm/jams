@@ -22,6 +22,7 @@
 #include "util_controls.h"
 #include "util_tiles.h"
 
+#include "component_accosted.h"
 #include "component_ai.h"
 #include "component_map.h"
 #include "component_motion.h"
@@ -164,12 +165,29 @@ static void pigeonAi(AEntity* Entity)
     } while(ctx->state == Z_PIGEON_AI_PICK_GOAL);
 }
 
+static void collided(AEntity* Pigeon, AEntity* Actor)
+{
+    A_UNUSED(Actor);
+
+    ZCompAccosted* accosted = a_entity_requireComponent(Pigeon, "accosted");
+
+    int convinced = z_comp_accosted_getConvinced(accosted);
+
+    if(convinced == 100) {
+        printf("You got me\n");
+    }
+
+    z_comp_accosted_setConvinced(accosted, convinced + 1);
+}
+
 AEntity* z_entity_pigeon_new(ZStateGame* Game, int TileX, int TileY)
 {
     AEntity* e = a_entity_new("pigeon", Game);
 
     AFix x = a_fix_itofix(TileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
     AFix y = a_fix_itofix(TileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
+
+    a_entity_addComponent(e, "accosted");
 
     ZCompAi* ai = a_entity_addComponent(e, "ai");
     z_comp_ai_init(ai, pigeonAi, sizeof(ZPigeonAiContext));
@@ -192,6 +210,8 @@ AEntity* z_entity_pigeon_new(ZStateGame* Game, int TileX, int TileY)
 
     ZCompVolume* volume = a_entity_addComponent(e, "volume");
     z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), x, y, 4);
+
+    a_entity_setMessageHandler(e, "collided", collided);
 
     return e;
 }
