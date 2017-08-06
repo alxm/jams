@@ -31,6 +31,7 @@
 #include "component_velocity.h"
 #include "component_volume.h"
 
+#include "entity_bubble.h"
 #include "entity_macros.h"
 
 typedef enum {
@@ -167,7 +168,11 @@ static void pigeonAi(AEntity* Entity)
 
 static void collided(AEntity* Pigeon, AEntity* Actor)
 {
-    A_UNUSED(Actor);
+    ZStateGame* game = a_entity_getContext(Pigeon);
+
+    if(Actor != z_state_game_getPlayer(game)) {
+        return;
+    }
 
     ZCompAccosted* accosted = a_entity_requireComponent(Pigeon, "accosted");
 
@@ -175,6 +180,31 @@ static void collided(AEntity* Pigeon, AEntity* Actor)
 
     if(convinced == 100) {
         printf("You got me\n");
+    } else if(convinced % 10 == 0) {
+        ZCompPosition* pos;
+        ZCompSprite* spr;
+
+        const char* bubbleSprite;
+
+        if(convinced / 10 % 2 == 0) {
+            pos = a_entity_requireComponent(Pigeon, "position");
+            spr = a_entity_requireComponent(Pigeon, "sprite");
+            bubbleSprite = "bubble1";
+        } else {
+            pos = a_entity_requireComponent(Actor, "position");
+            spr = a_entity_requireComponent(Actor, "sprite");
+            bubbleSprite = "bubble2";
+        }
+
+        AFix x, y;
+        z_comp_position_getCoords(pos, &x, &y);
+
+        ASprite* sprite = z_comp_sprite_getGraphic(spr);
+
+        x += a_fix_itofix(a_sprite_getWidth(sprite) / 8);
+        y -= a_fix_itofix(3 * a_sprite_getHeight(sprite) / 4);
+
+        z_entity_bubble_new(game, x, y, bubbleSprite);
     }
 
     z_comp_accosted_setConvinced(accosted, convinced + 1);

@@ -28,6 +28,7 @@ typedef enum {
 typedef enum {
     Z_COMP_SPRITE_LAYER_1 = -1,
     Z_COMP_SPRITE_LAYER_2,
+    Z_COMP_SPRITE_LAYER_3,
 } ZCompSpriteLayer;
 
 extern size_t z_comp_sprite_size(void);

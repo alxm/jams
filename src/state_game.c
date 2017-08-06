@@ -30,9 +30,9 @@
 #include "entity_player.h"
 
 struct ZStateGame {
-    AColMap* volumeColMap;
     AEntity* map;
     AEntity* player;
+    AColMap* volumeColMap;
 };
 
 static ZStateGame g_game;
@@ -90,6 +90,11 @@ void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y)
 AEntity* z_state_game_getMap(const ZStateGame* Game)
 {
     return Game->map;
+}
+
+AEntity* z_state_game_getPlayer(const ZStateGame* Game)
+{
+    return Game->player;
 }
 
 AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game)
