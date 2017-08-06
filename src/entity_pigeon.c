@@ -32,6 +32,7 @@
 #include "component_volume.h"
 
 #include "entity_bubble.h"
+#include "entity_log.h"
 #include "entity_macros.h"
 
 typedef enum {
@@ -169,6 +170,7 @@ static void pigeonAi(AEntity* Entity)
 static void collided(AEntity* Pigeon, AEntity* Actor)
 {
     ZStateGame* game = a_entity_getContext(Pigeon);
+    AEntity* log = z_state_game_getLog(game);
 
     if(Actor != z_state_game_getPlayer(game)) {
         return;
@@ -187,13 +189,17 @@ static void collided(AEntity* Pigeon, AEntity* Actor)
         const char* bubbleSprite;
 
         if(convinced / 10 % 2 == 0) {
-            pos = a_entity_requireComponent(Pigeon, "position");
-            spr = a_entity_requireComponent(Pigeon, "sprite");
-            bubbleSprite = "bubble1";
-        } else {
             pos = a_entity_requireComponent(Actor, "position");
             spr = a_entity_requireComponent(Actor, "sprite");
             bubbleSprite = "bubble2";
+
+            z_entity_log_write(log, NULL, 0, "Just hear me out!");
+        } else {
+            pos = a_entity_requireComponent(Pigeon, "position");
+            spr = a_entity_requireComponent(Pigeon, "sprite");
+            bubbleSprite = "bubble1";
+
+            z_entity_log_write(log, NULL, 0, "Leave me alone!");
         }
 
         AFix x, y;

@@ -25,11 +25,13 @@
 #include "component_position.h"
 
 #include "entity_item.h"
+#include "entity_log.h"
 #include "entity_map.h"
 #include "entity_pigeon.h"
 #include "entity_player.h"
 
 struct ZStateGame {
+    AEntity* log;
     AEntity* map;
     AEntity* player;
     AColMap* volumeColMap;
@@ -41,8 +43,10 @@ A_STATE(game)
 {
     A_STATE_INIT
     {
-        a_system_tick("ttl input ai move animate");
-        a_system_draw("mapDraw spriteDraw");
+        a_system_tick("ttl input ai move animate logTick");
+        a_system_draw("mapDraw spriteDraw logDraw");
+
+        g_game.log = z_entity_log_new();
 
         g_game.map = z_entity_map_new(&g_game, "gfx/level00.png");
         ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
@@ -85,6 +89,11 @@ void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y)
 
     *X = a_fix_fixtoi(x);
     *Y = a_fix_fixtoi(y);
+}
+
+AEntity* z_state_game_getLog(const ZStateGame* Game)
+{
+    return Game->log;
 }
 
 AEntity* z_state_game_getMap(const ZStateGame* Game)

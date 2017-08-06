@@ -15,12 +15,28 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZStateGame ZStateGame;
+#include <a2x.h>
 
-extern A_STATE(game);
+#include "component_log.h"
 
-extern void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y);
-extern AEntity* z_state_game_getLog(const ZStateGame* Game);
-extern AEntity* z_state_game_getMap(const ZStateGame* Game);
-extern AEntity* z_state_game_getPlayer(const ZStateGame* Game);
-extern AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game);
+AEntity* z_entity_log_new(void)
+{
+    AEntity* e = a_entity_new("log", NULL);
+
+    ZCompLog* log = a_entity_addComponent(e, "log");
+    z_comp_log_init(log, 4);
+
+    return e;
+}
+
+void z_entity_log_write(AEntity* Log, AFont* Font, int Indent, const char* Format, ...)
+{
+    ZCompLog* log = a_entity_requireComponent(Log, "log");
+
+    va_list args;
+    va_start(args, Format);
+
+    z_comp_log_write(log, Font, Indent, Format, args);
+
+    va_end(args);
+}

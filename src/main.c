@@ -25,6 +25,7 @@
 #include "component_bag.h"
 #include "component_input.h"
 #include "component_item.h"
+#include "component_log.h"
 #include "component_map.h"
 #include "component_motion.h"
 #include "component_position.h"
@@ -36,6 +37,7 @@
 #include "system_ai.h"
 #include "system_animate.h"
 #include "system_input.h"
+#include "system_log.h"
 #include "system_map.h"
 #include "system_move.h"
 #include "system_sprite.h"
@@ -60,6 +62,7 @@ A_MAIN
     a_component_declare("bag", z_comp_bag_size(), z_comp_bag_free);
     a_component_declare("input", z_comp_input_size(), z_comp_input_free);
     a_component_declare("item", z_comp_item_size(), z_comp_item_free);
+    a_component_declare("log", z_comp_log_size(), z_comp_log_free);
     a_component_declare("map", z_comp_map_size(), z_comp_map_free);
     a_component_declare("motion", z_comp_motion_size(), NULL);
     a_component_declare("position", z_comp_position_size(), NULL);
@@ -71,6 +74,8 @@ A_MAIN
     a_system_declare("ai", "ai", z_system_ai, NULL, false);
     a_system_declare("animate", "sprite", z_system_animate, NULL, false);
     a_system_declare("input", "input", z_system_input, NULL, false);
+    a_system_declare("logDraw", "log", z_system_logDraw, NULL, false);
+    a_system_declare("logTick", "log", z_system_logTick, NULL, false);
     a_system_declare("mapDraw", "map", z_system_mapDraw, NULL, false);
     a_system_declare("move", "position velocity", z_system_move, NULL, false);
     a_system_declare("spriteDraw", "position sprite", z_system_sprite, z_system_sprite_sort, false);
