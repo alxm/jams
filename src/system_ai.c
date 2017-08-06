@@ -15,4 +15,13 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapDraw;
+#include <a2x.h>
+
+#include "component_ai.h"
+
+void z_system_ai(AEntity* Entity)
+{
+    ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
+
+    z_comp_ai_getHandler(ai)(Entity);
+}

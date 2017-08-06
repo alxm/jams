@@ -22,9 +22,19 @@
 #include "util_controls.h"
 #include "util_tiles.h"
 
+#include "component_ai.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_volume.h"
+
+typedef struct ZPersonAiContext {
+    int tileGoalX, tileGoalY;
+} ZPersonAiContext;
+
+static void person_walkAroundAi(AEntity* Entity)
+{
+    A_UNUSED(Entity);
+}
 
 AEntity* z_entity_person_new(ZStateGame* Game, int TileX, int TileY)
 {
@@ -32,6 +42,12 @@ AEntity* z_entity_person_new(ZStateGame* Game, int TileX, int TileY)
 
     AFix x = a_fix_itofix(TileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
     AFix y = a_fix_itofix(TileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2);
+
+    ZCompAi* ai = a_entity_addComponent(e, "ai");
+    z_comp_ai_init(ai, person_walkAroundAi, sizeof(ZPersonAiContext));
+    ZPersonAiContext* ctx = z_comp_ai_getContext(ai);
+    ctx->tileGoalX = -1;
+    ctx->tileGoalY = -1;
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, x, y);

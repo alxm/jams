@@ -15,4 +15,39 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapDraw;
+#include <a2x.h>
+
+#include "component_ai.h"
+
+struct ZCompAi {
+    ZCompAiHandler* handler;
+    void* context;
+};
+
+size_t z_comp_ai_size(void)
+{
+    return sizeof(ZCompAi);
+}
+
+void z_comp_ai_init(ZCompAi* Ai, ZCompAiHandler* Handler, size_t ContextSize)
+{
+    Ai->handler = Handler;
+    Ai->context = a_mem_zalloc(ContextSize);
+}
+
+void z_comp_ai_free(void* Self)
+{
+    ZCompAi* ai = Self;
+
+    free(ai->context);
+}
+
+ZCompAiHandler* z_comp_ai_getHandler(const ZCompAi* Ai)
+{
+    return Ai->handler;
+}
+
+void* z_comp_ai_getContext(const ZCompAi* Ai)
+{
+    return Ai->context;
+}

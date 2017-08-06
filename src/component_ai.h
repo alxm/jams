@@ -15,4 +15,12 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapDraw;
+typedef struct ZCompAi ZCompAi;
+typedef void ZCompAiHandler(AEntity* Entity);
+
+extern size_t z_comp_ai_size(void);
+extern void z_comp_ai_init(ZCompAi* Ai, ZCompAiHandler* Handler, size_t ContextSize);
+extern AComponentFree z_comp_ai_free;
+
+extern ZCompAiHandler* z_comp_ai_getHandler(const ZCompAi* Ai);
+extern void* z_comp_ai_getContext(const ZCompAi* Ai);

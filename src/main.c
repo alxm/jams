@@ -20,6 +20,7 @@
 #include "state_game.h"
 #include "state_load.h"
 
+#include "component_ai.h"
 #include "component_bag.h"
 #include "component_input.h"
 #include "component_item.h"
@@ -29,6 +30,7 @@
 #include "component_velocity.h"
 #include "component_volume.h"
 
+#include "system_ai.h"
 #include "system_input.h"
 #include "system_map.h"
 #include "system_move.h"
@@ -48,6 +50,7 @@ A_SETUP
 
 A_MAIN
 {
+    a_component_declare("ai", z_comp_ai_size(), z_comp_ai_free);
     a_component_declare("bag", z_comp_bag_size(), z_comp_bag_free);
     a_component_declare("input", z_comp_input_size(), z_comp_input_free);
     a_component_declare("item", z_comp_item_size(), z_comp_item_free);
@@ -57,9 +60,9 @@ A_MAIN
     a_component_declare("velocity", z_comp_velocity_size(), NULL);
     a_component_declare("volume", z_comp_volume_size(), z_comp_volume_free);
 
+    a_system_declare("ai", "ai", z_system_ai, NULL, false);
     a_system_declare("input", "input", z_system_input, NULL, false);
     a_system_declare("mapDraw", "map", z_system_mapDraw, NULL, false);
-    a_system_declare("mapTick", "map", z_system_mapTick, NULL, false);
     a_system_declare("move", "position velocity", z_system_move, NULL, false);
     a_system_declare("spriteDraw", "position sprite", z_system_sprite, z_system_sprite_sort, false);
 

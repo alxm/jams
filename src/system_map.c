@@ -25,11 +25,6 @@
 #include "component_map.h"
 #include "component_position.h"
 
-void z_system_mapTick(AEntity* Entity)
-{
-    A_UNUSED(Entity);
-}
-
 void z_system_mapDraw(AEntity* Entity)
 {
     a_pixel_setPixel(z_util_colors.gray1);

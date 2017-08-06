@@ -15,4 +15,4 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern ASystemHandler z_system_mapDraw;
+extern ASystemHandler z_system_ai;
