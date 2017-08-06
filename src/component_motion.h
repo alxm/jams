@@ -18,11 +18,21 @@
 typedef struct ZCompMotion ZCompMotion;
 
 typedef enum {
-    Z_COMP_MOTION_OK,
-    Z_COMP_MOTION_BLOCKED,
+    Z_COMP_MOTION_STATE_OK,
+    Z_COMP_MOTION_STATE_BLOCKED,
 } ZCompMotionState;
+
+typedef enum {
+    Z_COMP_MOTION_DIR_UP,
+    Z_COMP_MOTION_DIR_DOWN,
+    Z_COMP_MOTION_DIR_LEFT,
+    Z_COMP_MOTION_DIR_RIGHT
+} ZCompMotionDirection;
 
 extern size_t z_comp_motion_size(void);
 
 extern ZCompMotionState z_comp_motion_getState(const ZCompMotion* Motion);
 extern void z_comp_motion_setState(ZCompMotion* Motion, ZCompMotionState State);
+
+extern ZCompMotionDirection z_comp_motion_getDirection(const ZCompMotion* Motion);
+extern void z_comp_motion_setDirection(ZCompMotion* Motion, ZCompMotionDirection Direction);

@@ -23,7 +23,7 @@
 
 struct ZCompSprite {
     ZCompSpriteDirection direction;
-    ASpriteFrames* frames[Z_COMP_SPRITE_NUM];
+    ASpriteFrames* frames[Z_COMP_SPRITE_DIR_NUM];
 };
 
 size_t z_comp_sprite_size(void)
@@ -33,16 +33,16 @@ size_t z_comp_sprite_size(void)
 
 void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right)
 {
-    Sprite->direction = Z_COMP_SPRITE_DOWN;
+    Sprite->direction = Z_COMP_SPRITE_DIR_DOWN;
 
-    Sprite->frames[Z_COMP_SPRITE_UP] = a_spriteframes_dup(
-                                            z_util_sprites_get(Up));
-    Sprite->frames[Z_COMP_SPRITE_DOWN] = a_spriteframes_dup(
-                                            z_util_sprites_get(Down));
-    Sprite->frames[Z_COMP_SPRITE_LEFT] = a_spriteframes_dup(
-                                            z_util_sprites_get(Left));
-    Sprite->frames[Z_COMP_SPRITE_RIGHT] = a_spriteframes_dup(
-                                            z_util_sprites_get(Right));
+    Sprite->frames[Z_COMP_SPRITE_DIR_UP] = a_spriteframes_dup(
+                                                z_util_sprites_get(Up));
+    Sprite->frames[Z_COMP_SPRITE_DIR_DOWN] = a_spriteframes_dup(
+                                                z_util_sprites_get(Down));
+    Sprite->frames[Z_COMP_SPRITE_DIR_LEFT] = a_spriteframes_dup(
+                                                z_util_sprites_get(Left));
+    Sprite->frames[Z_COMP_SPRITE_DIR_RIGHT] = a_spriteframes_dup(
+                                                z_util_sprites_get(Right));
 }
 
 ASprite* z_comp_sprite_getGraphic(const ZCompSprite* Sprite)
@@ -57,14 +57,14 @@ void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direct
 
 void z_comp_sprite_frameReset(ZCompSprite* Sprite)
 {
-    for(ZCompSpriteDirection d = Z_COMP_SPRITE_NUM; d--; ) {
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
         a_spriteframes_reset(Sprite->frames[d]);
     }
 }
 
 void z_comp_sprite_frameNext(ZCompSprite* Sprite)
 {
-    for(ZCompSpriteDirection d = Z_COMP_SPRITE_NUM; d--; ) {
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
         a_spriteframes_next(Sprite->frames[d]);
     }
 }

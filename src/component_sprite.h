@@ -18,11 +18,11 @@
 typedef struct ZCompSprite ZCompSprite;
 
 typedef enum {
-    Z_COMP_SPRITE_UP,
-    Z_COMP_SPRITE_DOWN,
-    Z_COMP_SPRITE_LEFT,
-    Z_COMP_SPRITE_RIGHT,
-    Z_COMP_SPRITE_NUM
+    Z_COMP_SPRITE_DIR_UP,
+    Z_COMP_SPRITE_DIR_DOWN,
+    Z_COMP_SPRITE_DIR_LEFT,
+    Z_COMP_SPRITE_DIR_RIGHT,
+    Z_COMP_SPRITE_DIR_NUM
 } ZCompSpriteDirection;
 
 extern size_t z_comp_sprite_size(void);

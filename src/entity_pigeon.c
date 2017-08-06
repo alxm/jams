@@ -39,9 +39,16 @@ typedef enum {
 
 typedef struct ZPigeonAiContext {
     ZPigeonAiState state;
+    ZPigeonAiState oldState;
     int goalX, goalY;
     int moveCounter;
 } ZPigeonAiContext;
+
+static inline void setState(ZPigeonAiContext* Context, ZPigeonAiState State)
+{
+    Context->oldState = Context->state;
+    Context->state = State;
+}
 
 static void pigeonAi(AEntity* Entity)
 {
@@ -62,18 +69,45 @@ static void pigeonAi(AEntity* Entity)
     z_comp_map_getDim(map, &mapWidth, &mapHeight);
 
     ZPigeonAiContext* ctx = z_comp_ai_getContext(ai);
+    ZCompMotionState motionState = z_comp_motion_getState(motion);
 
     switch(ctx->state) {
         case Z_PIGEON_AI_BLANK: {
-            int goalTileX = tileX - 1 + a_random_getInt(3);
-            int goalTileY = tileY - 1 + a_random_getInt(3);
+            int goalTileX = tileX;
+            int goalTileY = tileY;;
+
+            if(ctx->oldState != Z_PIGEON_AI_BLANK
+                && motionState == Z_COMP_MOTION_STATE_OK
+                && a_random_chance(3, 4)) {
+
+                switch(z_comp_motion_getDirection(motion)) {
+                    case Z_COMP_MOTION_DIR_UP: {
+                        goalTileY--;
+                    } break;
+
+                    case Z_COMP_MOTION_DIR_DOWN: {
+                        goalTileY++;
+                    } break;
+
+                    case Z_COMP_MOTION_DIR_LEFT: {
+                        goalTileX--;
+                    } break;
+
+                    case Z_COMP_MOTION_DIR_RIGHT: {
+                        goalTileX++;
+                    } break;
+                }
+            } else {
+                goalTileX += -1 + a_random_getInt(3);
+                goalTileY += -1 + a_random_getInt(3);
+            }
 
             if(goalTileX >= 0 && goalTileX < mapWidth
                 && goalTileY >= 0 && goalTileY < mapHeight
                 && (goalTileX != tileX || goalTileY != tileY)
                 && z_comp_map_isWalkable(map, goalTileX, goalTileY)) {
 
-                ctx->state = Z_PIGEON_AI_WALKING;
+                setState(ctx, Z_PIGEON_AI_WALKING);
                 ctx->goalX = goalTileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
                 ctx->goalY = goalTileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
             }
@@ -82,10 +116,10 @@ static void pigeonAi(AEntity* Entity)
         } break;
 
         case Z_PIGEON_AI_WALKING: {
-            ZCompMotionState motionState = z_comp_motion_getState(motion);
+            if(motionState == Z_COMP_MOTION_STATE_BLOCKED
+                && ctx->moveCounter > Z_UTIL_TILE_DIM / 2) {
 
-            if(motionState == Z_COMP_MOTION_BLOCKED && ctx->moveCounter > 8) {
-                ctx->state = Z_PIGEON_AI_BLANK;
+                setState(ctx, Z_PIGEON_AI_BLANK);
             } else {
                 if(a_fix_fixtoi(x) < ctx->goalX) {
                     z_entity_macro_moveRight(Entity);
@@ -96,7 +130,7 @@ static void pigeonAi(AEntity* Entity)
                 } else if(a_fix_fixtoi(y) > ctx->goalY) {
                     z_entity_macro_moveUp(Entity);
                 } else {
-                    ctx->state = Z_PIGEON_AI_BLANK;
+                    setState(ctx, Z_PIGEON_AI_BLANK);
                 }
 
                 ctx->moveCounter++;
@@ -114,8 +148,6 @@ AEntity* z_entity_pigeon_new(ZStateGame* Game, int TileX, int TileY)
 
     ZCompAi* ai = a_entity_addComponent(e, "ai");
     z_comp_ai_init(ai, pigeonAi, sizeof(ZPigeonAiContext));
-    ZPigeonAiContext* ctx = z_comp_ai_getContext(ai);
-    ctx->state = Z_PIGEON_AI_BLANK;
 
     a_entity_addComponent(e, "motion");
 

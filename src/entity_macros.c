@@ -17,11 +17,13 @@
 
 #include <a2x.h>
 
+#include "component_motion.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
 
-static void move(AEntity* Entity, AFix Ddx, AFix Ddy)
+static void move(AEntity* Entity, AFix Ddx, AFix Ddy, ZCompMotionDirection MotionDir, ZCompSpriteDirection SpriteDir)
 {
+    ZCompMotion* motion = a_entity_getComponent(Entity, "motion");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
     ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
 
@@ -33,33 +35,45 @@ static void move(AEntity* Entity, AFix Ddx, AFix Ddy)
 
     z_comp_velocity_setValues(velocity, dx, dy);
 
-    if(Ddy < 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_UP);
-    } else if(Ddy > 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_DOWN);
-    } else if(Ddx < 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_LEFT);
-    } else if(Ddx > 0) {
-        z_comp_sprite_setDirection(sprite, Z_COMP_SPRITE_RIGHT);
+    if(motion) {
+        z_comp_motion_setDirection(motion, MotionDir);
     }
+
+    z_comp_sprite_setDirection(sprite, SpriteDir);
 }
 
 void z_entity_macro_moveUp(AEntity* Entity)
 {
-    move(Entity, 0, -A_FIX_ONE);
+    move(Entity,
+         0,
+         -A_FIX_ONE,
+         Z_COMP_MOTION_DIR_UP,
+         Z_COMP_SPRITE_DIR_UP);
 }
 
 void z_entity_macro_moveDown(AEntity* Entity)
 {
-    move(Entity, 0, +A_FIX_ONE);
+    move(Entity,
+         0,
+         +A_FIX_ONE,
+         Z_COMP_MOTION_DIR_DOWN,
+         Z_COMP_SPRITE_DIR_DOWN);
 }
 
 void z_entity_macro_moveLeft(AEntity* Entity)
 {
-    move(Entity, -A_FIX_ONE, 0);
+    move(Entity,
+         -A_FIX_ONE,
+         0,
+         Z_COMP_MOTION_DIR_LEFT,
+         Z_COMP_SPRITE_DIR_LEFT);
 }
 
 void z_entity_macro_moveRight(AEntity* Entity)
 {
-    move(Entity, +A_FIX_ONE, 0);
+    move(Entity,
+         +A_FIX_ONE,
+         0,
+         Z_COMP_MOTION_DIR_RIGHT,
+         Z_COMP_SPRITE_DIR_RIGHT);
 }

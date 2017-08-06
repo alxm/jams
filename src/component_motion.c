@@ -21,6 +21,7 @@
 
 struct ZCompMotion {
     ZCompMotionState state;
+    ZCompMotionDirection direction;
 };
 
 size_t z_comp_motion_size(void)
@@ -36,4 +37,14 @@ ZCompMotionState z_comp_motion_getState(const ZCompMotion* Motion)
 void z_comp_motion_setState(ZCompMotion* Motion, ZCompMotionState State)
 {
     Motion->state = State;
+}
+
+ZCompMotionDirection z_comp_motion_getDirection(const ZCompMotion* Motion)
+{
+    return Motion->direction;
+}
+
+void z_comp_motion_setDirection(ZCompMotion* Motion, ZCompMotionDirection Direction)
+{
+    Motion->direction = Direction;
 }

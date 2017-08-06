@@ -40,7 +40,7 @@ void z_system_move(AEntity* Entity)
     ZCompVolume* volume = a_entity_requireComponent(Entity, "volume");
 
     if(motion) {
-        z_comp_motion_setState(motion, Z_COMP_MOTION_OK);
+        z_comp_motion_setState(motion, Z_COMP_MOTION_STATE_OK);
     }
 
     AFix dx, dy;
@@ -69,6 +69,10 @@ void z_system_move(AEntity* Entity)
     int tileY = a_fix_fixtoi(newY) / Z_UTIL_TILE_DIM;
 
     if(!z_comp_map_isWalkable(map, tileX, tileY)) {
+        if(motion) {
+            z_comp_motion_setState(motion, Z_COMP_MOTION_STATE_BLOCKED);
+        }
+
         return;
     }
 
@@ -98,7 +102,7 @@ void z_system_move(AEntity* Entity)
             z_comp_volume_setCoords(volume, oldX, oldY);
 
             if(motion) {
-                z_comp_motion_setState(motion, Z_COMP_MOTION_BLOCKED);
+                z_comp_motion_setState(motion, Z_COMP_MOTION_STATE_BLOCKED);
             }
 
             if(bag && eItem) {
