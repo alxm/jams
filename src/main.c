@@ -21,6 +21,7 @@
 #include "state_load.h"
 
 #include "component_accosted.h"
+#include "component_alarm.h"
 #include "component_ai.h"
 #include "component_bag.h"
 #include "component_input.h"
@@ -35,6 +36,7 @@
 #include "component_volume.h"
 
 #include "system_ai.h"
+#include "system_alarm.h"
 #include "system_animate.h"
 #include "system_input.h"
 #include "system_log.h"
@@ -59,6 +61,7 @@ A_MAIN
 {
     a_component_declare("accosted", z_comp_accosted_size(), NULL);
     a_component_declare("ai", z_comp_ai_size(), z_comp_ai_free);
+    a_component_declare("alarm", z_comp_alarm_size(), z_comp_alarm_free);
     a_component_declare("bag", z_comp_bag_size(), z_comp_bag_free);
     a_component_declare("input", z_comp_input_size(), z_comp_input_free);
     a_component_declare("item", z_comp_item_size(), z_comp_item_free);
@@ -72,6 +75,8 @@ A_MAIN
     a_component_declare("volume", z_comp_volume_size(), z_comp_volume_free);
 
     a_system_declare("ai", "ai", z_system_ai, NULL, false);
+    a_system_declare("alarmDraw", "alarm", z_system_alarmDraw, NULL, false);
+    a_system_declare("alarmTick", "alarm", z_system_alarmTick, NULL, false);
     a_system_declare("animate", "sprite", z_system_animate, NULL, false);
     a_system_declare("input", "input", z_system_input, NULL, false);
     a_system_declare("logDraw", "log", z_system_logDraw, NULL, false);

@@ -24,6 +24,7 @@
 #include "component_map.h"
 #include "component_position.h"
 
+#include "entity_alarm.h"
 #include "entity_item.h"
 #include "entity_log.h"
 #include "entity_map.h"
@@ -34,39 +35,42 @@ struct ZStateGame {
     AEntity* log;
     AEntity* map;
     AEntity* player;
+    AEntity* alarm;
     AColMap* volumeColMap;
 };
 
-static ZStateGame g_game;
-
 A_STATE(game)
 {
+    static ZStateGame game;
+
     A_STATE_INIT
     {
-        a_system_tick("ttl input ai move animate logTick");
-        a_system_draw("mapDraw spriteDraw logDraw");
+        a_system_tick("ttl input ai move animate logTick alarmTick");
+        a_system_draw("mapDraw spriteDraw logDraw alarmDraw");
 
-        g_game.log = z_entity_log_new();
+        game.log = z_entity_log_new();
 
-        g_game.map = z_entity_map_new(&g_game, "gfx/level00.png");
-        ZCompMap* map = a_entity_requireComponent(g_game.map, "map");
+        game.map = z_entity_map_new(&game, "gfx/level00.png");
+        ZCompMap* map = a_entity_requireComponent(game.map, "map");
 
         int mapWidth, mapHeight;
         z_comp_map_getDim(map, &mapWidth, &mapHeight);
 
-        g_game.volumeColMap = a_colmap_new(mapWidth * Z_UTIL_TILE_DIM,
+        game.volumeColMap = a_colmap_new(mapWidth * Z_UTIL_TILE_DIM,
                                            mapHeight * Z_UTIL_TILE_DIM,
                                            Z_UTIL_TILE_DIM);
 
-        g_game.player = z_entity_player_new(&g_game, 2, 5);
+        game.player = z_entity_player_new(&game, 2, 5);
 
-        z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 3, 5);
-        z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 5, 5);
-        z_entity_item_new(&g_game, Z_ENTITY_ITEM_COFFER, 4, 6);
+        game.alarm = z_entity_alarm_new(&game);
 
-        z_entity_pigeon_new(&g_game, 4, 7);
-        z_entity_pigeon_new(&g_game, 6, 7);
-        z_entity_pigeon_new(&g_game, 6, 6);
+        z_entity_item_new(&game, Z_ENTITY_ITEM_COFFER, 3, 5);
+        z_entity_item_new(&game, Z_ENTITY_ITEM_COFFER, 5, 5);
+        z_entity_item_new(&game, Z_ENTITY_ITEM_COFFER, 4, 6);
+
+        z_entity_pigeon_new(&game, 4, 7);
+        z_entity_pigeon_new(&game, 6, 7);
+        z_entity_pigeon_new(&game, 6, 6);
     }
 
     A_STATE_BODY
@@ -76,7 +80,7 @@ A_STATE(game)
 
     A_STATE_FREE
     {
-        a_colmap_free(g_game.volumeColMap);
+        a_colmap_free(game.volumeColMap);
     }
 }
 
@@ -106,7 +110,17 @@ AEntity* z_state_game_getPlayer(const ZStateGame* Game)
     return Game->player;
 }
 
+AEntity* z_state_game_getAlarm(const ZStateGame* Game)
+{
+    return Game->alarm;
+}
+
 AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game)
 {
     return Game->volumeColMap;
+}
+
+void z_state_game_gameOver(ZStateGame* Game)
+{
+    A_UNUSED(Game);
 }

@@ -15,15 +15,48 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZStateGame ZStateGame;
+#include <a2x.h>
 
-extern A_STATE(game);
+#include "component_alarm.h"
 
-extern void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y);
-extern AEntity* z_state_game_getLog(const ZStateGame* Game);
-extern AEntity* z_state_game_getMap(const ZStateGame* Game);
-extern AEntity* z_state_game_getPlayer(const ZStateGame* Game);
-extern AEntity* z_state_game_getAlarm(const ZStateGame* Game);
-extern AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game);
+struct ZCompAlarm {
+    AFix value;
+    bool on;
+};
 
-extern void z_state_game_gameOver(ZStateGame* Game);
+size_t z_comp_alarm_size(void)
+{
+    return sizeof(ZCompAlarm);
+}
+
+void z_comp_alarm_init(ZCompAlarm* Alarm)
+{
+    A_UNUSED(Alarm);
+}
+
+void z_comp_alarm_free(void* Self)
+{
+    ZCompAlarm* alarm = Self;
+
+    A_UNUSED(alarm);
+}
+
+AFix z_comp_alarm_getValue(const ZCompAlarm* Alarm)
+{
+    return Alarm->value;
+}
+
+void z_comp_alarm_setValue(ZCompAlarm* Alarm, AFix Value)
+{
+    Alarm->value = Value;
+}
+
+bool z_comp_alarm_isOn(const ZCompAlarm* Alarm)
+{
+    return Alarm->on;
+}
+
+void z_comp_alarm_toggle(ZCompAlarm* Alarm, bool On)
+{
+    Alarm->on = On;
+}

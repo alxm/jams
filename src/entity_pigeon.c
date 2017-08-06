@@ -24,6 +24,7 @@
 
 #include "component_accosted.h"
 #include "component_ai.h"
+#include "component_alarm.h"
 #include "component_map.h"
 #include "component_motion.h"
 #include "component_position.h"
@@ -81,7 +82,7 @@ static void pigeonAi(AEntity* Entity)
             case Z_PIGEON_AI_PICK_GOAL: {
                 ZPigeonAiState newState = Z_PIGEON_AI_WALKING;
 
-                if(a_random_chance(1, 4)) {
+                if(a_random_chance(1, 10)) {
                     newState = Z_PIGEON_AI_RESTING;
                 }
 
@@ -121,8 +122,10 @@ static void pigeonAi(AEntity* Entity)
                             && (goalTileX != tileX || goalTileY != tileY)
                             && z_comp_map_isWalkable(map, goalTileX, goalTileY)) {
 
-                            ctx->goalX = goalTileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
-                            ctx->goalY = goalTileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
+                            ctx->goalX = goalTileX * Z_UTIL_TILE_DIM
+                                            + Z_UTIL_TILE_DIM / 2;
+                            ctx->goalY = goalTileY * Z_UTIL_TILE_DIM
+                                            + Z_UTIL_TILE_DIM / 2;
                         }
 
                         ctx->counter = a_fps_msToFrames(
@@ -170,47 +173,53 @@ static void pigeonAi(AEntity* Entity)
 static void collided(AEntity* Pigeon, AEntity* Actor)
 {
     ZStateGame* game = a_entity_getContext(Pigeon);
-    AEntity* log = z_state_game_getLog(game);
 
     if(Actor != z_state_game_getPlayer(game)) {
         return;
     }
 
-    ZCompAccosted* accosted = a_entity_requireComponent(Pigeon, "accosted");
+    ZCompAlarm* alarm = a_entity_requireComponent(z_state_game_getAlarm(game),
+                                                  "alarm");
+    AEntity* log = z_state_game_getLog(game);
 
+    ZCompAccosted* accosted = a_entity_requireComponent(Pigeon, "accosted");
     int convinced = z_comp_accosted_getConvinced(accosted);
 
     if(convinced == 100) {
         printf("You got me\n");
-    } else if(convinced % 10 == 0) {
-        ZCompPosition* pos;
-        ZCompSprite* spr;
+    } else {
+        z_comp_alarm_toggle(alarm, true);
 
-        const char* bubbleSprite;
+        if(convinced % 10 == 0) {
+            ZCompPosition* pos;
+            ZCompSprite* spr;
 
-        if(convinced / 10 % 2 == 0) {
-            pos = a_entity_requireComponent(Actor, "position");
-            spr = a_entity_requireComponent(Actor, "sprite");
-            bubbleSprite = "bubble2";
+            const char* bubbleSprite;
 
-            z_entity_log_write(log, NULL, 0, "Just hear me out!");
-        } else {
-            pos = a_entity_requireComponent(Pigeon, "position");
-            spr = a_entity_requireComponent(Pigeon, "sprite");
-            bubbleSprite = "bubble1";
+            if(convinced / 10 % 2 == 0) {
+                pos = a_entity_requireComponent(Actor, "position");
+                spr = a_entity_requireComponent(Actor, "sprite");
+                bubbleSprite = "bubble2";
 
-            z_entity_log_write(log, NULL, 0, "Leave me alone!");
+                z_entity_log_write(log, NULL, 0, "Just hear me out!");
+            } else {
+                pos = a_entity_requireComponent(Pigeon, "position");
+                spr = a_entity_requireComponent(Pigeon, "sprite");
+                bubbleSprite = "bubble1";
+
+                z_entity_log_write(log, NULL, 0, "Leave me alone!");
+            }
+
+            AFix x, y;
+            z_comp_position_getCoords(pos, &x, &y);
+
+            ASprite* sprite = z_comp_sprite_getGraphic(spr);
+
+            x += a_fix_itofix(a_sprite_getWidth(sprite) / 8);
+            y -= a_fix_itofix(3 * a_sprite_getHeight(sprite) / 4);
+
+            z_entity_bubble_new(game, x, y, bubbleSprite);
         }
-
-        AFix x, y;
-        z_comp_position_getCoords(pos, &x, &y);
-
-        ASprite* sprite = z_comp_sprite_getGraphic(spr);
-
-        x += a_fix_itofix(a_sprite_getWidth(sprite) / 8);
-        y -= a_fix_itofix(3 * a_sprite_getHeight(sprite) / 4);
-
-        z_entity_bubble_new(game, x, y, bubbleSprite);
     }
 
     z_comp_accosted_setConvinced(accosted, convinced + 1);
