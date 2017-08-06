@@ -47,6 +47,16 @@ void z_system_sprite(AEntity* Entity)
 
 int z_system_sprite_sort(AEntity* A, AEntity* B)
 {
+    ZCompSprite* spriteA = a_entity_requireComponent(A, "sprite");
+    ZCompSprite* spriteB = a_entity_requireComponent(B, "sprite");
+
+    ZCompSpriteLayer layerA = z_comp_sprite_getLayer(spriteA);
+    ZCompSpriteLayer layerB = z_comp_sprite_getLayer(spriteB);
+
+    if(layerA != layerB) {
+        return layerA - layerB;
+    }
+
     ZCompPosition* positionA = a_entity_requireComponent(A, "position");
     ZCompPosition* positionB = a_entity_requireComponent(B, "position");
 

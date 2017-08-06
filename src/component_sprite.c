@@ -24,6 +24,7 @@
 struct ZCompSprite {
     ZCompSpriteDirection direction;
     ASpriteFrames* frames[Z_COMP_SPRITE_DIR_NUM];
+    ZCompSpriteLayer layer;
     bool autoPlay;
 };
 
@@ -32,8 +33,20 @@ size_t z_comp_sprite_size(void)
     return sizeof(ZCompSprite);
 }
 
-void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right, bool AutoPlay)
+void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right, ZCompSpriteLayer Layer, bool AutoPlay)
 {
+    if(Down == NULL) {
+        Down = Up;
+    }
+
+    if(Left == NULL) {
+        Left = Up;
+    }
+
+    if(Right == NULL) {
+        Right = Up;
+    }
+
     Sprite->direction = Z_COMP_SPRITE_DIR_DOWN;
 
     Sprite->frames[Z_COMP_SPRITE_DIR_UP] = a_spriteframes_dup(
@@ -44,6 +57,7 @@ void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, c
                                                 z_util_sprites_get(Left));
     Sprite->frames[Z_COMP_SPRITE_DIR_RIGHT] = a_spriteframes_dup(
                                                 z_util_sprites_get(Right));
+    Sprite->layer = Layer;
     Sprite->autoPlay = AutoPlay;
 }
 
@@ -69,6 +83,11 @@ void z_comp_sprite_frameNext(ZCompSprite* Sprite)
     for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
         a_spriteframes_next(Sprite->frames[d]);
     }
+}
+
+ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite)
+{
+    return Sprite->layer;
 }
 
 bool z_comp_sprite_getAutoPlay(const ZCompSprite* Sprite)

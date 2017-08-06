@@ -25,7 +25,7 @@ void z_util_colors_load(void)
 {
     z_util_colors.gray1 = a_pixel_hex(0x111111);
     z_util_colors.gray2 = a_pixel_hex(0x222222);
-    z_util_colors.gray3 = a_pixel_hex(0xbbbbbb);
+    z_util_colors.gray3 = a_pixel_hex(0x999999);
     z_util_colors.gray4 = a_pixel_hex(0xdddddd);
     z_util_colors.blue1 = a_pixel_hex(0x009999);
     z_util_colors.blue2 = a_pixel_hex(0x00dddd);

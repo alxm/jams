@@ -31,7 +31,13 @@ AEntity* z_entity_poof_new(ZStateGame* Game, AFix X, AFix Y)
     z_comp_position_init(position, X, Y);
 
     ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, "poof", "poof", "poof", "poof", true);
+    z_comp_sprite_init(sprite,
+                       "poof",
+                       NULL,
+                       NULL,
+                       NULL,
+                       Z_COMP_SPRITE_LAYER_2,
+                       true);
 
     ZCompTtl* ttl = a_entity_addComponent(e, "ttl");
     z_comp_ttl_init(ttl, 400, NULL);
