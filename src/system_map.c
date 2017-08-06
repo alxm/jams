@@ -19,6 +19,7 @@
 
 #include "state_game.h"
 
+#include "util_colors.h"
 #include "util_tiles.h"
 
 #include "component_map.h"
@@ -31,7 +32,7 @@ void z_system_mapTick(AEntity* Entity)
 
 void z_system_mapDraw(AEntity* Entity)
 {
-    a_pixel_setHex(0x111122);
+    a_pixel_setPixel(z_util_colors.gray1);
     a_draw_fill();
 
     int screenWidth = a_screen_getWidth();

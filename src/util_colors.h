@@ -15,28 +15,19 @@
     along with Pestering Peddler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef struct ZUtilColors ZUtilColors;
 
-#include "util_colors.h"
-#include "util_controls.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
+struct ZUtilColors {
+    APixel gray1;
+    APixel gray2;
+    APixel gray3;
+    APixel gray4;
+    APixel blue1;
+    APixel blue2;
+    APixel red1;
+    APixel red2;
+};
 
-A_STATE(load)
-{
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_controls_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
+extern ZUtilColors z_util_colors;
 
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
-    }
-}
+extern void z_util_colors_load(void);

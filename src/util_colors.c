@@ -18,25 +18,17 @@
 #include <a2x.h>
 
 #include "util_colors.h"
-#include "util_controls.h"
-#include "util_sprites.h"
-#include "util_tiles.h"
 
-A_STATE(load)
+ZUtilColors z_util_colors;
+
+void z_util_colors_load(void)
 {
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_controls_load();
-        z_util_sprites_load();
-        z_util_tiles_load();
-
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_sprites_free();
-        z_util_tiles_free();
-    }
+    z_util_colors.gray1 = a_pixel_hex(0x111111);
+    z_util_colors.gray2 = a_pixel_hex(0x222222);
+    z_util_colors.gray3 = a_pixel_hex(0xbbbbbb);
+    z_util_colors.gray4 = a_pixel_hex(0xdddddd);
+    z_util_colors.blue1 = a_pixel_hex(0x009999);
+    z_util_colors.blue2 = a_pixel_hex(0x00dddd);
+    z_util_colors.red1 = a_pixel_hex(0x990099);
+    z_util_colors.red2 = a_pixel_hex(0xdd00dd);
 }
