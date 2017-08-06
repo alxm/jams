@@ -24,6 +24,7 @@
 
 #include "component_ai.h"
 #include "component_map.h"
+#include "component_motion.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
@@ -38,12 +39,14 @@ typedef enum {
 
 typedef struct ZPersonAiContext {
     ZPersonAiState state;
-    int goalTileX, goalTileY;
+    int goalX, goalY;
+    int moveCounter;
 } ZPersonAiContext;
 
 static void person_walkAroundAi(AEntity* Entity)
 {
     ZCompAi* ai = a_entity_requireComponent(Entity, "ai");
+    ZCompMotion* motion = a_entity_requireComponent(Entity, "motion");
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
 
     AFix x, y;
@@ -62,40 +65,41 @@ static void person_walkAroundAi(AEntity* Entity)
 
     switch(ctx->state) {
         case Z_PERSON_AI_BLANK: {
-            /* TODO:
-             * - 75% chance to pick previous direction instead of random
-             * - if collides with something, reverse course
-             * - move at least half a tile before changing direction
-             * - if did not move at all for the past X frames, go to blank state
-             */
+            int goalTileX = tileX - 1 + a_random_getInt(3);
+            int goalTileY = tileY - 1 + a_random_getInt(3);
 
-            int newTileX = tileX - 1 + a_random_getInt(3);
-            int newTileY = tileY - 1 + a_random_getInt(3);
-
-            if(newTileX >= 0 && newTileX < mapWidth
-                && newTileY >= 0 && newTileY < mapHeight
-                && (newTileX != tileX || newTileY != tileY)
-                && z_comp_map_isWalkable(map, newTileX, newTileY)) {
+            if(goalTileX >= 0 && goalTileX < mapWidth
+                && goalTileY >= 0 && goalTileY < mapHeight
+                && (goalTileX != tileX || goalTileY != tileY)
+                && z_comp_map_isWalkable(map, goalTileX, goalTileY)) {
 
                 ctx->state = Z_PERSON_AI_WALKING;
-                ctx->goalTileX = newTileX;
-                ctx->goalTileY = newTileY;
+                ctx->goalX = goalTileX * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
+                ctx->goalY = goalTileY * Z_UTIL_TILE_DIM + Z_UTIL_TILE_DIM / 2;
             }
+
+            ctx->moveCounter = 0;
         } break;
 
         case Z_PERSON_AI_WALKING: {
-            if(tileX == ctx->goalTileX && tileY == ctx->goalTileY) {
+            ZCompMotionState motionState = z_comp_motion_getState(motion);
+
+            if(motionState == Z_COMP_MOTION_BLOCKED && ctx->moveCounter > 8) {
                 ctx->state = Z_PERSON_AI_BLANK;
             } else {
-                if(tileX < ctx->goalTileX) {
+                if(a_fix_fixtoi(x) < ctx->goalX) {
                     z_entity_macro_moveRight(Entity);
-                } else if(tileX > ctx->goalTileX) {
+                } else if(a_fix_fixtoi(x) > ctx->goalX) {
                     z_entity_macro_moveLeft(Entity);
-                } else if(tileY < ctx->goalTileY) {
+                } else if(a_fix_fixtoi(y) < ctx->goalY) {
                     z_entity_macro_moveDown(Entity);
-                } else if(tileY > ctx->goalTileY) {
+                } else if(a_fix_fixtoi(y) > ctx->goalY) {
                     z_entity_macro_moveUp(Entity);
+                } else {
+                    ctx->state = Z_PERSON_AI_BLANK;
                 }
+
+                ctx->moveCounter++;
             }
         } break;
     }
@@ -112,6 +116,8 @@ AEntity* z_entity_person_new(ZStateGame* Game, int TileX, int TileY)
     z_comp_ai_init(ai, person_walkAroundAi, sizeof(ZPersonAiContext));
     ZPersonAiContext* ctx = z_comp_ai_getContext(ai);
     ctx->state = Z_PERSON_AI_BLANK;
+
+    a_entity_addComponent(e, "motion");
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, x, y);

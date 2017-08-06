@@ -24,6 +24,7 @@
 #include "component_bag.h"
 #include "component_item.h"
 #include "component_map.h"
+#include "component_motion.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_velocity.h"
@@ -32,10 +33,15 @@
 void z_system_move(AEntity* Entity)
 {
     ZCompBag* bag = a_entity_getComponent(Entity, "bag");
+    ZCompMotion* motion = a_entity_getComponent(Entity, "motion");
     ZCompPosition* position = a_entity_requireComponent(Entity, "position");
     ZCompSprite* sprite = a_entity_requireComponent(Entity, "sprite");
     ZCompVelocity* velocity = a_entity_requireComponent(Entity, "velocity");
     ZCompVolume* volume = a_entity_requireComponent(Entity, "volume");
+
+    if(motion) {
+        z_comp_motion_setState(motion, Z_COMP_MOTION_OK);
+    }
 
     AFix dx, dy;
     z_comp_velocity_getValues(velocity, &dx, &dy);
@@ -90,6 +96,10 @@ void z_system_move(AEntity* Entity)
 
         if(a_collide_circleAndCircle(x1, y1, r1, x2, y2, r2)) {
             z_comp_volume_setCoords(volume, oldX, oldY);
+
+            if(motion) {
+                z_comp_motion_setState(motion, Z_COMP_MOTION_BLOCKED);
+            }
 
             if(bag && eItem) {
                 z_comp_bag_add(bag, e);
