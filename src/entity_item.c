@@ -60,7 +60,7 @@ AEntity* z_entity_item_new(ZStateGame* Game, ZEntityItemType Type, int TileX, in
     z_comp_position_init(position, x, y);
 
     ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, spriteId, spriteId, spriteId, spriteId);
+    z_comp_sprite_init(sprite, spriteId, spriteId, spriteId, spriteId, true);
 
     ZCompVolume* volume = a_entity_addComponent(e, "volume");
     z_comp_volume_init(volume,

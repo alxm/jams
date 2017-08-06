@@ -56,7 +56,8 @@ AEntity* z_entity_player_new(ZStateGame* Game, int TileX, int TileY)
                        "playerUp",
                        "playerDown",
                        "playerLeft",
-                       "playerRight");
+                       "playerRight",
+                       false);
 
     a_entity_addComponent(e, "velocity");
 

@@ -30,6 +30,8 @@
 #include "component_velocity.h"
 #include "component_volume.h"
 
+#include "entity_poof.h"
+
 void z_system_move(AEntity* Entity)
 {
     ZCompBag* bag = a_entity_getComponent(Entity, "bag");
@@ -109,6 +111,7 @@ void z_system_move(AEntity* Entity)
                 z_comp_bag_add(bag, e);
                 a_entity_mute(e);
                 printf("Bagged %s\n", z_comp_item_getName(eItem));
+                z_entity_poof_new(game, x, y);
             }
 
             return;

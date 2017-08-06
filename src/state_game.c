@@ -41,7 +41,7 @@ A_STATE(game)
 {
     A_STATE_INIT
     {
-        a_system_tick("input ai move");
+        a_system_tick("ttl input ai move animate");
         a_system_draw("mapDraw spriteDraw");
 
         g_game.map = z_entity_map_new(&g_game, "gfx/level00.png");

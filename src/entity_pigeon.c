@@ -159,7 +159,8 @@ AEntity* z_entity_pigeon_new(ZStateGame* Game, int TileX, int TileY)
                        "pigeonUp",
                        "pigeonDown",
                        "pigeonLeft",
-                       "pigeonRight");
+                       "pigeonRight",
+                       false);
 
     a_entity_addComponent(e, "velocity");
 

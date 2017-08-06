@@ -39,6 +39,9 @@ void z_util_sprites_load(void)
     new(sheet, 68, 17, "pigeonDown", 250);
     new(sheet, 68, 34, "pigeonLeft", 250);
     new(sheet, 68, 51, "pigeonRight", 250);
+    new(sheet, 0, 77, "bubble1", 0);
+    new(sheet, 0, 87, "bubble2", 0);
+    new(sheet, 0, 97, "poof", 100);
     new(sheet, 0, 68, "coffer", 0);
 }
 
