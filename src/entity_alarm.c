@@ -25,8 +25,7 @@ AEntity* z_entity_alarm_new(ZStateGame* Game)
 {
     AEntity* e = a_entity_new("alarm", Game);
 
-    ZCompAlarm* alarm = a_entity_addComponent(e, "alarm");
-    z_comp_alarm_init(alarm);
+    a_entity_addComponent(e, "alarm");
 
     return e;
 }

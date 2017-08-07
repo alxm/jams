@@ -19,3 +19,4 @@ extern void z_util_sprites_load(void);
 extern void z_util_sprites_free(void);
 
 extern ASpriteFrames* z_util_sprites_get(const char* Key);
+extern ASprite* z_util_sprites_getSingle(const char* Key);

@@ -29,18 +29,6 @@ size_t z_comp_alarm_size(void)
     return sizeof(ZCompAlarm);
 }
 
-void z_comp_alarm_init(ZCompAlarm* Alarm)
-{
-    A_UNUSED(Alarm);
-}
-
-void z_comp_alarm_free(void* Self)
-{
-    ZCompAlarm* alarm = Self;
-
-    A_UNUSED(alarm);
-}
-
 AFix z_comp_alarm_getValue(const ZCompAlarm* Alarm)
 {
     return Alarm->value;

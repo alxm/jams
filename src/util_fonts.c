@@ -28,7 +28,12 @@ void z_util_fonts_load(void)
     AFont* font = a_font_new(fontSprite, 0, 0, A_FONT_LOAD_ALL);
     a_sprite_free(fontSprite);
 
-    z_util_fonts.gray = a_font_dup(font, z_util_colors.gray4);
-    z_util_fonts.blue = a_font_dup(font, z_util_colors.blue2);
-    z_util_fonts.red = a_font_dup(font, z_util_colors.red2);
+    z_util_fonts.gray1 = a_font_dup(font, z_util_colors.gray1);
+    z_util_fonts.gray2 = a_font_dup(font, z_util_colors.gray2);
+    z_util_fonts.gray3 = a_font_dup(font, z_util_colors.gray3);
+    z_util_fonts.gray4 = a_font_dup(font, z_util_colors.gray4);
+    z_util_fonts.blue1 = a_font_dup(font, z_util_colors.blue1);
+    z_util_fonts.blue2 = a_font_dup(font, z_util_colors.blue2);
+    z_util_fonts.red1 = a_font_dup(font, z_util_colors.red1);
+    z_util_fonts.red2 = a_font_dup(font, z_util_colors.red2);
 }

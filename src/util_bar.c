@@ -19,7 +19,7 @@
 
 void z_util_bar_draw(APixel Color1, APixel Color2, int Value, int OutOf, int X, int Y, int Width, int Height)
 {
-    int part1Width = a_math_min(Width * Value / OutOf, Width);
+    int part1Width = a_math_max(1, a_math_min(Width * Value / OutOf, Width));
     int part2Width = Width - part1Width;
 
     a_pixel_setPixel(Color1);

@@ -46,6 +46,8 @@ void z_util_sprites_load(void)
     new(sheet, 0, 87, "bubble2", 0);
     new(sheet, 0, 97, "poof", 100);
     new(sheet, 0, 68, "coffer", 0);
+    new(sheet, 0, 108, "poop2", 0);
+    new(sheet, 8, 108, "poop1", 0);
 }
 
 void z_util_sprites_free(void)
@@ -56,4 +58,10 @@ void z_util_sprites_free(void)
 ASpriteFrames* z_util_sprites_get(const char* Key)
 {
     return a_strhash_get(g_sprites, Key);
+}
+
+ASprite* z_util_sprites_getSingle(const char* Key)
+{
+    ASpriteFrames* frames = a_strhash_get(g_sprites, Key);
+    return a_spriteframes_getCurrent(frames);
 }

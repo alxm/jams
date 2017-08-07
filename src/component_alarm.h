@@ -18,8 +18,6 @@
 typedef struct ZCompAlarm ZCompAlarm;
 
 extern size_t z_comp_alarm_size(void);
-extern void z_comp_alarm_init(ZCompAlarm* Alarm);
-extern AComponentFree z_comp_alarm_free;
 
 extern AFix z_comp_alarm_getValue(const ZCompAlarm* Alarm);
 extern void z_comp_alarm_setValue(ZCompAlarm* Alarm, AFix Value);

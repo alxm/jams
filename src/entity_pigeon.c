@@ -203,13 +203,13 @@ static void collided(AEntity* Pigeon, AEntity* Actor)
                 spr = a_entity_requireComponent(Actor, "sprite");
                 bubbleSprite = "bubble2";
 
-                z_entity_log_write(log, z_util_fonts.red, 0, "Just hear me out!");
+                z_entity_log_write(log, z_util_fonts.red2, 0, "Just hear me out!");
             } else {
                 pos = a_entity_requireComponent(Pigeon, "position");
                 spr = a_entity_requireComponent(Pigeon, "sprite");
                 bubbleSprite = "bubble1";
 
-                z_entity_log_write(log, z_util_fonts.blue, 0, "Leave me alone!");
+                z_entity_log_write(log, z_util_fonts.blue2, 0, "Leave me alone!");
             }
 
             AFix x, y;

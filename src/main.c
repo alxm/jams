@@ -61,7 +61,7 @@ A_MAIN
 {
     a_component_declare("accosted", z_comp_accosted_size(), NULL);
     a_component_declare("ai", z_comp_ai_size(), z_comp_ai_free);
-    a_component_declare("alarm", z_comp_alarm_size(), z_comp_alarm_free);
+    a_component_declare("alarm", z_comp_alarm_size(), NULL);
     a_component_declare("bag", z_comp_bag_size(), z_comp_bag_free);
     a_component_declare("input", z_comp_input_size(), z_comp_input_free);
     a_component_declare("item", z_comp_item_size(), z_comp_item_free);

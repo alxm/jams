@@ -21,6 +21,8 @@
 
 #include "util_bar.h"
 #include "util_colors.h"
+#include "util_fonts.h"
+#include "util_sprites.h"
 
 #include "component_alarm.h"
 
@@ -45,12 +47,37 @@ void z_system_alarmDraw(AEntity* Entity)
 {
     ZCompAlarm* alarm = a_entity_requireComponent(Entity, "alarm");
 
+    int x = 8;
+    int y = a_screen_getHeight() - 20;
+    int width = a_screen_getWidth() - 2 * x;
+    int height = 11;
+    int value = a_fix_fixtoi(z_comp_alarm_getValue(alarm));
+
+    int part1Width = a_math_min(width * value / 100, width);
+
     z_util_bar_draw(z_util_colors.red2,
                     z_util_colors.gray4,
-                    a_fix_fixtoi(z_comp_alarm_getValue(alarm)),
+                    value,
                     100,
-                    8,
-                    a_screen_getHeight() - 16,
-                    a_screen_getWidth() - 16,
-                    8);
+                    x,
+                    y,
+                    width,
+                    height);
+
+    ASprite* poop1 = z_util_sprites_getSingle("poop1");
+    ASprite* poop2 = z_util_sprites_getSingle("poop2");
+
+    a_screen_clipSet(x, y, part1Width, height);
+    a_sprite_blit(poop1, x + 2, y + 2);
+    a_font_setCoords(x + a_sprite_getWidth(poop1) + 4, y + 2);
+    a_font_setFont(z_util_fonts.blue2);
+    a_font_print("SCAM-O-METER");
+
+    a_screen_clipSet(x + part1Width, y, width - part1Width, height);
+    a_sprite_blit(poop2, x + 2, y + 2);
+    a_font_setCoords(x + a_sprite_getWidth(poop2) + 4, y + 2);
+    a_font_setFont(z_util_fonts.gray2);
+    a_font_print("SCAM-O-METER");
+
+    a_screen_clipReset();
 }

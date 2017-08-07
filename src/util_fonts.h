@@ -16,9 +16,14 @@
 */
 
 typedef struct ZUtilFonts {
-    AFont* gray;
-    AFont* blue;
-    AFont* red;
+    AFont* gray1;
+    AFont* gray2;
+    AFont* gray3;
+    AFont* gray4;
+    AFont* blue1;
+    AFont* blue2;
+    AFont* red1;
+    AFont* red2;
 } ZUtilFonts;
 
 extern ZUtilFonts z_util_fonts;
