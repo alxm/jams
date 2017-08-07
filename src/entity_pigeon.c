@@ -203,13 +203,35 @@ static void collided(AEntity* Pigeon, AEntity* Actor)
                 spr = a_entity_requireComponent(Actor, "sprite");
                 bubbleSprite = "bubble2";
 
-                z_entity_log_write(log, z_util_fonts.red2, 0, "Just hear me out!");
+                const char* texts[] = {
+                    "Wait just hear me out!",
+                    "Hold on, hold on!",
+                    "Hey, HEY!",
+                    "What's happening?",
+                    "Check this out, my friend",
+                };
+
+                z_entity_log_write(log,
+                                   z_util_fonts.red2,
+                                   0,
+                                   texts[a_random_getInt(A_ARRAY_LEN(texts))]);
             } else {
                 pos = a_entity_requireComponent(Pigeon, "position");
                 spr = a_entity_requireComponent(Pigeon, "sprite");
                 bubbleSprite = "bubble1";
 
-                z_entity_log_write(log, z_util_fonts.blue2, 0, "Leave me alone!");
+                const char* texts[] = {
+                    "Go away",
+                    "Leave me alone",
+                    "Who are you?",
+                    "You have issues",
+                    "No thanks",
+                };
+
+                z_entity_log_write(log,
+                                   z_util_fonts.blue2,
+                                   1,
+                                   texts[a_random_getInt(A_ARRAY_LEN(texts))]);
             }
 
             AFix x, y;
