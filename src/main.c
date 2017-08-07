@@ -87,6 +87,7 @@ A_MAIN
     a_system_declare("ttl", "ttl", z_system_ttl, NULL, false);
 
     a_state_new("game", game);
+    a_state_new("hypnotize", hypnotize);
     a_state_new("load", load);
 
     a_state_push("load");

@@ -187,7 +187,7 @@ static void collided(AEntity* Pigeon, AEntity* Actor)
     int convinced = z_comp_accosted_getConvinced(accosted);
 
     if(convinced >= 100) {
-        printf("You got me\n");
+        z_state_game_hypnotize(game);
         z_comp_alarm_toggle(alarm, false);
     } else {
         z_comp_alarm_toggle(alarm, true);

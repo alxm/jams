@@ -48,6 +48,7 @@ void z_util_sprites_load(void)
     new(sheet, 0, 68, "coffer", 0);
     new(sheet, 0, 108, "poop2", 0);
     new(sheet, 8, 108, "poop1", 0);
+    new(sheet, 5, 118, "buy", 0);
 }
 
 void z_util_sprites_free(void)

@@ -34,7 +34,7 @@ void z_system_alarmTick(AEntity* Entity)
         return;
     }
 
-    AFix value = z_comp_alarm_getValue(alarm) + A_FIX_ONE / 4;
+    AFix value = z_comp_alarm_getValue(alarm) + A_FIX_ONE / 8;
 
     z_comp_alarm_setValue(alarm, value);
 

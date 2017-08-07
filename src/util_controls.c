@@ -27,4 +27,5 @@ void z_util_controls_load(void)
     z_util_controls.down = a_button_new("key.down gamepad.b.down");
     z_util_controls.left = a_button_new("key.left gamepad.b.left");
     z_util_controls.right = a_button_new("key.right gamepad.b.right");
+    z_util_controls.action = a_button_new("key.space gamepad.b.a");
 }

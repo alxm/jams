@@ -22,6 +22,7 @@ struct ZUtilControls {
     AInputButton* down;
     AInputButton* left;
     AInputButton* right;
+    AInputButton* action;
 };
 
 extern ZUtilControls z_util_controls;

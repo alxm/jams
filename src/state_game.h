@@ -18,6 +18,7 @@
 typedef struct ZStateGame ZStateGame;
 
 extern A_STATE(game);
+extern A_STATE(hypnotize);
 
 extern void z_state_game_getOrigin(const ZStateGame* Game, int* X, int* Y);
 extern AEntity* z_state_game_getLog(const ZStateGame* Game);
@@ -27,3 +28,4 @@ extern AEntity* z_state_game_getAlarm(const ZStateGame* Game);
 extern AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game);
 
 extern void z_state_game_gameOver(ZStateGame* Game);
+extern void z_state_game_hypnotize(ZStateGame* Game);
