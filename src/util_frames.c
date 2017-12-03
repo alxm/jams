@@ -40,12 +40,13 @@ void z_util_frames_load(void)
 
     ASprite* sh = a_sprite_newFromFile("gfx/sprites.png");
 
-    loadFrames("buildingBase", sh, 0, 17, 200);
-    loadFrames("buildingDepot", sh, 0, 34, 200);
-    loadFrames("buildingTurret", sh, 0, 51, 200);
+    loadFrames("buildingBase", sh, 0, 17, 0);
+    loadFrames("buildingDepot", sh, 0, 34, 0);
+    loadFrames("buildingTurret", sh, 0, 51, 0);
     loadFrames("crystal", sh, 0, 0, 100);
+    loadFrames("cursor", sh, 0, 104, 0);
     loadFrames("workerUp", sh, 0, 68, 100);
-    loadFrames("workerDown", sh, 0, 77, 50);
+    loadFrames("workerDown", sh, 0, 77, 100);
     loadFrames("workerLeft", sh, 0, 86, 100);
     loadFrames("workerRight", sh, 0, 95, 100);
 
