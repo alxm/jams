@@ -15,29 +15,17 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+#define Z_UTIL_COLOR_LEVELS 3
 
-#include "util_colors.h"
-#include "util_frames.h"
-#include "util_terrain.h"
+typedef enum {
+    Z_UTIL_COLOR_INVALID = -1,
+    Z_UTIL_COLOR_GRAY,
+    Z_UTIL_COLOR_PURPLE,
+    Z_UTIL_COLOR_PINK,
+    Z_UTIL_COLOR_GREEN,
+    Z_UTIL_COLOR_NUM
+} ZUtilColor;
 
-A_STATE(load)
-{
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_frames_load();
-        z_util_terrain_load();
-    }
+extern void z_util_colors_load(void);
 
-    A_STATE_TICK
-    {
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_frames_unload();
-        z_util_terrain_unload();
-    }
-}
+extern APixel z_util_colors_get(ZUtilColor Color, int Level);

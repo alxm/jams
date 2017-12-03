@@ -18,26 +18,23 @@
 #include <a2x.h>
 
 #include "util_colors.h"
-#include "util_frames.h"
-#include "util_terrain.h"
 
-A_STATE(load)
+APixel g_colors[Z_UTIL_COLOR_NUM][Z_UTIL_COLOR_LEVELS];
+
+void z_util_colors_load(void)
 {
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_frames_load();
-        z_util_terrain_load();
+    ASprite* palette = a_sprite_newFromFile("gfx/palette.png");
+
+    for(ZUtilColor c = 0; c < Z_UTIL_COLOR_NUM; c++) {
+        for(int l = 0; l < Z_UTIL_COLOR_LEVELS; l++) {
+            g_colors[c][l] = a_sprite_getPixel(palette, l, 1 + c);
+        }
     }
 
-    A_STATE_TICK
-    {
-        a_state_push("game");
-    }
+    a_sprite_free(palette);
+}
 
-    A_STATE_FREE
-    {
-        z_util_frames_unload();
-        z_util_terrain_unload();
-    }
+APixel z_util_colors_get(ZUtilColor Color, int Level)
+{
+    return g_colors[Color][Level];
 }
