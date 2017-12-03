@@ -32,7 +32,7 @@ AEntity* z_entity_cursor_new(ZStateGame* Game)
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position,
-                         a_fix_itofix(a_screen_getWidth() / 2),
+                         a_fix_itofix(a_screen_getWidth() / 2 + 8),
                          a_fix_itofix(a_screen_getHeight() / 2));
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
