@@ -56,10 +56,6 @@ void z_comp_mapgfx_init(ZCompMapGfx* MapGfx, const ZUtilTerrainType** Terrain, c
         for(int x = w; x--; ) {
             ZGfxTile* tile = &MapGfx->tiles[y][x];
             tile->frames = z_util_terrain_dupFrames(Terrain[y][x]);
-
-            for(unsigned i = a_random_intu(a_fps_msToFrames(800)); i--; ) {
-                a_spriteframes_next(tile->frames);
-            }
         }
     }
 }

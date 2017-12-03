@@ -39,7 +39,7 @@ static ZTerrain g_terrains[Z_UTIL_TERRAIN_NUM];
 
 static void instance_new(ZUtilTerrainType Terrain, int Chance, const ASprite* Sheet, int X, int Y)
 {
-    unsigned ticksPerFrame = a_fps_msToFrames(2000);
+    unsigned ticksPerFrame = a_fps_msToFrames(1000);
     ASpriteFrames* frames = a_spriteframes_new(Sheet, X, Y, ticksPerFrame);
 
     ZUtilTerrainInstance* instance = a_mem_malloc(sizeof(ZUtilTerrainInstance));
@@ -114,6 +114,23 @@ void z_util_terrain_unload(void)
 bool z_util_terrain_isWalkable(ZUtilTerrainType Type)
 {
     return g_terrains[Type].flags & Z_WALKABLE;
+}
+
+ASpriteFrames* z_util_terrain_getFrames(ZUtilTerrainType Type)
+{
+    const ZTerrain* terrain = &g_terrains[Type];
+    const int rand = a_random_int(terrain->totalChances);
+    int counter = 0;
+
+    A_LIST_ITERATE(terrain->instances, ZUtilTerrainInstance*, instance) {
+        counter += instance->chance;
+
+        if(counter > rand) {
+            return instance->frames;
+        }
+    }
+
+    return NULL;
 }
 
 ASpriteFrames* z_util_terrain_dupFrames(ZUtilTerrainType Type)

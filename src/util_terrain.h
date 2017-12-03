@@ -27,5 +27,6 @@ extern void z_util_terrain_load(void);
 extern void z_util_terrain_unload(void);
 
 extern bool z_util_terrain_isWalkable(ZUtilTerrainType Type);
+extern ASpriteFrames* z_util_terrain_getFrames(ZUtilTerrainType Type);
 extern ASpriteFrames* z_util_terrain_dupFrames(ZUtilTerrainType Type);
 extern APixel z_util_terrain_getColor(ZUtilTerrainType Type);
