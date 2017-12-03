@@ -19,6 +19,8 @@
 
 #include "state_game.h"
 
+#include "util_colors.h"
+#include "util_coords.h"
 #include "util_level.h"
 
 #include "entity_crystal.h"
@@ -28,12 +30,24 @@ struct ZStateGame {
     AEntity* map;
 };
 
-static void spawnCrystals(ZStateGame* Game)
+static void spawnCrystals(ZStateGame* Game, const ZUtilLevel* Level)
 {
-    for(int i = 16; i--; ) {
-        z_entity_crystal_new(Game,
-                             a_random_int(a_screen_getWidth()),
-                             a_random_int(a_screen_getHeight()));
+    int w, h;
+    z_util_level_getDim(Level, &w, &h);
+
+    for(int y = h; y--; ) {
+        for(int x = w; x--; ) {
+            APixel p = z_util_level_getValue(Level, x, y);
+
+            for(int l = 0; l < Z_UTIL_COLOR_LEVELS; l++) {
+                if(p == z_util_colors_get(Z_UTIL_COLOR_GREEN, l)) {
+                    z_entity_crystal_new(Game,
+                                         z_util_coords_tileMid(x),
+                                         z_util_coords_tileMid(y));
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -42,7 +56,7 @@ static void initGame(ZStateGame* Game)
     ZUtilLevel* level = z_util_level_load("gfx/map0.png");
 
     Game->map = z_entity_map_new(Game, level);
-    spawnCrystals(Game);
+    spawnCrystals(Game, level);
 
     z_util_level_free(level);
 }
