@@ -25,6 +25,7 @@ struct ZCompSprite {
     ZCompSpriteLayer layer;
     ZCompSpriteDirection direction;
     ASpriteFrames* frames[Z_COMP_SPRITE_DIR_NUM];
+    AFix offsetX, offsetY;
 };
 
 size_t z_comp_sprite_size(void)
@@ -46,6 +47,9 @@ void z_comp_sprite_initEx(ZCompSprite* Sprite, const char* Up, const char* Down,
     Sprite->frames[Z_COMP_SPRITE_DIR_DOWN] = z_util_frames_dup(Down);
     Sprite->frames[Z_COMP_SPRITE_DIR_LEFT] = z_util_frames_dup(Left);
     Sprite->frames[Z_COMP_SPRITE_DIR_RIGHT] = z_util_frames_dup(Right);
+
+    Sprite->offsetX = 0;
+    Sprite->offsetY = 0;
 }
 
 void z_comp_sprite_free(void* Self)
@@ -57,16 +61,26 @@ void z_comp_sprite_free(void* Self)
     }
 }
 
+ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite)
+{
+    return Sprite->layer;
+}
+
 void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction)
 {
     Sprite->direction = Direction;
 }
 
-void z_comp_sprite_tickFrame(const ZCompSprite* Sprite)
+void z_comp_sprite_getOffset(const ZCompSprite* Sprite, AFix* OffsetX, AFix* OffsetY)
 {
-    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
-        a_spriteframes_next(Sprite->frames[d]);
-    }
+    *OffsetX = Sprite->offsetX;
+    *OffsetY = Sprite->offsetY;
+}
+
+void z_comp_sprite_setOffset(ZCompSprite* Sprite, AFix OffsetX, AFix OffsetY)
+{
+    Sprite->offsetX = OffsetX;
+    Sprite->offsetY = OffsetY;
 }
 
 ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite)
@@ -74,7 +88,9 @@ ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite)
     return a_spriteframes_getCurrent(Sprite->frames[Sprite->direction]);
 }
 
-ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite)
+void z_comp_sprite_tickFrame(const ZCompSprite* Sprite)
 {
-    return Sprite->layer;
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
+        a_spriteframes_next(Sprite->frames[d]);
+    }
 }

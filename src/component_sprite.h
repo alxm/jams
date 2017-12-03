@@ -37,7 +37,10 @@ extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Id, ZCompSpriteL
 extern void z_comp_sprite_initEx(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right, ZCompSpriteLayer Layer);
 extern AFree z_comp_sprite_free;
 
-extern void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction);
-extern void z_comp_sprite_tickFrame(const ZCompSprite* Sprite);
-extern ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite);
 extern ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite);
+extern void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction);
+extern void z_comp_sprite_getOffset(const ZCompSprite* Sprite, AFix* OffsetX, AFix* OffsetY);
+extern void z_comp_sprite_setOffset(ZCompSprite* Sprite, AFix OffsetX, AFix OffsetY);
+extern ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite);
+
+extern void z_comp_sprite_tickFrame(const ZCompSprite* Sprite);

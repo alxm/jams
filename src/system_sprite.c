@@ -45,5 +45,10 @@ void z_system_spriteDraw(AEntity* Entity)
     int w = a_sprite_getWidth(spr);
     int h = a_sprite_getHeight(spr);
 
-    a_sprite_blit(spr, x - w / 2, y - h / 2);
+    AFix offsetX, offsetY;
+    z_comp_sprite_getOffset(sprite, &offsetX, &offsetY);
+
+    a_sprite_blit(spr,
+                  x - w / 2 + a_fix_fixtoi(offsetX * w),
+                  y - h / 2 + a_fix_fixtoi(offsetY * h));
 }

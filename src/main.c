@@ -55,13 +55,14 @@ A_MAIN
     a_system_declare("tickMapFrame", "mapGfx", z_system_mapFrame, NULL, false);
     a_system_declare("tickSpriteFrame", "sprite", z_system_spriteTickFrame, NULL, false);
 
+    a_system_declare("drawCursorUnderside", "cursor", z_system_cursorDrawUnderside, NULL, false);
     a_system_declare("drawMapTiles", "mapTerrain", z_system_mapDrawTiles, NULL, false);
     a_system_declare("drawSprite", "position sprite", z_system_spriteDraw, z_system_sprite_sort, false);
 
     a_state_new("game",
                 game,
                 "tickCursor tickMapFrame tickSpriteFrame",
-                "drawMapTiles drawSprite");
+                "drawMapTiles drawCursorUnderside drawSprite");
 
     a_state_new("load", load, "", "");
 

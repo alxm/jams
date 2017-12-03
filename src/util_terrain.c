@@ -39,7 +39,7 @@ static ZTerrain g_terrains[Z_UTIL_TERRAIN_NUM];
 
 static void instance_new(ZUtilTerrainType Terrain, int Chance, const ASprite* Sheet, int X, int Y)
 {
-    unsigned ticksPerFrame = a_fps_msToFrames(800);
+    unsigned ticksPerFrame = a_fps_msToFrames(2000);
     ASpriteFrames* frames = a_spriteframes_new(Sheet, X, Y, ticksPerFrame);
 
     ZUtilTerrainInstance* instance = a_mem_malloc(sizeof(ZUtilTerrainInstance));

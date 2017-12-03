@@ -37,6 +37,7 @@ AEntity* z_entity_cursor_new(ZStateGame* Game)
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
     z_comp_sprite_init(sprite, "cursor", Z_COMP_SPRITE_LAYER_CURSOR);
+    z_comp_sprite_setOffset(sprite, A_FIX_ONE / 2, A_FIX_ONE / 2);
 
     return e;
 }

@@ -17,6 +17,7 @@
 
 #include <a2x.h>
 
+#include "util_coords.h"
 #include "util_level.h"
 #include "util_terrain.h"
 
@@ -43,8 +44,8 @@ void z_system_mapDrawTiles(AEntity* Entity)
             ASprite* sprite = z_comp_mapgfx_getSprite(gfx, x, y);
 
             a_sprite_blit(sprite,
-                          x * a_sprite_getWidth(sprite),
-                          y * a_sprite_getHeight(sprite));
+                          x * Z_UTIL_COORDS_TILE_DIM,
+                          y * Z_UTIL_COORDS_TILE_DIM);
         }
     }
 }
