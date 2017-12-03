@@ -22,15 +22,35 @@
 #include "component_position.h"
 #include "component_sprite.h"
 
-AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
+#include "entity_building.h"
+
+AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X, int Y)
 {
-    AEntity* e = a_entity_new("crystal", Game);
+    const char* id = NULL;
+
+    switch(Type) {
+        case Z_ENTITY_BUILDING_BASE: {
+            id = "buildingBase";
+        } break;
+
+        case Z_ENTITY_BUILDING_DEPOT: {
+            id = "buildingDepot";
+        } break;
+
+        case Z_ENTITY_BUILDING_TURRET: {
+            id = "buildingTurret";
+        } break;
+
+        default: break;
+    }
+
+    AEntity* e = a_entity_new(id, Game);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, "crystal");
+    z_comp_sprite_init(sprite, id);
 
     return e;
 }

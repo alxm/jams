@@ -15,22 +15,12 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef enum {
+    Z_ENTITY_BUILDING_INVALID = -1,
+    Z_ENTITY_BUILDING_BASE,
+    Z_ENTITY_BUILDING_DEPOT,
+    Z_ENTITY_BUILDING_TURRET,
+    Z_ENTITY_BUILDING_NUM
+} ZEntityBuildingType;
 
-#include "state_game.h"
-
-#include "component_position.h"
-#include "component_sprite.h"
-
-AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
-{
-    AEntity* e = a_entity_new("crystal", Game);
-
-    ZCompPosition* position = a_entity_addComponent(e, "position");
-    z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
-
-    ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, "crystal");
-
-    return e;
-}
+extern AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X, int Y);

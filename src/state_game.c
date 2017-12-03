@@ -23,12 +23,42 @@
 #include "util_coords.h"
 #include "util_level.h"
 
+#include "entity_building.h"
 #include "entity_crystal.h"
 #include "entity_map.h"
 
 struct ZStateGame {
     AEntity* map;
 };
+
+static void spawnBuildings(ZStateGame* Game, const ZUtilLevel* Level)
+{
+    int w, h;
+    z_util_level_getDim(Level, &w, &h);
+
+    for(int y = h; y--; ) {
+        for(int x = w; x--; ) {
+            APixel p = z_util_level_getValue(Level, x, y);
+
+            if(p == z_util_colors_get(Z_UTIL_COLOR_PINK, 2)) {
+                z_entity_building_new(Game,
+                                      Z_ENTITY_BUILDING_BASE,
+                                      z_util_coords_tileMid(x),
+                                      z_util_coords_tileMid(y));
+            } else if(p == z_util_colors_get(Z_UTIL_COLOR_PINK, 1)) {
+                z_entity_building_new(Game,
+                                      Z_ENTITY_BUILDING_DEPOT,
+                                      z_util_coords_tileMid(x),
+                                      z_util_coords_tileMid(y));
+            } else if(p == z_util_colors_get(Z_UTIL_COLOR_PINK, 0)) {
+                z_entity_building_new(Game,
+                                      Z_ENTITY_BUILDING_TURRET,
+                                      z_util_coords_tileMid(x),
+                                      z_util_coords_tileMid(y));
+            }
+        }
+    }
+}
 
 static void spawnCrystals(ZStateGame* Game, const ZUtilLevel* Level)
 {
@@ -40,47 +70,49 @@ static void spawnCrystals(ZStateGame* Game, const ZUtilLevel* Level)
             APixel p = z_util_level_getValue(Level, x, y);
 
             for(int l = 0; l < Z_UTIL_COLOR_LEVELS; l++) {
-                if(p == z_util_colors_get(Z_UTIL_COLOR_GREEN, l)) {
-                    switch(l) {
-                        case 0: {
-                            z_entity_crystal_new(
-                                Game,
-                                z_util_coords_tileMid(x),
-                                z_util_coords_tileMid(y));
-                        } break;
-
-                        case 1: {
-                            z_entity_crystal_new(
-                                Game,
-                                z_util_coords_tileToInt(x) + 4,
-                                z_util_coords_tileToInt(y) + 4);
-
-                            z_entity_crystal_new(
-                                Game,
-                                z_util_coords_tileToInt(x) + 10,
-                                z_util_coords_tileToInt(y) + 9);
-                        } break;
-
-                        case 2: {
-                            z_entity_crystal_new(
-                                Game,
-                                z_util_coords_tileToInt(x) + 4,
-                                z_util_coords_tileToInt(y) + 4);
-
-                            z_entity_crystal_new(
-                                Game,
-                                z_util_coords_tileToInt(x) + 11,
-                                z_util_coords_tileToInt(y) + 7);
-
-                            z_entity_crystal_new(
-                                Game,
-                                z_util_coords_tileToInt(x) + 6,
-                                z_util_coords_tileToInt(y) + 11);
-                        } break;
-                    }
-
-                    break;
+                if(p != z_util_colors_get(Z_UTIL_COLOR_GREEN, l)) {
+                    continue;
                 }
+
+                switch(l) {
+                    case 0: {
+                        z_entity_crystal_new(
+                            Game,
+                            z_util_coords_tileMid(x),
+                            z_util_coords_tileMid(y));
+                    } break;
+
+                    case 1: {
+                        z_entity_crystal_new(
+                            Game,
+                            z_util_coords_tileToInt(x) + 4,
+                            z_util_coords_tileToInt(y) + 4);
+
+                        z_entity_crystal_new(
+                            Game,
+                            z_util_coords_tileToInt(x) + 10,
+                            z_util_coords_tileToInt(y) + 9);
+                    } break;
+
+                    case 2: {
+                        z_entity_crystal_new(
+                            Game,
+                            z_util_coords_tileToInt(x) + 4,
+                            z_util_coords_tileToInt(y) + 4);
+
+                        z_entity_crystal_new(
+                            Game,
+                            z_util_coords_tileToInt(x) + 11,
+                            z_util_coords_tileToInt(y) + 7);
+
+                        z_entity_crystal_new(
+                            Game,
+                            z_util_coords_tileToInt(x) + 6,
+                            z_util_coords_tileToInt(y) + 11);
+                    } break;
+                }
+
+                break;
             }
         }
     }
@@ -92,6 +124,7 @@ static void initGame(ZStateGame* Game)
 
     Game->map = z_entity_map_new(Game, level);
     spawnCrystals(Game, level);
+    spawnBuildings(Game, level);
 
     z_util_level_free(level);
 }
