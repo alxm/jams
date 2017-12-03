@@ -22,7 +22,8 @@
 #include "component_sprite.h"
 
 struct ZCompSprite {
-    ASpriteFrames* frames;
+    ZCompSpriteDirection direction;
+    ASpriteFrames* frames[Z_COMP_SPRITE_DIR_NUM];
 };
 
 size_t z_comp_sprite_size(void)
@@ -30,26 +31,50 @@ size_t z_comp_sprite_size(void)
     return sizeof(ZCompSprite);
 }
 
-void z_comp_sprite_init(ZCompSprite* Sprite, const char* Id)
+void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right)
 {
-    Sprite->frames = z_util_frames_dup(Id);
+    if(Down == NULL) {
+        Down = Up;
+    }
+
+    if(Left == NULL) {
+        Left = Up;
+    }
+
+    if(Right == NULL) {
+        Right = Up;
+    }
+
+    Sprite->direction = a_random_int(Z_COMP_SPRITE_DIR_NUM);
+
+    Sprite->frames[Z_COMP_SPRITE_DIR_UP] = z_util_frames_dup(Up);
+    Sprite->frames[Z_COMP_SPRITE_DIR_DOWN] = z_util_frames_dup(Down);
+    Sprite->frames[Z_COMP_SPRITE_DIR_LEFT] = z_util_frames_dup(Left);
+    Sprite->frames[Z_COMP_SPRITE_DIR_RIGHT] = z_util_frames_dup(Right);
 }
 
 void z_comp_sprite_free(void* Self)
 {
     ZCompSprite* sprite = Self;
 
-    a_spriteframes_free(sprite->frames, false);
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
+        a_spriteframes_free(sprite->frames[d], false);
+    }
+}
 
-    A_UNUSED(sprite);
+void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction)
+{
+    Sprite->direction = Direction;
 }
 
 void z_comp_sprite_tickFrame(const ZCompSprite* Sprite)
 {
-    a_spriteframes_next(Sprite->frames);
+    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
+        a_spriteframes_next(Sprite->frames[d]);
+    }
 }
 
 ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite)
 {
-    return a_spriteframes_getCurrent(Sprite->frames);
+    return a_spriteframes_getCurrent(Sprite->frames[Sprite->direction]);
 }

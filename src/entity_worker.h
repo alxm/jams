@@ -15,20 +15,4 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompSprite ZCompSprite;
-
-typedef enum {
-    Z_COMP_SPRITE_DIR_UP,
-    Z_COMP_SPRITE_DIR_DOWN,
-    Z_COMP_SPRITE_DIR_LEFT,
-    Z_COMP_SPRITE_DIR_RIGHT,
-    Z_COMP_SPRITE_DIR_NUM
-} ZCompSpriteDirection;
-
-extern size_t z_comp_sprite_size(void);
-extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right);
-extern AFree z_comp_sprite_free;
-
-extern void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction);
-extern void z_comp_sprite_tickFrame(const ZCompSprite* Sprite);
-extern ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite);
+extern AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y);

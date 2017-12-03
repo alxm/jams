@@ -15,20 +15,26 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompSprite ZCompSprite;
+#include <a2x.h>
 
-typedef enum {
-    Z_COMP_SPRITE_DIR_UP,
-    Z_COMP_SPRITE_DIR_DOWN,
-    Z_COMP_SPRITE_DIR_LEFT,
-    Z_COMP_SPRITE_DIR_RIGHT,
-    Z_COMP_SPRITE_DIR_NUM
-} ZCompSpriteDirection;
+#include "state_game.h"
 
-extern size_t z_comp_sprite_size(void);
-extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right);
-extern AFree z_comp_sprite_free;
+#include "component_position.h"
+#include "component_sprite.h"
 
-extern void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction);
-extern void z_comp_sprite_tickFrame(const ZCompSprite* Sprite);
-extern ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite);
+AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
+{
+    AEntity* e = a_entity_new("worker", Game);
+
+    ZCompPosition* position = a_entity_addComponent(e, "position");
+    z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
+
+    ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
+    z_comp_sprite_init(sprite,
+                       "workerUp",
+                       "workerDown",
+                       "workerLeft",
+                       "workerRight");
+
+    return e;
+}

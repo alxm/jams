@@ -50,7 +50,7 @@ AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X
     z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, id);
+    z_comp_sprite_init(sprite, id, NULL, NULL, NULL);
 
     return e;
 }

@@ -44,10 +44,10 @@ void z_util_frames_load(void)
     loadFrames("buildingDepot", sh, 0, 34, 200);
     loadFrames("buildingTurret", sh, 0, 51, 200);
     loadFrames("crystal", sh, 0, 0, 100);
-    loadFrames("workerRight", sh, 0, 68, 200);
-    loadFrames("workerUp", sh, 0, 77, 200);
-    loadFrames("workerLeft", sh, 0, 86, 200);
-    loadFrames("workerDown", sh, 0, 95, 200);
+    loadFrames("workerUp", sh, 0, 68, 100);
+    loadFrames("workerDown", sh, 0, 77, 50);
+    loadFrames("workerLeft", sh, 0, 86, 100);
+    loadFrames("workerRight", sh, 0, 95, 100);
 
     a_sprite_free(sh);
 }
