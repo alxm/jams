@@ -15,27 +15,8 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+extern void z_util_frames_load(void);
+extern void z_util_frames_unload(void);
 
-#include "util_frames.h"
-#include "util_terrain.h"
-
-A_STATE(load)
-{
-    A_STATE_INIT
-    {
-        z_util_frames_load();
-        z_util_terrain_load();
-    }
-
-    A_STATE_TICK
-    {
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_frames_unload();
-        z_util_terrain_unload();
-    }
-}
+extern ASpriteFrames* z_util_frames_get(const char* Id);
+extern ASpriteFrames* z_util_frames_dup(const char* Id);
