@@ -21,6 +21,7 @@
 
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_volume.h"
 
 AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
 {
@@ -36,6 +37,9 @@ AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
                          "workerLeft",
                          "workerRight",
                          Z_COMP_SPRITE_LAYER_UNITS);
+
+    ZCompVolume* volume = a_entity_addComponent(e, "volume");
+    z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), X, Y, 4);
 
     return e;
 }

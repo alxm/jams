@@ -28,6 +28,7 @@
 #include "component_mapterrain.h"
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_volume.h"
 
 #include "system_cursor.h"
 #include "system_map.h"
@@ -50,6 +51,7 @@ A_MAIN
     a_component_declare("mapTerrain", z_comp_mapterrain_size(), z_comp_mapterrain_free);
     a_component_declare("position", z_comp_position_size(), NULL);
     a_component_declare("sprite", z_comp_sprite_size(), z_comp_sprite_free);
+    a_component_declare("volume", z_comp_volume_size(), z_comp_volume_free);
 
     a_system_declare("tickCursor", "cursor", z_system_cursorTick, NULL, false);
     a_system_declare("tickMapFrame", "mapGfx", z_system_mapFrame, NULL, false);

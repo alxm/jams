@@ -22,22 +22,27 @@
 #include "component_cursor.h"
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_volume.h"
 
 AEntity* z_entity_cursor_new(ZStateGame* Game)
 {
     AEntity* e = a_entity_new("cursor", Game);
 
+    int x = a_screen_getWidth() / 2 + 8;
+    int y = a_screen_getHeight() / 2;
+
     ZCompCursor* cursor = a_entity_addComponent(e, "cursor");
     z_comp_cursor_init(cursor);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
-    z_comp_position_init(position,
-                         a_fix_itofix(a_screen_getWidth() / 2 + 8),
-                         a_fix_itofix(a_screen_getHeight() / 2));
+    z_comp_position_init(position, a_fix_itofix(x), a_fix_itofix(y));
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
     z_comp_sprite_init(sprite, "cursor", Z_COMP_SPRITE_LAYER_CURSOR);
     z_comp_sprite_setOffset(sprite, A_FIX_ONE / 2, A_FIX_ONE / 2);
+
+    ZCompVolume* volume = a_entity_addComponent(e, "volume");
+    z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), x, y, 1);
 
     return e;
 }

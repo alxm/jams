@@ -30,6 +30,7 @@
 #include "entity_worker.h"
 
 struct ZStateGame {
+    AColMap* volumeColMap;
     AEntity* map;
     AEntity* cursor;
 };
@@ -134,6 +135,13 @@ static void initGame(ZStateGame* Game)
 {
     ZUtilLevel* level = z_util_level_load("gfx/map0.png");
 
+    int w, h;
+    z_util_level_getDim(level, &w, &h);
+
+    w *= Z_UTIL_COORDS_TILE_DIM;
+    h *= Z_UTIL_COORDS_TILE_DIM;
+
+    Game->volumeColMap = a_colmap_new(w, h, Z_UTIL_COORDS_TILE_DIM);
     Game->map = z_entity_map_new(Game, level);
     Game->cursor = z_entity_cursor_new(Game);
 
@@ -146,7 +154,12 @@ static void initGame(ZStateGame* Game)
 
 static void freeGame(ZStateGame* Game)
 {
-    A_UNUSED(Game);
+    a_colmap_free(Game->volumeColMap);
+}
+
+AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game)
+{
+    return Game->volumeColMap;
 }
 
 A_STATE(game)

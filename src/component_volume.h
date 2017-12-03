@@ -15,11 +15,12 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompCursor ZCompCursor;
+typedef struct ZCompVolume ZCompVolume;
 
-extern size_t z_comp_cursor_size(void);
-extern void z_comp_cursor_init(ZCompCursor* Cursor);
-extern AFree z_comp_cursor_free;
+extern size_t z_comp_volume_size(void);
+extern void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, int X, int Y, int Radius);
+extern AFree z_comp_volume_free;
 
-extern AEntity* z_comp_cursor_getSelected(const ZCompCursor* Cursor);
-extern void z_comp_cursor_setSelected(ZCompCursor* Cursor, AEntity* Unit);
+extern int z_comp_volume_getRadius(const ZCompVolume* Volume);
+extern AColObject* z_comp_volume_getColObject(const ZCompVolume* Volume);
+extern void z_comp_volume_setCoords(const ZCompVolume* Volume, AFix X, AFix Y);

@@ -3,12 +3,17 @@
 #include "util_colors.h"
 #include "util_controls.h"
 #include "util_coords.h"
+#include "util_frames.h"
 
+#include "component_cursor.h"
 #include "component_position.h"
+#include "component_volume.h"
 
 void z_system_cursorTick(AEntity* Entity)
 {
+    ZCompCursor* cursor = a_entity_reqComponent(Entity, "cursor");
     ZCompPosition* position = a_entity_reqComponent(Entity, "position");
+    ZCompVolume* volume = a_entity_reqComponent(Entity, "volume");
 
     AFix x, y;
     z_comp_position_getCoordsFix(position, &x, &y);
@@ -24,11 +29,37 @@ void z_system_cursorTick(AEntity* Entity)
                      a_fix_itofix(a_screen_getHeight()) - 1);
 
     z_comp_position_setCoords(position, x, y);
-}
+    z_comp_volume_setCoords(volume, x, y);
 
+    int cursorX, cursorY;
+    z_comp_position_getCoordsInt(position, &cursorX, &cursorY);
+
+    int cursorRadius = z_comp_volume_getRadius(volume);
+
+    A_COL_ITERATE(z_comp_volume_getColObject(volume), AEntity*, worker) {
+        ZCompPosition* position = a_entity_reqComponent(worker, "position");
+        ZCompVolume* volume = a_entity_reqComponent(worker, "volume");
+
+        int workerX, workerY;
+        z_comp_position_getCoordsInt(position, &workerX, &workerY);
+
+        int workerRadius = z_comp_volume_getRadius(volume);
+
+        if(a_collide_circleAndCircle(cursorX,
+                                     cursorY,
+                                     cursorRadius,
+                                     workerX,
+                                     workerY,
+                                     workerRadius)) {
+
+            z_comp_cursor_setSelected(cursor, worker);
+        }
+    }
+}
 
 void z_system_cursorDrawUnderside(AEntity* Entity)
 {
+    ZCompCursor* cursor = a_entity_reqComponent(Entity, "cursor");
     ZCompPosition* position = a_entity_reqComponent(Entity, "position");
 
     int x, y;
@@ -45,6 +76,24 @@ void z_system_cursorDrawUnderside(AEntity* Entity)
                      tileY * Z_UTIL_COORDS_TILE_DIM,
                      Z_UTIL_COORDS_TILE_DIM,
                      Z_UTIL_COORDS_TILE_DIM);
+
+    AEntity* selectedUnit = z_comp_cursor_getSelected(cursor);
+
+    if(selectedUnit != NULL) {
+        ZCompPosition* pos = a_entity_reqComponent(selectedUnit, "position");
+
+        int unitX, unitY;
+        z_comp_position_getCoordsInt(pos, &unitX, &unitY);
+
+        a_pixel_setBlend(A_PIXEL_BLEND_PLAIN);
+
+        ASpriteFrames* selected = z_util_frames_get("cursorSelectedUnit");
+        ASprite* sprite = a_spriteframes_getCurrent(selected);
+
+        a_sprite_blit(sprite,
+                      unitX - a_sprite_getWidth(sprite) / 2,
+                      unitY - a_sprite_getHeight(sprite) / 2);
+    }
 
     a_pixel_pop();
 }

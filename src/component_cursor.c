@@ -20,7 +20,7 @@
 #include "component_cursor.h"
 
 struct ZCompCursor {
-    int x;
+    AEntity* selectedUnit;
 };
 
 size_t z_comp_cursor_size(void)
@@ -30,12 +30,29 @@ size_t z_comp_cursor_size(void)
 
 void z_comp_cursor_init(ZCompCursor* Cursor)
 {
-    A_UNUSED(Cursor);
+    Cursor->selectedUnit = NULL;
 }
 
 void z_comp_cursor_free(void* Self)
 {
     ZCompCursor* cursor = Self;
 
-    A_UNUSED(cursor);
+    if(cursor->selectedUnit != NULL) {
+        a_entity_release(cursor->selectedUnit);
+    }
+}
+
+AEntity* z_comp_cursor_getSelected(const ZCompCursor* Cursor)
+{
+    return Cursor->selectedUnit;
+}
+
+void z_comp_cursor_setSelected(ZCompCursor* Cursor, AEntity* Unit)
+{
+    if(Cursor->selectedUnit != NULL) {
+        a_entity_release(Cursor->selectedUnit);
+    }
+
+    Cursor->selectedUnit = Unit;
+    a_entity_reference(Cursor->selectedUnit);
 }

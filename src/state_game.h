@@ -17,4 +17,6 @@
 
 typedef struct ZStateGame ZStateGame;
 
+extern AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game);
+
 extern A_STATE(game);
