@@ -41,6 +41,9 @@ void z_util_frames_load(void)
     ASprite* sh = a_sprite_newFromFile("gfx/sprites.png");
 
     loadFrames("crystal", sh, 0, 0, 100);
+    loadFrames("buildingBase", sh, 0, 17, 200);
+    loadFrames("buildingTurret", sh, 0, 34, 200);
+    loadFrames("buildingDepot", sh, 0, 51, 200);
 
     a_sprite_free(sh);
 }
