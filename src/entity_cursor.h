@@ -15,31 +15,4 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
-
-#include "util_colors.h"
-#include "util_controls.h"
-#include "util_frames.h"
-#include "util_terrain.h"
-
-A_STATE(load)
-{
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_controls_load();
-        z_util_frames_load();
-        z_util_terrain_load();
-    }
-
-    A_STATE_TICK
-    {
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_frames_unload();
-        z_util_terrain_unload();
-    }
-}
+extern AEntity* z_entity_cursor_new(ZStateGame* Game);

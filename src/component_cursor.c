@@ -17,29 +17,25 @@
 
 #include <a2x.h>
 
-#include "util_colors.h"
-#include "util_controls.h"
-#include "util_frames.h"
-#include "util_terrain.h"
+#include "component_cursor.h"
 
-A_STATE(load)
+struct ZCompCursor {
+    int x;
+};
+
+size_t z_comp_cursor_size(void)
 {
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_controls_load();
-        z_util_frames_load();
-        z_util_terrain_load();
-    }
+    return sizeof(ZCompCursor);
+}
 
-    A_STATE_TICK
-    {
-        a_state_push("game");
-    }
+void z_comp_cursor_init(ZCompCursor* Cursor)
+{
+    A_UNUSED(Cursor);
+}
 
-    A_STATE_FREE
-    {
-        z_util_frames_unload();
-        z_util_terrain_unload();
-    }
+void z_comp_cursor_free(void* Self)
+{
+    ZCompCursor* cursor = Self;
+
+    A_UNUSED(cursor);
 }

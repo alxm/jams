@@ -25,11 +25,13 @@
 
 #include "entity_building.h"
 #include "entity_crystal.h"
+#include "entity_cursor.h"
 #include "entity_map.h"
 #include "entity_worker.h"
 
 struct ZStateGame {
     AEntity* map;
+    AEntity* cursor;
 };
 
 static void spawnCrystals(ZStateGame* Game, const ZUtilLevel* Level)
@@ -133,6 +135,8 @@ static void initGame(ZStateGame* Game)
     ZUtilLevel* level = z_util_level_load("gfx/map0.png");
 
     Game->map = z_entity_map_new(Game, level);
+    Game->cursor = z_entity_cursor_new(Game);
+
     spawnCrystals(Game, level);
     spawnBuildings(Game, level);
     spawnWorkers(Game);

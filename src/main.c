@@ -23,11 +23,13 @@
 #include "util_level.h"
 #include "util_terrain.h"
 
+#include "component_cursor.h"
 #include "component_mapgfx.h"
 #include "component_mapterrain.h"
 #include "component_position.h"
 #include "component_sprite.h"
 
+#include "system_cursor.h"
 #include "system_map.h"
 #include "system_sprite.h"
 
@@ -38,15 +40,18 @@ A_SETUP
     a_settings_set("app.author", "alxm");
     a_settings_set("app.output.on", "yes");
     a_settings_set("app.output.verbose", "yes");
+    a_settings_set("input.hideCursor", "yes");
 }
 
 A_MAIN
 {
+    a_component_declare("cursor", z_comp_cursor_size(), z_comp_cursor_free);
     a_component_declare("mapGfx", z_comp_mapgfx_size(), z_comp_mapgfx_free);
     a_component_declare("mapTerrain", z_comp_mapterrain_size(), z_comp_mapterrain_free);
     a_component_declare("position", z_comp_position_size(), NULL);
     a_component_declare("sprite", z_comp_sprite_size(), z_comp_sprite_free);
 
+    a_system_declare("tickCursor", "cursor", z_system_cursorTick, NULL, false);
     a_system_declare("tickMapFrame", "mapGfx", z_system_mapFrame, NULL, false);
     a_system_declare("tickSpriteFrame", "sprite", z_system_spriteTickFrame, NULL, false);
 
@@ -55,7 +60,7 @@ A_MAIN
 
     a_state_new("game",
                 game,
-                "tickMapFrame tickSpriteFrame",
+                "tickCursor tickMapFrame tickSpriteFrame",
                 "drawMapTiles drawSprite");
 
     a_state_new("load", load, "", "");

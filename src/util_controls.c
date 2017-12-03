@@ -17,29 +17,11 @@
 
 #include <a2x.h>
 
-#include "util_colors.h"
 #include "util_controls.h"
-#include "util_frames.h"
-#include "util_terrain.h"
 
-A_STATE(load)
+ZUtilControls z_util_controls;
+
+void z_util_controls_load(void)
 {
-    A_STATE_INIT
-    {
-        z_util_colors_load();
-        z_util_controls_load();
-        z_util_frames_load();
-        z_util_terrain_load();
-    }
-
-    A_STATE_TICK
-    {
-        a_state_push("game");
-    }
-
-    A_STATE_FREE
-    {
-        z_util_frames_unload();
-        z_util_terrain_unload();
-    }
+    z_util_controls.mouse = a_touch_new("touchScreen");
 }
