@@ -15,5 +15,7 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+extern ASystemSort z_system_sprite_sort;
+
 extern ASystemHandler z_system_spriteTickFrame;
 extern ASystemHandler z_system_spriteDraw;

@@ -22,6 +22,7 @@
 #include "component_sprite.h"
 
 struct ZCompSprite {
+    ZCompSpriteLayer layer;
     ZCompSpriteDirection direction;
     ASpriteFrames* frames[Z_COMP_SPRITE_DIR_NUM];
 };
@@ -31,20 +32,14 @@ size_t z_comp_sprite_size(void)
     return sizeof(ZCompSprite);
 }
 
-void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right)
+void z_comp_sprite_init(ZCompSprite* Sprite, const char* Id, ZCompSpriteLayer Layer)
 {
-    if(Down == NULL) {
-        Down = Up;
-    }
+    z_comp_sprite_initEx(Sprite, Id, Id, Id, Id, Layer);
+}
 
-    if(Left == NULL) {
-        Left = Up;
-    }
-
-    if(Right == NULL) {
-        Right = Up;
-    }
-
+void z_comp_sprite_initEx(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right, ZCompSpriteLayer Layer)
+{
+    Sprite->layer = Layer;
     Sprite->direction = a_random_int(Z_COMP_SPRITE_DIR_NUM);
 
     Sprite->frames[Z_COMP_SPRITE_DIR_UP] = z_util_frames_dup(Up);
@@ -77,4 +72,9 @@ void z_comp_sprite_tickFrame(const ZCompSprite* Sprite)
 ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite)
 {
     return a_spriteframes_getCurrent(Sprite->frames[Sprite->direction]);
+}
+
+ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite)
+{
+    return Sprite->layer;
 }

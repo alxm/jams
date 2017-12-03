@@ -30,7 +30,7 @@ AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
     z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, "crystal", NULL, NULL, NULL);
+    z_comp_sprite_init(sprite, "crystal", Z_COMP_SPRITE_LAYER_UNITS);
 
     return e;
 }

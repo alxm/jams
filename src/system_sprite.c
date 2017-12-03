@@ -20,6 +20,14 @@
 #include "component_position.h"
 #include "component_sprite.h"
 
+int z_system_sprite_sort(AEntity* A, AEntity* B)
+{
+    ZCompSprite* spriteA = a_entity_reqComponent(A, "sprite");
+    ZCompSprite* spriteB = a_entity_reqComponent(B, "sprite");
+
+    return z_comp_sprite_getLayer(spriteA) - z_comp_sprite_getLayer(spriteB);
+}
+
 void z_system_spriteTickFrame(AEntity* Entity)
 {
     z_comp_sprite_tickFrame(a_entity_reqComponent(Entity, "sprite"));

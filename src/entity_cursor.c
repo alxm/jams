@@ -36,7 +36,7 @@ AEntity* z_entity_cursor_new(ZStateGame* Game)
                          a_fix_itofix(a_screen_getHeight() / 2));
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, "cursor", NULL, NULL, NULL);
+    z_comp_sprite_init(sprite, "cursor", Z_COMP_SPRITE_LAYER_CURSOR);
 
     return e;
 }

@@ -30,11 +30,12 @@ AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
     z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite,
-                       "workerUp",
-                       "workerDown",
-                       "workerLeft",
-                       "workerRight");
+    z_comp_sprite_initEx(sprite,
+                         "workerUp",
+                         "workerDown",
+                         "workerLeft",
+                         "workerRight",
+                         Z_COMP_SPRITE_LAYER_UNITS);
 
     return e;
 }

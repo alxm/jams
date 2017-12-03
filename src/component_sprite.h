@@ -18,6 +18,13 @@
 typedef struct ZCompSprite ZCompSprite;
 
 typedef enum {
+    Z_COMP_SPRITE_LAYER_INVALID = -1,
+    Z_COMP_SPRITE_LAYER_BUILDINGS,
+    Z_COMP_SPRITE_LAYER_UNITS,
+    Z_COMP_SPRITE_LAYER_CURSOR,
+} ZCompSpriteLayer;
+
+typedef enum {
     Z_COMP_SPRITE_DIR_UP,
     Z_COMP_SPRITE_DIR_DOWN,
     Z_COMP_SPRITE_DIR_LEFT,
@@ -26,9 +33,11 @@ typedef enum {
 } ZCompSpriteDirection;
 
 extern size_t z_comp_sprite_size(void);
-extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right);
+extern void z_comp_sprite_init(ZCompSprite* Sprite, const char* Id, ZCompSpriteLayer Layer);
+extern void z_comp_sprite_initEx(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right, ZCompSpriteLayer Layer);
 extern AFree z_comp_sprite_free;
 
 extern void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction);
 extern void z_comp_sprite_tickFrame(const ZCompSprite* Sprite);
 extern ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite);
+extern ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite);
