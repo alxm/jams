@@ -41,9 +41,44 @@ static void spawnCrystals(ZStateGame* Game, const ZUtilLevel* Level)
 
             for(int l = 0; l < Z_UTIL_COLOR_LEVELS; l++) {
                 if(p == z_util_colors_get(Z_UTIL_COLOR_GREEN, l)) {
-                    z_entity_crystal_new(Game,
-                                         z_util_coords_tileMid(x),
-                                         z_util_coords_tileMid(y));
+                    switch(l) {
+                        case 0: {
+                            z_entity_crystal_new(
+                                Game,
+                                z_util_coords_tileMid(x),
+                                z_util_coords_tileMid(y));
+                        } break;
+
+                        case 1: {
+                            z_entity_crystal_new(
+                                Game,
+                                z_util_coords_tileToInt(x) + 4,
+                                z_util_coords_tileToInt(y) + 4);
+
+                            z_entity_crystal_new(
+                                Game,
+                                z_util_coords_tileToInt(x) + 10,
+                                z_util_coords_tileToInt(y) + 9);
+                        } break;
+
+                        case 2: {
+                            z_entity_crystal_new(
+                                Game,
+                                z_util_coords_tileToInt(x) + 4,
+                                z_util_coords_tileToInt(y) + 4);
+
+                            z_entity_crystal_new(
+                                Game,
+                                z_util_coords_tileToInt(x) + 11,
+                                z_util_coords_tileToInt(y) + 7);
+
+                            z_entity_crystal_new(
+                                Game,
+                                z_util_coords_tileToInt(x) + 6,
+                                z_util_coords_tileToInt(y) + 11);
+                        } break;
+                    }
+
                     break;
                 }
             }

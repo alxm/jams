@@ -39,6 +39,11 @@ static inline int z_util_coords_intToTileOffsetInt(int Coord)
     return Coord & Z_UTIL_COORDS_TILE_MASK;
 }
 
+static inline int z_util_coords_tileToInt(int TileCoord)
+{
+    return TileCoord * Z_UTIL_COORDS_TILE_DIM;
+}
+
 static inline int z_util_coords_tileMid(int TileCoord)
 {
     return TileCoord * Z_UTIL_COORDS_TILE_DIM + Z_UTIL_COORDS_TILE_DIM / 2;
