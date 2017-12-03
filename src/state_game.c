@@ -19,11 +19,21 @@
 
 #include "state_game.h"
 
+#include "entity_crystal.h"
 #include "entity_map.h"
 
 struct ZStateGame {
     AEntity* map;
 };
+
+static void spawnCrystals(ZStateGame* Game)
+{
+    for(int i = 16; i--; ) {
+        z_entity_crystal_new(Game,
+                             a_random_int(a_screen_getWidth()),
+                             a_random_int(a_screen_getHeight()));
+    }
+}
 
 static void initGame(ZStateGame* Game)
 {
@@ -33,6 +43,8 @@ static void initGame(ZStateGame* Game)
     int dataH = a_sprite_getHeight(image);
 
     Game->map = z_entity_map_new(Game, data, dataW, dataH);
+
+    spawnCrystals(Game);
 }
 
 static void freeGame(ZStateGame* Game)

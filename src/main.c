@@ -24,8 +24,11 @@
 
 #include "component_mapgfx.h"
 #include "component_mapterrain.h"
+#include "component_position.h"
+#include "component_sprite.h"
 
 #include "system_map.h"
+#include "system_sprite.h"
 
 A_SETUP
 {
@@ -40,15 +43,19 @@ A_MAIN
 {
     a_component_declare("mapGfx", z_comp_mapgfx_size(), z_comp_mapgfx_free);
     a_component_declare("mapTerrain", z_comp_mapterrain_size(), z_comp_mapterrain_free);
+    a_component_declare("position", z_comp_position_size(), NULL);
+    a_component_declare("sprite", z_comp_sprite_size(), z_comp_sprite_free);
 
     a_system_declare("tickMapFrame", "mapGfx", z_system_mapFrame, NULL, false);
+    a_system_declare("tickSpriteFrame", "sprite", z_system_spriteTickFrame, NULL, false);
 
     a_system_declare("drawMapTiles", "mapTerrain", z_system_mapDrawTiles, NULL, false);
+    a_system_declare("drawSprite", "position sprite", z_system_spriteDraw, NULL, false);
 
     a_state_new("game",
                 game,
-                "tickMapFrame",
-                "drawMapTiles");
+                "tickMapFrame tickSpriteFrame",
+                "drawMapTiles drawSprite");
 
     a_state_new("load", load, "", "");
 

@@ -31,7 +31,7 @@ static void loadFrames(const char* Id, const ASprite* Sheet, int X, int Y, unsig
 
 static void freeFrames(ASpriteFrames* Frames)
 {
-    a_spriteframes_free(Frames, false);
+    a_spriteframes_free(Frames, true);
 }
 
 void z_util_frames_load(void)
