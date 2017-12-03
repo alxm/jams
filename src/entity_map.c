@@ -18,39 +18,21 @@
 #include <a2x.h>
 
 #include "state_game.h"
-#include "state_load.h"
 
 #include "util_terrain.h"
 
 #include "component_mapgfx.h"
 #include "component_mapterrain.h"
 
-#include "system_map.h"
-
-A_SETUP
+AEntity* z_entity_map_new(ZStateGame* Game, APixel* Data, int W, int H)
 {
-    a_settings_set("app.title", "Mine Op 40");
-    a_settings_set("app.version", "1.0");
-    a_settings_set("app.author", "alxm");
-    a_settings_set("app.output.on", "yes");
-    a_settings_set("app.output.verbose", "yes");
-}
+    AEntity* e = a_entity_new("map", Game);
 
-A_MAIN
-{
-    a_component_declare("mapGfx", z_comp_mapgfx_size(), z_comp_mapgfx_free);
-    a_component_declare("mapTerrain", z_comp_mapterrain_size(), z_comp_mapterrain_free);
+    ZCompMapTerrain* terrain = a_entity_addComponent(e, "mapTerrain");
+    z_comp_mapterrain_init(terrain, Data, W, H);
 
-    a_system_declare("tickMapFrame", "mapGfx", z_system_mapFrame, NULL, false);
+    ZCompMapGfx* gfx = a_entity_addComponent(e, "mapGfx");
+    z_comp_mapgfx_init(gfx, W, H, z_comp_mapterrain_getMap(terrain));
 
-    a_system_declare("drawMapTiles", "mapTerrain", z_system_mapDrawTiles, NULL, false);
-
-    a_state_new("game",
-                game,
-                "tickMapFrame",
-                "drawMapTiles");
-
-    a_state_new("load", load, "", "");
-
-    a_state_push("load");
+    return e;
 }
