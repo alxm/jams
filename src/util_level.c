@@ -17,23 +17,40 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
-
 #include "util_level.h"
-#include "util_terrain.h"
 
-#include "component_mapgfx.h"
-#include "component_mapterrain.h"
+struct ZUtilLevel {
+    ASprite* sprite;
+    int w, h;
+    APixel* data;
+};
 
-AEntity* z_entity_map_new(ZStateGame* Game, const ZUtilLevel* Level)
+ZUtilLevel* z_util_level_load(const char* Path)
 {
-    AEntity* e = a_entity_new("map", Game);
+    ZUtilLevel* level = a_mem_malloc(sizeof(ZUtilLevel));
+    ASprite* image = a_sprite_newFromFile(Path);
 
-    ZCompMapTerrain* terrain = a_entity_addComponent(e, "mapTerrain");
-    z_comp_mapterrain_init(terrain, Level);
+    level->sprite = image;
+    level->w = a_sprite_getWidth(image);
+    level->h = a_sprite_getHeight(image);
+    level->data = a_sprite_getPixels(image);
 
-    ZCompMapGfx* gfx = a_entity_addComponent(e, "mapGfx");
-    z_comp_mapgfx_init(gfx, z_comp_mapterrain_getMap(terrain), Level);
+    return level;
+}
 
-    return e;
+void z_util_level_free(ZUtilLevel* Level)
+{
+    a_sprite_free(Level->sprite);
+    free(Level);
+}
+
+void z_util_level_getDim(const ZUtilLevel* Level, int* W, int* H)
+{
+    *W = Level->w;
+    *H = Level->h;
+}
+
+APixel z_util_level_getValue(const ZUtilLevel* Level, int X, int Y)
+{
+    return Level->data[Y * Level->w + X];
 }

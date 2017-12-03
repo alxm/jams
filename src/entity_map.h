@@ -15,4 +15,4 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-extern AEntity* z_entity_map_new(ZStateGame* Game, APixel* Data, int W, int H);
+extern AEntity* z_entity_map_new(ZStateGame* Game, const ZUtilLevel* Level);

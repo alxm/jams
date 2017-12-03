@@ -17,6 +17,7 @@
 
 #include <a2x.h>
 
+#include "util_level.h"
 #include "util_terrain.h"
 
 #include "component_mapgfx.h"
@@ -36,20 +37,23 @@ size_t z_comp_mapgfx_size(void)
     return sizeof(ZCompMapGfx);
 }
 
-void z_comp_mapgfx_init(ZCompMapGfx* MapGfx, int W, int H, const ZUtilTerrainType** Terrain)
+void z_comp_mapgfx_init(ZCompMapGfx* MapGfx, const ZUtilTerrainType** Terrain, const ZUtilLevel* Level)
 {
-    unsigned w = (unsigned)W;
-    unsigned h = (unsigned)H;
+    int w, h;
+    z_util_level_getDim(Level, &w, &h);
 
-    MapGfx->w = W;
-    MapGfx->h = H;
-    MapGfx->tiles = a_mem_malloc(h * sizeof(ZGfxTile*));
-    MapGfx->tilesData = a_mem_malloc(h * w * sizeof(ZGfxTile));
+    unsigned wu = (unsigned)w;
+    unsigned hu = (unsigned)h;
 
-    for(int y = H; y--; ) {
-        MapGfx->tiles[y] = MapGfx->tilesData + y * W;
+    MapGfx->w = w;
+    MapGfx->h = h;
+    MapGfx->tiles = a_mem_malloc(hu * sizeof(ZGfxTile*));
+    MapGfx->tilesData = a_mem_malloc(hu * wu * sizeof(ZGfxTile));
 
-        for(int x = W; x--; ) {
+    for(int y = h; y--; ) {
+        MapGfx->tiles[y] = MapGfx->tilesData + y * w;
+
+        for(int x = w; x--; ) {
             ZGfxTile* tile = &MapGfx->tiles[y][x];
             tile->frames = z_util_terrain_dupFrames(Terrain[y][x]);
 

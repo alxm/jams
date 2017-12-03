@@ -23,10 +23,10 @@ typedef enum {
     Z_WALKABLE = 1,
 } ZTerrainFlag;
 
-struct ZUtilTerrainInstance {
+typedef struct {
     int chance;
     ASpriteFrames* frames;
-};
+} ZUtilTerrainInstance;
 
 typedef struct ZTerrain {
     ZTerrainFlag flags;

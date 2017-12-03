@@ -18,7 +18,7 @@
 typedef struct ZCompMapGfx ZCompMapGfx;
 
 extern size_t z_comp_mapgfx_size(void);
-extern void z_comp_mapgfx_init(ZCompMapGfx* MapGfx, int W, int H, const ZUtilTerrainType** Terrain);
+extern void z_comp_mapgfx_init(ZCompMapGfx* MapGfx, const ZUtilTerrainType** Terrain, const ZUtilLevel* Level);
 extern AFree z_comp_mapgfx_free;
 
 extern ASprite* z_comp_mapgfx_getSprite(const ZCompMapGfx* MapGfx, int X, int Y);

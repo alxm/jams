@@ -18,7 +18,7 @@
 typedef struct ZCompMapTerrain ZCompMapTerrain;
 
 extern size_t z_comp_mapterrain_size(void);
-extern void z_comp_mapterrain_init(ZCompMapTerrain* Terrain, APixel* Data, int W, int H);
+extern void z_comp_mapterrain_init(ZCompMapTerrain* Terrain, const ZUtilLevel* Level);
 extern AFree z_comp_mapterrain_free;
 
 extern const ZUtilTerrainType** z_comp_mapterrain_getMap(const ZCompMapTerrain* Terrain);

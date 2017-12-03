@@ -19,6 +19,8 @@
 
 #include "state_game.h"
 
+#include "util_level.h"
+
 #include "entity_crystal.h"
 #include "entity_map.h"
 
@@ -37,14 +39,12 @@ static void spawnCrystals(ZStateGame* Game)
 
 static void initGame(ZStateGame* Game)
 {
-    ASprite* image = a_sprite_newFromFile("gfx/map0.png");
-    APixel* data = a_sprite_getPixels(image);
-    int dataW = a_sprite_getWidth(image);
-    int dataH = a_sprite_getHeight(image);
+    ZUtilLevel* level = z_util_level_load("gfx/map0.png");
 
-    Game->map = z_entity_map_new(Game, data, dataW, dataH);
-
+    Game->map = z_entity_map_new(Game, level);
     spawnCrystals(Game);
+
+    z_util_level_free(level);
 }
 
 static void freeGame(ZStateGame* Game)

@@ -17,6 +17,8 @@
 
 #include <a2x.h>
 
+#include "util_colors.h"
+#include "util_level.h"
 #include "util_terrain.h"
 
 #include "component_mapterrain.h"
@@ -32,27 +34,32 @@ size_t z_comp_mapterrain_size(void)
     return sizeof(ZCompMapTerrain);
 }
 
-void z_comp_mapterrain_init(ZCompMapTerrain* MapTerrain, APixel* Data, int W, int H)
+void z_comp_mapterrain_init(ZCompMapTerrain* MapTerrain, const ZUtilLevel* Level)
 {
-    unsigned w = (unsigned)W;
-    unsigned h = (unsigned)H;
+    int w, h;
+    z_util_level_getDim(Level, &w, &h);
 
-    MapTerrain->w = W;
-    MapTerrain->h = H;
-    MapTerrain->tiles = a_mem_malloc(h * sizeof(ZUtilTerrainType*));
-    MapTerrain->tilesData = a_mem_malloc(h * w * sizeof(ZUtilTerrainType));
+    unsigned wu = (unsigned)w;
+    unsigned hu = (unsigned)h;
 
-    for(int i = H; i--; ) {
-        MapTerrain->tiles[i] = MapTerrain->tilesData + i * W;
+    MapTerrain->w = w;
+    MapTerrain->h = h;
+    MapTerrain->tiles = a_mem_malloc(hu * sizeof(ZUtilTerrainType*));
+    MapTerrain->tilesData = a_mem_malloc(hu * wu * sizeof(ZUtilTerrainType));
 
-        for(int j = W; j--; ) {
+    for(int i = h; i--; ) {
+        MapTerrain->tiles[i] = MapTerrain->tilesData + i * w;
+
+        for(int j = w; j--; ) {
             MapTerrain->tiles[i][j] = Z_UTIL_TERRAIN_INVALID;
         }
     }
 
-    for(int y = 0; y < H; y++) {
-        for(int x = 0; x < W; x++) {
-            APixel p = *(Data + y * W + x);
+    for(int y = 0; y < h; y++) {
+        for(int x = 0; x < w; x++) {
+            APixel p = z_util_level_getValue(Level, x, y);
+
+            MapTerrain->tiles[y][x] = Z_UTIL_TERRAIN_PLAIN;
 
             for(ZUtilTerrainType t = 0; t < Z_UTIL_TERRAIN_NUM; t++) {
                 if(p == z_util_terrain_getColor(t)) {

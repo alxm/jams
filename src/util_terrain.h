@@ -23,8 +23,6 @@ typedef enum {
     Z_UTIL_TERRAIN_NUM
 } ZUtilTerrainType;
 
-typedef struct ZUtilTerrainInstance ZUtilTerrainInstance;
-
 extern void z_util_terrain_load(void);
 extern void z_util_terrain_unload(void);
 

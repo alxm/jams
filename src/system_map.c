@@ -17,6 +17,7 @@
 
 #include <a2x.h>
 
+#include "util_level.h"
 #include "util_terrain.h"
 
 #include "component_mapgfx.h"

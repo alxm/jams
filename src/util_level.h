@@ -15,25 +15,10 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef struct ZUtilLevel ZUtilLevel;
 
-#include "state_game.h"
+extern ZUtilLevel* z_util_level_load(const char* Path);
+extern void z_util_level_free(ZUtilLevel* Level);
 
-#include "util_level.h"
-#include "util_terrain.h"
-
-#include "component_mapgfx.h"
-#include "component_mapterrain.h"
-
-AEntity* z_entity_map_new(ZStateGame* Game, const ZUtilLevel* Level)
-{
-    AEntity* e = a_entity_new("map", Game);
-
-    ZCompMapTerrain* terrain = a_entity_addComponent(e, "mapTerrain");
-    z_comp_mapterrain_init(terrain, Level);
-
-    ZCompMapGfx* gfx = a_entity_addComponent(e, "mapGfx");
-    z_comp_mapgfx_init(gfx, z_comp_mapterrain_getMap(terrain), Level);
-
-    return e;
-}
+extern void z_util_level_getDim(const ZUtilLevel* Level, int* W, int* H);
+extern APixel z_util_level_getValue(const ZUtilLevel* Level, int X, int Y);

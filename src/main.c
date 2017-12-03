@@ -20,6 +20,7 @@
 #include "state_game.h"
 #include "state_load.h"
 
+#include "util_level.h"
 #include "util_terrain.h"
 
 #include "component_mapgfx.h"
