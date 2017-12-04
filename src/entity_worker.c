@@ -19,6 +19,7 @@
 
 #include "state_game.h"
 
+#include "component_goal.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_volume.h"
@@ -26,6 +27,9 @@
 AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
 {
     AEntity* e = a_entity_new("worker", Game);
+
+    ZCompGoal* goal = a_entity_addComponent(e, "goal");
+    z_comp_goal_init(goal);
 
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));

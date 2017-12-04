@@ -6,17 +6,14 @@
 #include "util_frames.h"
 
 #include "component_cursor.h"
+#include "component_goal.h"
 #include "component_position.h"
 #include "component_volume.h"
 
-void z_system_cursorTick(AEntity* Entity)
+static void updateMouseCoords(ZCompPosition* Position, ZCompVolume* Volume)
 {
-    ZCompCursor* cursor = a_entity_reqComponent(Entity, "cursor");
-    ZCompPosition* position = a_entity_reqComponent(Entity, "position");
-    ZCompVolume* volume = a_entity_reqComponent(Entity, "volume");
-
     AFix x, y;
-    z_comp_position_getCoordsFix(position, &x, &y);
+    z_comp_position_getCoordsFix(Position, &x, &y);
 
     int mouseDx, mouseDy;
     a_touch_getDelta(z_util_controls.mouse, &mouseDx, &mouseDy);
@@ -28,17 +25,20 @@ void z_system_cursorTick(AEntity* Entity)
                      0,
                      a_fix_itofix(a_screen_getHeight()) - 1);
 
-    z_comp_position_setCoords(position, x, y);
-    z_comp_volume_setCoords(volume, x, y);
+    z_comp_position_setCoords(Position, x, y);
+    z_comp_volume_setCoords(Volume, x, y);
+}
 
+static void handleClick(ZCompCursor* Cursor, ZCompPosition* Position, ZCompVolume* Volume)
+{
     int cursorX, cursorY;
-    z_comp_position_getCoordsInt(position, &cursorX, &cursorY);
+    z_comp_position_getCoordsInt(Position, &cursorX, &cursorY);
 
-    int cursorRadius = z_comp_volume_getRadius(volume);
+    int cursorRadius = z_comp_volume_getRadius(Volume);
 
     bool hover = false;
 
-    A_COL_ITERATE(z_comp_volume_getColObject(volume), AEntity*, worker) {
+    A_COL_ITERATE(z_comp_volume_getColObject(Volume), AEntity*, worker) {
         ZCompPosition* position = a_entity_reqComponent(worker, "position");
         ZCompVolume* volume = a_entity_reqComponent(worker, "volume");
 
@@ -55,10 +55,10 @@ void z_system_cursorTick(AEntity* Entity)
                                      workerRadius)) {
 
             hover = true;
-            z_comp_cursor_setHover(cursor, worker);
+            z_comp_cursor_setHover(Cursor, worker);
 
             if(a_touch_getTap(z_util_controls.mouse)) {
-                z_comp_cursor_setSelected(cursor, worker);
+                z_comp_cursor_setSelected(Cursor, worker);
             }
 
             break;
@@ -66,14 +66,51 @@ void z_system_cursorTick(AEntity* Entity)
     }
 
     if(!hover) {
-        z_comp_cursor_setHover(cursor, NULL);
+        z_comp_cursor_setHover(Cursor, NULL);
 
         if(a_touch_getTap(z_util_controls.mouse)) {
-            z_comp_cursor_setSelected(cursor, NULL);
+            z_comp_cursor_setSelected(Cursor, NULL);
         }
     }
+}
 
+static void dispatchMission(ZCompCursor* Cursor, ZCompPosition* Position, AEntity* Actor, AEntity* Objective)
+{
+    if(Objective == NULL) {
+        ZCompGoal* goal = a_entity_getComponent(Actor, "goal");
+
+        if(goal == NULL) {
+            return;
+        }
+
+        int x, y;
+        z_comp_position_getCoordsInt(Position, &x, &y);
+
+        z_comp_goal_setDestCoords(goal, x, y);
+        z_comp_goal_setObjective(goal, Objective);
+        z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_MOVE);
+    } else if(Actor != Objective) {
+        A_UNUSED(Cursor);
+        //z_comp_cursor_setSelected(Cursor, Actor);
+    }
+}
+
+void z_system_cursorTick(AEntity* Entity)
+{
+    ZCompCursor* cursor = a_entity_reqComponent(Entity, "cursor");
+    ZCompPosition* position = a_entity_reqComponent(Entity, "position");
+    ZCompVolume* volume = a_entity_reqComponent(Entity, "volume");
+
+    AEntity* oldSelected = z_comp_cursor_getSelected(cursor);
+
+    updateMouseCoords(position, volume);
+    handleClick(cursor, position, volume);
     z_comp_cursor_lightTick(cursor);
+
+    if(oldSelected != NULL) {
+        AEntity* newSelected = z_comp_cursor_getSelected(cursor);
+        dispatchMission(cursor, position, oldSelected, newSelected);
+    }
 }
 
 static void drawUnderlight(const ZCompCursor* Cursor, ZCompCursorType Type, AEntity* Unit)
