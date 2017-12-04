@@ -22,12 +22,16 @@
 #include "util_level.h"
 #include "util_terrain.h"
 
+#include "component_mapbuildings.h"
 #include "component_mapgfx.h"
 #include "component_mapterrain.h"
 
 AEntity* z_entity_map_new(ZStateGame* Game, const ZUtilLevel* Level)
 {
     AEntity* e = a_entity_new("map", Game);
+
+    ZCompMapBuildings* buildings = a_entity_addComponent(e, "mapBuildings");
+    z_comp_mapbuildings_init(buildings, Level);
 
     ZCompMapTerrain* terrain = a_entity_addComponent(e, "mapTerrain");
     z_comp_mapterrain_init(terrain, Level);

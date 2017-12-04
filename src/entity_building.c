@@ -20,7 +20,9 @@
 #include "state_game.h"
 
 #include "util_coords.h"
+#include "util_level.h"
 
+#include "component_mapbuildings.h"
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_volume.h"
@@ -68,6 +70,14 @@ AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X
                        true);
 
     a_entity_addComponent(e, "tagBuilding");
+
+    AEntity* map = z_state_game_getMap(Game);
+    ZCompMapBuildings* buildings = a_entity_reqComponent(map, "mapBuildings");
+
+    z_comp_mapbuildings_set(buildings,
+                            z_util_coords_intToTileInt(X),
+                            z_util_coords_intToTileInt(Y),
+                            e);
 
     return e;
 }

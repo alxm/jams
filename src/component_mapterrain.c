@@ -47,11 +47,11 @@ void z_comp_mapterrain_init(ZCompMapTerrain* MapTerrain, const ZUtilLevel* Level
     MapTerrain->tiles = a_mem_malloc(hu * sizeof(ZUtilTerrainType*));
     MapTerrain->tilesData = a_mem_malloc(hu * wu * sizeof(ZUtilTerrainType));
 
-    for(int i = h; i--; ) {
-        MapTerrain->tiles[i] = MapTerrain->tilesData + i * w;
+    for(int y = h; y--; ) {
+        MapTerrain->tiles[y] = MapTerrain->tilesData + y * w;
 
-        for(int j = w; j--; ) {
-            MapTerrain->tiles[i][j] = Z_UTIL_TERRAIN_INVALID;
+        for(int x = w; x--; ) {
+            MapTerrain->tiles[y][x] = Z_UTIL_TERRAIN_INVALID;
         }
     }
 
@@ -79,18 +79,18 @@ void z_comp_mapterrain_free(void* Self)
     free(terrain->tilesData);
 }
 
-const ZUtilTerrainType** z_comp_mapterrain_getMap(const ZCompMapTerrain* Terrain)
+const ZUtilTerrainType** z_comp_mapterrain_getMap(const ZCompMapTerrain* MapTerrain)
 {
-    return (const ZUtilTerrainType**)Terrain->tiles;
+    return (const ZUtilTerrainType**)MapTerrain->tiles;
 }
 
-void z_comp_mapterrain_getDim(const ZCompMapTerrain* Terrain, int* W, int* H)
+void z_comp_mapterrain_getDim(const ZCompMapTerrain* MapTerrain, int* W, int* H)
 {
-    *W = Terrain->w;
-    *H = Terrain->h;
+    *W = MapTerrain->w;
+    *H = MapTerrain->h;
 }
 
-ZUtilTerrainType z_comp_mapterrain_getType(const ZCompMapTerrain* Terrain, int X, int Y)
+ZUtilTerrainType z_comp_mapterrain_getType(const ZCompMapTerrain* MapTerrain, int X, int Y)
 {
-    return Terrain->tiles[Y][X];
+    return MapTerrain->tiles[Y][X];
 }

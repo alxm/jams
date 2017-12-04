@@ -26,6 +26,7 @@
 
 #include "component_cursor.h"
 #include "component_goal.h"
+#include "component_mapbuildings.h"
 #include "component_mapgfx.h"
 #include "component_mapterrain.h"
 #include "component_motion.h"
@@ -55,6 +56,7 @@ A_MAIN
 {
     a_component_declare("cursor", z_comp_cursor_size(), z_comp_cursor_free);
     a_component_declare("goal", z_comp_goal_size(), z_comp_goal_free);
+    a_component_declare("mapBuildings", z_comp_mapbuildings_size(), z_comp_mapbuildings_free);
     a_component_declare("mapGfx", z_comp_mapgfx_size(), z_comp_mapgfx_free);
     a_component_declare("mapTerrain", z_comp_mapterrain_size(), z_comp_mapterrain_free);
     a_component_declare("motion", z_comp_motion_size(), NULL);

@@ -24,6 +24,7 @@
 #include "util_terrain.h"
 
 #include "component_goal.h"
+#include "component_mapbuildings.h"
 #include "component_mapterrain.h"
 #include "component_position.h"
 #include "component_volume.h"
@@ -49,7 +50,7 @@ static inline void pointUnpack(void* Point, int* X, int *Y)
     *Y = ((ptrdiff_t)Point >> 16) & 0xffff;
 }
 
-static bool aStar(ZCompMapTerrain* Terrain, int StartX, int StartY, int EndX, int EndY, int* NextX, int* NextY)
+static bool aStar(ZCompMapTerrain* Terrain, ZCompMapBuildings* Buildings, int StartX, int StartY, int EndX, int EndY, int* NextX, int* NextY)
 {
     bool foundPath = false;
 
@@ -140,7 +141,10 @@ static bool aStar(ZCompMapTerrain* Terrain, int StartX, int StartY, int EndX, in
             ZTile* tile = &tiles[tileY][tileX];                              \
             ZUtilTerrainType terrain = terrainMap[tileY][tileX];             \
                                                                              \
-            if(z_util_terrain_isWalkable(terrain) && !tile->inClosedList) {  \
+            if(z_util_terrain_isWalkable(terrain)                            \
+                && z_comp_mapbuildings_get(Buildings, tileX, tileY) == NULL  \
+                && !tile->inClosedList) {                                    \
+                                                                             \
                 int fromStartToHere = currentTile->fromStartToHere + 1;      \
                 int estFromHereToEnd = a_math_abs(EndX - tileX)              \
                                         + a_math_abs(EndY - tileY);          \
@@ -206,10 +210,10 @@ static void pathfind(AEntity* Entity, ZCompGoal* Goal)
 
     ZStateGame* game = a_entity_getContext(Entity);
     AEntity* map = z_state_game_getMap(game);
-    ZCompMapTerrain* terrain = a_entity_reqComponent(map, "mapTerrain");
     int nextTileX, nextTileY;
 
-    bool foundPath = aStar(terrain,
+    bool foundPath = aStar(a_entity_reqComponent(map, "mapTerrain"),
+                           a_entity_reqComponent(map, "mapBuildings"),
                            currentTileX,
                            currentTileY,
                            destTileX,

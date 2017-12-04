@@ -15,12 +15,11 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-typedef struct ZCompMapTerrain ZCompMapTerrain;
+typedef struct ZCompMapBuildings ZCompMapBuildings;
 
-extern size_t z_comp_mapterrain_size(void);
-extern void z_comp_mapterrain_init(ZCompMapTerrain* MapTerrain, const ZUtilLevel* Level);
-extern AFree z_comp_mapterrain_free;
+extern size_t z_comp_mapbuildings_size(void);
+extern void z_comp_mapbuildings_init(ZCompMapBuildings* MapBuildings, const ZUtilLevel* Level);
+extern AFree z_comp_mapbuildings_free;
 
-extern const ZUtilTerrainType** z_comp_mapterrain_getMap(const ZCompMapTerrain* MapTerrain);
-extern void z_comp_mapterrain_getDim(const ZCompMapTerrain* MapTerrain, int* W, int* H);
-extern ZUtilTerrainType z_comp_mapterrain_getType(const ZCompMapTerrain* MapTerrain, int X, int Y);
+extern AEntity* z_comp_mapbuildings_get(const ZCompMapBuildings* MapBuildings, int X, int Y);
+extern void z_comp_mapbuildings_set(ZCompMapBuildings* MapBuildings, int X, int Y, AEntity* Building);
