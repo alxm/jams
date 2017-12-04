@@ -20,6 +20,7 @@ typedef enum {
     Z_UTIL_TERRAIN_PLAIN,
     Z_UTIL_TERRAIN_BUMPS,
     Z_UTIL_TERRAIN_BUBBLES,
+    Z_UTIL_TERRAIN_ROCK,
     Z_UTIL_TERRAIN_NUM
 } ZUtilTerrainType;
 

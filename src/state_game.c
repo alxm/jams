@@ -33,6 +33,7 @@ struct ZStateGame {
     AColMap* volumeColMap;
     AEntity* map;
     AEntity* cursor;
+    AEntity* base;
 };
 
 static void spawnCrystals(ZStateGame* Game, const ZUtilLevel* Level)
@@ -103,10 +104,17 @@ static void spawnBuildings(ZStateGame* Game, const ZUtilLevel* Level)
             APixel p = z_util_level_getValue(Level, x, y);
 
             if(p == z_util_colors_get(Z_UTIL_COLOR_PINK, 2)) {
-                z_entity_building_new(Game,
-                                      Z_ENTITY_BUILDING_BASE,
-                                      z_util_coords_tileMid(x),
-                                      z_util_coords_tileMid(y));
+                int baseX = z_util_coords_tileMid(x);
+                int baseY = z_util_coords_tileMid(y);
+
+                Game->base = z_entity_building_new(Game,
+                                                   Z_ENTITY_BUILDING_BASE,
+                                                   baseX,
+                                                   baseY);
+
+                z_entity_worker_new(Game, baseX - 8, baseY + 12);
+                z_entity_worker_new(Game, baseX + 8, baseY + 16);
+                z_entity_worker_new(Game, baseX + 12, baseY + 4);
             } else if(p == z_util_colors_get(Z_UTIL_COLOR_PINK, 1)) {
                 z_entity_building_new(Game,
                                       Z_ENTITY_BUILDING_DEPOT,
@@ -119,18 +127,6 @@ static void spawnBuildings(ZStateGame* Game, const ZUtilLevel* Level)
                                       z_util_coords_tileMid(y));
             }
         }
-    }
-}
-
-static void spawnWorkers(ZStateGame* Game)
-{
-    int w = a_screen_getWidth();
-    int h = a_screen_getHeight();
-
-    for(int i = 16; i--; ) {
-        z_entity_worker_new(Game,
-                            w / 4 + a_random_int(w - w / 2),
-                            h / 6 + a_random_int(h - h / 3));
     }
 }
 
@@ -150,7 +146,6 @@ static void initGame(ZStateGame* Game)
 
     spawnCrystals(Game, level);
     spawnBuildings(Game, level);
-    spawnWorkers(Game);
 
     z_util_level_free(level);
 }

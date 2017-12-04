@@ -104,6 +104,11 @@ void z_util_terrain_load(void)
                      0);
     }
 
+    terrain_init(Z_UTIL_TERRAIN_ROCK,
+                 0,
+                 z_util_colors_get(Z_UTIL_COLOR_PURPLE, 2));
+    instance_new(Z_UTIL_TERRAIN_ROCK, 1, sheet, 0, 51, 0);
+
     a_sprite_free(sheet);
 }
 
