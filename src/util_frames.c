@@ -45,8 +45,10 @@ void z_util_frames_load(void)
     loadFrames("buildingTurret", sh, 0, 51, 0);
     loadFrames("crystal", sh, 0, 0, 100);
     loadFrames("cursor", sh, 0, 104, 0);
-    loadFrames("cursorHoverUnit", sh, 13, 104, 200);
-    loadFrames("cursorSelectedUnit", sh, 28, 104, 200);
+    loadFrames("cursorUnitHover", sh, 13, 104, 200);
+    loadFrames("cursorUnitSelected", sh, 28, 104, 200);
+    loadFrames("cursorBuildingHover", sh, 79, 104, 200);
+    loadFrames("cursorBuildingSelected", sh, 102, 104, 200);
     loadFrames("workerUp", sh, 0, 68, 100);
     loadFrames("workerDown", sh, 0, 77, 100);
     loadFrames("workerLeft", sh, 0, 86, 100);

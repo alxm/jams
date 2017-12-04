@@ -38,10 +38,10 @@ void z_comp_cursor_init(ZCompCursor* Cursor)
     Cursor->unitSelected = NULL;
 
     Cursor->light[Z_COMP_CURSOR_UNIT_HOVER]
-        = z_util_frames_get("cursorHoverUnit");
+        = z_util_frames_get("cursorUnitHover");
 
     Cursor->light[Z_COMP_CURSOR_UNIT_SELECTED]
-        = z_util_frames_get("cursorSelectedUnit");
+        = z_util_frames_get("cursorUnitSelected");
 }
 
 void z_comp_cursor_free(void* Self)
