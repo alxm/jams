@@ -165,6 +165,11 @@ AColMap* z_state_game_getVolumeColMap(const ZStateGame* Game)
     return Game->volumeColMap;
 }
 
+AEntity* z_state_game_getMap(const ZStateGame* Game)
+{
+    return Game->map;
+}
+
 A_STATE(game)
 {
     static ZStateGame game;

@@ -18,7 +18,7 @@
 typedef struct ZCompGoal ZCompGoal;
 
 typedef enum {
-    Z_COMP_GOAL_STATE_INVALID = 1,
+    Z_COMP_GOAL_STATE_INVALID = -1,
     Z_COMP_GOAL_STATE_NONE,
     Z_COMP_GOAL_STATE_MOVE,
 } ZCompGoalState;
