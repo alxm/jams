@@ -1,4 +1,4 @@
-A_APP_NAME = mine-op-40
+A_APP_NAME = mineop40
 
 #
 # You can set A2X_PATH to a hard-coded value

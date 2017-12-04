@@ -50,6 +50,12 @@ static inline void pointUnpack(void* Point, int* X, int *Y)
     *Y = ((ptrdiff_t)Point >> 16) & 0xffff;
 }
 
+static void nop(AEntity* Entity, ZCompGoal* Goal)
+{
+    A_UNUSED(Entity);
+    A_UNUSED(Goal);
+}
+
 static bool aStar(ZCompMapTerrain* Terrain, ZCompMapBuildings* Buildings, int StartX, int StartY, int EndX, int EndY, int* NextX, int* NextY)
 {
     bool foundPath = false;
@@ -204,7 +210,14 @@ static void pathfind(AEntity* Entity, ZCompGoal* Goal)
     int destTileY = z_util_coords_intToTileInt(destY);
 
     if(currentX == destX && currentY == destY) {
-        z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_NONE);
+        AEntity* objective = z_comp_goal_getObjective(Goal);
+
+        if(objective && a_entity_hasComponent(objective, "tagCrystal")) {
+            z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_MINE);
+        } else {
+            z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_NONE);
+        }
+
         return;
     }
 
@@ -253,15 +266,37 @@ static void pathfind(AEntity* Entity, ZCompGoal* Goal)
     }
 }
 
+static void mine(AEntity* Entity, ZCompGoal* Goal)
+{
+    A_UNUSED(Entity);
+
+    z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_BRINGBACK);
+}
+
+static void bringback(AEntity* Entity, ZCompGoal* Goal)
+{
+    ZStateGame* game = a_entity_getContext(Entity);
+    AEntity* base = z_state_game_getBase(game);
+    ZCompPosition* basePos = a_entity_reqComponent(base, "position");
+
+    int baseX, baseY;
+    z_comp_position_getCoordsInt(basePos, &baseX, &baseY);
+
+    z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_PATHFINDING);
+    z_comp_goal_setDestCoords(Goal, baseX, baseY + Z_UTIL_COORDS_TILE_DIM);
+    z_comp_goal_setObjective(Goal, base);
+}
+
+void (*g_goalCallbacks[Z_COMP_GOAL_STATE_NUM])(AEntity*, ZCompGoal*) = {
+    nop,
+    pathfind,
+    mine,
+    bringback,
+};
+
 void z_system_goalTick(AEntity* Entity)
 {
     ZCompGoal* goal = a_entity_reqComponent(Entity, "goal");
 
-    switch(z_comp_goal_getState(goal)) {
-        case Z_COMP_GOAL_STATE_PATHFINDING: {
-            pathfind(Entity, goal);
-        } break;
-
-        default: return;
-    }
+    g_goalCallbacks[z_comp_goal_getState(goal)](Entity, goal);
 }

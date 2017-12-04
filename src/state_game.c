@@ -165,6 +165,11 @@ AEntity* z_state_game_getMap(const ZStateGame* Game)
     return Game->map;
 }
 
+AEntity* z_state_game_getBase(const ZStateGame* Game)
+{
+    return Game->base;
+}
+
 A_STATE(game)
 {
     static ZStateGame game;

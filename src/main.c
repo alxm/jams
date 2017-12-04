@@ -65,6 +65,7 @@ A_MAIN
     a_component_declare("position", z_comp_position_size(), NULL);
     a_component_declare("sprite", z_comp_sprite_size(), z_comp_sprite_free);
     a_component_declare("tagBuilding", 0, NULL);
+    a_component_declare("tagCrystal", 0, NULL);
     a_component_declare("tagWorker", 0, NULL);
     a_component_declare("velocity", z_comp_velocity_size(), NULL);
     a_component_declare("volume", z_comp_volume_size(), z_comp_volume_free);

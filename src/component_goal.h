@@ -21,6 +21,9 @@ typedef enum {
     Z_COMP_GOAL_STATE_INVALID = -1,
     Z_COMP_GOAL_STATE_NONE,
     Z_COMP_GOAL_STATE_PATHFINDING,
+    Z_COMP_GOAL_STATE_MINE,
+    Z_COMP_GOAL_STATE_BRINGBACK,
+    Z_COMP_GOAL_STATE_NUM
 } ZCompGoalState;
 
 extern size_t z_comp_goal_size(void);

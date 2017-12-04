@@ -44,5 +44,7 @@ AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
                        false,
                        false);
 
+    a_entity_addComponent(e, "tagCrystal");
+
     return e;
 }
