@@ -1,12 +1,17 @@
 #include <a2x.h>
 
+#include "state_game.h"
+
 #include "util_colors.h"
 #include "util_controls.h"
 #include "util_coords.h"
 #include "util_frames.h"
+#include "util_level.h"
+#include "util_terrain.h"
 
 #include "component_cursor.h"
 #include "component_goal.h"
+#include "component_mapterrain.h"
 #include "component_position.h"
 #include "component_volume.h"
 
@@ -36,41 +41,38 @@ static void handleClick(ZCompCursor* Cursor, ZCompPosition* Position, ZCompVolum
 
     int cursorRadius = z_comp_volume_getRadius(Volume);
 
-    bool hover = false;
+    z_comp_cursor_setHover(Cursor, NULL);
 
-    A_COL_ITERATE(z_comp_volume_getColObject(Volume), AEntity*, worker) {
-        ZCompPosition* position = a_entity_reqComponent(worker, "position");
-        ZCompVolume* volume = a_entity_reqComponent(worker, "volume");
+    A_COL_ITERATE(z_comp_volume_getColObject(Volume), AEntity*, unit) {
+        ZCompPosition* position = a_entity_reqComponent(unit, "position");
+        ZCompVolume* volume = a_entity_reqComponent(unit, "volume");
 
-        int workerX, workerY;
-        z_comp_position_getCoordsInt(position, &workerX, &workerY);
+        int unitX, unitY;
+        z_comp_position_getCoordsInt(position, &unitX, &unitY);
 
-        int workerRadius = z_comp_volume_getRadius(volume);
+        int unitRadius = z_comp_volume_getRadius(volume);
 
         if(a_collide_circleAndCircle(cursorX,
                                      cursorY,
                                      cursorRadius,
-                                     workerX,
-                                     workerY,
-                                     workerRadius)) {
+                                     unitX,
+                                     unitY,
+                                     unitRadius)) {
 
-            hover = true;
-            z_comp_cursor_setHover(Cursor, worker);
+            z_comp_cursor_setHover(Cursor, unit);
 
             if(a_touch_getTap(z_util_controls.mouse)) {
-                z_comp_cursor_setSelected(Cursor, worker);
+                z_comp_cursor_setSelected(Cursor, unit);
             }
 
             break;
         }
     }
 
-    if(!hover) {
-        z_comp_cursor_setHover(Cursor, NULL);
+    if(z_comp_cursor_getHover(Cursor) == NULL
+        && a_touch_getTap(z_util_controls.mouse)) {
 
-        if(a_touch_getTap(z_util_controls.mouse)) {
-            z_comp_cursor_setSelected(Cursor, NULL);
-        }
+        z_comp_cursor_setSelected(Cursor, NULL);
     }
 }
 
@@ -86,11 +88,21 @@ static void dispatchMission(ZCompCursor* Cursor, ZCompPosition* Position, AEntit
         int x, y;
         z_comp_position_getCoordsInt(Position, &x, &y);
 
-        z_comp_goal_setDestCoords(goal, x, y);
-        z_comp_goal_setObjective(goal, Objective);
-        z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_PATHFINDING);
+        int tileX = z_util_coords_intToTileInt(x);
+        int tileY = z_util_coords_intToTileInt(y);
+
+        ZStateGame* game = a_entity_getContext(Actor);
+        AEntity* map = z_state_game_getMap(game);
+        ZCompMapTerrain* mTerrain = a_entity_reqComponent(map, "mapTerrain");
+        ZUtilTerrainType t = z_comp_mapterrain_getType(mTerrain, tileX, tileY);
+
+        if(z_util_terrain_isWalkable(t)) {
+            z_comp_goal_setDestCoords(goal, x, y);
+            z_comp_goal_setObjective(goal, Objective);
+            z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_PATHFINDING);
+            z_comp_cursor_setSelected(Cursor, Actor);
+        }
     } else if(Actor != Objective) {
-        A_UNUSED(Cursor);
         //z_comp_cursor_setSelected(Cursor, Actor);
     }
 }
