@@ -42,6 +42,7 @@ A_SETUP
     a_settings_set("app.output.on", "yes");
     a_settings_set("app.output.verbose", "yes");
     a_settings_set("input.hideCursor", "yes");
+    a_settings_set("video.borderColor", "0x3e1d5f");
 }
 
 A_MAIN

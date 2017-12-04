@@ -17,6 +17,7 @@
 
 #include <a2x.h>
 
+#include "util_colors.h"
 #include "util_terrain.h"
 
 typedef enum {
@@ -37,9 +38,9 @@ typedef struct ZTerrain {
 
 static ZTerrain g_terrains[Z_UTIL_TERRAIN_NUM];
 
-static void instance_new(ZUtilTerrainType Terrain, int Chance, const ASprite* Sheet, int X, int Y)
+static void instance_new(ZUtilTerrainType Terrain, int Chance, const ASprite* Sheet, int X, int Y, unsigned MsPerFrame)
 {
-    unsigned ticksPerFrame = a_fps_msToFrames(1000);
+    unsigned ticksPerFrame = a_fps_msToFrames(MsPerFrame);
     ASpriteFrames* frames = a_spriteframes_new(Sheet, X, Y, ticksPerFrame);
 
     ZUtilTerrainInstance* instance = a_mem_malloc(sizeof(ZUtilTerrainInstance));
@@ -81,24 +82,26 @@ void z_util_terrain_load(void)
 
     terrain_init(Z_UTIL_TERRAIN_PLAIN,
                  Z_WALKABLE,
-                 a_pixel_hex(0xc9c9c9));
-    instance_new(Z_UTIL_TERRAIN_PLAIN, 2, sheet, 0, 0);
-    instance_new(Z_UTIL_TERRAIN_PLAIN, 1, sheet, 17, 0);
+                 z_util_colors_get(Z_UTIL_COLOR_GRAY_LAND, 2));
+    instance_new(Z_UTIL_TERRAIN_PLAIN, 30, sheet, 0, 0, 1000);
+    instance_new(Z_UTIL_TERRAIN_PLAIN, 2, sheet, 17, 0, 1000);
+    instance_new(Z_UTIL_TERRAIN_PLAIN, 1, sheet, 51, 0, 1000);
 
     terrain_init(Z_UTIL_TERRAIN_BUMPS,
                  0,
-                 a_pixel_hex(0x353535));
-    instance_new(Z_UTIL_TERRAIN_BUMPS, 1, sheet, 0, 17);
+                 z_util_colors_get(Z_UTIL_COLOR_PURPLE, 0));
+    instance_new(Z_UTIL_TERRAIN_BUMPS, 1, sheet, 17, 17, 500);
 
     terrain_init(Z_UTIL_TERRAIN_BUBBLES,
                  Z_WALKABLE,
-                 a_pixel_hex(0x7f7f7f));
-    for(int i = 0; i < 8; i++) {
+                 z_util_colors_get(Z_UTIL_COLOR_GRAY_LAND, 1));
+    for(int i = 0; i < 14; i++) {
         instance_new(Z_UTIL_TERRAIN_BUBBLES,
-                     i == 0 ? 21 : 1,
+                     1,
                      sheet,
                      i * 17,
-                     34);
+                     34,
+                     0);
     }
 
     a_sprite_free(sheet);
