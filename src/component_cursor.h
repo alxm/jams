@@ -18,11 +18,18 @@
 typedef struct ZCompCursor ZCompCursor;
 
 typedef enum {
-    Z_COMP_CURSOR_INVALID = -1,
-    Z_COMP_CURSOR_UNIT_HOVER,
-    Z_COMP_CURSOR_UNIT_SELECTED,
-    Z_COMP_CURSOR_NUM
+    Z_COMP_CURSOR_TYPE_INVALID = -1,
+    Z_COMP_CURSOR_TYPE_HOVER,
+    Z_COMP_CURSOR_TYPE_SELECTED,
+    Z_COMP_CURSOR_TYPE_NUM
 } ZCompCursorType;
+
+typedef enum {
+    Z_COMP_CURSOR_SIZE_INVALID = -1,
+    Z_COMP_CURSOR_SIZE_SMALL,
+    Z_COMP_CURSOR_SIZE_LARGE,
+    Z_COMP_CURSOR_SIZE_NUM,
+} ZCompCursorSize;
 
 extern size_t z_comp_cursor_size(void);
 extern void z_comp_cursor_init(ZCompCursor* Cursor);
@@ -35,4 +42,4 @@ extern AEntity* z_comp_cursor_getSelected(const ZCompCursor* Cursor);
 extern void z_comp_cursor_setSelected(ZCompCursor* Cursor, AEntity* Unit);
 
 extern void z_comp_cursor_lightTick(const ZCompCursor* Cursor);
-extern ASprite* z_comp_cursor_getLight(const ZCompCursor* Cursor, ZCompCursorType Type);
+extern ASprite* z_comp_cursor_getLight(const ZCompCursor* Cursor, ZCompCursorType Type, ZCompCursorSize Size);

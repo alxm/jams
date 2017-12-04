@@ -21,24 +21,29 @@
 
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_volume.h"
 
 #include "entity_building.h"
 
 AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X, int Y)
 {
     const char* id = NULL;
+    int rad = 0;
 
     switch(Type) {
         case Z_ENTITY_BUILDING_BASE: {
             id = "buildingBase";
+            rad = 7;
         } break;
 
         case Z_ENTITY_BUILDING_DEPOT: {
             id = "buildingDepot";
+            rad = 6;
         } break;
 
         case Z_ENTITY_BUILDING_TURRET: {
             id = "buildingTurret";
+            rad = 4;
         } break;
 
         default: break;
@@ -51,6 +56,11 @@ AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
     z_comp_sprite_init(sprite, id, Z_COMP_SPRITE_LAYER_BUILDINGS);
+
+    ZCompVolume* volume = a_entity_addComponent(e, "volume");
+    z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), X, Y, rad);
+
+    a_entity_addComponent(e, "tagBuilding");
 
     return e;
 }

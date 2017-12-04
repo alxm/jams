@@ -30,7 +30,7 @@ AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
 
-    ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
+    ZCompSprite* sprite = a_entity_addComponent(e, "sprite");
     z_comp_sprite_initEx(sprite,
                          "workerUp",
                          "workerDown",
@@ -40,6 +40,8 @@ AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
 
     ZCompVolume* volume = a_entity_addComponent(e, "volume");
     z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), X, Y, 4);
+
+    a_entity_addComponent(e, "tagWorker");
 
     return e;
 }

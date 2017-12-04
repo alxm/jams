@@ -24,7 +24,7 @@
 struct ZCompCursor {
     AEntity* unitHover; // unit that cursor is hovering over
     AEntity* unitSelected; // unit that cursor selected
-    ASpriteFrames* light[Z_COMP_CURSOR_NUM];
+    ASpriteFrames* lights[Z_COMP_CURSOR_TYPE_NUM][Z_COMP_CURSOR_SIZE_NUM];
 };
 
 size_t z_comp_cursor_size(void)
@@ -37,11 +37,17 @@ void z_comp_cursor_init(ZCompCursor* Cursor)
     Cursor->unitHover = NULL;
     Cursor->unitSelected = NULL;
 
-    Cursor->light[Z_COMP_CURSOR_UNIT_HOVER]
+    Cursor->lights[Z_COMP_CURSOR_TYPE_HOVER][Z_COMP_CURSOR_SIZE_SMALL]
         = z_util_frames_get("cursorUnitHover");
 
-    Cursor->light[Z_COMP_CURSOR_UNIT_SELECTED]
+    Cursor->lights[Z_COMP_CURSOR_TYPE_HOVER][Z_COMP_CURSOR_SIZE_LARGE]
+        = z_util_frames_get("cursorBuildingHover");
+
+    Cursor->lights[Z_COMP_CURSOR_TYPE_SELECTED][Z_COMP_CURSOR_SIZE_SMALL]
         = z_util_frames_get("cursorUnitSelected");
+
+    Cursor->lights[Z_COMP_CURSOR_TYPE_SELECTED][Z_COMP_CURSOR_SIZE_LARGE]
+        = z_util_frames_get("cursorBuildingSelected");
 }
 
 void z_comp_cursor_free(void* Self)
@@ -90,22 +96,31 @@ void z_comp_cursor_setSelected(ZCompCursor* Cursor, AEntity* Unit)
 
     if(Unit != NULL) {
         a_entity_reference(Unit);
-        a_spriteframes_reset(Cursor->light[Z_COMP_CURSOR_UNIT_SELECTED]);
+
+        for(ZCompCursorSize s = 0; s < Z_COMP_CURSOR_SIZE_NUM; s++) {
+            a_spriteframes_reset(
+                Cursor->lights[Z_COMP_CURSOR_TYPE_SELECTED][s]);
+        }
     }
 }
 
 void z_comp_cursor_lightTick(const ZCompCursor* Cursor)
 {
-    for(ZCompCursorType t = 0; t < Z_COMP_CURSOR_NUM; t++) {
-        a_spriteframes_next(Cursor->light[t]);
+    for(ZCompCursorType t = 0; t < Z_COMP_CURSOR_TYPE_NUM; t++) {
+        for(ZCompCursorSize s = 0; s < Z_COMP_CURSOR_SIZE_NUM; s++) {
+            a_spriteframes_next(Cursor->lights[t][s]);
+        }
     }
 
     if(Cursor->unitSelected == NULL) {
-        a_spriteframes_reset(Cursor->light[Z_COMP_CURSOR_UNIT_SELECTED]);
+        for(ZCompCursorSize s = 0; s < Z_COMP_CURSOR_SIZE_NUM; s++) {
+            a_spriteframes_reset(
+                Cursor->lights[Z_COMP_CURSOR_TYPE_SELECTED][s]);
+        }
     }
 }
 
-ASprite* z_comp_cursor_getLight(const ZCompCursor* Cursor, ZCompCursorType Type)
+ASprite* z_comp_cursor_getLight(const ZCompCursor* Cursor, ZCompCursorType Type, ZCompCursorSize Size)
 {
-    return a_spriteframes_getCurrent(Cursor->light[Type]);
+    return a_spriteframes_getCurrent(Cursor->lights[Type][Size]);
 }

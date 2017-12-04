@@ -83,7 +83,13 @@ static void drawUnderlight(const ZCompCursor* Cursor, ZCompCursorType Type, AEnt
     int unitX, unitY;
     z_comp_position_getCoordsInt(position, &unitX, &unitY);
 
-    ASprite* sprite = z_comp_cursor_getLight(Cursor, Type);
+    ZCompCursorSize size = Z_COMP_CURSOR_SIZE_SMALL;
+
+    if(a_entity_hasComponent(Unit, "tagBuilding")) {
+        size = Z_COMP_CURSOR_SIZE_LARGE;
+    }
+
+    ASprite* sprite = z_comp_cursor_getLight(Cursor, Type, size);
 
     a_sprite_blit(sprite,
                   unitX - a_sprite_getWidth(sprite) / 2,
@@ -102,10 +108,10 @@ void z_system_cursorDrawUnderside(AEntity* Entity)
     AEntity* selectedUnit = z_comp_cursor_getSelected(cursor);
 
     if(hoverUnit != NULL && hoverUnit != selectedUnit) {
-        drawUnderlight(cursor, Z_COMP_CURSOR_UNIT_HOVER, hoverUnit);
+        drawUnderlight(cursor, Z_COMP_CURSOR_TYPE_HOVER, hoverUnit);
     }
 
     if(selectedUnit != NULL) {
-        drawUnderlight(cursor, Z_COMP_CURSOR_UNIT_SELECTED, selectedUnit);
+        drawUnderlight(cursor, Z_COMP_CURSOR_TYPE_SELECTED, selectedUnit);
     }
 }
