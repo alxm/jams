@@ -17,11 +17,14 @@
 
 #include <a2x.h>
 
+#include "util_frames.h"
+
 #include "component_cursor.h"
 
 struct ZCompCursor {
     AEntity* unitHover; // unit that cursor is hovering over
     AEntity* unitSelected; // unit that cursor selected
+    ASpriteFrames* light[Z_COMP_CURSOR_NUM];
 };
 
 size_t z_comp_cursor_size(void)
@@ -33,6 +36,12 @@ void z_comp_cursor_init(ZCompCursor* Cursor)
 {
     Cursor->unitHover = NULL;
     Cursor->unitSelected = NULL;
+
+    Cursor->light[Z_COMP_CURSOR_UNIT_HOVER]
+        = z_util_frames_get("cursorHoverUnit");
+
+    Cursor->light[Z_COMP_CURSOR_UNIT_SELECTED]
+        = z_util_frames_get("cursorSelectedUnit");
 }
 
 void z_comp_cursor_free(void* Self)
@@ -81,5 +90,22 @@ void z_comp_cursor_setSelected(ZCompCursor* Cursor, AEntity* Unit)
 
     if(Unit != NULL) {
         a_entity_reference(Unit);
+        a_spriteframes_reset(Cursor->light[Z_COMP_CURSOR_UNIT_SELECTED]);
     }
+}
+
+void z_comp_cursor_lightTick(const ZCompCursor* Cursor)
+{
+    for(ZCompCursorType t = 0; t < Z_COMP_CURSOR_NUM; t++) {
+        a_spriteframes_next(Cursor->light[t]);
+    }
+
+    if(Cursor->unitSelected == NULL) {
+        a_spriteframes_reset(Cursor->light[Z_COMP_CURSOR_UNIT_SELECTED]);
+    }
+}
+
+ASprite* z_comp_cursor_getLight(const ZCompCursor* Cursor, ZCompCursorType Type)
+{
+    return a_spriteframes_getCurrent(Cursor->light[Type]);
 }

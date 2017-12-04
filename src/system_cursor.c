@@ -72,19 +72,18 @@ void z_system_cursorTick(AEntity* Entity)
             z_comp_cursor_setSelected(cursor, NULL);
         }
     }
+
+    z_comp_cursor_lightTick(cursor);
 }
 
-static void drawUnderlight(AEntity* Unit, const char* SpriteId)
+static void drawUnderlight(const ZCompCursor* Cursor, ZCompCursorType Type, AEntity* Unit)
 {
     ZCompPosition* position = a_entity_reqComponent(Unit, "position");
 
     int unitX, unitY;
     z_comp_position_getCoordsInt(position, &unitX, &unitY);
 
-    a_pixel_setBlend(A_PIXEL_BLEND_PLAIN);
-
-    ASpriteFrames* frames = z_util_frames_get(SpriteId);
-    ASprite* sprite = a_spriteframes_getCurrent(frames);
+    ASprite* sprite = z_comp_cursor_getLight(Cursor, Type);
 
     a_sprite_blit(sprite,
                   unitX - a_sprite_getWidth(sprite) / 2,
@@ -99,19 +98,14 @@ void z_system_cursorDrawUnderside(AEntity* Entity)
     int x, y;
     z_comp_position_getCoordsInt(position, &x, &y);
 
-    a_pixel_push();
-    a_pixel_setBlend(A_PIXEL_BLEND_ADD);
-
     AEntity* hoverUnit = z_comp_cursor_getHover(cursor);
     AEntity* selectedUnit = z_comp_cursor_getSelected(cursor);
 
     if(hoverUnit != NULL && hoverUnit != selectedUnit) {
-        drawUnderlight(hoverUnit, "cursorHoverUnit");
+        drawUnderlight(cursor, Z_COMP_CURSOR_UNIT_HOVER, hoverUnit);
     }
 
     if(selectedUnit != NULL) {
-        drawUnderlight(selectedUnit, "cursorSelectedUnit");
+        drawUnderlight(cursor, Z_COMP_CURSOR_UNIT_SELECTED, selectedUnit);
     }
-
-    a_pixel_pop();
 }
