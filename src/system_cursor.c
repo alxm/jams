@@ -88,7 +88,7 @@ static void dispatchMission(ZCompCursor* Cursor, ZCompPosition* Position, AEntit
 
         z_comp_goal_setDestCoords(goal, x, y);
         z_comp_goal_setObjective(goal, Objective);
-        z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_MOVE);
+        z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_PATHFINDING);
     } else if(Actor != Objective) {
         A_UNUSED(Cursor);
         //z_comp_cursor_setSelected(Cursor, Actor);

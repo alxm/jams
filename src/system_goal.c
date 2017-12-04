@@ -184,21 +184,15 @@ done:
     return foundPath;
 }
 
-void z_system_goalTick(AEntity* Entity)
+static void pathfind(AEntity* Entity, ZCompGoal* Goal)
 {
-    ZCompGoal* goal = a_entity_reqComponent(Entity, "goal");
-
-    if(z_comp_goal_getState(goal) == Z_COMP_GOAL_STATE_NONE) {
-        return;
-    }
-
     ZCompPosition* position = a_entity_reqComponent(Entity, "position");
 
     int currentX, currentY;
     z_comp_position_getCoordsInt(position, &currentX, &currentY);
 
     int destX, destY;
-    z_comp_goal_getDestCoords(goal, &destX, &destY);
+    z_comp_goal_getDestCoords(Goal, &destX, &destY);
 
     int currentTileX = z_util_coords_intToTileInt(currentX);
     int currentTileY = z_util_coords_intToTileInt(currentY);
@@ -206,50 +200,64 @@ void z_system_goalTick(AEntity* Entity)
     int destTileY = z_util_coords_intToTileInt(destY);
 
     if(currentX == destX && currentY == destY) {
-        z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_NONE);
+        z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_NONE);
+        return;
+    }
+
+    ZStateGame* game = a_entity_getContext(Entity);
+    AEntity* map = z_state_game_getMap(game);
+    ZCompMapTerrain* terrain = a_entity_reqComponent(map, "mapTerrain");
+    int nextTileX, nextTileY;
+
+    bool foundPath = aStar(terrain,
+                           currentTileX,
+                           currentTileY,
+                           destTileX,
+                           destTileY,
+                           &nextTileX,
+                           &nextTileY);
+
+    int targetX, targetY;
+
+    if(foundPath) {
+        targetX = z_util_coords_tileMid(nextTileX);
+        targetY = z_util_coords_tileMid(nextTileY);
+    } else if(z_comp_goal_hasNextCoords(Goal)) {
+        z_comp_goal_getNextCoords(Goal, &targetX, &targetY);
     } else {
-        ZStateGame* game = a_entity_getContext(Entity);
-        AEntity* map = z_state_game_getMap(game);
-        ZCompMapTerrain* terrain = a_entity_reqComponent(map, "mapTerrain");
-        int nextTileX, nextTileY;
+        z_comp_goal_clearNextCoords(Goal);
+        return;
+    }
 
-        bool foundPath = aStar(terrain,
-                               currentTileX,
-                               currentTileY,
-                               destTileX,
-                               destTileY,
-                               &nextTileX,
-                               &nextTileY);
+    if(nextTileX == destTileX && nextTileY == destTileY) {
+        targetX = destX;
+        targetY = destY;
+    }
 
-        int targetX, targetY;
+    z_comp_goal_setNextCoords(Goal, targetX, targetY);
 
-        if(foundPath) {
-            targetX = z_util_coords_tileMid(nextTileX);
-            targetY = z_util_coords_tileMid(nextTileY);
-        } else if(z_comp_goal_hasNextCoords(goal)) {
-            z_comp_goal_getNextCoords(goal, &targetX, &targetY);
-        } else {
-            z_comp_goal_clearNextCoords(goal);
-            return;
-        }
+    if(currentX < targetX) {
+        z_entity_macro_moveRight(Entity);
+    } else if(currentX > targetX) {
+        z_entity_macro_moveLeft(Entity);
+    }
 
-        if(nextTileX == destTileX && nextTileY == destTileY) {
-            targetX = destX;
-            targetY = destY;
-        }
+    if(currentY < targetY) {
+        z_entity_macro_moveDown(Entity);
+    } else if(currentY > targetY) {
+        z_entity_macro_moveUp(Entity);
+    }
+}
 
-        z_comp_goal_setNextCoords(goal, targetX, targetY);
+void z_system_goalTick(AEntity* Entity)
+{
+    ZCompGoal* goal = a_entity_reqComponent(Entity, "goal");
 
-        if(currentX < targetX) {
-            z_entity_macro_moveRight(Entity);
-        } else if(currentX > targetX) {
-            z_entity_macro_moveLeft(Entity);
-        }
+    switch(z_comp_goal_getState(goal)) {
+        case Z_COMP_GOAL_STATE_PATHFINDING: {
+            pathfind(Entity, goal);
+        } break;
 
-        if(currentY < targetY) {
-            z_entity_macro_moveDown(Entity);
-        } else if(currentY > targetY) {
-            z_entity_macro_moveUp(Entity);
-        }
+        default: return;
     }
 }
