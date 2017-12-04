@@ -34,7 +34,7 @@ static void updateMouseCoords(ZCompPosition* Position, ZCompVolume* Volume)
     z_comp_volume_setCoords(Volume, x, y);
 }
 
-static void handleClick(ZCompCursor* Cursor, ZCompPosition* Position, ZCompVolume* Volume)
+static void handlePosition(ZCompCursor* Cursor, ZCompPosition* Position, ZCompVolume* Volume)
 {
     int cursorX, cursorY;
     z_comp_position_getCoordsInt(Position, &cursorX, &cursorY);
@@ -60,52 +60,54 @@ static void handleClick(ZCompCursor* Cursor, ZCompPosition* Position, ZCompVolum
                                      unitRadius)) {
 
             z_comp_cursor_setHover(Cursor, unit);
-
-            if(z_comp_volume_isSelectable(volume)
-                && a_touch_getTap(z_util_controls.mouse)) {
-
-                z_comp_cursor_setSelected(Cursor, unit);
-            }
-
             break;
         }
     }
-
-    if(z_comp_cursor_getHover(Cursor) == NULL
-        && a_touch_getTap(z_util_controls.mouse)) {
-
-        z_comp_cursor_setSelected(Cursor, NULL);
-    }
 }
 
-static void dispatchMission(ZCompCursor* Cursor, ZCompPosition* Position, AEntity* Actor, AEntity* Objective)
+static void dispatchMission(ZStateGame* Game, ZCompCursor* Cursor, ZCompPosition* Position)
 {
-    if(Objective == NULL) {
-        ZCompGoal* goal = a_entity_getComponent(Actor, "goal");
+    AEntity* hoverUnit = z_comp_cursor_getHover(Cursor);
+    AEntity* selectedUnit = z_comp_cursor_getSelected(Cursor);
 
-        if(goal == NULL) {
-            return;
+    int cursorX, cursorY;
+    z_comp_position_getCoordsInt(Position, &cursorX, &cursorY);
+
+    if(hoverUnit != NULL) {
+        ZCompVolume* volume = a_entity_reqComponent(hoverUnit, "volume");
+
+        if(z_comp_volume_isSelectable(volume)) {
+            z_comp_cursor_setSelected(Cursor, hoverUnit);
+        } else if(selectedUnit != NULL) {
+            ZCompGoal* goal = a_entity_getComponent(selectedUnit, "goal");
+
+            if(goal) {
+                z_comp_goal_setDestCoords(goal, cursorX, cursorY);
+                z_comp_goal_setObjective(goal, hoverUnit);
+                z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_PATHFINDING);
+            }
         }
+    } else if(selectedUnit != NULL) {
+        int cursorTileX = z_util_coords_intToTileInt(cursorX);
+        int cursorTileY = z_util_coords_intToTileInt(cursorY);
 
-        int x, y;
-        z_comp_position_getCoordsInt(Position, &x, &y);
+        AEntity* map = z_state_game_getMap(Game);
+        ZCompMapTerrain* mapTerrain = a_entity_reqComponent(map, "mapTerrain");
+        ZUtilTerrainType terrain = z_comp_mapterrain_getType(mapTerrain,
+                                                             cursorTileX,
+                                                             cursorTileY);
 
-        int tileX = z_util_coords_intToTileInt(x);
-        int tileY = z_util_coords_intToTileInt(y);
+        if(z_util_terrain_isWalkable(terrain)) {
+            ZCompGoal* goal = a_entity_getComponent(selectedUnit, "goal");
 
-        ZStateGame* game = a_entity_getContext(Actor);
-        AEntity* map = z_state_game_getMap(game);
-        ZCompMapTerrain* mTerrain = a_entity_reqComponent(map, "mapTerrain");
-        ZUtilTerrainType t = z_comp_mapterrain_getType(mTerrain, tileX, tileY);
-
-        if(z_util_terrain_isWalkable(t)) {
-            z_comp_goal_setDestCoords(goal, x, y);
-            z_comp_goal_setObjective(goal, Objective);
-            z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_PATHFINDING);
-            z_comp_cursor_setSelected(Cursor, Actor);
+            if(goal) {
+                z_comp_goal_setDestCoords(goal, cursorX, cursorY);
+                z_comp_goal_setObjective(goal, hoverUnit);
+                z_comp_goal_setState(goal, Z_COMP_GOAL_STATE_PATHFINDING);
+            }
+        } else {
+            z_comp_cursor_setSelected(Cursor, NULL);
         }
-    } else if(Actor != Objective) {
-        //z_comp_cursor_setSelected(Cursor, Actor);
     }
 }
 
@@ -115,16 +117,14 @@ void z_system_cursorTick(AEntity* Entity)
     ZCompPosition* position = a_entity_reqComponent(Entity, "position");
     ZCompVolume* volume = a_entity_reqComponent(Entity, "volume");
 
-    AEntity* oldSelected = z_comp_cursor_getSelected(cursor);
-
     updateMouseCoords(position, volume);
-    handleClick(cursor, position, volume);
-    z_comp_cursor_lightTick(cursor);
+    handlePosition(cursor, position, volume);
 
-    if(oldSelected != NULL) {
-        AEntity* newSelected = z_comp_cursor_getSelected(cursor);
-        dispatchMission(cursor, position, oldSelected, newSelected);
+    if(a_touch_getTap(z_util_controls.mouse)) {
+        dispatchMission(a_entity_getContext(Entity), cursor, position);
     }
+
+    z_comp_cursor_lightTick(cursor);
 }
 
 static void drawUnderlight(const ZCompCursor* Cursor, ZCompCursorType Type, AEntity* Unit)
