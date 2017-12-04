@@ -54,7 +54,8 @@ AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
                        X,
                        Y,
                        4,
-                       false);
+                       false,
+                       true);
 
     a_entity_addComponent(e, "tagWorker");
 

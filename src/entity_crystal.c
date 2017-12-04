@@ -23,6 +23,7 @@
 
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_volume.h"
 
 AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
 {
@@ -33,6 +34,15 @@ AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
 
     ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
     z_comp_sprite_init(sprite, "crystal", Z_COMP_SPRITE_LAYER_UNITS);
+
+    ZCompVolume* volume = a_entity_addComponent(e, "volume");
+    z_comp_volume_init(volume,
+                       z_state_game_getVolumeColMap(Game),
+                       X,
+                       Y,
+                       5,
+                       false,
+                       false);
 
     return e;
 }

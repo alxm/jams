@@ -67,7 +67,8 @@ AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X
                        X,
                        Y,
                        rad,
-                       true);
+                       true,
+                       false);
 
     a_entity_addComponent(e, "tagBuilding");
 

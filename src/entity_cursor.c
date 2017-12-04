@@ -49,6 +49,7 @@ AEntity* z_entity_cursor_new(ZStateGame* Game)
                        x,
                        y,
                        1,
+                       false,
                        false);
 
     return e;

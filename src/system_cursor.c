@@ -61,7 +61,9 @@ static void handleClick(ZCompCursor* Cursor, ZCompPosition* Position, ZCompVolum
 
             z_comp_cursor_setHover(Cursor, unit);
 
-            if(a_touch_getTap(z_util_controls.mouse)) {
+            if(z_comp_volume_isSelectable(volume)
+                && a_touch_getTap(z_util_controls.mouse)) {
+
                 z_comp_cursor_setSelected(Cursor, unit);
             }
 

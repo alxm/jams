@@ -23,6 +23,7 @@ struct ZCompVolume {
     int radius;
     AColObject* colobj;
     bool isObstacle;
+    bool isSelectable;
 };
 
 size_t z_comp_volume_size(void)
@@ -30,11 +31,12 @@ size_t z_comp_volume_size(void)
     return sizeof(ZCompVolume);
 }
 
-void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, int X, int Y, int Radius, bool IsObstacle)
+void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, int X, int Y, int Radius, bool IsObstacle, bool IsSelectable)
 {
     Volume->radius = Radius;
     Volume->colobj = a_colobject_new(ColMap, a_component_getEntity(Volume));
     Volume->isObstacle = IsObstacle;
+    Volume->isSelectable = IsSelectable;
 
     a_colobject_setCoords(Volume->colobj, X, Y);
 }
@@ -63,4 +65,9 @@ void z_comp_volume_setCoords(const ZCompVolume* Volume, AFix X, AFix Y)
 bool z_comp_volume_isObstacle(const ZCompVolume* Volume)
 {
     return Volume->isObstacle;
+}
+
+bool z_comp_volume_isSelectable(const ZCompVolume* Volume)
+{
+    return Volume->isSelectable;
 }
