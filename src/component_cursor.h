@@ -21,5 +21,8 @@ extern size_t z_comp_cursor_size(void);
 extern void z_comp_cursor_init(ZCompCursor* Cursor);
 extern AFree z_comp_cursor_free;
 
+extern AEntity* z_comp_cursor_getHover(const ZCompCursor* Cursor);
+extern void z_comp_cursor_setHover(ZCompCursor* Cursor, AEntity* Unit);
+
 extern AEntity* z_comp_cursor_getSelected(const ZCompCursor* Cursor);
 extern void z_comp_cursor_setSelected(ZCompCursor* Cursor, AEntity* Unit);

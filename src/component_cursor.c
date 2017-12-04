@@ -20,7 +20,8 @@
 #include "component_cursor.h"
 
 struct ZCompCursor {
-    AEntity* selectedUnit;
+    AEntity* unitHover; // unit that cursor is hovering over
+    AEntity* unitSelected; // unit that cursor selected
 };
 
 size_t z_comp_cursor_size(void)
@@ -30,29 +31,55 @@ size_t z_comp_cursor_size(void)
 
 void z_comp_cursor_init(ZCompCursor* Cursor)
 {
-    Cursor->selectedUnit = NULL;
+    Cursor->unitHover = NULL;
+    Cursor->unitSelected = NULL;
 }
 
 void z_comp_cursor_free(void* Self)
 {
     ZCompCursor* cursor = Self;
 
-    if(cursor->selectedUnit != NULL) {
-        a_entity_release(cursor->selectedUnit);
+    if(cursor->unitHover != NULL) {
+        a_entity_release(cursor->unitHover);
+    }
+
+    if(cursor->unitSelected != NULL) {
+        a_entity_release(cursor->unitSelected);
+    }
+}
+
+AEntity* z_comp_cursor_getHover(const ZCompCursor* Cursor)
+{
+    return Cursor->unitHover;
+}
+
+void z_comp_cursor_setHover(ZCompCursor* Cursor, AEntity* Unit)
+{
+    if(Cursor->unitHover != NULL) {
+        a_entity_release(Cursor->unitHover);
+    }
+
+    Cursor->unitHover = Unit;
+
+    if(Unit != NULL) {
+        a_entity_reference(Unit);
     }
 }
 
 AEntity* z_comp_cursor_getSelected(const ZCompCursor* Cursor)
 {
-    return Cursor->selectedUnit;
+    return Cursor->unitSelected;
 }
 
 void z_comp_cursor_setSelected(ZCompCursor* Cursor, AEntity* Unit)
 {
-    if(Cursor->selectedUnit != NULL) {
-        a_entity_release(Cursor->selectedUnit);
+    if(Cursor->unitSelected != NULL) {
+        a_entity_release(Cursor->unitSelected);
     }
 
-    Cursor->selectedUnit = Unit;
-    a_entity_reference(Cursor->selectedUnit);
+    Cursor->unitSelected = Unit;
+
+    if(Unit != NULL) {
+        a_entity_reference(Unit);
+    }
 }

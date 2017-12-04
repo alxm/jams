@@ -124,10 +124,10 @@ static void spawnBuildings(ZStateGame* Game, const ZUtilLevel* Level)
 
 static void spawnWorkers(ZStateGame* Game)
 {
-    for(int i = 8; i--; ) {
+    for(int i = 16; i--; ) {
         z_entity_worker_new(Game,
-                            a_random_int(a_screen_getWidth()),
-                            a_random_int(a_screen_getHeight()));
+                            80 + a_random_int(a_screen_getWidth() - 160),
+                            40 + a_random_int(a_screen_getHeight() - 80));
     }
 }
 
