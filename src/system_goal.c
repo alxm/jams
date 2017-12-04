@@ -28,6 +28,8 @@
 #include "component_position.h"
 #include "component_volume.h"
 
+#include "entity_macros.h"
+
 typedef struct {
     void* parentCoords;
     int fromStartToHere;
@@ -219,32 +221,35 @@ void z_system_goalTick(AEntity* Entity)
                                &nextTileX,
                                &nextTileY);
 
-        if(!foundPath) {
+        int targetX, targetY;
+
+        if(foundPath) {
+            targetX = z_util_coords_tileMid(nextTileX);
+            targetY = z_util_coords_tileMid(nextTileY);
+        } else if(z_comp_goal_hasNextCoords(goal)) {
+            z_comp_goal_getNextCoords(goal, &targetX, &targetY);
+        } else {
+            z_comp_goal_clearNextCoords(goal);
             return;
         }
 
-        int targetX = z_util_coords_tileMid(nextTileX);
-        int targetY = z_util_coords_tileMid(nextTileY);
+        if(nextTileX == destTileX && nextTileY == destTileY) {
+            targetX = destX;
+            targetY = destY;
+        }
+
         z_comp_goal_setNextCoords(goal, targetX, targetY);
 
-        AFix xf, yf;
-        z_comp_position_getCoordsFix(position, &xf, &yf);
-
         if(currentX < targetX) {
-            xf += A_FIX_ONE / 2;
+            z_entity_macro_moveRight(Entity);
         } else if(currentX > targetX) {
-            xf -= A_FIX_ONE / 2;
+            z_entity_macro_moveLeft(Entity);
         }
 
         if(currentY < targetY) {
-            yf += A_FIX_ONE / 2;
+            z_entity_macro_moveDown(Entity);
         } else if(currentY > targetY) {
-            yf -= A_FIX_ONE / 2;
+            z_entity_macro_moveUp(Entity);
         }
-
-        ZCompVolume* volume = a_entity_reqComponent(Entity, "volume");
-
-        z_comp_position_setCoords(position, xf, yf);
-        z_comp_volume_setCoords(volume, xf, yf);
     }
 }

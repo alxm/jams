@@ -18,9 +18,10 @@
 typedef struct ZCompVolume ZCompVolume;
 
 extern size_t z_comp_volume_size(void);
-extern void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, int X, int Y, int Radius);
+extern void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, int X, int Y, int Radius, bool IsObstacle);
 extern AFree z_comp_volume_free;
 
 extern int z_comp_volume_getRadius(const ZCompVolume* Volume);
 extern AColObject* z_comp_volume_getColObject(const ZCompVolume* Volume);
 extern void z_comp_volume_setCoords(const ZCompVolume* Volume, AFix X, AFix Y);
+extern bool z_comp_volume_isObstacle(const ZCompVolume* Volume);

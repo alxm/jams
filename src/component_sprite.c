@@ -17,14 +17,15 @@
 
 #include <a2x.h>
 
+#include "util_coords.h"
 #include "util_frames.h"
 
 #include "component_sprite.h"
 
 struct ZCompSprite {
     ZCompSpriteLayer layer;
-    ZCompSpriteDirection direction;
-    ASpriteFrames* frames[Z_COMP_SPRITE_DIR_NUM];
+    ZUtilDirection direction;
+    ASpriteFrames* frames[Z_UTIL_DIRECTION_NUM];
     AFix offsetX, offsetY;
 };
 
@@ -41,12 +42,12 @@ void z_comp_sprite_init(ZCompSprite* Sprite, const char* Id, ZCompSpriteLayer La
 void z_comp_sprite_initEx(ZCompSprite* Sprite, const char* Up, const char* Down, const char* Left, const char* Right, ZCompSpriteLayer Layer)
 {
     Sprite->layer = Layer;
-    Sprite->direction = a_random_int(Z_COMP_SPRITE_DIR_NUM);
+    Sprite->direction = a_random_int(Z_UTIL_DIRECTION_NUM);
 
-    Sprite->frames[Z_COMP_SPRITE_DIR_UP] = z_util_frames_dup(Up);
-    Sprite->frames[Z_COMP_SPRITE_DIR_DOWN] = z_util_frames_dup(Down);
-    Sprite->frames[Z_COMP_SPRITE_DIR_LEFT] = z_util_frames_dup(Left);
-    Sprite->frames[Z_COMP_SPRITE_DIR_RIGHT] = z_util_frames_dup(Right);
+    Sprite->frames[Z_UTIL_DIRECTION_UP] = z_util_frames_dup(Up);
+    Sprite->frames[Z_UTIL_DIRECTION_DOWN] = z_util_frames_dup(Down);
+    Sprite->frames[Z_UTIL_DIRECTION_LEFT] = z_util_frames_dup(Left);
+    Sprite->frames[Z_UTIL_DIRECTION_RIGHT] = z_util_frames_dup(Right);
 
     Sprite->offsetX = 0;
     Sprite->offsetY = 0;
@@ -56,7 +57,7 @@ void z_comp_sprite_free(void* Self)
 {
     ZCompSprite* sprite = Self;
 
-    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
+    for(ZUtilDirection d = Z_UTIL_DIRECTION_NUM; d--; ) {
         a_spriteframes_free(sprite->frames[d], false);
     }
 }
@@ -66,7 +67,7 @@ ZCompSpriteLayer z_comp_sprite_getLayer(const ZCompSprite* Sprite)
     return Sprite->layer;
 }
 
-void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZCompSpriteDirection Direction)
+void z_comp_sprite_setDirection(ZCompSprite* Sprite, ZUtilDirection Direction)
 {
     Sprite->direction = Direction;
 }
@@ -90,7 +91,7 @@ ASprite* z_comp_sprite_getSprite(const ZCompSprite* Sprite)
 
 void z_comp_sprite_tickFrame(const ZCompSprite* Sprite)
 {
-    for(ZCompSpriteDirection d = Z_COMP_SPRITE_DIR_NUM; d--; ) {
+    for(ZUtilDirection d = Z_UTIL_DIRECTION_NUM; d--; ) {
         a_spriteframes_next(Sprite->frames[d]);
     }
 }

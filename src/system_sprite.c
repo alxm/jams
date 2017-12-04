@@ -17,6 +17,8 @@
 
 #include <a2x.h>
 
+#include "util_coords.h"
+
 #include "component_position.h"
 #include "component_sprite.h"
 

@@ -17,22 +17,26 @@
 
 #include <a2x.h>
 
-#include "state_game.h"
+#include "component_velocity.h"
 
-#include "util_coords.h"
+struct ZCompVelocity {
+    AFix dx;
+    AFix dy;
+};
 
-#include "component_position.h"
-#include "component_sprite.h"
-
-AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
+size_t z_comp_velocity_size(void)
 {
-    AEntity* e = a_entity_new("crystal", Game);
+    return sizeof(ZCompVelocity);
+}
 
-    ZCompPosition* position = a_entity_addComponent(e, "position");
-    z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
+void z_comp_velocity_getDelta(const ZCompVelocity* Velocity, AFix* Dx, AFix* Dy)
+{
+    *Dx = Velocity->dx;
+    *Dy = Velocity->dy;
+}
 
-    ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, "crystal", Z_COMP_SPRITE_LAYER_UNITS);
-
-    return e;
+void z_comp_velocity_setDelta(ZCompVelocity* Velocity, AFix Dx, AFix Dy)
+{
+    Velocity->dx = Dx;
+    Velocity->dy = Dy;
 }

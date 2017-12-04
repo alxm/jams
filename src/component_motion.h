@@ -15,24 +15,19 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
+typedef struct ZCompMotion ZCompMotion;
 
-#include "state_game.h"
+typedef enum {
+    Z_COMP_MOTION_STATE_INVALID = -1,
+    Z_COMP_MOTION_STATE_RESTING,
+    Z_COMP_MOTION_STATE_MOVING,
+    Z_COMP_MOTION_STATE_BLOCKED,
+} ZCompMotionState;
 
-#include "util_coords.h"
+extern size_t z_comp_motion_size(void);
 
-#include "component_position.h"
-#include "component_sprite.h"
+extern ZCompMotionState z_comp_motion_getState(const ZCompMotion* Motion);
+extern void z_comp_motion_setState(ZCompMotion* Motion, ZCompMotionState State);
 
-AEntity* z_entity_crystal_new(ZStateGame* Game, int X, int Y)
-{
-    AEntity* e = a_entity_new("crystal", Game);
-
-    ZCompPosition* position = a_entity_addComponent(e, "position");
-    z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
-
-    ZCompSprite* sprite =  a_entity_addComponent(e, "sprite");
-    z_comp_sprite_init(sprite, "crystal", Z_COMP_SPRITE_LAYER_UNITS);
-
-    return e;
-}
+extern ZUtilDirection z_comp_motion_getDirection(const ZCompMotion* Motion);
+extern void z_comp_motion_setDirection(ZCompMotion* Motion, ZUtilDirection Direction);

@@ -33,7 +33,7 @@ size_t z_comp_goal_size(void)
 
 void z_comp_goal_init(ZCompGoal* Goal)
 {
-    A_UNUSED(Goal);
+    z_comp_goal_clearNextCoords(Goal);
 }
 
 void z_comp_goal_free(void* Self)
@@ -77,6 +77,17 @@ void z_comp_goal_setNextCoords(ZCompGoal* Goal, int NextX, int NextY)
 {
     Goal->nextX = NextX;
     Goal->nextY = NextY;
+}
+
+void z_comp_goal_clearNextCoords(ZCompGoal* Goal)
+{
+    Goal->nextX = -1;
+    Goal->nextY = -1;
+}
+
+bool z_comp_goal_hasNextCoords(const ZCompGoal* Goal)
+{
+    return Goal->nextX != -1 && Goal->nextY != -1;
 }
 
 AEntity* z_comp_goal_getObjective(const ZCompGoal* Goal)

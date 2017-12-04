@@ -22,6 +22,7 @@
 struct ZCompVolume {
     int radius;
     AColObject* colobj;
+    bool isObstacle;
 };
 
 size_t z_comp_volume_size(void)
@@ -29,10 +30,11 @@ size_t z_comp_volume_size(void)
     return sizeof(ZCompVolume);
 }
 
-void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, int X, int Y, int Radius)
+void z_comp_volume_init(ZCompVolume* Volume, AColMap* ColMap, int X, int Y, int Radius, bool IsObstacle)
 {
     Volume->radius = Radius;
     Volume->colobj = a_colobject_new(ColMap, a_component_getEntity(Volume));
+    Volume->isObstacle = IsObstacle;
 
     a_colobject_setCoords(Volume->colobj, X, Y);
 }
@@ -56,4 +58,9 @@ AColObject* z_comp_volume_getColObject(const ZCompVolume* Volume)
 void z_comp_volume_setCoords(const ZCompVolume* Volume, AFix X, AFix Y)
 {
     a_colobject_setCoords(Volume->colobj, a_fix_fixtoi(X), a_fix_fixtoi(Y));
+}
+
+bool z_comp_volume_isObstacle(const ZCompVolume* Volume)
+{
+    return Volume->isObstacle;
 }

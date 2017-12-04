@@ -19,6 +19,8 @@
 
 #include "state_game.h"
 
+#include "util_coords.h"
+
 #include "component_cursor.h"
 #include "component_position.h"
 #include "component_sprite.h"
@@ -42,7 +44,12 @@ AEntity* z_entity_cursor_new(ZStateGame* Game)
     z_comp_sprite_setOffset(sprite, A_FIX_ONE / 2, A_FIX_ONE / 2);
 
     ZCompVolume* volume = a_entity_addComponent(e, "volume");
-    z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), x, y, 1);
+    z_comp_volume_init(volume,
+                       z_state_game_getVolumeColMap(Game),
+                       x,
+                       y,
+                       1,
+                       false);
 
     return e;
 }

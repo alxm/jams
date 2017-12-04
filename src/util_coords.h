@@ -15,6 +15,15 @@
     along with Mine Op 40.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+typedef enum {
+    Z_UTIL_DIRECTION_INVALID = -1,
+    Z_UTIL_DIRECTION_UP,
+    Z_UTIL_DIRECTION_DOWN,
+    Z_UTIL_DIRECTION_LEFT,
+    Z_UTIL_DIRECTION_RIGHT,
+    Z_UTIL_DIRECTION_NUM
+} ZUtilDirection;
+
 #define Z_UTIL_COORDS_TILE_SHIFT (4)
 #define Z_UTIL_COORDS_TILE_DIM   (1 << Z_UTIL_COORDS_TILE_SHIFT)
 #define Z_UTIL_COORDS_TILE_MASK  (Z_UTIL_COORDS_TILE_DIM - 1)

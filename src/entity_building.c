@@ -19,6 +19,8 @@
 
 #include "state_game.h"
 
+#include "util_coords.h"
+
 #include "component_position.h"
 #include "component_sprite.h"
 #include "component_volume.h"
@@ -58,7 +60,12 @@ AEntity* z_entity_building_new(ZStateGame* Game, ZEntityBuildingType Type, int X
     z_comp_sprite_init(sprite, id, Z_COMP_SPRITE_LAYER_BUILDINGS);
 
     ZCompVolume* volume = a_entity_addComponent(e, "volume");
-    z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), X, Y, rad);
+    z_comp_volume_init(volume,
+                       z_state_game_getVolumeColMap(Game),
+                       X,
+                       Y,
+                       rad,
+                       true);
 
     a_entity_addComponent(e, "tagBuilding");
 

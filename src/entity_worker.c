@@ -19,6 +19,8 @@
 
 #include "state_game.h"
 
+#include "util_coords.h"
+
 #include "component_goal.h"
 #include "component_position.h"
 #include "component_sprite.h"
@@ -31,6 +33,8 @@ AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
     ZCompGoal* goal = a_entity_addComponent(e, "goal");
     z_comp_goal_init(goal);
 
+    a_entity_addComponent(e, "motion");
+
     ZCompPosition* position = a_entity_addComponent(e, "position");
     z_comp_position_init(position, a_fix_itofix(X), a_fix_itofix(Y));
 
@@ -42,8 +46,15 @@ AEntity* z_entity_worker_new(ZStateGame* Game, int X, int Y)
                          "workerRight",
                          Z_COMP_SPRITE_LAYER_UNITS);
 
+    a_entity_addComponent(e, "velocity");
+
     ZCompVolume* volume = a_entity_addComponent(e, "volume");
-    z_comp_volume_init(volume, z_state_game_getVolumeColMap(Game), X, Y, 4);
+    z_comp_volume_init(volume,
+                       z_state_game_getVolumeColMap(Game),
+                       X,
+                       Y,
+                       4,
+                       true);
 
     a_entity_addComponent(e, "tagWorker");
 

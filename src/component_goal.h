@@ -35,6 +35,8 @@ extern void z_comp_goal_setDestCoords(ZCompGoal* Goal, int DestX, int DestY);
 
 extern void z_comp_goal_getNextCoords(const ZCompGoal* Goal, int* NextX, int* NextY);
 extern void z_comp_goal_setNextCoords(ZCompGoal* Goal, int NextX, int NextY);
+extern void z_comp_goal_clearNextCoords(ZCompGoal* Goal);
+extern bool z_comp_goal_hasNextCoords(const ZCompGoal* Goal);
 
 extern AEntity* z_comp_goal_getObjective(const ZCompGoal* Goal);
 extern void z_comp_goal_setObjective(ZCompGoal* Goal, AEntity* Objective);

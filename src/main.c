@@ -20,6 +20,7 @@
 #include "state_game.h"
 #include "state_load.h"
 
+#include "util_coords.h"
 #include "util_level.h"
 #include "util_terrain.h"
 
@@ -27,13 +28,16 @@
 #include "component_goal.h"
 #include "component_mapgfx.h"
 #include "component_mapterrain.h"
+#include "component_motion.h"
 #include "component_position.h"
 #include "component_sprite.h"
+#include "component_velocity.h"
 #include "component_volume.h"
 
 #include "system_cursor.h"
 #include "system_goal.h"
 #include "system_map.h"
+#include "system_move.h"
 #include "system_sprite.h"
 
 A_SETUP
@@ -53,15 +57,18 @@ A_MAIN
     a_component_declare("goal", z_comp_goal_size(), z_comp_goal_free);
     a_component_declare("mapGfx", z_comp_mapgfx_size(), z_comp_mapgfx_free);
     a_component_declare("mapTerrain", z_comp_mapterrain_size(), z_comp_mapterrain_free);
+    a_component_declare("motion", z_comp_motion_size(), NULL);
     a_component_declare("position", z_comp_position_size(), NULL);
     a_component_declare("sprite", z_comp_sprite_size(), z_comp_sprite_free);
     a_component_declare("tagBuilding", 0, NULL);
     a_component_declare("tagWorker", 0, NULL);
+    a_component_declare("velocity", z_comp_velocity_size(), NULL);
     a_component_declare("volume", z_comp_volume_size(), z_comp_volume_free);
 
     a_system_declare("tickCursor", "cursor", z_system_cursorTick, NULL, false);
     a_system_declare("tickGoal", "goal", z_system_goalTick, NULL, false);
     a_system_declare("tickMapFrame", "mapGfx", z_system_mapFrame, NULL, false);
+    a_system_declare("tickMove", "position velocity", z_system_move, NULL, false);
     a_system_declare("tickSpriteFrame", "sprite", z_system_spriteTickFrame, NULL, false);
 
     a_system_declare("drawCursorUnderside", "cursor", z_system_cursorDrawUnderside, NULL, false);
@@ -70,7 +77,7 @@ A_MAIN
 
     a_state_new("game",
                 game,
-                "tickCursor tickGoal tickMapFrame tickSpriteFrame",
+                "tickCursor tickGoal tickMove tickMapFrame tickSpriteFrame",
                 "drawMapTiles drawCursorUnderside drawSprite");
 
     a_state_new("load", load, "", "");
