@@ -214,8 +214,10 @@ static void pathfind(AEntity* Entity, ZCompGoal* Goal)
 
         if(objective && a_entity_hasComponent(objective, "tagCrystal")) {
             z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_MINE);
-        } else {
+        } else if(!z_comp_goal_pop(Goal)) {
             z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_NONE);
+        } else {
+            z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_PATHFINDING);
         }
 
         return;
@@ -270,6 +272,9 @@ static void mine(AEntity* Entity, ZCompGoal* Goal)
 {
     A_UNUSED(Entity);
 
+    // Remember that we're mining
+    z_comp_goal_push(Goal);
+
     z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_BRINGBACK);
 }
 
@@ -284,7 +289,6 @@ static void bringback(AEntity* Entity, ZCompGoal* Goal)
 
     z_comp_goal_setState(Goal, Z_COMP_GOAL_STATE_PATHFINDING);
     z_comp_goal_setDestCoords(Goal, baseX, baseY + Z_UTIL_COORDS_TILE_DIM);
-    z_comp_goal_setObjective(Goal, base);
 }
 
 void (*g_goalCallbacks[Z_COMP_GOAL_STATE_NUM])(AEntity*, ZCompGoal*) = {

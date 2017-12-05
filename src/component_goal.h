@@ -43,3 +43,6 @@ extern bool z_comp_goal_hasNextCoords(const ZCompGoal* Goal);
 
 extern AEntity* z_comp_goal_getObjective(const ZCompGoal* Goal);
 extern void z_comp_goal_setObjective(ZCompGoal* Goal, AEntity* Objective);
+
+extern void z_comp_goal_push(ZCompGoal* Goal);
+extern bool z_comp_goal_pop(ZCompGoal* Goal);
