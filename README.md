@@ -13,6 +13,24 @@ Download binaries from [https://alxm.itch.io/mineop40](https://alxm.itch.io/mine
 * Select a worker then click on a crystal to start mining
 * Press ESC key at any time to quit
 
+## Running
+
+### Windows
+
+* Built for 64bit system
+* Launch `mineop40.exe`
+
+### Linux
+
+* Built for 64bit Ubuntu 16.04/Linux Mint 18
+* You may need to install these libraries: `libSDL2 libSDL2_mixer libpng12`
+* Launch `mineop40`
+
+## Building Source Code
+
+* Install a2x `rel_ld40` from [here](https://github.com/alxm/a2x/tree/rel_ld40)
+* Clone this repo, `cd make && make` or `make -f Makefile.mingw64`
+
 ## License
 
 Copyright 2017 Alex Margarit (alex@alxm.org)
