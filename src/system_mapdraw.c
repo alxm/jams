@@ -15,27 +15,34 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "system_mapdraw.h"
 
-#include <a2x.h>
+#include "component_map.h"
 
-typedef struct UMap UMap;
-typedef struct UTile UTile;
+#include "util_ecs.h"
 
-typedef enum {
-    U_MAP_ID_INVALID = -1,
-    U_MAP_ID_CAVE,
-    U_MAP_ID_NUM
-} UMapId;
+static void s_mapdraw(AEntity* Entity)
+{
+    CMap* cmap = a_entity_componentReq(Entity, U_COM_MAP);
+    const UMap* map = c_map_mapGet(cmap);
+    AVectorInt dim = u_map_dimGet(map);
 
-#define U_TILE_DIM 16
+    A_UNUSED(dim);
 
-extern void u_map_load(void);
-extern void u_map_unload(void);
+    a_screen_clear();
 
-extern const UMap* u_map_get(UMapId Id);
+    for(int y = 0; y < dim.y; y++) {
+        for(int x = 0; x < dim.x; x++) {
+            const UTile* tile = u_map_tileGet(map, x, y);
+            const ASprite* sprite = u_tile_spriteGet(tile);
 
-extern AVectorInt u_map_dimGet(const UMap* Map);
-extern const UTile* u_map_tileGet(const UMap* Map, int X, int Y);
+            a_sprite_blit(sprite, x * U_TILE_DIM, y * U_TILE_DIM);
+        }
+    }
+}
 
-extern const ASprite* u_tile_spriteGet(const UTile* Tile);
+void s_mapdraw_register(int Index)
+{
+    a_system_new(Index, s_mapdraw, NULL, false);
+    a_system_add(Index, U_COM_MAP);
+}

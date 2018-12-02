@@ -19,23 +19,4 @@
 
 #include <a2x.h>
 
-typedef struct UMap UMap;
-typedef struct UTile UTile;
-
-typedef enum {
-    U_MAP_ID_INVALID = -1,
-    U_MAP_ID_CAVE,
-    U_MAP_ID_NUM
-} UMapId;
-
-#define U_TILE_DIM 16
-
-extern void u_map_load(void);
-extern void u_map_unload(void);
-
-extern const UMap* u_map_get(UMapId Id);
-
-extern AVectorInt u_map_dimGet(const UMap* Map);
-extern const UTile* u_map_tileGet(const UMap* Map, int X, int Y);
-
-extern const ASprite* u_tile_spriteGet(const UTile* Tile);
+extern void s_mapdraw_register(int Index);

@@ -19,23 +19,21 @@
 
 #include <a2x.h>
 
-typedef struct UMap UMap;
-typedef struct UTile UTile;
+typedef enum {
+    U_COM_INVALID = -1,
+    U_COM_MAP,
+    U_COM_NUM
+} UComponentId;
 
 typedef enum {
-    U_MAP_ID_INVALID = -1,
-    U_MAP_ID_CAVE,
-    U_MAP_ID_NUM
-} UMapId;
+    U_SYS_INVALD = -1,
+    U_SYS_MAPDRAW,
+    U_SYS_NUM
+} USystemId;
 
-#define U_TILE_DIM 16
+typedef enum {
+    U_MSG_INVALID = -1,
+    U_MSG_NUM
+} UMessageId;
 
-extern void u_map_load(void);
-extern void u_map_unload(void);
-
-extern const UMap* u_map_get(UMapId Id);
-
-extern AVectorInt u_map_dimGet(const UMap* Map);
-extern const UTile* u_map_tileGet(const UMap* Map, int X, int Y);
-
-extern const ASprite* u_tile_spriteGet(const UTile* Tile);
+extern void u_ecs_load(void);

@@ -15,27 +15,30 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "component_map.h"
 
-#include <a2x.h>
+struct CMap {
+    const UMap* map;
+};
 
-typedef struct UMap UMap;
-typedef struct UTile UTile;
+static void c_map_free(void* Self)
+{
+    CMap* map = Self;
 
-typedef enum {
-    U_MAP_ID_INVALID = -1,
-    U_MAP_ID_CAVE,
-    U_MAP_ID_NUM
-} UMapId;
+    A_UNUSED(map);
+}
 
-#define U_TILE_DIM 16
+void c_map_register(int Index)
+{
+    a_component_new(Index, "map", sizeof(CMap), NULL, c_map_free);
+}
 
-extern void u_map_load(void);
-extern void u_map_unload(void);
+void c_map_init(CMap* Map, UMapId Id)
+{
+    Map->map = u_map_get(Id);
+}
 
-extern const UMap* u_map_get(UMapId Id);
-
-extern AVectorInt u_map_dimGet(const UMap* Map);
-extern const UTile* u_map_tileGet(const UMap* Map, int X, int Y);
-
-extern const ASprite* u_tile_spriteGet(const UTile* Tile);
+const UMap* c_map_mapGet(const CMap* Map)
+{
+    return Map->map;
+}

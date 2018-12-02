@@ -17,9 +17,9 @@
 
 #include "util_map.h"
 
-typedef struct {
+struct UTile {
     ASpriteFrames* frames;
-} UTile;
+};
 
 typedef const UTile* UMapTile;
 
@@ -146,4 +146,24 @@ void u_map_unload(void)
     for(UMapId id = U_MAP_ID_NUM; id--; ) {
         mapFree(id);
     }
+}
+
+const UMap* u_map_get(UMapId Id)
+{
+    return &g_maps[Id];
+}
+
+AVectorInt u_map_dimGet(const UMap* Map)
+{
+    return (AVectorInt){Map->w, Map->h};
+}
+
+const UTile* u_map_tileGet(const UMap* Map, int X, int Y)
+{
+    return Map->tiles[Y][X];
+}
+
+const ASprite* u_tile_spriteGet(const UTile* Tile)
+{
+    return a_spriteframes_getCurrent(Tile->frames);
 }

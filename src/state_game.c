@@ -15,20 +15,24 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "entity_map.h"
+
 #include "state_game.h"
 
+#include "util_ecs.h"
+
 struct TGame {
-    int x;
+    AEntity* map;
 };
 
 static void zInitGame(TGame* Game)
 {
-    Game->x = 1;
+    Game->map = e_map_new(Game, U_MAP_ID_CAVE);
 }
 
 static void zFreeGame(TGame* Game)
 {
-    Game->x = 0;
+    a_entity_removeSet(Game->map);
 }
 
 A_STATE(t_game)
@@ -47,7 +51,7 @@ A_STATE(t_game)
 
     A_STATE_DRAW
     {
-        //
+        a_system_run(U_SYS_MAPDRAW);
     }
 
     A_STATE_FREE
