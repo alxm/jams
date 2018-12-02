@@ -17,8 +17,8 @@
 
 #include "state_load.h"
 
+#include "util_map.h"
 #include "util_state.h"
-#include "util_tile.h"
 
 A_STATE(t_load)
 {
@@ -27,7 +27,7 @@ A_STATE(t_load)
         void (*unload)(void);
         bool loaded;
     } table[] = {
-        {u_tile_load, u_tile_unload, false},
+        {u_map_load, u_map_unload, false},
     };
 
     A_STATE_INIT

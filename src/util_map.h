@@ -19,9 +19,13 @@
 
 #include <a2x.h>
 
-typedef struct UTile UTile;
+typedef struct UMap UMap;
 
-extern void u_tile_load(void);
-extern void u_tile_unload(void);
+typedef enum {
+    U_MAP_ID_INVALID = -1,
+    U_MAP_ID_CAVE,
+    U_MAP_ID_NUM
+} UMapId;
 
-extern const UTile* u_tile_get(APixel Color);
+extern void u_map_load(void);
+extern void u_map_unload(void);
