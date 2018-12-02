@@ -15,16 +15,13 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
+#pragma once
 
-A_SETUP
-{
-    a_settings_stringSet(A_SETTING_APP_TITLE, "Cave Shrine");
-    a_settings_stringSet(A_SETTING_APP_VERSION, "0.1.0");
-    a_settings_stringSet(A_SETTING_APP_AUTHOR, "alxm");
-}
+#include <a2x.h>
 
-A_MAIN
-{
-    u_state_push(U_STATE_ID_LOAD);
-}
+typedef struct UTile UTile;
+
+extern void u_tile_load(void);
+extern void u_tile_unload(void);
+
+extern const UTile* u_tile_get(APixel Color);

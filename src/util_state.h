@@ -15,16 +15,17 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
+#pragma once
 
-A_SETUP
-{
-    a_settings_stringSet(A_SETTING_APP_TITLE, "Cave Shrine");
-    a_settings_stringSet(A_SETTING_APP_VERSION, "0.1.0");
-    a_settings_stringSet(A_SETTING_APP_AUTHOR, "alxm");
-}
+#include <a2x.h>
 
-A_MAIN
-{
-    u_state_push(U_STATE_ID_LOAD);
-}
+typedef enum {
+    U_STATE_ID_INVALID = -1,
+    U_STATE_ID_LOAD,
+    U_STATE_ID_GAME,
+    U_STATE_ID_NUM
+} UStateId;
+
+extern AState* u_state_get(UStateId Id);
+extern void u_state_push(UStateId Id);
+extern void u_state_replace(UStateId Id);

@@ -17,14 +17,28 @@
 
 #include "util_state.h"
 
-A_SETUP
+#include "state_game.h"
+#include "state_load.h"
+
+static const struct {
+    AState* function;
+    const char* name;
+} g_states[U_STATE_ID_NUM] = {
+    [U_STATE_ID_LOAD] = {t_load, "Loading"},
+    [U_STATE_ID_GAME] = {t_game, "Game"},
+};
+
+AState* u_state_get(UStateId Id)
 {
-    a_settings_stringSet(A_SETTING_APP_TITLE, "Cave Shrine");
-    a_settings_stringSet(A_SETTING_APP_VERSION, "0.1.0");
-    a_settings_stringSet(A_SETTING_APP_AUTHOR, "alxm");
+    return g_states[Id].function;
 }
 
-A_MAIN
+void u_state_push(UStateId Id)
 {
-    u_state_push(U_STATE_ID_LOAD);
+    a_state_push(g_states[Id].function, g_states[Id].name);
+}
+
+void u_state_replace(UStateId Id)
+{
+    a_state_replace(g_states[Id].function, g_states[Id].name);
 }

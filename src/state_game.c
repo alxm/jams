@@ -15,16 +15,43 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
+#include "state_game.h"
 
-A_SETUP
+struct TGame {
+    int x;
+};
+
+static void zInitGame(TGame* Game)
 {
-    a_settings_stringSet(A_SETTING_APP_TITLE, "Cave Shrine");
-    a_settings_stringSet(A_SETTING_APP_VERSION, "0.1.0");
-    a_settings_stringSet(A_SETTING_APP_AUTHOR, "alxm");
+    Game->x = 1;
 }
 
-A_MAIN
+static void zFreeGame(TGame* Game)
 {
-    u_state_push(U_STATE_ID_LOAD);
+    Game->x = 0;
+}
+
+A_STATE(t_game)
+{
+    static TGame game;
+
+    A_STATE_INIT
+    {
+        zInitGame(&game);
+    }
+
+    A_STATE_TICK
+    {
+        //
+    }
+
+    A_STATE_DRAW
+    {
+        //
+    }
+
+    A_STATE_FREE
+    {
+        zFreeGame(&game);
+    }
 }
