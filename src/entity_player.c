@@ -19,7 +19,6 @@
 
 #include "component_input.h"
 #include "component_position.h"
-#include "component_sprite.h"
 
 #include "macro_move.h"
 
@@ -39,7 +38,7 @@ static void playerAction(AEntity* Player, UButtonId Button)
 
 AEntity* e_player_new(TGame* Game)
 {
-    AEntity* e = a_entity_new("player", Game);
+    AEntity* e = a_entity_newEx("player", NULL, Game);
 
     CInput* input = a_entity_componentAdd(e, U_COM_INPUT);
     c_input_bind(input, U_BUTTON_UP, playerAction);
@@ -50,9 +49,6 @@ AEntity* e_player_new(TGame* Game)
 
     CPosition* position = a_entity_componentAdd(e, U_COM_POSITION);
     c_position_directionSet(position, C_POSITION_DOWN);
-
-    CSprite* sprite = a_entity_componentAdd(e, U_COM_SPRITE);
-    c_sprite_init(sprite, "assets/gfx/player.png");
 
     a_entity_activeSetPermanent(e);
 

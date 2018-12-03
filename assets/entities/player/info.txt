@@ -1,0 +1,7 @@
+player
+    sprite
+        frames
+            player/up.png
+            player/down.png
+            player/left.png
+            player/right.png

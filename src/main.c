@@ -23,6 +23,7 @@ A_SETUP
     a_settings_stringSet(A_SETTING_APP_VERSION, "0.1.0");
     a_settings_stringSet(A_SETTING_APP_AUTHOR, "alxm");
     a_settings_colorSet(A_SETTING_COLOR_SCREEN_BORDER, 0x111111);
+    a_settings_boolSet(A_SETTING_VIDEO_VSYNC, false);
 }
 
 A_MAIN

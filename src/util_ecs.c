@@ -48,10 +48,29 @@ static void u_systems_load(void)
     s_spritedraw_register(U_SYS_SPRITEDRAW);
 }
 
+static void u_templates_load(void)
+{
+    ADir* root = a_dir_new("assets/entities");
+
+    A_LIST_ITERATE(a_dir_entriesListGet(root), APath*, p) {
+        if(a_path_getName(p)[0] == '.' || !a_path_test(p, A_PATH_DIR)) {
+            continue;
+        }
+
+        char buffer[64];
+        snprintf(buffer, sizeof(buffer), "%s/info.txt", a_path_getFull(p));
+
+        a_template_new(buffer, NULL);
+    }
+
+    a_dir_free(root);
+}
+
 void u_ecs_load(void)
 {
     a_ecs_init(U_COM_NUM, U_SYS_NUM, U_MSG_NUM);
 
     u_components_load();
     u_systems_load();
+    u_templates_load();
 }
