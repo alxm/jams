@@ -28,6 +28,7 @@ typedef const UTile* UMapTile;
 struct UMap {
     const char* name;
     uint32_t colorhex;
+    AVectorInt startCoords;
     AStrHash* tilesTable; // table of UTile
     int w, h;
     UMapTile** tiles; // [h][w]
@@ -80,6 +81,20 @@ const UTile* tileGet(const UMap* Map, APixel Color)
     return t;
 }
 
+static void loadInfo(UMap* Map)
+{
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "assets/maps/%s/info.txt", Map->name);
+
+    ABlock* info = a_block_new(buffer);
+
+    const ABlock* startBlock = a_block_get(info, "start");
+
+    Map->startCoords = a_block_readCoords(startBlock, 1);
+
+    a_block_free(info);
+}
+
 static void loadTiles(const UMap* Map)
 {
     char buffer[64];
@@ -116,6 +131,7 @@ static void mapNew(UMapId Id, const char* Name, uint32_t Hexcode)
     m->colorhex = Hexcode;
     m->tilesTable = a_strhash_new();
 
+    loadInfo(m);
     loadTiles(m);
 
     m->w = a_sprite_widthGet(image);
@@ -177,6 +193,11 @@ const UTile* u_map_getTile(const UMap* Map, int X, int Y)
 uint32_t u_map_getColorHex(const UMap* Map)
 {
     return Map->colorhex;
+}
+
+AVectorInt u_map_getStartCoords(const UMap* Map)
+{
+    return Map->startCoords;
 }
 
 const ASprite* u_tile_getSprite(const UTile* Tile)

@@ -80,14 +80,12 @@ static void gameMapChange(TGame* Game, UMapId Map)
     }
 
     Game->activeMap = Map;
+    const UMap* umap = e_map_mapGet(Game->maps[Game->activeMap].map);
+
     a_collection_muteDec(Game->maps[Game->activeMap].entities);
+    m_move_coordsSet(Game->player, u_map_getStartCoords(umap));
 
-    m_move_coordsSet(Game->player, (AVectorInt){8, 6});
-
-    a_settings_colorSet(
-        A_SETTING_COLOR_SCREEN_BORDER,
-        u_map_getColorHex(e_map_mapGet(Game->maps[Game->activeMap].map)));
-
+    a_settings_colorSet(A_SETTING_COLOR_SCREEN_BORDER, u_map_getColorHex(umap));
     a_fade_screens(500);
 }
 

@@ -39,6 +39,7 @@ extern const UMap* u_map_get(UMapId Id);
 extern AVectorInt u_map_getDim(const UMap* Map);
 extern const UTile* u_map_getTile(const UMap* Map, int X, int Y);
 extern uint32_t u_map_getColorHex(const UMap* Map);
+extern AVectorInt u_map_getStartCoords(const UMap* Map);
 
 extern const ASprite* u_tile_getSprite(const UTile* Tile);
 extern int u_tile_getCode(const UTile* Tile);
