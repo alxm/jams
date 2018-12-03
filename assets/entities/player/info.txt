@@ -1,4 +1,8 @@
 player
+    damage
+        2
+    health
+        10
     sprite
         frames
             player/up.png

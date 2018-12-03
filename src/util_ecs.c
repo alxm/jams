@@ -18,6 +18,8 @@
 #include "util_ecs.h"
 
 #include "component_ai.h"
+#include "component_damage.h"
+#include "component_health.h"
 #include "component_input.h"
 #include "component_map.h"
 #include "component_position.h"
@@ -33,6 +35,8 @@ static void u_components_load(void)
 {
     c_ai_register(U_COM_AI);
     a_component_new(U_COM_CAMERA, "camera", 0, NULL, NULL);
+    c_damage_register(U_COM_DAMAGE);
+    c_health_register(U_COM_HEALTH);
     c_input_register(U_COM_INPUT);
     c_map_register(U_COM_MAP);
     c_position_register(U_COM_POSITION);
