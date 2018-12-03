@@ -41,3 +41,4 @@ extern const UTile* u_map_getTile(const UMap* Map, int X, int Y);
 
 extern const ASprite* u_tile_getSprite(const UTile* Tile);
 extern int u_tile_getCode(const UTile* Tile);
+extern bool u_tile_getBlock(const UTile* Tile);

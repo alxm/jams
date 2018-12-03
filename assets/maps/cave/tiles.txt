@@ -1,12 +1,14 @@
 void
     void1.png
     000000
+    block
 floor
     floor1.png
     767676
 wall
     wall1.png
     ffffff
+    block
 door
     door1.png
     1a8f0b

@@ -20,6 +20,7 @@
 struct UTile {
     ASpriteFrames* frames;
     int code;
+    bool block;
 };
 
 typedef const UTile* UMapTile;
@@ -30,6 +31,7 @@ struct UMap {
     int w, h;
     UMapTile** tiles; // [h][w]
     UMapTile* tilesData; // [h * w]
+    APixel bgcolor;
 };
 
 static UMap g_maps[U_MAP_ID_NUM];
@@ -45,7 +47,7 @@ static char* pixelToKey(APixel Pixel)
     return buffer;
 }
 
-static UTile* tileNew(const UMap* Map, const char* File, int Code)
+static UTile* tileNew(const UMap* Map, const char* File, int Code, bool Block)
 {
     UTile* t = a_mem_malloc(sizeof(UTile));
 
@@ -54,6 +56,7 @@ static UTile* tileNew(const UMap* Map, const char* File, int Code)
 
     t->frames = a_spriteframes_newFromFileGrid(buffer, 16, 16, 0);
     t->code = Code;
+    t->block = Block;
 
     return t;
 }
@@ -88,8 +91,11 @@ static void loadTiles(const UMap* Map)
         const char* file = a_block_readString(t, 1);
         APixel color = a_block_readPixel(t, 2);
         const ABlock* codeBlock = a_block_get(t, "code");
+        const ABlock* blockBlock = a_block_get(t, "block");
         int code = codeBlock ? a_block_readInt(codeBlock, 1) : 0;
-        UTile* tile = tileNew(Map, file, code);
+        bool block = blockBlock != NULL;
+
+        UTile* tile = tileNew(Map, file, code, block);
 
         a_strhash_add(Map->tilesTable, pixelToKey(color), tile);
     }
@@ -175,4 +181,9 @@ const ASprite* u_tile_getSprite(const UTile* Tile)
 int u_tile_getCode(const UTile* Tile)
 {
     return Tile->code;
+}
+
+bool u_tile_getBlock(const UTile* Tile)
+{
+    return Tile->block;
 }

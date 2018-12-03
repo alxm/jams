@@ -55,17 +55,20 @@ void m_move_coordsSet(AEntity* Entity, AVectorInt Coords)
     if(otherEntity) {
         //
     } else {
-        c_map_entitySet(map, oldCoords, NULL);
-        c_map_entitySet(map, Coords, Entity);
-
-        c_position_coordsSet(position, Coords);
-
         const UMap* umap = c_map_mapGet(map);
         const UTile* utile = u_map_getTile(umap, Coords.x, Coords.y);
-        int code = u_tile_getCode(utile);
 
-        if(code > 0) {
-            t_game_runCode(game, code);
+        if(!u_tile_getBlock(utile)) {
+            c_map_entitySet(map, oldCoords, NULL);
+            c_map_entitySet(map, Coords, Entity);
+
+            c_position_coordsSet(position, Coords);
+
+            int code = u_tile_getCode(utile);
+
+            if(code > 0) {
+                t_game_runCode(game, code);
+            }
         }
     }
 }
