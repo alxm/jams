@@ -28,3 +28,6 @@ extern void c_map_register(int Index);
 extern void c_map_init(CMap* Map, UMapId Id);
 
 extern const UMap* c_map_mapGet(const CMap* Map);
+
+extern AEntity* c_map_entityGet(const CMap* Map, AVectorInt Coords);
+extern void c_map_entitySet(CMap* Map, AVectorInt Coords, AEntity* Entity);

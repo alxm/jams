@@ -32,30 +32,40 @@ void m_move_direction(AEntity* Entity, CPositionDirection Direction)
         [C_POSITION_RIGHT] = {1, 0},
     };
 
-    TGame* game = a_entity_contextGet(Entity);
-    AEntity* map = t_game_getMap(game);
-
     CPosition* position = a_entity_componentReq(Entity, U_COM_POSITION);
     AVectorInt coords = c_position_coordsGet(position);
 
     coords.x += incs[Direction].x;
     coords.y += incs[Direction].y;
 
-    c_position_coordsSet(position, coords);
+    m_move_coordsSet(Entity, coords);
     c_position_directionSet(position, Direction);
-
-    const UMap* umap = c_map_mapGet(a_entity_componentReq(map, U_COM_MAP));
-    const UTile* utile = u_map_getTile(umap, coords.x, coords.y);
-    int code = u_tile_getCode(utile);
-
-    if(code > 0) {
-        t_game_runCode(game, code);
-    }
 }
 
-void m_move_coordsSet(AEntity* Entity, int X, int Y)
+void m_move_coordsSet(AEntity* Entity, AVectorInt Coords)
 {
-    CPosition* position = a_entity_componentReq(Entity, U_COM_POSITION);
+    TGame* game = a_entity_contextGet(Entity);
+    CMap* map = a_entity_componentReq(t_game_getMap(game), U_COM_MAP);
 
-    c_position_coordsSet(position, (AVectorInt){X, Y});
+    CPosition* position = a_entity_componentReq(Entity, U_COM_POSITION);
+    AVectorInt oldCoords = c_position_coordsGet(position);
+
+    AEntity* otherEntity = c_map_entityGet(map, Coords);
+
+    if(otherEntity) {
+        //
+    } else {
+        c_map_entitySet(map, oldCoords, NULL);
+        c_map_entitySet(map, Coords, Entity);
+
+        c_position_coordsSet(position, Coords);
+
+        const UMap* umap = c_map_mapGet(map);
+        const UTile* utile = u_map_getTile(umap, Coords.x, Coords.y);
+        int code = u_tile_getCode(utile);
+
+        if(code > 0) {
+            t_game_runCode(game, code);
+        }
+    }
 }

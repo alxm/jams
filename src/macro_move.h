@@ -22,4 +22,4 @@
 #include "component_position.h"
 
 extern void m_move_direction(AEntity* Entity, CPositionDirection Direction);
-extern void m_move_coordsSet(AEntity* Entity, int X, int Y);
+extern void m_move_coordsSet(AEntity* Entity, AVectorInt Coords);

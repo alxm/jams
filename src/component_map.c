@@ -17,15 +17,22 @@
 
 #include "component_map.h"
 
+typedef struct {
+    AEntity* entity;
+} CMapTile;
+
 struct CMap {
     const UMap* map;
+    CMapTile** tiles; // [h][w]
+    CMapTile* tilesData; // [h * w]
 };
 
 static void c_map_free(void* Self)
 {
     CMap* map = Self;
 
-    A_UNUSED(map);
+    free(map->tiles);
+    free(map->tilesData);
 }
 
 void c_map_register(int Index)
@@ -36,9 +43,40 @@ void c_map_register(int Index)
 void c_map_init(CMap* Map, UMapId Id)
 {
     Map->map = u_map_get(Id);
+
+    AVectorInt dim = u_map_getDim(Map->map);
+    unsigned w = (unsigned)dim.x;
+    unsigned h = (unsigned)dim.y;
+
+    Map->tiles = a_mem_malloc(h * sizeof(CMapTile*));
+    Map->tilesData = a_mem_zalloc(h * w * sizeof(CMapTile));
+
+    for(unsigned y = h; y--; ) {
+        Map->tiles[y] = Map->tilesData + y * w;
+    }
 }
 
 const UMap* c_map_mapGet(const CMap* Map)
 {
     return Map->map;
+}
+
+AEntity* c_map_entityGet(const CMap* Map, AVectorInt Coords)
+{
+    return Map->tiles[Coords.y][Coords.x].entity;
+}
+
+void c_map_entitySet(CMap* Map, AVectorInt Coords, AEntity* Entity)
+{
+    AEntity* current = Map->tiles[Coords.y][Coords.x].entity;
+
+    if(current) {
+        a_entity_refDec(current);
+    }
+
+    Map->tiles[Coords.y][Coords.x].entity = Entity;
+
+    if(Entity) {
+        a_entity_refInc(Entity);
+    }
 }

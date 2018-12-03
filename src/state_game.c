@@ -32,11 +32,11 @@ struct TGame {
     ATimer* turnTimer;
     AEntity* player;
     AEntity* camera;
+    UMapId activeMap;
     struct {
         ACollection* entities;
         AEntity* map;
     } maps[U_MAP_ID_NUM];
-    UMapId activeMap;
 };
 
 static void gameLevelLoadMap(TGame* Game, UMapId Map, const ABlock* Block)
@@ -45,6 +45,7 @@ static void gameLevelLoadMap(TGame* Game, UMapId Map, const ABlock* Block)
         return;
     }
 
+    Game->activeMap = Map;
     a_ecs_collectionSet(Game->maps[Map].entities);
 
     A_LIST_ITERATE(a_block_getAll(Block), const ABlock*, b) {
@@ -57,14 +58,18 @@ static void gameLevelLoadMap(TGame* Game, UMapId Map, const ABlock* Block)
 
         AEntity* e = a_entity_newEx(template, &context, Game);
         a_entity_muteInc(e);
+
+        m_move_coordsSet(e, coords);
     }
 
+    Game->activeMap = U_MAP_ID_INVALID;
     a_ecs_collectionSet(NULL);
 }
 
 static void gameLevelLoad(TGame* Game)
 {
     const ABlock* level = u_level_get(Game->level);
+
     const ABlock* cave = a_block_get(level, "cave");
     const ABlock* forest = a_block_get(level, "forest");
 
@@ -81,7 +86,7 @@ static void gameMapChange(TGame* Game, UMapId Map)
     Game->activeMap = Map;
     a_collection_muteDec(Game->maps[Game->activeMap].entities);
 
-    m_move_coordsSet(Game->player, 8, 6);
+    m_move_coordsSet(Game->player, (AVectorInt){8, 6});
 }
 
 static void gameInit(TGame* Game)
