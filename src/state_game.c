@@ -15,6 +15,7 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "entity_camera.h"
 #include "entity_map.h"
 #include "entity_player.h"
 
@@ -23,17 +24,19 @@
 #include "util_ecs.h"
 
 struct TGame {
+    AEntity* camera;
     AEntity* map;
     AEntity* player;
 };
 
-static void zInitGame(TGame* Game)
+static void gameInit(TGame* Game)
 {
+    Game->camera = e_camera_new(Game);
     Game->map = e_map_new(Game, U_MAP_ID_CAVE);
     Game->player = e_player_new(Game, 8, 6);
 }
 
-static void zFreeGame(TGame* Game)
+static void gameFree(TGame* Game)
 {
     A_UNUSED(Game);
 }
@@ -44,12 +47,12 @@ A_STATE(t_game)
 
     A_STATE_INIT
     {
-        zInitGame(&game);
+        gameInit(&game);
     }
 
     A_STATE_TICK
     {
-        //
+        a_system_run(U_SYS_CAMERA);
     }
 
     A_STATE_DRAW
@@ -63,6 +66,16 @@ A_STATE(t_game)
 
     A_STATE_FREE
     {
-        zFreeGame(&game);
+        gameFree(&game);
     }
+}
+
+AEntity* t_game_getCamera(const TGame* Game)
+{
+    return Game->camera;
+}
+
+AEntity* t_game_getPlayer(const TGame* Game)
+{
+    return Game->player;
 }

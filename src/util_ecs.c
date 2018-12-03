@@ -21,6 +21,7 @@
 #include "component_position.h"
 #include "component_sprite.h"
 
+#include "system_camera.h"
 #include "system_mapdraw.h"
 #include "system_spritedraw.h"
 
@@ -29,10 +30,13 @@ static void u_components_load(void)
     c_map_register(U_COM_MAP);
     c_position_register(U_COM_POSITION);
     c_sprite_register(U_COM_SPRITE);
+
+    a_component_new(U_COM_CAMERA, "camera", 0, NULL, NULL);
 }
 
 static void u_systems_load(void)
 {
+    s_camera_register(U_SYS_CAMERA);
     s_mapdraw_register(U_SYS_MAPDRAW);
     s_spritedraw_register(U_SYS_SPRITEDRAW);
 }

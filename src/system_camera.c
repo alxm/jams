@@ -15,40 +15,33 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "system_spritedraw.h"
+#include "system_camera.h"
 
 #include "component_position.h"
-#include "component_sprite.h"
-
-#include "entity_camera.h"
 
 #include "state_game.h"
 
 #include "util_ecs.h"
 #include "util_map.h"
 
-static void s_spritedraw(AEntity* Entity)
+static void s_camera(AEntity* Entity)
 {
     TGame* game = a_entity_contextGet(Entity);
-    AEntity* camera = t_game_getCamera(game);
+    AEntity* player = t_game_getPlayer(game);
 
-    CPosition* cposition = a_entity_componentReq(Entity, U_COM_POSITION);
-    CSprite* csprite = a_entity_componentReq(Entity, U_COM_SPRITE);
-
-    AVectorInt coords = c_position_coordsGet(cposition);
-    CPositionDirection dir = c_position_directionGet(cposition);
+    CPosition* position = a_entity_componentReq(Entity, U_COM_POSITION);
+    AVectorInt coords = c_position_coordsGet(
+                            a_entity_componentReq(player, U_COM_POSITION));
 
     coords.x *= U_TILE_DIM;
     coords.y *= U_TILE_DIM;
 
-    coords = e_camera_worldToScreen(camera, coords);
-
-    a_sprite_blit(c_sprite_framesGet(csprite, dir), coords.x, coords.y);
+    c_position_coordsSet(position, coords);
 }
 
-void s_spritedraw_register(int Index)
+void s_camera_register(int Index)
 {
-    a_system_new(Index, s_spritedraw, NULL, false);
+    a_system_new(Index, s_camera, NULL, false);
+    a_system_add(Index, U_COM_CAMERA);
     a_system_add(Index, U_COM_POSITION);
-    a_system_add(Index, U_COM_SPRITE);
 }

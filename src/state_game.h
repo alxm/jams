@@ -22,3 +22,6 @@
 typedef struct TGame TGame;
 
 extern AState t_game;
+
+extern AEntity* t_game_getCamera(const TGame* Game);
+extern AEntity* t_game_getPlayer(const TGame* Game);
