@@ -23,4 +23,4 @@
 
 #include "util_map.h"
 
-extern AEntity* e_player_new(TGame* Game, int X, int Y);
+extern AEntity* e_player_new(TGame* Game);

@@ -23,7 +23,9 @@ typedef struct TGame TGame;
 
 extern AState t_game;
 
-extern AEntity* t_game_getCamera(const TGame* Game);
 extern AEntity* t_game_getPlayer(const TGame* Game);
+extern AEntity* t_game_getCamera(const TGame* Game);
+extern AEntity* t_game_getMap(const TGame* Game);
 
 extern bool t_game_turnStart(const TGame* Game);
+extern void t_game_runCode(TGame* Game, int Code);

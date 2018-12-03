@@ -17,6 +17,10 @@
 
 #include "macro_move.h"
 
+#include "component_map.h"
+
+#include "state_game.h"
+
 #include "util_ecs.h"
 
 void m_move_direction(AEntity* Entity, CPositionDirection Direction)
@@ -28,6 +32,9 @@ void m_move_direction(AEntity* Entity, CPositionDirection Direction)
         [C_POSITION_RIGHT] = {1, 0},
     };
 
+    TGame* game = a_entity_contextGet(Entity);
+    AEntity* map = t_game_getMap(game);
+
     CPosition* position = a_entity_componentReq(Entity, U_COM_POSITION);
     AVectorInt coords = c_position_coordsGet(position);
 
@@ -36,4 +43,19 @@ void m_move_direction(AEntity* Entity, CPositionDirection Direction)
 
     c_position_coordsSet(position, coords);
     c_position_directionSet(position, Direction);
+
+    const UMap* umap = c_map_mapGet(a_entity_componentReq(map, U_COM_MAP));
+    const UTile* utile = u_map_getTile(umap, coords.x, coords.y);
+    int code = u_tile_getCode(utile);
+
+    if(code > 0) {
+        t_game_runCode(game, code);
+    }
+}
+
+void m_move_coordsSet(AEntity* Entity, int X, int Y)
+{
+    CPosition* position = a_entity_componentReq(Entity, U_COM_POSITION);
+
+    c_position_coordsSet(position, (AVectorInt){X, Y});
 }

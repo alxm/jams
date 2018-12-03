@@ -19,6 +19,7 @@
 
 struct UTile {
     ASpriteFrames* frames;
+    int code;
 };
 
 typedef const UTile* UMapTile;
@@ -46,7 +47,7 @@ static char* pixelToKey(APixel Pixel)
     return buffer;
 }
 
-static UTile* tileNew(const UMap* Map, const char* File)
+static UTile* tileNew(const UMap* Map, const char* File, int Code)
 {
     UTile* t = a_mem_malloc(sizeof(UTile));
 
@@ -54,6 +55,7 @@ static UTile* tileNew(const UMap* Map, const char* File)
     snprintf(buffer, sizeof(buffer), Z_MAP_PREFIX "/%s/%s", Map->name, File);
 
     t->frames = a_spriteframes_newFromFileGrid(buffer, 16, 16, 0);
+    t->code = Code;
 
     return t;
 }
@@ -87,8 +89,11 @@ static void loadTiles(const UMap* Map)
     A_LIST_ITERATE(a_block_getAll(tiles), const ABlock*, t) {
         const char* file = a_block_readString(t, 1);
         APixel color = a_block_readPixel(t, 2);
+        const ABlock* codeBlock = a_block_get(t, "code");
+        int code = codeBlock ? a_block_readInt(codeBlock, 1) : 0;
+        UTile* tile = tileNew(Map, file, code);
 
-        a_strhash_add(Map->tilesTable, pixelToKey(color), tileNew(Map, file));
+        a_strhash_add(Map->tilesTable, pixelToKey(color), tile);
     }
 
     a_block_free(tiles);
@@ -154,17 +159,22 @@ const UMap* u_map_get(UMapId Id)
     return &g_maps[Id];
 }
 
-AVectorInt u_map_dimGet(const UMap* Map)
+AVectorInt u_map_getDim(const UMap* Map)
 {
     return (AVectorInt){Map->w, Map->h};
 }
 
-const UTile* u_map_tileGet(const UMap* Map, int X, int Y)
+const UTile* u_map_getTile(const UMap* Map, int X, int Y)
 {
     return Map->tiles[Y][X];
 }
 
-const ASprite* u_tile_spriteGet(const UTile* Tile)
+const ASprite* u_tile_getSprite(const UTile* Tile)
 {
     return a_spriteframes_getCurrent(Tile->frames);
+}
+
+int u_tile_getCode(const UTile* Tile)
+{
+    return Tile->code;
 }

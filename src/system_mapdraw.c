@@ -32,12 +32,12 @@ static void s_mapdraw(AEntity* Entity)
 
     CMap* cmap = a_entity_componentReq(Entity, U_COM_MAP);
     const UMap* umap = c_map_mapGet(cmap);
-    AVectorInt dim = u_map_dimGet(umap);
+    AVectorInt dim = u_map_getDim(umap);
 
     for(int y = 0; y < dim.y; y++) {
         for(int x = 0; x < dim.x; x++) {
-            const UTile* tile = u_map_tileGet(umap, x, y);
-            const ASprite* sprite = u_tile_spriteGet(tile);
+            const UTile* tile = u_map_getTile(umap, x, y);
+            const ASprite* sprite = u_tile_getSprite(tile);
 
             AVectorInt coords = {x * U_TILE_DIM, y * U_TILE_DIM};
             coords = e_camera_worldToScreen(camera, coords);

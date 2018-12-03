@@ -21,47 +21,49 @@
 #include "entity_map.h"
 #include "entity_player.h"
 
+#include "macro_move.h"
+
 #include "util_ecs.h"
+#include "util_map.h"
 
 struct TGame {
-    AEntity* camera;
-    AEntity* map;
-    AEntity* player;
     ATimer* turnTimer;
+    AEntity* player;
+    AEntity* camera;
+    AEntity* maps[U_MAP_ID_NUM];
+    UMapId activeMap;
 };
+
+static void gameMapChange(TGame* Game, UMapId Map)
+{
+    if(Game->activeMap != U_MAP_ID_INVALID) {
+        a_entity_muteInc(Game->maps[Game->activeMap]);
+    }
+
+    Game->activeMap = Map;
+    a_entity_muteDec(Game->maps[Game->activeMap]);
+
+    m_move_coordsSet(Game->player, 8, 6);
+}
 
 static void gameInit(TGame* Game)
 {
-    Game->camera = e_camera_new(Game);
-    Game->map = e_map_new(Game, U_MAP_ID_FOREST);
-    Game->player = e_player_new(Game, 8, 6);
     Game->turnTimer = a_timer_new(A_TIMER_MS, 250, false);
+    Game->camera = e_camera_new(Game);
+    Game->player = e_player_new(Game);
+
+    for(UMapId m = U_MAP_ID_NUM; m--; ) {
+        Game->maps[m] = e_map_new(Game, m);
+        a_entity_muteInc(Game->maps[m]);
+    }
+
+    Game->activeMap = U_MAP_ID_INVALID;
+    gameMapChange(Game, U_MAP_ID_CAVE);
 }
 
 static void gameFree(TGame* Game)
 {
     a_timer_free(Game->turnTimer);
-}
-
-static bool t_game_turnCanStart(const TGame* Game)
-{
-    return !a_timer_isRunning(Game->turnTimer);
-}
-
-static bool t_game_turnInProgress(const TGame* Game)
-{
-    return a_timer_isRunning(Game->turnTimer);
-}
-
-bool t_game_turnStart(const TGame* Game)
-{
-    if(a_timer_isRunning(Game->turnTimer)) {
-        return false;
-    }
-
-    a_timer_start(Game->turnTimer);
-
-    return true;
 }
 
 A_STATE(t_game)
@@ -75,10 +77,10 @@ A_STATE(t_game)
 
     A_STATE_TICK
     {
-        if(t_game_turnCanStart(&game)) {
+        if(!a_timer_isRunning(game.turnTimer)) {
             a_system_run(U_SYS_INPUT);
 
-            if(t_game_turnInProgress(&game)) {
+            if(a_timer_isRunning(game.turnTimer)) {
                 a_system_run(U_SYS_AI);
             }
         }
@@ -101,12 +103,41 @@ A_STATE(t_game)
     }
 }
 
+AEntity* t_game_getPlayer(const TGame* Game)
+{
+    return Game->player;
+}
+
 AEntity* t_game_getCamera(const TGame* Game)
 {
     return Game->camera;
 }
 
-AEntity* t_game_getPlayer(const TGame* Game)
+AEntity* t_game_getMap(const TGame* Game)
 {
-    return Game->player;
+    return Game->maps[Game->activeMap];
+}
+
+bool t_game_turnStart(const TGame* Game)
+{
+    if(a_timer_isRunning(Game->turnTimer)) {
+        return false;
+    }
+
+    a_timer_start(Game->turnTimer);
+
+    return true;
+}
+
+void t_game_runCode(TGame* Game, int Code)
+{
+    switch(Code) {
+        case 1: {
+            gameMapChange(Game, U_MAP_ID_FOREST);
+        } break;
+
+        case 2: {
+            gameMapChange(Game, U_MAP_ID_CAVE);
+        } break;
+    }
 }

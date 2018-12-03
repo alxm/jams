@@ -1,6 +1,8 @@
 entrance
     caveentrance.png
     1a8f0b
+    code
+        2
 rocksleft
     rocksleft.png
     0a1f6f

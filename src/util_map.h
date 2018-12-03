@@ -36,7 +36,8 @@ extern void u_map_unload(void);
 
 extern const UMap* u_map_get(UMapId Id);
 
-extern AVectorInt u_map_dimGet(const UMap* Map);
-extern const UTile* u_map_tileGet(const UMap* Map, int X, int Y);
+extern AVectorInt u_map_getDim(const UMap* Map);
+extern const UTile* u_map_getTile(const UMap* Map, int X, int Y);
 
-extern const ASprite* u_tile_spriteGet(const UTile* Tile);
+extern const ASprite* u_tile_getSprite(const UTile* Tile);
+extern int u_tile_getCode(const UTile* Tile);

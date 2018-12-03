@@ -37,7 +37,7 @@ static void playerAction(AEntity* Player, UButtonId Button)
     }
 }
 
-AEntity* e_player_new(TGame* Game, int X, int Y)
+AEntity* e_player_new(TGame* Game)
 {
     AEntity* e = a_entity_new("player", Game);
 
@@ -49,7 +49,6 @@ AEntity* e_player_new(TGame* Game, int X, int Y)
     c_input_bind(input, U_BUTTON_ACTION, playerAction);
 
     CPosition* position = a_entity_componentAdd(e, U_COM_POSITION);
-    c_position_coordsSet(position, (AVectorInt){X, Y});
     c_position_directionSet(position, C_POSITION_DOWN);
 
     CSprite* sprite = a_entity_componentAdd(e, U_COM_SPRITE);
