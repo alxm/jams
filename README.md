@@ -1,6 +1,6 @@
 # Cave Shrine
 
-*Cave Shrine* is a game made in 48h for Ludum Dare 43.
+*Cave Shrine* is a game made from scratch for Ludum Dare 43.
 
 ## License
 

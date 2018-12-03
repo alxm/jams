@@ -25,6 +25,7 @@ typedef struct UTile UTile;
 typedef enum {
     U_MAP_ID_INVALID = -1,
     U_MAP_ID_CAVE,
+    U_MAP_ID_FOREST,
     U_MAP_ID_NUM
 } UMapId;
 

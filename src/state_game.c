@@ -33,9 +33,9 @@ struct TGame {
 static void gameInit(TGame* Game)
 {
     Game->camera = e_camera_new(Game);
-    Game->map = e_map_new(Game, U_MAP_ID_CAVE);
+    Game->map = e_map_new(Game, U_MAP_ID_FOREST);
     Game->player = e_player_new(Game, 8, 6);
-    Game->turnTimer = a_timer_new(A_TIMER_MS, 500, false);
+    Game->turnTimer = a_timer_new(A_TIMER_MS, 250, false);
 }
 
 static void gameFree(TGame* Game)

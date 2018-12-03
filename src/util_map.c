@@ -139,6 +139,7 @@ static void mapFree(UMapId Id)
 void u_map_load(void)
 {
     mapNew(U_MAP_ID_CAVE, "cave");
+    mapNew(U_MAP_ID_FOREST, "forest");
 }
 
 void u_map_unload(void)
