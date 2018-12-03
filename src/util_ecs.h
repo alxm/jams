@@ -42,6 +42,7 @@ typedef enum {
 
 typedef enum {
     U_MSG_INVALID = -1,
+    U_MSG_INTERACT,
     U_MSG_NUM
 } UMessageId;
 

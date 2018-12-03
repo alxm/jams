@@ -53,7 +53,7 @@ void m_move_coordsSet(AEntity* Entity, AVectorInt Coords)
     AEntity* otherEntity = c_map_entityGet(map, Coords);
 
     if(otherEntity) {
-        //
+        a_entity_messageSend(otherEntity, Entity, U_MSG_INTERACT);
     } else {
         const UMap* umap = c_map_mapGet(map);
         const UTile* utile = u_map_getTile(umap, Coords.x, Coords.y);

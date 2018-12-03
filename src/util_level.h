@@ -19,10 +19,6 @@
 
 #include <a2x.h>
 
-typedef struct {
-    AVectorInt coords;
-} ULevelEntityContext;
-
 extern void u_level_load(void);
 extern void u_level_unload(void);
 

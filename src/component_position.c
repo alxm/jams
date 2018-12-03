@@ -17,7 +17,7 @@
 
 #include "component_position.h"
 
-#include "util_level.h"
+#include "state_game.h"
 
 struct CPosition {
     AVectorInt coords;
@@ -29,7 +29,7 @@ static void c_position_initWithData(void* Self, const void* Data, const void* Co
     A_UNUSED(Data);
 
     CPosition* position = Self;
-    const ULevelEntityContext* context = Context;
+    const TGameEntityContext* context = Context;
 
     position->coords = context->coords;
     position->direction = C_POSITION_DOWN;

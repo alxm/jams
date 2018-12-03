@@ -18,6 +18,7 @@
 #include "state_game.h"
 
 #include "entity_camera.h"
+#include "entity_enemy.h"
 #include "entity_map.h"
 #include "entity_player.h"
 
@@ -49,17 +50,12 @@ static void gameLevelLoadMap(TGame* Game, UMapId Map, const ABlock* Block)
     a_ecs_collectionSet(Game->maps[Map].entities);
 
     A_LIST_ITERATE(a_block_getAll(Block), const ABlock*, b) {
-        const char* template = a_block_readString(b, 0);
-        AVectorInt coords = a_block_readCoords(b, 1);
-
-        ULevelEntityContext context = {
-            coords,
+        TGameEntityContext context = {
+            .template = a_block_readString(b, 0),
+            .coords = a_block_readCoords(b, 1),
         };
 
-        AEntity* e = a_entity_newEx(template, &context, Game);
-        a_entity_muteInc(e);
-
-        m_move_coordsSet(e, coords);
+        a_entity_muteInc(e_enemy_new(Game, &context));
     }
 
     Game->activeMap = U_MAP_ID_INVALID;

@@ -15,22 +15,26 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "entity_enemy.h"
 
-#include <a2x.h>
+#include "macro_move.h"
 
-typedef struct TGame TGame;
+#include "util_ecs.h"
 
-typedef struct {
-    const char* template;
-    AVectorInt coords;
-} TGameEntityContext;
+static void enemyInteract(AEntity* Entity, AEntity* Actor)
+{
+    printf("%s -> %s\n",
+        a_entity_idGet(Actor),
+        a_entity_idGet(Entity));
+}
 
-extern AState t_game;
+AEntity* e_enemy_new(TGame* Game, TGameEntityContext* Context)
+{
+    AEntity* e = a_entity_newEx(Context->template, Context, Game);
 
-extern AEntity* t_game_getPlayer(const TGame* Game);
-extern AEntity* t_game_getCamera(const TGame* Game);
-extern AEntity* t_game_getMap(const TGame* Game);
+    a_entity_messageSet(e, U_MSG_INTERACT, enemyInteract);
 
-extern bool t_game_turnStart(const TGame* Game);
-extern void t_game_runCode(TGame* Game, int Code);
+    m_move_coordsSet(e, Context->coords);
+
+    return e;
+}
