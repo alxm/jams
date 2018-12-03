@@ -15,32 +15,34 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "system_mapdraw.h"
+#include "component_position.h"
 
-#include "component_map.h"
+struct CPosition {
+    AVectorInt coords;
+    CPositionDirection direction;
+};
 
-#include "util_ecs.h"
-
-static void s_mapdraw(AEntity* Entity)
+void c_position_register(int Index)
 {
-    CMap* cmap = a_entity_componentReq(Entity, U_COM_MAP);
-    const UMap* umap = c_map_mapGet(cmap);
-    AVectorInt dim = u_map_dimGet(umap);
-
-    A_UNUSED(dim);
-
-    for(int y = 0; y < dim.y; y++) {
-        for(int x = 0; x < dim.x; x++) {
-            const UTile* tile = u_map_tileGet(umap, x, y);
-            const ASprite* sprite = u_tile_spriteGet(tile);
-
-            a_sprite_blit(sprite, x * U_TILE_DIM, y * U_TILE_DIM);
-        }
-    }
+    a_component_new(Index, "position", sizeof(CPosition), NULL, NULL);
 }
 
-void s_mapdraw_register(int Index)
+AVectorInt c_position_coordsGet(const CPosition* Position)
 {
-    a_system_new(Index, s_mapdraw, NULL, false);
-    a_system_add(Index, U_COM_MAP);
+    return Position->coords;
+}
+
+void c_position_coordsSet(CPosition* Position, AVectorInt Coords)
+{
+    Position->coords = Coords;
+}
+
+CPositionDirection c_position_directionGet(const CPosition* Position)
+{
+    return Position->direction;
+}
+
+void c_position_directionSet(CPosition* Position, CPositionDirection Direction)
+{
+    Position->direction = Direction;
 }

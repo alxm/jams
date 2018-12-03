@@ -15,32 +15,25 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "system_mapdraw.h"
+#include "entity_map.h"
 
-#include "component_map.h"
+#include "component_position.h"
+#include "component_sprite.h"
 
 #include "util_ecs.h"
 
-static void s_mapdraw(AEntity* Entity)
+AEntity* e_player_new(TGame* Game, int X, int Y)
 {
-    CMap* cmap = a_entity_componentReq(Entity, U_COM_MAP);
-    const UMap* umap = c_map_mapGet(cmap);
-    AVectorInt dim = u_map_dimGet(umap);
+    AEntity* e = a_entity_new("player", Game);
 
-    A_UNUSED(dim);
+    CPosition* position = a_entity_componentAdd(e, U_COM_POSITION);
+    c_position_coordsSet(position, (AVectorInt){X, Y});
+    c_position_directionSet(position, C_POSITION_DOWN);
 
-    for(int y = 0; y < dim.y; y++) {
-        for(int x = 0; x < dim.x; x++) {
-            const UTile* tile = u_map_tileGet(umap, x, y);
-            const ASprite* sprite = u_tile_spriteGet(tile);
+    CSprite* sprite = a_entity_componentAdd(e, U_COM_SPRITE);
+    c_sprite_init(sprite, "assets/gfx/player.png");
 
-            a_sprite_blit(sprite, x * U_TILE_DIM, y * U_TILE_DIM);
-        }
-    }
-}
+    a_entity_activeSetPermanent(e);
 
-void s_mapdraw_register(int Index)
-{
-    a_system_new(Index, s_mapdraw, NULL, false);
-    a_system_add(Index, U_COM_MAP);
+    return e;
 }

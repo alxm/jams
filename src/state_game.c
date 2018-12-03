@@ -16,6 +16,7 @@
 */
 
 #include "entity_map.h"
+#include "entity_player.h"
 
 #include "state_game.h"
 
@@ -23,16 +24,18 @@
 
 struct TGame {
     AEntity* map;
+    AEntity* player;
 };
 
 static void zInitGame(TGame* Game)
 {
     Game->map = e_map_new(Game, U_MAP_ID_CAVE);
+    Game->player = e_player_new(Game, 8, 6);
 }
 
 static void zFreeGame(TGame* Game)
 {
-    a_entity_removeSet(Game->map);
+    A_UNUSED(Game);
 }
 
 A_STATE(t_game)
@@ -51,7 +54,11 @@ A_STATE(t_game)
 
     A_STATE_DRAW
     {
+        a_pixel_colorSetHex(0x111111);
+        a_draw_fill();
+
         a_system_run(U_SYS_MAPDRAW);
+        a_system_run(U_SYS_SPRITEDRAW);
     }
 
     A_STATE_FREE

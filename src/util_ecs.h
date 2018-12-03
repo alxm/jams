@@ -22,12 +22,15 @@
 typedef enum {
     U_COM_INVALID = -1,
     U_COM_MAP,
+    U_COM_POSITION,
+    U_COM_SPRITE,
     U_COM_NUM
 } UComponentId;
 
 typedef enum {
     U_SYS_INVALD = -1,
     U_SYS_MAPDRAW,
+    U_SYS_SPRITEDRAW,
     U_SYS_NUM
 } USystemId;
 

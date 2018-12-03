@@ -18,17 +18,23 @@
 #include "util_ecs.h"
 
 #include "component_map.h"
+#include "component_position.h"
+#include "component_sprite.h"
 
 #include "system_mapdraw.h"
+#include "system_spritedraw.h"
 
 static void u_components_load(void)
 {
     c_map_register(U_COM_MAP);
+    c_position_register(U_COM_POSITION);
+    c_sprite_register(U_COM_SPRITE);
 }
 
 static void u_systems_load(void)
 {
     s_mapdraw_register(U_SYS_MAPDRAW);
+    s_spritedraw_register(U_SYS_SPRITEDRAW);
 }
 
 void u_ecs_load(void)
