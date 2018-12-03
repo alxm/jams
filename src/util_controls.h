@@ -20,29 +20,16 @@
 #include <a2x.h>
 
 typedef enum {
-    U_COM_INVALID = -1,
-    U_COM_AI,
-    U_COM_CAMERA,
-    U_COM_INPUT,
-    U_COM_MAP,
-    U_COM_POSITION,
-    U_COM_SPRITE,
-    U_COM_NUM
-} UComponentId;
+    U_BUTTON_INVALID = -1,
+    U_BUTTON_UP,
+    U_BUTTON_DOWN,
+    U_BUTTON_LEFT,
+    U_BUTTON_RIGHT,
+    U_BUTTON_ACTION,
+    U_BUTTON_NUM
+} UButtonId;
 
-typedef enum {
-    U_SYS_INVALD = -1,
-    U_SYS_AI,
-    U_SYS_CAMERA,
-    U_SYS_INPUT,
-    U_SYS_MAPDRAW,
-    U_SYS_SPRITEDRAW,
-    U_SYS_NUM
-} USystemId;
+extern void u_controls_load(void);
+extern void u_controls_unload(void);
 
-typedef enum {
-    U_MSG_INVALID = -1,
-    U_MSG_NUM
-} UMessageId;
-
-extern void u_ecs_load(void);
+extern AButton* u_controls_get(UButtonId Id);

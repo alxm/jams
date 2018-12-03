@@ -19,30 +19,13 @@
 
 #include <a2x.h>
 
-typedef enum {
-    U_COM_INVALID = -1,
-    U_COM_AI,
-    U_COM_CAMERA,
-    U_COM_INPUT,
-    U_COM_MAP,
-    U_COM_POSITION,
-    U_COM_SPRITE,
-    U_COM_NUM
-} UComponentId;
+typedef struct CInput CInput;
 
-typedef enum {
-    U_SYS_INVALD = -1,
-    U_SYS_AI,
-    U_SYS_CAMERA,
-    U_SYS_INPUT,
-    U_SYS_MAPDRAW,
-    U_SYS_SPRITEDRAW,
-    U_SYS_NUM
-} USystemId;
+#include "util_controls.h"
 
-typedef enum {
-    U_MSG_INVALID = -1,
-    U_MSG_NUM
-} UMessageId;
+typedef void CInputHandler(AEntity* Entity, UButtonId Button);
 
-extern void u_ecs_load(void);
+extern void c_input_register(int Index);
+
+extern void c_input_bind(const CInput* Input, UButtonId Button, CInputHandler* Handler);
+extern void c_input_tick(const CInput* Input);

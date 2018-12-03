@@ -15,34 +15,37 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "component_ai.h"
 
-#include <a2x.h>
+struct CAi {
+    int value;
+};
 
-typedef enum {
-    U_COM_INVALID = -1,
-    U_COM_AI,
-    U_COM_CAMERA,
-    U_COM_INPUT,
-    U_COM_MAP,
-    U_COM_POSITION,
-    U_COM_SPRITE,
-    U_COM_NUM
-} UComponentId;
+static void c_ai_init(void* Self)
+{
+    CAi* ai = Self;
 
-typedef enum {
-    U_SYS_INVALD = -1,
-    U_SYS_AI,
-    U_SYS_CAMERA,
-    U_SYS_INPUT,
-    U_SYS_MAPDRAW,
-    U_SYS_SPRITEDRAW,
-    U_SYS_NUM
-} USystemId;
+    ai->value = 1;
+}
 
-typedef enum {
-    U_MSG_INVALID = -1,
-    U_MSG_NUM
-} UMessageId;
+static void c_ai_free(void* Self)
+{
+    CAi* ai = Self;
 
-extern void u_ecs_load(void);
+    A_UNUSED(ai);
+}
+
+void c_ai_register(int Index)
+{
+    a_component_new(Index, "ai", sizeof(CAi), c_ai_init, c_ai_free);
+}
+
+int c_ai_valueGet(const CAi* Ai)
+{
+    return Ai->value;
+}
+
+void c_ai_valueSet(CAi* Ai, int Value)
+{
+    Ai->value = Value;
+}

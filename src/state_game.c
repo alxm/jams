@@ -15,11 +15,11 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "state_game.h"
+
 #include "entity_camera.h"
 #include "entity_map.h"
 #include "entity_player.h"
-
-#include "state_game.h"
 
 #include "util_ecs.h"
 
@@ -27,6 +27,7 @@ struct TGame {
     AEntity* camera;
     AEntity* map;
     AEntity* player;
+    ATimer* turnTimer;
 };
 
 static void gameInit(TGame* Game)
@@ -34,11 +35,33 @@ static void gameInit(TGame* Game)
     Game->camera = e_camera_new(Game);
     Game->map = e_map_new(Game, U_MAP_ID_CAVE);
     Game->player = e_player_new(Game, 8, 6);
+    Game->turnTimer = a_timer_new(A_TIMER_MS, 500, false);
 }
 
 static void gameFree(TGame* Game)
 {
-    A_UNUSED(Game);
+    a_timer_free(Game->turnTimer);
+}
+
+static bool t_game_turnCanStart(const TGame* Game)
+{
+    return !a_timer_isRunning(Game->turnTimer);
+}
+
+static bool t_game_turnInProgress(const TGame* Game)
+{
+    return a_timer_isRunning(Game->turnTimer);
+}
+
+bool t_game_turnStart(const TGame* Game)
+{
+    if(a_timer_isRunning(Game->turnTimer)) {
+        return false;
+    }
+
+    a_timer_start(Game->turnTimer);
+
+    return true;
 }
 
 A_STATE(t_game)
@@ -52,6 +75,14 @@ A_STATE(t_game)
 
     A_STATE_TICK
     {
+        if(t_game_turnCanStart(&game)) {
+            a_system_run(U_SYS_INPUT);
+
+            if(t_game_turnInProgress(&game)) {
+                a_system_run(U_SYS_AI);
+            }
+        }
+
         a_system_run(U_SYS_CAMERA);
     }
 

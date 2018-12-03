@@ -15,34 +15,19 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "system_ai.h"
 
-#include <a2x.h>
+#include "component_ai.h"
 
-typedef enum {
-    U_COM_INVALID = -1,
-    U_COM_AI,
-    U_COM_CAMERA,
-    U_COM_INPUT,
-    U_COM_MAP,
-    U_COM_POSITION,
-    U_COM_SPRITE,
-    U_COM_NUM
-} UComponentId;
+#include "util_ecs.h"
 
-typedef enum {
-    U_SYS_INVALD = -1,
-    U_SYS_AI,
-    U_SYS_CAMERA,
-    U_SYS_INPUT,
-    U_SYS_MAPDRAW,
-    U_SYS_SPRITEDRAW,
-    U_SYS_NUM
-} USystemId;
+static void s_ai(AEntity* Entity)
+{
+    A_UNUSED(Entity);
+}
 
-typedef enum {
-    U_MSG_INVALID = -1,
-    U_MSG_NUM
-} UMessageId;
-
-extern void u_ecs_load(void);
+void s_ai_register(int Index)
+{
+    a_system_new(Index, s_ai, NULL, false);
+    a_system_add(Index, U_COM_AI);
+}

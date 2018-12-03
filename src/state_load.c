@@ -17,6 +17,7 @@
 
 #include "state_load.h"
 
+#include "util_controls.h"
 #include "util_ecs.h"
 #include "util_map.h"
 #include "util_state.h"
@@ -28,6 +29,7 @@ A_STATE(t_load)
         void (*unload)(void);
         bool loaded;
     } table[] = {
+        {u_controls_load, u_controls_unload, false},
         {u_ecs_load, NULL, false},
         {u_map_load, u_map_unload, false},
     };
