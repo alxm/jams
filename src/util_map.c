@@ -27,11 +27,11 @@ typedef const UTile* UMapTile;
 
 struct UMap {
     const char* name;
+    uint32_t colorhex;
     AStrHash* tilesTable; // table of UTile
     int w, h;
     UMapTile** tiles; // [h][w]
     UMapTile* tilesData; // [h * w]
-    APixel bgcolor;
 };
 
 static UMap g_maps[U_MAP_ID_NUM];
@@ -103,7 +103,7 @@ static void loadTiles(const UMap* Map)
     a_block_free(tiles);
 }
 
-static void mapNew(UMapId Id, const char* Name)
+static void mapNew(UMapId Id, const char* Name, uint32_t Hexcode)
 {
     char buffer[64];
     snprintf(buffer, sizeof(buffer), "assets/maps/%s/map.png", Name);
@@ -113,6 +113,7 @@ static void mapNew(UMapId Id, const char* Name)
     UMap* m = &g_maps[Id];
 
     m->name = Name;
+    m->colorhex = Hexcode;
     m->tilesTable = a_strhash_new();
 
     loadTiles(m);
@@ -147,8 +148,8 @@ static void mapFree(UMapId Id)
 
 void u_map_load(void)
 {
-    mapNew(U_MAP_ID_CAVE, "cave");
-    mapNew(U_MAP_ID_FOREST, "forest");
+    mapNew(U_MAP_ID_CAVE, "cave", 0x111111);
+    mapNew(U_MAP_ID_FOREST, "forest", 0x011e2a);
 }
 
 void u_map_unload(void)
@@ -171,6 +172,11 @@ AVectorInt u_map_getDim(const UMap* Map)
 const UTile* u_map_getTile(const UMap* Map, int X, int Y)
 {
     return Map->tiles[Y][X];
+}
+
+uint32_t u_map_getColorHex(const UMap* Map)
+{
+    return Map->colorhex;
 }
 
 const ASprite* u_tile_getSprite(const UTile* Tile)

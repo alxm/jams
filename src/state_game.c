@@ -87,6 +87,10 @@ static void gameMapChange(TGame* Game, UMapId Map)
     a_collection_muteDec(Game->maps[Game->activeMap].entities);
 
     m_move_coordsSet(Game->player, (AVectorInt){8, 6});
+
+    a_settings_colorSet(
+        A_SETTING_COLOR_SCREEN_BORDER,
+        u_map_getColorHex(e_map_mapGet(Game->maps[Game->activeMap].map)));
 }
 
 static void gameInit(TGame* Game)
@@ -141,9 +145,6 @@ A_STATE(t_game)
 
     A_STATE_DRAW
     {
-        a_pixel_colorSetHex(0x111111);
-        a_draw_fill();
-
         a_system_run(U_SYS_MAPDRAW);
         a_system_run(U_SYS_SPRITEDRAW);
     }

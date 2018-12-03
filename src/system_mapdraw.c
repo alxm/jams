@@ -34,6 +34,9 @@ static void s_mapdraw(AEntity* Entity)
     const UMap* umap = c_map_mapGet(cmap);
     AVectorInt dim = u_map_getDim(umap);
 
+    a_pixel_colorSetHex(u_map_getColorHex(umap));
+    a_draw_fill();
+
     for(int y = 0; y < dim.y; y++) {
         for(int x = 0; x < dim.x; x++) {
             const UTile* tile = u_map_getTile(umap, x, y);

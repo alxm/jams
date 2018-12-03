@@ -32,3 +32,10 @@ AEntity* e_map_new(TGame* Game, UMapId Id)
 
     return e;
 }
+
+const UMap* e_map_mapGet(const AEntity* Map)
+{
+    CMap* map = a_entity_componentReq(Map, U_COM_MAP);
+
+    return c_map_mapGet(map);
+}

@@ -24,3 +24,5 @@
 #include "util_map.h"
 
 extern AEntity* e_map_new(TGame* Game, UMapId Id);
+
+extern const UMap* e_map_mapGet(const AEntity* Map);
