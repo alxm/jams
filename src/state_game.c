@@ -24,38 +24,84 @@
 #include "macro_move.h"
 
 #include "util_ecs.h"
+#include "util_level.h"
 #include "util_map.h"
 
 struct TGame {
+    unsigned level;
     ATimer* turnTimer;
     AEntity* player;
     AEntity* camera;
-    AEntity* maps[U_MAP_ID_NUM];
+    struct {
+        ACollection* entities;
+        AEntity* map;
+    } maps[U_MAP_ID_NUM];
     UMapId activeMap;
 };
+
+static void gameLevelLoadMap(TGame* Game, UMapId Map, const ABlock* Block)
+{
+    if(Block == NULL) {
+        return;
+    }
+
+    a_ecs_collectionSet(Game->maps[Map].entities);
+
+    A_LIST_ITERATE(a_block_getAll(Block), const ABlock*, b) {
+        const char* template = a_block_readString(b, 0);
+        AVectorInt coords = a_block_readCoords(b, 1);
+
+        ULevelEntityContext context = {
+            coords,
+        };
+
+        AEntity* e = a_entity_newEx(template, &context, Game);
+        a_entity_muteInc(e);
+    }
+
+    a_ecs_collectionSet(NULL);
+}
+
+static void gameLevelLoad(TGame* Game)
+{
+    const ABlock* level = u_level_get(Game->level);
+    const ABlock* cave = a_block_get(level, "cave");
+    const ABlock* forest = a_block_get(level, "forest");
+
+    gameLevelLoadMap(Game, U_MAP_ID_CAVE, cave);
+    gameLevelLoadMap(Game, U_MAP_ID_FOREST, forest);
+}
 
 static void gameMapChange(TGame* Game, UMapId Map)
 {
     if(Game->activeMap != U_MAP_ID_INVALID) {
-        a_entity_muteInc(Game->maps[Game->activeMap]);
+        a_collection_muteInc(Game->maps[Game->activeMap].entities);
     }
 
     Game->activeMap = Map;
-    a_entity_muteDec(Game->maps[Game->activeMap]);
+    a_collection_muteDec(Game->maps[Game->activeMap].entities);
 
     m_move_coordsSet(Game->player, 8, 6);
 }
 
 static void gameInit(TGame* Game)
 {
+    Game->level = 0;
     Game->turnTimer = a_timer_new(A_TIMER_MS, 250, false);
-    Game->camera = e_camera_new(Game);
     Game->player = e_player_new(Game);
+    Game->camera = e_camera_new(Game);
 
     for(UMapId m = U_MAP_ID_NUM; m--; ) {
-        Game->maps[m] = e_map_new(Game, m);
-        a_entity_muteInc(Game->maps[m]);
+        Game->maps[m].entities = a_collection_new();
+        a_ecs_collectionSet(Game->maps[m].entities);
+
+        Game->maps[m].map = e_map_new(Game, m);
+        a_entity_muteInc(Game->maps[m].map);
+
+        a_ecs_collectionSet(NULL);
     }
+
+    gameLevelLoad(Game);
 
     Game->activeMap = U_MAP_ID_INVALID;
     gameMapChange(Game, U_MAP_ID_CAVE);
@@ -115,7 +161,7 @@ AEntity* t_game_getCamera(const TGame* Game)
 
 AEntity* t_game_getMap(const TGame* Game)
 {
-    return Game->maps[Game->activeMap];
+    return Game->maps[Game->activeMap].map;
 }
 
 bool t_game_turnStart(const TGame* Game)

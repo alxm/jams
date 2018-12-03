@@ -17,14 +17,33 @@
 
 #include "component_position.h"
 
+#include "util_level.h"
+
 struct CPosition {
     AVectorInt coords;
     CPositionDirection direction;
 };
 
+static void c_position_initWithData(void* Self, const void* Data, const void* Context)
+{
+    A_UNUSED(Data);
+
+    CPosition* position = Self;
+    const ULevelEntityContext* context = Context;
+
+    position->coords = context->coords;
+    position->direction = C_POSITION_DOWN;
+}
+
 void c_position_register(int Index)
 {
     a_component_new(Index, "position", sizeof(CPosition), NULL, NULL);
+
+    a_component_dataSet(Index,
+                        1,
+                        NULL,
+                        NULL,
+                        c_position_initWithData);
 }
 
 AVectorInt c_position_coordsGet(const CPosition* Position)

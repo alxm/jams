@@ -1,0 +1,8 @@
+snake
+    sprite
+        frames
+            snake/all.png
+            snake/all.png
+            snake/all.png
+            snake/all.png
+    position

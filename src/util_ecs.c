@@ -53,7 +53,7 @@ static void u_templates_load(void)
     ADir* root = a_dir_new("assets/entities");
 
     A_LIST_ITERATE(a_dir_entriesListGet(root), APath*, p) {
-        if(a_path_getName(p)[0] == '.' || !a_path_test(p, A_PATH_DIR)) {
+        if(!a_path_test(p, A_PATH_DIR)) {
             continue;
         }
 

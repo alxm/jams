@@ -67,7 +67,6 @@ static void c_sprite_initWithData(void* Self, const void* Data, const void* Cont
     const CSpriteData* data = Data;
 
     for(int d = 0; d < C_POSITION_NUM; d++) {
-        printf("Load %s\n", data->files[d]);
         sprite->frames[d] = a_spriteframes_newFromFileGrid(
                                 data->files[d], U_TILE_DIM, U_TILE_DIM, 0);
     }

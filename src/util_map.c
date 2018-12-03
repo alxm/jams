@@ -34,8 +34,6 @@ struct UMap {
 
 static UMap g_maps[U_MAP_ID_NUM];
 
-#define Z_MAP_PREFIX "assets/maps"
-
 static char* pixelToKey(APixel Pixel)
 {
     int r, g, b;
@@ -52,7 +50,7 @@ static UTile* tileNew(const UMap* Map, const char* File, int Code)
     UTile* t = a_mem_malloc(sizeof(UTile));
 
     char buffer[64];
-    snprintf(buffer, sizeof(buffer), Z_MAP_PREFIX "/%s/%s", Map->name, File);
+    snprintf(buffer, sizeof(buffer), "assets/maps/%s/%s", Map->name, File);
 
     t->frames = a_spriteframes_newFromFileGrid(buffer, 16, 16, 0);
     t->code = Code;
@@ -82,7 +80,7 @@ const UTile* tileGet(const UMap* Map, APixel Color)
 static void loadTiles(const UMap* Map)
 {
     char buffer[64];
-    snprintf(buffer, sizeof(buffer), Z_MAP_PREFIX "/%s/tiles.txt", Map->name);
+    snprintf(buffer, sizeof(buffer), "assets/maps/%s/tiles.txt", Map->name);
 
     ABlock* tiles = a_block_new(buffer);
 
@@ -102,7 +100,7 @@ static void loadTiles(const UMap* Map)
 static void mapNew(UMapId Id, const char* Name)
 {
     char buffer[64];
-    snprintf(buffer, sizeof(buffer), Z_MAP_PREFIX "/%s/map.png", Name);
+    snprintf(buffer, sizeof(buffer), "assets/maps/%s/map.png", Name);
 
     ASprite* image = a_sprite_newFromFile(buffer);
 
