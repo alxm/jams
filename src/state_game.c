@@ -91,6 +91,8 @@ static void gameMapChange(TGame* Game, UMapId Map)
     a_settings_colorSet(
         A_SETTING_COLOR_SCREEN_BORDER,
         u_map_getColorHex(e_map_mapGet(Game->maps[Game->activeMap].map)));
+
+    a_fade_screens(500);
 }
 
 static void gameInit(TGame* Game)
