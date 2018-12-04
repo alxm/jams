@@ -26,6 +26,7 @@
 
 #include "util_ecs.h"
 #include "util_level.h"
+#include "util_log.h"
 #include "util_map.h"
 
 struct TGame {
@@ -139,12 +140,16 @@ A_STATE(t_game)
         }
 
         a_system_run(U_SYS_CAMERA);
+
+        u_log_tick();
     }
 
     A_STATE_DRAW
     {
         a_system_run(U_SYS_MAPDRAW);
         a_system_run(U_SYS_SPRITEDRAW);
+
+        u_log_draw(4, 132);
     }
 
     A_STATE_FREE

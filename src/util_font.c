@@ -15,20 +15,24 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
+#include "util_font.h"
 
-A_SETUP
+static AFont* g_fonts[U_FONT_NUM];
+
+void u_font_load(void)
 {
-    a_settings_stringSet(A_SETTING_APP_TITLE, "Cave Shrine");
-    a_settings_stringSet(A_SETTING_APP_VERSION, "0.1.0");
-    a_settings_stringSet(A_SETTING_APP_AUTHOR, "alxm");
-    a_settings_colorSet(A_SETTING_COLOR_SCREEN_BORDER, 0x111111);
-    a_settings_boolSet(A_SETTING_VIDEO_VSYNC, false);
-    a_settings_intSet(A_SETTING_VIDEO_WIDTH, 256);
-    a_settings_intSet(A_SETTING_VIDEO_HEIGHT, 144);
+    g_fonts[U_FONT_RED] = a_font_newFromFile("assets/gfx/font_red.png");
+    g_fonts[U_FONT_BLUE] = a_font_newFromFile("assets/gfx/font_blue.png");
 }
 
-A_MAIN
+void u_font_unload(void)
 {
-    u_state_push(U_STATE_ID_LOAD);
+    for(UFontId f = 0; f < U_FONT_NUM; f++) {
+        a_font_free(g_fonts[f]);
+    }
+}
+
+const AFont* u_font_get(UFontId Id)
+{
+    return g_fonts[Id];
 }

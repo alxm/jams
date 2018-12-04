@@ -24,6 +24,7 @@
 #include "state_game.h"
 
 #include "util_ecs.h"
+#include "util_log.h"
 
 void m_move_bumpHandler(AEntity* Target, AEntity* Actor)
 {
@@ -34,11 +35,12 @@ void m_move_bumpHandler(AEntity* Target, AEntity* Actor)
         int health = c_health_valueGet(targetHealth);
         int damage = c_damage_valueGet(actorDamage);
 
-        printf("%s attacked %s (%d -> %d)\n",
-            a_entity_idGet(Actor),
-            a_entity_idGet(Target),
-            health,
-            health - damage);
+        u_log_add(U_FONT_BLUE,
+                  "%s attacked %s (%d -> %d)",
+                  a_entity_idGet(Actor),
+                  a_entity_idGet(Target),
+                  health,
+                  health - damage);
 
         c_health_valueSet(targetHealth, health - damage);
     }

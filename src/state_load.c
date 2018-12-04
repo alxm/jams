@@ -19,7 +19,9 @@
 
 #include "util_controls.h"
 #include "util_ecs.h"
+#include "util_font.h"
 #include "util_level.h"
+#include "util_log.h"
 #include "util_map.h"
 #include "util_state.h"
 
@@ -32,7 +34,9 @@ A_STATE(t_load)
     } table[] = {
         {u_controls_load, u_controls_unload, false},
         {u_ecs_load, NULL, false},
+        {u_font_load, u_font_unload, false},
         {u_level_load, u_level_unload, false},
+        {u_log_load, u_log_unload, false},
         {u_map_load, u_map_unload, false},
     };
 

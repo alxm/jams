@@ -15,20 +15,19 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
+#pragma once
 
-A_SETUP
-{
-    a_settings_stringSet(A_SETTING_APP_TITLE, "Cave Shrine");
-    a_settings_stringSet(A_SETTING_APP_VERSION, "0.1.0");
-    a_settings_stringSet(A_SETTING_APP_AUTHOR, "alxm");
-    a_settings_colorSet(A_SETTING_COLOR_SCREEN_BORDER, 0x111111);
-    a_settings_boolSet(A_SETTING_VIDEO_VSYNC, false);
-    a_settings_intSet(A_SETTING_VIDEO_WIDTH, 256);
-    a_settings_intSet(A_SETTING_VIDEO_HEIGHT, 144);
-}
+#include <a2x.h>
 
-A_MAIN
-{
-    u_state_push(U_STATE_ID_LOAD);
-}
+#include "util_font.h"
+
+extern void u_log_load(void);
+extern void u_log_unload(void);
+
+extern void u_log_add(UFontId Font, const char* Format, ...);
+
+extern void u_log_inc(void);
+extern void u_log_dec(void);
+
+extern void u_log_tick(void);
+extern void u_log_draw(int X, int Y);
