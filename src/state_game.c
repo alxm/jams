@@ -88,6 +88,8 @@ static void gameMapChange(TGame* Game, UMapId Map)
 
     a_settings_colorSet(A_SETTING_COLOR_SCREEN_BORDER, u_map_getColorHex(umap));
     a_fade_screens(500);
+
+    u_log_add(U_FONT_GREEN, "Current location: %s", u_map_getName(umap));
 }
 
 static void gameInit(TGame* Game)

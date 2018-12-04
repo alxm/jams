@@ -23,6 +23,7 @@ typedef enum {
     U_FONT_INVALID = -1,
     U_FONT_RED,
     U_FONT_BLUE,
+    U_FONT_GREEN,
     U_FONT_NUM,
 } UFontId;
 

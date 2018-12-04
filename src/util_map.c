@@ -190,6 +190,11 @@ const UTile* u_map_getTile(const UMap* Map, int X, int Y)
     return Map->tiles[Y][X];
 }
 
+const char* u_map_getName(const UMap* Map)
+{
+    return Map->name;
+}
+
 uint32_t u_map_getColorHex(const UMap* Map)
 {
     return Map->colorhex;

@@ -23,6 +23,7 @@ void u_font_load(void)
 {
     g_fonts[U_FONT_RED] = a_font_newFromFile("assets/gfx/font_red.png");
     g_fonts[U_FONT_BLUE] = a_font_newFromFile("assets/gfx/font_blue.png");
+    g_fonts[U_FONT_GREEN] = a_font_newFromFile("assets/gfx/font_green.png");
 }
 
 void u_font_unload(void)
