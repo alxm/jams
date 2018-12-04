@@ -22,12 +22,16 @@
 #include "macro_move.h"
 
 #include "util_ecs.h"
+#include "util_font.h"
+#include "util_log.h"
 
 static void s_health(AEntity* Entity)
 {
     CHealth* health = a_entity_componentReq(Entity, U_COM_HEALTH);
 
     if(c_health_valueGet(health) <= 0) {
+        u_log_add(U_FONT_RED, "%s was slain", a_entity_idGet(Entity));
+
         a_entity_removeSet(Entity);
         m_move_coordsClear(Entity);
     }

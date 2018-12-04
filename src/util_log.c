@@ -120,7 +120,7 @@ void u_log_draw(int X, int Y)
 {
     int alphaInc = (A_PIXEL_ALPHA_MAX * 3 / 4) / (int)g_log.maxLines;
     int numLines = (int)a_list_sizeGet(g_log.lines);
-    int alpha = A_PIXEL_ALPHA_MAX - (numLines + 1) * alphaInc;
+    int alpha = A_PIXEL_ALPHA_MAX - numLines * alphaInc;
 
     a_pixel_push();
     a_pixel_blendSet(A_PIXEL_BLEND_RGBA);
