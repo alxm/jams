@@ -23,5 +23,4 @@ typedef struct CAi CAi;
 
 extern void c_ai_register(int Index);
 
-extern int c_ai_valueGet(const CAi* Ai);
-extern void c_ai_valueSet(CAi* Ai, int Value);
+extern int c_ai_codeGet(const CAi* Ai);

@@ -19,11 +19,19 @@
 
 #include "component_ai.h"
 
+#include "macro_move.h"
+
 #include "util_ecs.h"
 
 static void s_ai(AEntity* Entity)
 {
-    A_UNUSED(Entity);
+    CAi* ai = a_entity_componentReq(Entity, U_COM_AI);
+
+    switch(c_ai_codeGet(ai)) {
+        case 0: {
+            m_move_direction(Entity, a_random_rangeu(C_POSITION_UP, C_POSITION_NUM));
+        } break;
+    }
 }
 
 void s_ai_register(int Index)

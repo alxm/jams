@@ -87,10 +87,12 @@ void m_move_coordsSet(AEntity* Entity, AVectorInt Coords)
 
             c_position_coordsSet(position, Coords);
 
-            int code = u_tile_getCode(utile);
+            if(Entity == t_game_getPlayer(game)) {
+                int code = u_tile_getCode(utile);
 
-            if(code > 0) {
-                t_game_runCode(game, code);
+                if(code > 0) {
+                    t_game_runCode(game, code);
+                }
             }
         }
     }

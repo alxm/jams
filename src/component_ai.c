@@ -17,35 +17,45 @@
 
 #include "component_ai.h"
 
+typedef struct {
+    int code;
+} CAiData;
+
 struct CAi {
-    int value;
+    int code;
 };
 
-static void c_ai_init(void* Self)
+static void c_ai_dataInit(void* Data, const ABlock* Block, const void* Context)
 {
-    CAi* ai = Self;
+    A_UNUSED(Context);
 
-    ai->value = 1;
+    CAiData* data = Data;
+
+    data->code = a_block_readInt(Block, 1);
 }
 
-static void c_ai_free(void* Self)
+static void c_ai_initWithData(void* Self, const void* Data, const void* Context)
 {
-    CAi* ai = Self;
+    A_UNUSED(Context);
 
-    A_UNUSED(ai);
+    CAi* ai = Self;
+    const CAiData* data = Data;
+
+    ai->code = data->code;
 }
 
 void c_ai_register(int Index)
 {
-    a_component_new(Index, "ai", sizeof(CAi), c_ai_init, c_ai_free);
+    a_component_new(Index, "ai", sizeof(CAi), NULL, NULL);
+
+    a_component_dataSet(Index,
+                        sizeof(CAiData),
+                        c_ai_dataInit,
+                        NULL,
+                        c_ai_initWithData);
 }
 
-int c_ai_valueGet(const CAi* Ai)
+int c_ai_codeGet(const CAi* Ai)
 {
-    return Ai->value;
-}
-
-void c_ai_valueSet(CAi* Ai, int Value)
-{
-    Ai->value = Value;
+    return Ai->code;
 }
