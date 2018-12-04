@@ -1,6 +1,34 @@
 # Cave Shrine
 
-*Cave Shrine* is a game made from scratch for Ludum Dare 43.
+*Cave Shrine* is an unfinished game I made for Ludum Dare 43.
+
+![Cave Shrine screenshot](https://github.com/alxm/cave-shrine/raw/master/assets/screenshots/Cave-Shrine-01.png "Cave Shrine screenshot")
+![Cave Shrine screenshot](https://github.com/alxm/cave-shrine/raw/master/assets/screenshots/Cave-Shrine-02.png "Cave Shrine screenshot")
+
+Download binaries from [https://alxm.itch.io/cave-shrine](https://alxm.itch.io/cave-shrine)
+
+## Controls
+
+* Move with dpad or arrow keys
+* Exit with Esc key
+
+## Running
+
+### Windows
+
+* Built for 64bit system
+* Launch `caveshrine.exe`
+
+### Linux
+
+* Built for 64bit Ubuntu 16.04/Linux Mint 18
+* You may need to install these libraries: `libSDL2 libSDL2_mixer libpng12`
+* Launch `caveshrine`
+
+## Building Source Code
+
+* Install a2x `rel_ld43` from [here](https://github.com/alxm/a2x/tree/rel_ld43)
+* Clone this repo, `cd make && make` or `make -f Makefile.mingw64`
 
 ## License
 
