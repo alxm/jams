@@ -14,3 +14,19 @@ door
     1a8f0b
     code
         1
+shrine1
+    shrine1.png
+    700c47
+    block
+shrine2
+    shrine2.png
+    f644ad
+    block
+shrine3
+    shrine3.png
+    a64f82
+    block
+shrine4
+    shrine4.png
+    450e2f
+    block
