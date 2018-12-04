@@ -128,6 +128,8 @@ A_STATE(t_game)
 
     A_STATE_TICK
     {
+        a_system_run(U_SYS_HEALTH);
+
         if(!a_timer_isRunning(game.turnTimer)) {
             a_system_run(U_SYS_INPUT);
 

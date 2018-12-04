@@ -17,11 +17,32 @@
 
 #include "macro_move.h"
 
+#include "component_damage.h"
+#include "component_health.h"
 #include "component_map.h"
 
 #include "state_game.h"
 
 #include "util_ecs.h"
+
+void m_move_bumpHandler(AEntity* Target, AEntity* Actor)
+{
+    CHealth* targetHealth = a_entity_componentGet(Target, U_COM_HEALTH);
+    CDamage* actorDamage = a_entity_componentGet(Actor, U_COM_DAMAGE);
+
+    if(actorDamage && targetHealth) {
+        int health = c_health_valueGet(targetHealth);
+        int damage = c_damage_valueGet(actorDamage);
+
+        printf("%s attacked %s (%d -> %d)\n",
+            a_entity_idGet(Actor),
+            a_entity_idGet(Target),
+            health,
+            health - damage);
+
+        c_health_valueSet(targetHealth, health - damage);
+    }
+}
 
 void m_move_direction(AEntity* Entity, CPositionDirection Direction)
 {
@@ -70,5 +91,18 @@ void m_move_coordsSet(AEntity* Entity, AVectorInt Coords)
                 t_game_runCode(game, code);
             }
         }
+    }
+}
+
+void m_move_coordsClear(AEntity* Entity)
+{
+    TGame* game = a_entity_contextGet(Entity);
+    CMap* map = a_entity_componentReq(t_game_getMap(game), U_COM_MAP);
+
+    CPosition* position = a_entity_componentReq(Entity, U_COM_POSITION);
+    AVectorInt coords = c_position_coordsGet(position);
+
+    if(c_map_entityGet(map, coords) == Entity) {
+        c_map_entitySet(map, coords, NULL);
     }
 }

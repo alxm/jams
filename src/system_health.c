@@ -15,18 +15,26 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "entity_enemy.h"
+#include "system_health.h"
+
+#include "component_health.h"
 
 #include "macro_move.h"
 
 #include "util_ecs.h"
 
-AEntity* e_enemy_new(TGame* Game, TGameEntityContext* Context)
+static void s_health(AEntity* Entity)
 {
-    AEntity* e = a_entity_newEx(Context->template, Context, Game);
+    CHealth* health = a_entity_componentReq(Entity, U_COM_HEALTH);
 
-    a_entity_messageSet(e, U_MSG_INTERACT, m_move_bumpHandler);
-    m_move_coordsSet(e, Context->coords);
+    if(c_health_valueGet(health) <= 0) {
+        a_entity_removeSet(Entity);
+        m_move_coordsClear(Entity);
+    }
+}
 
-    return e;
+void s_health_register(int Index)
+{
+    a_system_new(Index, s_health, NULL, false);
+    a_system_add(Index, U_COM_HEALTH);
 }

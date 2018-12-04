@@ -21,5 +21,8 @@
 
 #include "component_position.h"
 
+extern AMessageHandler m_move_bumpHandler;
+
 extern void m_move_direction(AEntity* Entity, CPositionDirection Direction);
 extern void m_move_coordsSet(AEntity* Entity, AVectorInt Coords);
+extern void m_move_coordsClear(AEntity* Entity);

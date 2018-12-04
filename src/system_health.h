@@ -15,18 +15,8 @@
     along with Cave Shrine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "entity_enemy.h"
+#pragma once
 
-#include "macro_move.h"
+#include <a2x.h>
 
-#include "util_ecs.h"
-
-AEntity* e_enemy_new(TGame* Game, TGameEntityContext* Context)
-{
-    AEntity* e = a_entity_newEx(Context->template, Context, Game);
-
-    a_entity_messageSet(e, U_MSG_INTERACT, m_move_bumpHandler);
-    m_move_coordsSet(e, Context->coords);
-
-    return e;
-}
+extern void s_health_register(int Index);

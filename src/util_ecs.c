@@ -27,6 +27,7 @@
 
 #include "system_ai.h"
 #include "system_camera.h"
+#include "system_health.h"
 #include "system_input.h"
 #include "system_mapdraw.h"
 #include "system_spritedraw.h"
@@ -47,6 +48,7 @@ static void u_systems_load(void)
 {
     s_ai_register(U_SYS_AI);
     s_camera_register(U_SYS_CAMERA);
+    s_health_register(U_SYS_HEALTH);
     s_input_register(U_SYS_INPUT);
     s_mapdraw_register(U_SYS_MAPDRAW);
     s_spritedraw_register(U_SYS_SPRITEDRAW);

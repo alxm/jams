@@ -36,6 +36,7 @@ typedef enum {
     U_SYS_INVALD = -1,
     U_SYS_AI,
     U_SYS_CAMERA,
+    U_SYS_HEALTH,
     U_SYS_INPUT,
     U_SYS_MAPDRAW,
     U_SYS_SPRITEDRAW,
