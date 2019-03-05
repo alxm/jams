@@ -84,13 +84,13 @@ static void z_area_free(ZArea* Area)
     free(Area);
 }
 
-static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize)
+static AList* z_area_subdivide(ZArea* StartArea, int Iterations, int BlockSizeMin, int RoadSize)
 {
     AList* areas = a_list_new();
 
     a_list_addLast(areas, StartArea);
 
-    for(int iterations = 32; iterations--; ) {
+    while(Iterations--) {
         ZArea* areaOld = NULL;
 
         for(int tries = 8; tries--; ) {
@@ -128,11 +128,17 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize)
                                  areaOld->y,
                                  areaOld->w - median,
                                  areaOld->h);
-            memcpy(areaNew->road, areaOld->road, sizeof(areaOld->road));
-            areaNew->road[Z_ROAD_LEFT].size = RoadSize;
 
             areaOld->w = median;
-            areaOld->road[Z_ROAD_RIGHT].size = RoadSize;
+            memcpy(areaNew->road, areaOld->road, sizeof(areaOld->road));
+
+            if(areaOld->w > areaNew->w) {
+                areaOld->road[Z_ROAD_RIGHT].size = RoadSize - (RoadSize >> 1);
+                areaNew->road[Z_ROAD_LEFT].size = RoadSize >> 1;
+            } else {
+                areaOld->road[Z_ROAD_RIGHT].size = RoadSize >> 1;
+                areaNew->road[Z_ROAD_LEFT].size = RoadSize - (RoadSize >> 1);
+            }
         } else {
             int smallest = a_math_max(BlockSizeMin / 2, areaOld->h / 4);
             int median = a_random_range(smallest, areaOld->h - smallest + 1);
@@ -141,11 +147,17 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize)
                                  areaOld->y + median,
                                  areaOld->w,
                                  areaOld->h - median);
-            memcpy(areaNew->road, areaOld->road, sizeof(areaOld->road));
-            areaNew->road[Z_ROAD_UP].size = RoadSize;
 
             areaOld->h = median;
-            areaOld->road[Z_ROAD_DOWN].size = RoadSize;
+            memcpy(areaNew->road, areaOld->road, sizeof(areaOld->road));
+
+            if(areaOld->h > areaNew->h) {
+                areaOld->road[Z_ROAD_DOWN].size = RoadSize - (RoadSize >> 1);
+                areaNew->road[Z_ROAD_UP].size = RoadSize >> 1;
+            } else {
+                areaOld->road[Z_ROAD_DOWN].size = RoadSize >> 1;
+                areaNew->road[Z_ROAD_UP].size = RoadSize - (RoadSize >> 1);
+            }
         }
 
         a_list_addLast(areas, areaNew);
@@ -162,12 +174,19 @@ static inline int distanceFromCenterSq(const ZArea* Area)
     return x * x + y * y;
 }
 
-int z_area_sortByDistance(void* ItemA, void* ItemB)
+static inline int surfaceArea(const ZArea* Area)
 {
-    const ZArea* areaA = ItemA;
-    const ZArea* areaB = ItemB;
+    return Area->w * Area->h;
+}
 
-    return distanceFromCenterSq(areaA) - distanceFromCenterSq(areaB);
+static int z_area_sortByDistance(void* ItemA, void* ItemB)
+{
+    return distanceFromCenterSq(ItemA) - distanceFromCenterSq(ItemB);
+}
+
+static int z_area_sortBySize(void* ItemA, void* ItemB)
+{
+    return surfaceArea(ItemB) - surfaceArea(ItemA);
 }
 
 static void z_map_generate(ZMap* Map)
@@ -180,14 +199,18 @@ static void z_map_generate(ZMap* Map)
         entireArea->road[r].size = 4;
     }
 
-    AList* areas = z_area_subdivide(entireArea, 4 * Z_BLOCK_SIZE_MULTIPLE, 4);
+    AList* areas = z_area_subdivide(entireArea,
+                                    32,
+                                    4 * Z_BLOCK_SIZE_MULTIPLE,
+                                    8);
 
     a_list_sort(areas, z_area_sortByDistance);
 
     for(unsigned i = a_list_sizeGet(areas) / 5; i--; ) {
         AList* subAreas = z_area_subdivide(a_list_pop(areas),
+                                           8,
                                            2 * Z_BLOCK_SIZE_MULTIPLE,
-                                           2);
+                                           4);
 
         a_list_appendMove(areas, subAreas);
         a_list_free(subAreas);
@@ -197,8 +220,21 @@ static void z_map_generate(ZMap* Map)
 
     for(unsigned i = a_list_sizeGet(areas) / 8; i--; ) {
         AList* subAreas = z_area_subdivide(a_list_pop(areas),
+                                           8,
                                            1 * Z_BLOCK_SIZE_MULTIPLE,
-                                           1);
+                                           2);
+
+        a_list_appendMove(areas, subAreas);
+        a_list_free(subAreas);
+    }
+
+    a_list_sort(areas, z_area_sortBySize);
+
+    for(unsigned i = a_list_sizeGet(areas) / 16; i--; ) {
+        AList* subAreas = z_area_subdivide(a_list_pop(areas),
+                                           a_random_range(1, 4),
+                                           1 * Z_BLOCK_SIZE_MULTIPLE,
+                                           2);
 
         a_list_appendMove(areas, subAreas);
         a_list_free(subAreas);
@@ -232,20 +268,6 @@ static void z_map_generate(ZMap* Map)
             for(int r = a->road[Z_ROAD_RIGHT].size; r--; ) {
                 Map->tiles[y][a->x + a->w - 1 - r].value = 1;
             }
-        }
-    }
-
-    for(int y = 0; y < Z_MAP_H; y++) {
-        for(int b = 0; b < Z_BLOCK_SIZE_MULTIPLE; b++) {
-            Map->tiles[y][b].value = 0;
-            Map->tiles[y][Z_MAP_W - 1 - b].value = 0;
-        }
-    }
-
-    for(int x = 0; x < Z_MAP_W; x++) {
-        for(int b = 0; b < Z_BLOCK_SIZE_MULTIPLE; b++) {
-            Map->tiles[b][x].value = 0;
-            Map->tiles[Z_MAP_H - 1 - b][x].value = 0;
         }
     }
 
