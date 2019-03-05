@@ -189,6 +189,21 @@ static int z_area_sortBySize(void* ItemA, void* ItemB)
     return surfaceArea(ItemB) - surfaceArea(ItemA);
 }
 
+static void areasDivide(AList* Areas, AListCompare* SortFunction, unsigned Percentage, int Iterations, int BlockSizeMin, int RoadSize)
+{
+    a_list_sort(Areas, SortFunction);
+
+    for(unsigned i = a_list_sizeGet(Areas) * Percentage / 100; i--; ) {
+        AList* subAreas = z_area_subdivide(a_list_pop(Areas),
+                                           Iterations,
+                                           BlockSizeMin,
+                                           RoadSize);
+
+        a_list_appendMove(Areas, subAreas);
+        a_list_free(subAreas);
+    }
+}
+
 static void z_map_generate(ZMap* Map)
 {
     memset(Map, 0, sizeof(ZMap));
@@ -204,41 +219,26 @@ static void z_map_generate(ZMap* Map)
                                     4 * Z_BLOCK_SIZE_MULTIPLE,
                                     8);
 
-    a_list_sort(areas, z_area_sortByDistance);
+    areasDivide(areas,
+                z_area_sortByDistance,
+                20,
+                8,
+                2 * Z_BLOCK_SIZE_MULTIPLE,
+                4);
 
-    for(unsigned i = a_list_sizeGet(areas) / 5; i--; ) {
-        AList* subAreas = z_area_subdivide(a_list_pop(areas),
-                                           8,
-                                           2 * Z_BLOCK_SIZE_MULTIPLE,
-                                           4);
+    areasDivide(areas,
+                z_area_sortByDistance,
+                12,
+                8,
+                1 * Z_BLOCK_SIZE_MULTIPLE,
+                2);
 
-        a_list_appendMove(areas, subAreas);
-        a_list_free(subAreas);
-    }
-
-    a_list_sort(areas, z_area_sortByDistance);
-
-    for(unsigned i = a_list_sizeGet(areas) / 8; i--; ) {
-        AList* subAreas = z_area_subdivide(a_list_pop(areas),
-                                           8,
-                                           1 * Z_BLOCK_SIZE_MULTIPLE,
-                                           2);
-
-        a_list_appendMove(areas, subAreas);
-        a_list_free(subAreas);
-    }
-
-    a_list_sort(areas, z_area_sortBySize);
-
-    for(unsigned i = a_list_sizeGet(areas) / 16; i--; ) {
-        AList* subAreas = z_area_subdivide(a_list_pop(areas),
-                                           a_random_range(1, 4),
-                                           1 * Z_BLOCK_SIZE_MULTIPLE,
-                                           2);
-
-        a_list_appendMove(areas, subAreas);
-        a_list_free(subAreas);
-    }
+    areasDivide(areas,
+                z_area_sortBySize,
+                6,
+                a_random_range(1, 4),
+                1 * Z_BLOCK_SIZE_MULTIPLE,
+                2);
 
     A_LIST_ITERATE(areas, ZArea*, a) {
         if(a->x == 0 || a->y == 0
