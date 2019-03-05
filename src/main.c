@@ -188,35 +188,32 @@ static void z_map_generate(ZMap* Map)
     }
 
     A_LIST_ITERATE(areas, ZArea*, a) {
-        if(a->y > 0) {
-            for(int x = a->x + a->w; x-- > a->x; ) {
-                for(int r = a->road[Z_ROAD_UP].size; r--; ) {
-                    Map->tiles[a->y + r][x].value = 1;
-                }
+        if(a->x == 0 || a->y == 0
+            || a->x + a->w == Z_MAP_W || a->y + a->h == Z_MAP_H) {
+
+            z_area_free(a);
+            A_LIST_REMOVE_CURRENT();
+
+            continue;
+        }
+
+        for(int x = a->x + a->w; x-- > a->x; ) {
+            for(int r = a->road[Z_ROAD_UP].size; r--; ) {
+                Map->tiles[a->y + r][x].value = 1;
+            }
+
+            for(int r = a->road[Z_ROAD_DOWN].size; r--; ) {
+                Map->tiles[a->y + a->h - 1 - r][x].value = 1;
             }
         }
 
-        if(a->y + a->h < Z_MAP_H) {
-            for(int x = a->x + a->w; x-- > a->x; ) {
-                for(int r = a->road[Z_ROAD_DOWN].size; r--; ) {
-                    Map->tiles[a->y + a->h - 1 - r][x].value = 1;
-                }
+        for(int y = a->y + a->h; y-- > a->y; ) {
+            for(int r = a->road[Z_ROAD_LEFT].size; r--; ) {
+                Map->tiles[y][a->x + r].value = 1;
             }
-        }
 
-        if(a->x > 0) {
-            for(int y = a->y + a->h; y-- > a->y; ) {
-                for(int r = a->road[Z_ROAD_LEFT].size; r--; ) {
-                    Map->tiles[y][a->x + r].value = 1;
-                }
-            }
-        }
-
-        if(a->x + a->w < Z_MAP_W) {
-            for(int y = a->y + a->h; y-- > a->y; ) {
-                for(int r = a->road[Z_ROAD_RIGHT].size; r--; ) {
-                    Map->tiles[y][a->x + a->w - 1 - r].value = 1;
-                }
+            for(int r = a->road[Z_ROAD_RIGHT].size; r--; ) {
+                Map->tiles[y][a->x + a->w - 1 - r].value = 1;
             }
         }
     }
