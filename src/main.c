@@ -22,7 +22,8 @@
 #define Z_MAP_H A_CONFIG_SCREEN_WIDTH
 
 #define Z_BLOCK_SIZE_MULTIPLE 8
-#define Z_BLOCK_SIZE_MIN (4 * Z_BLOCK_SIZE_MULTIPLE)
+#define Z_BLOCK_SIZE_MIN_LARGE (4 * Z_BLOCK_SIZE_MULTIPLE)
+#define Z_BLOCK_SIZE_MIN_SMALL (2 * Z_BLOCK_SIZE_MULTIPLE)
 
 typedef struct {
     int x, y, w, h;
@@ -37,8 +38,6 @@ typedef struct {
 } ZMap;
 
 static ZMap g_map;
-
-bool done = false;
 
 static ZArea* z_area_new(int X, int Y, int W, int H)
 {
@@ -57,14 +56,11 @@ static void z_area_free(ZArea* Area)
     free(Area);
 }
 
-static void z_map_generate(ZMap* Map)
+static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin)
 {
-    memset(Map, 0, sizeof(ZMap));
-
     AList* areas = a_list_new();
-    ZArea* startArea = z_area_new(0, 0, Z_MAP_W, Z_MAP_H);
 
-    a_list_addLast(areas, startArea);
+    a_list_addLast(areas, StartArea);
 
     for(int iterations = 32; iterations--; ) {
         ZArea* areaOld = NULL;
@@ -72,7 +68,7 @@ static void z_map_generate(ZMap* Map)
         for(int tries = 8; tries--; ) {
             ZArea* a = a_list_getRandom(areas);
 
-            if(a->w >= Z_BLOCK_SIZE_MIN || a->h >= Z_BLOCK_SIZE_MIN) {
+            if(a->w >= BlockSizeMin || a->h >= BlockSizeMin) {
                 areaOld = a;
                 break;
             }
@@ -80,7 +76,7 @@ static void z_map_generate(ZMap* Map)
 
         if(areaOld == NULL) {
             A_LIST_ITERATE(areas, ZArea*, a) {
-                if(a->w >= Z_BLOCK_SIZE_MIN || a->h >= Z_BLOCK_SIZE_MIN) {
+                if(a->w >= BlockSizeMin || a->h >= BlockSizeMin) {
                     areaOld = a;
                     break;
                 }
@@ -88,8 +84,6 @@ static void z_map_generate(ZMap* Map)
         }
 
         if(areaOld == NULL) {
-            a_out_printf("BAIL: %d iterations left\n", iterations + 1);
-            done = true;
             break;
         }
 
@@ -123,28 +117,54 @@ static void z_map_generate(ZMap* Map)
         a_list_addLast(areas, areaNew);
     }
 
-    A_LIST_ITERATE(areas, ZArea*, a) {
+    return areas;
+}
+
+static void mapDrawAreas(ZMap* Map, AList* Areas, int RoadWidth, int RoadValue)
+{
+    A_LIST_ITERATE(Areas, ZArea*, a) {
         int y = a->y + a->h;
 
-        if(y < Z_MAP_H - 1) {
+        if(y < Z_MAP_H) {
             for(int x = a->x + a->w; x-- > a->x; ) {
-                Map->tiles[y - 3][x].value = 3;
-                Map->tiles[y - 2][x].value = 3;
-                Map->tiles[y - 1][x].value = 4;
-                Map->tiles[y - 0][x].value = 4;
+                for(int i = 1; i <= RoadWidth; i++) {
+                    if(Map->tiles[y - i][x].value == 0) {
+                        Map->tiles[y - i][x].value = RoadValue;
+                    }
+                }
             }
         }
 
         int x = a->x + a->w;
 
-        if(x < Z_MAP_W - 1) {
+        if(x < Z_MAP_W) {
             for(int y = a->y + a->h; y-- > a->y; ) {
-                Map->tiles[y][x - 3].value = 4;
-                Map->tiles[y][x - 2].value = 4;
-                Map->tiles[y][x - 1].value = 3;
-                Map->tiles[y][x - 0].value = 3;
+                for(int i = 1; i <= RoadWidth; i++) {
+                    if(Map->tiles[y][x - i].value == 0) {
+                        Map->tiles[y][x - i].value = RoadValue;
+                    }
+                }
             }
         }
+    }
+}
+
+static void z_map_generate(ZMap* Map)
+{
+    memset(Map, 0, sizeof(ZMap));
+
+    AList* areas = z_area_subdivide(z_area_new(0, 0, Z_MAP_W, Z_MAP_H),
+                                    Z_BLOCK_SIZE_MIN_LARGE);
+
+    mapDrawAreas(Map, areas, 4, 1);
+
+    for(unsigned subarea = a_list_sizeGet(areas) / 2; subarea--; ) {
+        AList* subAreas = z_area_subdivide(a_list_removeRandom(areas),
+                                           Z_BLOCK_SIZE_MIN_SMALL);
+
+        mapDrawAreas(Map, subAreas, 2, 2);
+
+        a_list_freeEx(subAreas, (AFree*)z_area_free);
     }
 
     a_list_freeEx(areas, (AFree*)z_area_free);
@@ -153,11 +173,9 @@ static void z_map_generate(ZMap* Map)
 static void z_map_draw(const ZMap* Map)
 {
     const APixel colors[] = {
-        a_pixel_fromHex(0xaaff88),
-        a_pixel_fromHex(0xffb922),
-        a_pixel_fromHex(0xff8822),
-        a_pixel_fromHex(0xff6022),
-        a_pixel_fromHex(0xff3722),
+        a_pixel_fromHex(0x112244),
+        a_pixel_fromHex(0xddb040),
+        a_pixel_fromHex(0xb0dd40),
     };
 
     for(int y = Z_MAP_H; y--; ) {
@@ -194,7 +212,7 @@ A_STATE(s_map)
 
     A_STATE_TICK
     {
-        if(!done && a_fps_ticksNth(A_CONFIG_FPS_RATE_TICK / 2)) {
+        if(a_fps_ticksNth(A_CONFIG_FPS_RATE_TICK / 2)) {
             z_map_generate(&g_map);
         }
     }
