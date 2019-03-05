@@ -22,8 +22,6 @@
 #define Z_MAP_H A_CONFIG_SCREEN_WIDTH
 
 #define Z_BLOCK_SIZE_MULTIPLE 8
-#define Z_BLOCK_SIZE_MIN_LARGE (4 * Z_BLOCK_SIZE_MULTIPLE)
-#define Z_BLOCK_SIZE_MIN_SMALL (2 * Z_BLOCK_SIZE_MULTIPLE)
 
 typedef struct {
     int x, y, w, h;
@@ -93,7 +91,7 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin)
                                     : areaOld->w > areaOld->h;
 
         if(splitAlongHeight) {
-            int smallest = a_math_max(Z_BLOCK_SIZE_MULTIPLE, areaOld->w / 4);
+            int smallest = a_math_max(BlockSizeMin / 2, areaOld->w / 4);
             int median = a_random_range(smallest, areaOld->w - smallest + 1);
 
             areaNew = z_area_new(areaOld->x + median,
@@ -103,7 +101,7 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin)
 
             areaOld->w = median;
         } else {
-            int smallest = a_math_max(Z_BLOCK_SIZE_MULTIPLE, areaOld->h / 4);
+            int smallest = a_math_max(BlockSizeMin / 2, areaOld->h / 4);
             int median = a_random_range(smallest, areaOld->h - smallest + 1);
 
             areaNew = z_area_new(areaOld->x,
@@ -123,6 +121,7 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin)
 static void mapDrawAreas(ZMap* Map, AList* Areas, int RoadWidth, int RoadValue)
 {
     A_LIST_ITERATE(Areas, ZArea*, a) {
+        int x = a->x + a->w;
         int y = a->y + a->h;
 
         if(y < Z_MAP_H) {
@@ -134,8 +133,6 @@ static void mapDrawAreas(ZMap* Map, AList* Areas, int RoadWidth, int RoadValue)
                 }
             }
         }
-
-        int x = a->x + a->w;
 
         if(x < Z_MAP_W) {
             for(int y = a->y + a->h; y-- > a->y; ) {
@@ -149,25 +146,70 @@ static void mapDrawAreas(ZMap* Map, AList* Areas, int RoadWidth, int RoadValue)
     }
 }
 
+static inline int distanceFromCenterSq(const ZArea* Area)
+{
+    int x = Area->x + Area->w / 2 - Z_MAP_W / 2;
+    int y = Area->y + Area->h / 2 - Z_MAP_H / 2;
+
+    return x * x + y * y;
+}
+
+int z_area_sortByDistance(void* ItemA, void* ItemB)
+{
+    const ZArea* areaA = ItemA;
+    const ZArea* areaB = ItemB;
+
+    return distanceFromCenterSq(areaA) - distanceFromCenterSq(areaB);
+}
+
 static void z_map_generate(ZMap* Map)
 {
     memset(Map, 0, sizeof(ZMap));
 
     AList* areas = z_area_subdivide(z_area_new(0, 0, Z_MAP_W, Z_MAP_H),
-                                    Z_BLOCK_SIZE_MIN_LARGE);
+                                    4 * Z_BLOCK_SIZE_MULTIPLE);
 
     mapDrawAreas(Map, areas, 4, 1);
 
-    for(unsigned subarea = a_list_sizeGet(areas) / 2; subarea--; ) {
-        AList* subAreas = z_area_subdivide(a_list_removeRandom(areas),
-                                           Z_BLOCK_SIZE_MIN_SMALL);
+    a_list_sort(areas, z_area_sortByDistance);
+
+    for(unsigned i = a_list_sizeGet(areas) / 5; i--; ) {
+        AList* subAreas = z_area_subdivide(a_list_pop(areas),
+                                           2 * Z_BLOCK_SIZE_MULTIPLE);
 
         mapDrawAreas(Map, subAreas, 2, 2);
 
-        a_list_freeEx(subAreas, (AFree*)z_area_free);
+        a_list_appendMove(areas, subAreas);
+        a_list_free(subAreas);
+    }
+
+    a_list_sort(areas, z_area_sortByDistance);
+
+    for(unsigned i = a_list_sizeGet(areas) / 8; i--; ) {
+        AList* subAreas = z_area_subdivide(a_list_pop(areas),
+                                           1 * Z_BLOCK_SIZE_MULTIPLE);
+
+        mapDrawAreas(Map, subAreas, 1, 3);
+
+        a_list_appendMove(areas, subAreas);
+        a_list_free(subAreas);
     }
 
     a_list_freeEx(areas, (AFree*)z_area_free);
+
+    for(int y = 0; y < Z_MAP_H; y++) {
+        for(int b = 0; b < Z_BLOCK_SIZE_MULTIPLE; b++) {
+            Map->tiles[y][b].value = 0;
+            Map->tiles[y][Z_MAP_W - 1 - b].value = 0;
+        }
+    }
+
+    for(int x = 0; x < Z_MAP_W; x++) {
+        for(int b = 0; b < Z_BLOCK_SIZE_MULTIPLE; b++) {
+            Map->tiles[b][x].value = 0;
+            Map->tiles[Z_MAP_H - 1 - b][x].value = 0;
+        }
+    }
 }
 
 static void z_map_draw(const ZMap* Map)
@@ -175,7 +217,8 @@ static void z_map_draw(const ZMap* Map)
     const APixel colors[] = {
         a_pixel_fromHex(0x112244),
         a_pixel_fromHex(0xddb040),
-        a_pixel_fromHex(0xb0dd40),
+        a_pixel_fromHex(0xdd8640),
+        a_pixel_fromHex(0xdd6140),
     };
 
     for(int y = Z_MAP_H; y--; ) {
