@@ -18,6 +18,23 @@
 
 #include <a2x.h>
 
+enum {
+    Z__COORDS_CAN_PACK_IN_A_VOID_PTR = 1 / (sizeof(void*) >= 4),
+    Z__COORDS_CAN_PACK_IN_A_PTRDIFF = 1 / (sizeof(ptrdiff_t) >= 4),
+};
+
+static inline void* z_coords_pack(AVectorInt Coords)
+{
+    return (void*)(ptrdiff_t)
+        (((Coords.y & 0xffff) << 16) | (Coords.x & 0xffff));
+}
+
+static inline AVectorInt z_coords_unpack(void* Point)
+{
+    return (AVectorInt){(ptrdiff_t)Point & 0xffff,
+                        ((ptrdiff_t)Point >> 16) & 0xffff};
+}
+
 #define Z_MAP_W A_CONFIG_SCREEN_WIDTH
 #define Z_MAP_H A_CONFIG_SCREEN_WIDTH
 
@@ -218,8 +235,6 @@ static void z_map_generate(ZMap* Map)
         }
     }
 
-    a_list_freeEx(areas, (AFree*)z_area_free);
-
     for(int y = 0; y < Z_MAP_H; y++) {
         for(int b = 0; b < Z_BLOCK_SIZE_MULTIPLE; b++) {
             Map->tiles[y][b].value = 0;
@@ -233,6 +248,48 @@ static void z_map_generate(ZMap* Map)
             Map->tiles[Z_MAP_H - 1 - b][x].value = 0;
         }
     }
+
+    a_list_sort(areas, z_area_sortByDistance);
+
+    ZArea* centerMost = a_list_peek(areas);
+    AVectorInt origin = {centerMost->x, centerMost->y};
+    AList* queue = a_list_new();
+
+    #define Z_ENQUEUE(Base, X, Y) \
+        if(Map->tiles[Base.y + Y][Base.x + X].value == 1) { \
+            Map->tiles[Base.y + Y][Base.x + X].value = 2; \
+            a_list_addLast(queue, \
+                           z_coords_pack( \
+                            (AVectorInt){Base.x + X, Base.y + Y})); \
+        }
+
+    Z_ENQUEUE(origin, 0, 0);
+
+    while(!a_list_isEmpty(queue)) {
+        AVectorInt coords = z_coords_unpack(a_list_removeFirst(queue));
+
+        Z_ENQUEUE(coords, 0, -1);
+        Z_ENQUEUE(coords, 0, 1);
+        Z_ENQUEUE(coords, -1, 0);
+        Z_ENQUEUE(coords, 1, 0);
+    }
+
+    for(int y = Z_MAP_H; y--; ) {
+        for(int x = Z_MAP_W; x--; ) {
+            switch(Map->tiles[y][x].value) {
+                case 1:
+                    Map->tiles[y][x].value = 0;
+                    break;
+
+                case 2:
+                    Map->tiles[y][x].value = 1;
+                    break;
+            }
+        }
+    }
+
+    a_list_free(queue);
+    a_list_freeEx(areas, (AFree*)z_area_free);
 }
 
 static void z_map_draw(const ZMap* Map)
