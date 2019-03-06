@@ -184,6 +184,11 @@ static int z_area_sortByDistance(void* ItemA, void* ItemB)
     return distanceFromCenterSq(ItemA) - distanceFromCenterSq(ItemB);
 }
 
+static int z_area_sortByDistanceInv(void* ItemA, void* ItemB)
+{
+    return distanceFromCenterSq(ItemB) - distanceFromCenterSq(ItemA);
+}
+
 static int z_area_sortBySize(void* ItemA, void* ItemB)
 {
     return surfaceArea(ItemB) - surfaceArea(ItemA);
@@ -236,7 +241,7 @@ static void z_map_generate(ZMap* Map)
     areasDivide(areas,
                 z_area_sortBySize,
                 6,
-                a_random_range(1, 4),
+                2,
                 1 * Z_BLOCK_SIZE_MULTIPLE,
                 2);
 
@@ -246,10 +251,17 @@ static void z_map_generate(ZMap* Map)
 
             z_area_free(a);
             A_LIST_REMOVE_CURRENT();
-
-            continue;
         }
+    }
 
+    areasDivide(areas,
+                z_area_sortByDistanceInv,
+                20,
+                3,
+                1 * Z_BLOCK_SIZE_MULTIPLE,
+                1);
+
+    A_LIST_ITERATE(areas, ZArea*, a) {
         for(int x = a->x + a->w; x-- > a->x; ) {
             for(int r = a->road[Z_ROAD_UP].size; r--; ) {
                 Map->tiles[a->y + r][x].value = 1;
@@ -326,7 +338,6 @@ static void z_map_draw(const ZMap* Map)
     for(int y = Z_MAP_H; y--; ) {
         for(int x = Z_MAP_W; x--; ) {
             int value = Map->tiles[y][x].value;
-
             a_pixel_colorSetPixel(colors[value]);
             a_draw_pixel(x, y);
         }
