@@ -16,15 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
+
 #include <a2x.h>
 
-#include "util_input.h"
-#include "util_state.h"
+typedef enum {
+    U_BUTTON_INVALID = -1,
+    U_BUTTON_UP,
+    U_BUTTON_DOWN,
+    U_BUTTON_LEFT,
+    U_BUTTON_RIGHT,
+    U_BUTTON_ACTION,
+    U_BUTTON_NUM
+} UButtonId;
 
-A_MAIN
-{
-    u_state_load();
-    u_input_load();
+extern void u_input_load(void);
+extern void u_input_unload(void);
 
-    a_state_push(U_STATE_GAME);
-}
+extern AButton* u_input_get(UButtonId Id);

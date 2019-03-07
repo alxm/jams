@@ -16,15 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
+
 #include <a2x.h>
 
-#include "util_input.h"
-#include "util_state.h"
+extern void n_camera_new(AVectorFix Coords);
 
-A_MAIN
-{
-    u_state_load();
-    u_input_load();
+extern void n_camera_tick(AVectorFix Origin);
 
-    a_state_push(U_STATE_GAME);
-}
+extern AVectorFix n_camera_originGet(void);
+extern AVectorInt n_camera_coordsToScreen(AVectorFix WorldCoords);
+
+extern AVectorInt n_camera_shakeGet(void);
+extern void n_camera_shakeSet(unsigned Ms);

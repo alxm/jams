@@ -16,15 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
+
 #include <a2x.h>
 
-#include "util_input.h"
-#include "util_state.h"
+#define N_MAP_W 256
+#define N_MAP_H 256
 
-A_MAIN
-{
-    u_state_load();
-    u_input_load();
+extern void n_map_new(void);
 
-    a_state_push(U_STATE_GAME);
-}
+extern void n_map_tick(void);
+extern void n_map_draw(void);
+
+extern void n_map_visibleGet(AVectorInt* TileStart, AVectorInt* TileEnd, AVectorInt* ScreenStart);

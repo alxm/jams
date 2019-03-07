@@ -16,15 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <a2x.h>
-
-#include "util_input.h"
 #include "util_state.h"
 
-A_MAIN
-{
-    u_state_load();
-    u_input_load();
+#include "state_game.h"
 
-    a_state_push(U_STATE_GAME);
+void u_state_load(void)
+{
+    a_state_init(U_STATE_NUM);
+
+    a_state_new(U_STATE_GAME, t_game, "Game");
 }

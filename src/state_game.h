@@ -16,15 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
+
 #include <a2x.h>
 
-#include "util_input.h"
-#include "util_state.h"
-
-A_MAIN
-{
-    u_state_load();
-    u_input_load();
-
-    a_state_push(U_STATE_GAME);
-}
+extern A_STATE(t_game);

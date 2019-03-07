@@ -16,15 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
+
 #include <a2x.h>
 
-#include "util_input.h"
-#include "util_state.h"
+#define Z_COORDS_PIXELS_PER_UNIT 16
 
-A_MAIN
+static inline AFix z_coords_pixelsToUnits(int Pixels)
 {
-    u_state_load();
-    u_input_load();
+    return a_fix_fromInt(Pixels) / Z_COORDS_PIXELS_PER_UNIT;
+}
 
-    a_state_push(U_STATE_GAME);
+static inline AVectorInt z_coords_unitsToPixels(AVectorFix Units)
+{
+    return (AVectorInt){a_fix_toInt(Units.x * Z_COORDS_PIXELS_PER_UNIT),
+                        a_fix_toInt(Units.y * Z_COORDS_PIXELS_PER_UNIT)};
 }
