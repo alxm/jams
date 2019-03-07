@@ -20,6 +20,7 @@
 
 #include "obj_camera.h"
 #include "util_coords.h"
+#include "util_tile.h"
 
 enum {
     Z__COORDS_CAN_PACK_IN_A_VOID_PTR = 1 / (sizeof(void*) >= 4),
@@ -58,7 +59,7 @@ typedef struct {
 } ZArea;
 
 typedef struct {
-    int value;
+    UTile id;
 } ZMapTile;
 
 typedef struct {
@@ -264,21 +265,21 @@ static void z_map_generate(NMap* Map)
     A_LIST_ITERATE(areas, ZArea*, a) {
         for(int x = a->x + a->w; x-- > a->x; ) {
             for(int r = a->road[Z_ROAD_UP].size; r--; ) {
-                Map->tiles[a->y + r][x].value = 1;
+                Map->tiles[a->y + r][x].id = 1;
             }
 
             for(int r = a->road[Z_ROAD_DOWN].size; r--; ) {
-                Map->tiles[a->y + a->h - 1 - r][x].value = 1;
+                Map->tiles[a->y + a->h - 1 - r][x].id = 1;
             }
         }
 
         for(int y = a->y + a->h; y-- > a->y; ) {
             for(int r = a->road[Z_ROAD_LEFT].size; r--; ) {
-                Map->tiles[y][a->x + r].value = 1;
+                Map->tiles[y][a->x + r].id = 1;
             }
 
             for(int r = a->road[Z_ROAD_RIGHT].size; r--; ) {
-                Map->tiles[y][a->x + a->w - 1 - r].value = 1;
+                Map->tiles[y][a->x + a->w - 1 - r].id = 1;
             }
         }
     }
@@ -290,8 +291,8 @@ static void z_map_generate(NMap* Map)
     AList* queue = a_list_new();
 
     #define Z_ENQUEUE(Base, X, Y) \
-        if(Map->tiles[Base.y + Y][Base.x + X].value == 1) { \
-            Map->tiles[Base.y + Y][Base.x + X].value = 2; \
+        if(Map->tiles[Base.y + Y][Base.x + X].id == 1) { \
+            Map->tiles[Base.y + Y][Base.x + X].id = 2; \
             a_list_addLast(queue, \
                            z_coords_pack( \
                             (AVectorInt){Base.x + X, Base.y + Y})); \
@@ -310,38 +311,14 @@ static void z_map_generate(NMap* Map)
 
     for(int y = N_MAP_H; y--; ) {
         for(int x = N_MAP_W; x--; ) {
-            switch(Map->tiles[y][x].value) {
-                case 1:
-                    Map->tiles[y][x].value = 0;
-                    break;
-
-                case 2:
-                    Map->tiles[y][x].value = 1;
-                    break;
+            if(Map->tiles[y][x].id > 0) {
+                Map->tiles[y][x].id--;
             }
         }
     }
 
     a_list_free(queue);
     a_list_freeEx(areas, (AFree*)z_area_free);
-}
-
-void z_map_draw(const NMap* Map)
-{
-    const APixel colors[] = {
-        a_pixel_fromHex(0x112244),
-        a_pixel_fromHex(0xddb040),
-        a_pixel_fromHex(0xdd8640),
-        a_pixel_fromHex(0xdd6140),
-    };
-
-    for(int y = N_MAP_H; y--; ) {
-        for(int x = N_MAP_W; x--; ) {
-            int value = Map->tiles[y][x].value;
-            a_pixel_colorSetPixel(colors[value]);
-            a_draw_pixel(x, y);
-        }
-    }
 }
 
 void n_map_new(void)
@@ -356,15 +333,6 @@ void n_map_tick(void)
 
 void n_map_draw(void)
 {
-    //z_map_draw(&g_map);
-    //return;
-    const APixel colors[] = {
-        a_pixel_fromHex(0x112244),
-        a_pixel_fromHex(0xddb040),
-        a_pixel_fromHex(0xdd8640),
-        a_pixel_fromHex(0xdd6140),
-    };
-
     a_pixel_colorSetHex(0x886644);
     a_draw_fill();
 
@@ -380,13 +348,9 @@ void n_map_draw(void)
             tileX < tileEnd.x;
             tileX++, screenX += Z_COORDS_PIXELS_PER_UNIT) {
 
-            int value = g_map.tiles[tileY][tileX].value;
-
-            a_pixel_colorSetPixel(colors[value]);
-            a_draw_rectangle(screenX,
-                             screenY,
-                             Z_COORDS_PIXELS_PER_UNIT,
-                             Z_COORDS_PIXELS_PER_UNIT);
+            a_sprite_blit(u_tile_spriteGet(g_map.tiles[tileY][tileX].id),
+                          screenX,
+                          screenY);
         }
     }
 }

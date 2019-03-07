@@ -16,15 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
+#pragma once
 
-#include "state_game.h"
-#include "state_load.h"
+#include <a2x.h>
 
-void u_state_load(void)
-{
-    a_state_init(U_STATE_NUM);
-
-    a_state_new(U_STATE_GAME, t_game, "Game");
-    a_state_new(U_STATE_LOAD, t_load, "Load");
-}
+extern AStateHandler t_load;

@@ -23,6 +23,7 @@
 typedef enum {
     U_STATE_INVALID = -1,
     U_STATE_GAME,
+    U_STATE_LOAD,
     U_STATE_NUM
 } UStateId;
 

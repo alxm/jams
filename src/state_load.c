@@ -16,15 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
-
-#include "state_game.h"
 #include "state_load.h"
 
-void u_state_load(void)
-{
-    a_state_init(U_STATE_NUM);
+#include "util_input.h"
+#include "util_state.h"
+#include "util_tile.h"
 
-    a_state_new(U_STATE_GAME, t_game, "Game");
-    a_state_new(U_STATE_LOAD, t_load, "Load");
+void t_load(void)
+{
+    A_STATE_INIT
+    {
+        u_input_load();
+        u_tile_load();
+
+        a_state_push(U_STATE_GAME);
+    }
+
+    A_STATE_FREE
+    {
+        u_input_unload();
+        u_tile_unload();
+    }
 }

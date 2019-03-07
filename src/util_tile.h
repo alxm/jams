@@ -16,15 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util_state.h"
+#pragma once
 
-#include "state_game.h"
-#include "state_load.h"
+#include <a2x.h>
 
-void u_state_load(void)
-{
-    a_state_init(U_STATE_NUM);
+typedef enum {
+    U_TILE_ID_INVALID = -1,
+    U_TILE_ID_BUILDING,
+    U_TILE_ID_ROAD_H,
+    U_TILE_ID_ROAD_V,
+    U_TILE_ID_NUM
+} UTile;
 
-    a_state_new(U_STATE_GAME, t_game, "Game");
-    a_state_new(U_STATE_LOAD, t_load, "Load");
-}
+typedef enum {
+    Z_TILE_FLAG_NOMOVE = A_FLAG_BIT(0),
+} UTileFlags;
+
+extern void u_tile_load(void);
+extern void u_tile_unload(void);
+
+extern bool u_tile_flagsTest(UTile Tile, UTileFlags Flags);
+extern const ASprite* u_tile_spriteGet(UTile Tile);
