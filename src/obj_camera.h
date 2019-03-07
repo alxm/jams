@@ -21,6 +21,7 @@
 #include <a2x.h>
 
 extern void n_camera_new(AVectorFix Coords);
+extern void n_camera_free(void);
 
 extern void n_camera_tick(AVectorFix Origin);
 

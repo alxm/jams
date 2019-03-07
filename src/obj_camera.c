@@ -41,6 +41,12 @@ void n_camera_new(AVectorFix Coords)
     }
 }
 
+void n_camera_free(void)
+{
+    a_timer_free(g_camera.shakeTimer);
+    g_camera.shakeTimer = NULL;
+}
+
 void n_camera_tick(AVectorFix Origin)
 {
     #define Z_SHIFT 3

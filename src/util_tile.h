@@ -29,7 +29,7 @@ typedef enum {
 } UTile;
 
 typedef enum {
-    Z_TILE_FLAG_NOMOVE = A_FLAG_BIT(0),
+    U_TILE_FLAG_NOMOVE = A_FLAG_BIT(0),
 } UTileFlags;
 
 extern void u_tile_load(void);

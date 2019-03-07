@@ -38,8 +38,8 @@ A_STATE(t_game)
         g_game.coords.x = a_fix_fromInt(N_MAP_W / 2) + A_FIX_ONE / 2;
         g_game.coords.y = a_fix_fromInt(N_MAP_H / 2) + A_FIX_ONE / 2;
 
-        n_map_new();
         n_camera_new(g_game.coords);
+        n_map_new();
     }
 
     A_STATE_TICK
@@ -60,11 +60,23 @@ A_STATE(t_game)
             g_game.coords.x += Z_MOVE_INC;
         }
 
+        if(a_fps_ticksNth(A_CONFIG_FPS_RATE_TICK / 2)) {
+            n_map_free();
+            n_map_new();
+        }
+
+        n_map_tick();
         n_camera_tick(g_game.coords);
     }
 
     A_STATE_DRAW
     {
         n_map_draw();
+    }
+
+    A_STATE_FREE
+    {
+        n_camera_free();
+        n_map_free();
     }
 }

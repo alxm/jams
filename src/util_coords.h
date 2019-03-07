@@ -32,3 +32,20 @@ static inline AVectorInt z_coords_unitsToPixels(AVectorFix Units)
     return (AVectorInt){a_fix_toInt(Units.x * Z_COORDS_PIXELS_PER_UNIT),
                         a_fix_toInt(Units.y * Z_COORDS_PIXELS_PER_UNIT)};
 }
+
+enum {
+    Z__COORDS_CAN_PACK_IN_A_VOID_PTR = 1 / (sizeof(void*) >= 4),
+    Z__COORDS_CAN_PACK_IN_A_PTRDIFF = 1 / (sizeof(ptrdiff_t) >= 4),
+};
+
+static inline void* z_coords_pack(AVectorInt Coords)
+{
+    return (void*)(ptrdiff_t)
+        (((Coords.y & 0xffff) << 16) | (Coords.x & 0xffff));
+}
+
+static inline AVectorInt z_coords_unpack(void* Point)
+{
+    return (AVectorInt){(ptrdiff_t)Point & 0xffff,
+                        ((ptrdiff_t)Point >> 16) & 0xffff};
+}

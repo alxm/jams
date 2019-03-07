@@ -27,7 +27,7 @@ typedef struct {
 } ZTile;
 
 static ZTile g_tiles[U_TILE_ID_NUM] = {
-    [U_TILE_ID_BUILDING] = {{0, 0}, Z_TILE_FLAG_NOMOVE, NULL},
+    [U_TILE_ID_BUILDING] = {{0, 0}, U_TILE_FLAG_NOMOVE, NULL},
     [U_TILE_ID_ROAD_H] = {{16, 0}, 0, NULL},
     [U_TILE_ID_ROAD_V] = {{32, 0}, 0, NULL},
 };
