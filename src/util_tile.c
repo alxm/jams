@@ -24,13 +24,14 @@ typedef struct {
     AVectorInt coords;
     UTileFlags flags;
     ASprite* sprite;
+    uint32_t hex;
 } ZTile;
 
 static ZTile g_tiles[U_TILE_ID_NUM] = {
-    [U_TILE_ID_VOID] = {{0, 0}, U_TILE_FLAG_NOMOVE, NULL},
-    [U_TILE_ID_BUILDING] = {{16, 0}, U_TILE_FLAG_NOMOVE, NULL},
-    [U_TILE_ID_ROAD_H] = {{32, 0}, 0, NULL},
-    [U_TILE_ID_ROAD_V] = {{48, 0}, 0, NULL},
+    [U_TILE_ID_VOID] = {{0, 0}, U_TILE_FLAG_NOMOVE, NULL, 0xaa8844},
+    [U_TILE_ID_BUILDING] = {{16, 0}, U_TILE_FLAG_NOMOVE, NULL, 0x88cc28},
+    [U_TILE_ID_ROAD_H] = {{32, 0}, 0, NULL, 0x44770f},
+    [U_TILE_ID_ROAD_V] = {{48, 0}, 0, NULL, 0x77440f},
 };
 
 void u_tile_load(void)
@@ -63,4 +64,9 @@ bool u_tile_flagsTest(UTile Tile, UTileFlags Flags)
 const ASprite* u_tile_spriteGet(UTile Tile)
 {
     return g_tiles[Tile].sprite;
+}
+
+APixel u_tile_colorGet(UTile Tile)
+{
+    return a_pixel_fromHex(g_tiles[Tile].hex);
 }

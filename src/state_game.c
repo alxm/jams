@@ -60,7 +60,7 @@ A_STATE(t_game)
             g_game.coords.x += Z_MOVE_INC;
         }
 
-        #if 0
+        #if Z_SHOW_MAP
             if(a_fps_ticksNth(A_CONFIG_FPS_RATE_TICK / 2)) {
                 n_map_free();
                 n_map_new();

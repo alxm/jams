@@ -326,20 +326,20 @@ static void mapGen(NMap* Map)
     a_list_addLast(Map->areas, entireMap);
 
     // Main shape
-    mapGenAreasDivideN(Map, NULL, 1, 16, 3, 16);
+    mapGenAreasDivideN(Map, NULL, 1, 24, 4, 16);
 
     // Split into smaller blocks around the center
-    mapGenAreasDivideP(Map, z_area_cmpDistance, 80, 8, 2, 8);
-    mapGenAreasDivideP(Map, z_area_cmpDistance, 20, 4, 1, 8);
+    mapGenAreasDivideP(Map, z_area_cmpDistance, 50, 8, 2, 8);
+    mapGenAreasDivideP(Map, z_area_cmpDistance, 25, 4, 1, 8);
 
     // Clean map edges
     mapGenAreasDiscardAroundEdge(Map);
 
     // Split up the largest blocks
-    mapGenAreasDivideN(Map, z_area_cmpSizeInv, 2, 4, 2, 2);
+    mapGenAreasDivideN(Map, z_area_cmpSizeInv, 2, 8, 2, 2);
 
     // Split up the blocks farthest from center
-    mapGenAreasDivideN(Map, z_area_cmpDistanceInv, 4, 2, 1, 1);
+    mapGenAreasDivideN(Map, z_area_cmpDistanceInv, 4, 8, 1, 3);
 
     mapGenAreasDrawRoads(Map);
     mapGenAreasFloodFill(Map);
@@ -367,7 +367,7 @@ void n_map_tick(void)
 
 void n_map_draw(void)
 {
-    #if 0
+    #if Z_SHOW_MAP
         a_pixel_colorSetHex(0xaa8844);
         a_draw_fill();
 
@@ -376,9 +376,8 @@ void n_map_draw(void)
 
         for(int y = 0; y < N_MAP_H; y++) {
             for(int x = 0; x < N_MAP_W; x++) {
-                if(g_map.tiles[y][x].id > 0) {
-                    a_pixel_colorSetHex(0x88cc28);
-                    a_draw_pixel(offsetX + x, offsetY + y);
+                a_pixel_colorSetPixel(u_tile_colorGet(g_map.tiles[y][x].id));
+                a_draw_pixel(offsetX + x, offsetY + y);
             }
         }
 

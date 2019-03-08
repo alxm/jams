@@ -38,3 +38,4 @@ extern void u_tile_unload(void);
 
 extern bool u_tile_flagsTest(UTile Tile, UTileFlags Flags);
 extern const ASprite* u_tile_spriteGet(UTile Tile);
+extern APixel u_tile_colorGet(UTile Tile);
