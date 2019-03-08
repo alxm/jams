@@ -363,16 +363,16 @@ static void mapGen(NMap* Map)
 
     // Split into smaller blocks around the center
     mapGenAreasDivideP(Map, z_area_cmpDistance, 50, 8, 2, 8);
-    mapGenAreasDivideP(Map, z_area_cmpDistance, 25, 4, 1, 8);
+    mapGenAreasDivideP(Map, z_area_cmpDistance, 25, 6, 1, 8);
 
     // Clean map edges
     mapGenAreasDiscardAroundEdge(Map);
 
     // Split up the largest blocks
-    mapGenAreasDivideN(Map, z_area_cmpSizeInv, 2, 8, 2, 2);
+    mapGenAreasDivideP(Map, z_area_cmpSizeInv, 20, 8, 2, 2);
 
     // Split up the blocks farthest from center
-    mapGenAreasDivideN(Map, z_area_cmpDistanceInv, 4, 8, 1, 3);
+    mapGenAreasDivideP(Map, z_area_cmpDistanceInv, 20, 4, 1, 3);
 
     mapGenAreasDrawRoads(Map);
     mapGenAreasFloodFill(Map);
