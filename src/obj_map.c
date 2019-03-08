@@ -72,6 +72,24 @@ static void z_area_free(ZArea* Area)
     free(Area);
 }
 
+static inline int z_area_sizeGetWidthUsable(const ZArea* Area)
+{
+    return Area->w
+            - Area->road[Z_ROAD_LEFT].size - Area->road[Z_ROAD_RIGHT].size;
+}
+
+static inline int z_area_sizeGetHeightUsable(const ZArea* Area)
+{
+    return Area->h
+            - Area->road[Z_ROAD_UP].size - Area->road[Z_ROAD_DOWN].size;
+}
+
+static bool z_area_canDivide(const ZArea* Area, int BlockSizeMin, int RoadSize)
+{
+    return z_area_sizeGetWidthUsable(Area) >= 2 * BlockSizeMin + RoadSize
+            || z_area_sizeGetHeightUsable(Area) >= 2 * BlockSizeMin + RoadSize;
+}
+
 static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize, int Iterations)
 {
     AList* areas = a_list_new();
@@ -84,9 +102,7 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize,
         for(int tries = 8; tries--; ) {
             ZArea* a = a_list_getRandom(areas);
 
-            if(a->w >= 2 * BlockSizeMin + RoadSize
-                || a->h >= 2 * BlockSizeMin + RoadSize) {
-
+            if(z_area_canDivide(a, BlockSizeMin, RoadSize)) {
                 areaOld = a;
                 break;
             }
@@ -94,9 +110,7 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize,
 
         if(areaOld == NULL) {
             A_LIST_ITERATE(areas, ZArea*, a) {
-                if(a->w >= 2 * BlockSizeMin + RoadSize
-                    || a->h >= 2 * BlockSizeMin + RoadSize) {
-
+                if(z_area_canDivide(a, BlockSizeMin, RoadSize)) {
                     areaOld = a;
                     break;
                 }
@@ -108,13 +122,22 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize,
         }
 
         ZArea* areaNew;
-        bool splitAlongHeight = areaOld->w == areaOld->h
-                                    ? a_random_int(2) : areaOld->w > areaOld->h;
+        int usableWidth = z_area_sizeGetWidthUsable(areaOld);
+        int usableHeight = z_area_sizeGetHeightUsable(areaOld);
+        bool splitAlongHeight = usableWidth == usableHeight
+                                    ? a_random_int(2)
+                                    : usableWidth > usableHeight;
 
         if(splitAlongHeight) {
-            int smallest = a_math_max(
-                            BlockSizeMin + (RoadSize >> 1), areaOld->w / 4);
-            int median = a_random_range(smallest, areaOld->w - smallest + 1);
+            int min = areaOld->road[Z_ROAD_LEFT].size
+                        + BlockSizeMin
+                        + (RoadSize >> 1);
+            int max = areaOld->w
+                        - areaOld->road[Z_ROAD_RIGHT].size
+                        - BlockSizeMin
+                        - (RoadSize >> 1);
+
+            int median = a_random_range(min, max + 1);
 
             areaNew = z_area_new(areaOld->x + median,
                                  areaOld->y,
@@ -124,7 +147,9 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize,
             areaOld->w = median;
             memcpy(areaNew->road, areaOld->road, sizeof(areaOld->road));
 
-            if(areaOld->w > areaNew->w) {
+            if(areaOld->w - areaOld->road[Z_ROAD_LEFT].size
+                > areaNew->w - areaNew->road[Z_ROAD_RIGHT].size) {
+
                 areaOld->road[Z_ROAD_RIGHT].size = RoadSize - (RoadSize >> 1);
                 areaNew->road[Z_ROAD_LEFT].size = RoadSize >> 1;
             } else {
@@ -132,9 +157,15 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize,
                 areaNew->road[Z_ROAD_LEFT].size = RoadSize - (RoadSize >> 1);
             }
         } else {
-            int smallest = a_math_max(
-                            BlockSizeMin + (RoadSize >> 1), areaOld->h / 4);
-            int median = a_random_range(smallest, areaOld->h - smallest + 1);
+            int min = areaOld->road[Z_ROAD_UP].size
+                        + BlockSizeMin
+                        + (RoadSize >> 1);
+            int max = areaOld->h
+                        - areaOld->road[Z_ROAD_DOWN].size
+                        - BlockSizeMin
+                        - (RoadSize >> 1);
+
+            int median = a_random_range(min, max + 1);
 
             areaNew = z_area_new(areaOld->x,
                                  areaOld->y + median,
@@ -144,7 +175,9 @@ static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize,
             areaOld->h = median;
             memcpy(areaNew->road, areaOld->road, sizeof(areaOld->road));
 
-            if(areaOld->h > areaNew->h) {
+            if(areaOld->h - areaOld->road[Z_ROAD_UP].size
+                > areaNew->h - areaNew->road[Z_ROAD_DOWN].size) {
+
                 areaOld->road[Z_ROAD_DOWN].size = RoadSize - (RoadSize >> 1);
                 areaNew->road[Z_ROAD_UP].size = RoadSize >> 1;
             } else {
