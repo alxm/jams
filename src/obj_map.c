@@ -226,7 +226,7 @@ static void mapGenAreasDiscardAroundEdge(NMap* Map)
     }
 }
 
-static void mapGenAreasDrawRoadsOnTiles(NMap* Map)
+static void mapGenAreasDrawRoads(NMap* Map)
 {
     A_LIST_ITERATE(Map->areas, ZArea*, a) {
         for(int x = a->x + a->w; x-- > a->x; ) {
@@ -246,6 +246,22 @@ static void mapGenAreasDrawRoadsOnTiles(NMap* Map)
 
             for(int r = a->road[Z_ROAD_RIGHT].size; r--; ) {
                 Map->tiles[y][a->x + a->w - 1 - r].id = U_TILE_ID_ROAD_V;
+            }
+        }
+    }
+}
+
+static void mapGenAreasDrawBuildings(NMap* Map)
+{
+    A_LIST_ITERATE(Map->areas, ZArea*, a) {
+        int startX = a->x + a->road[Z_ROAD_LEFT].size;
+        int startY = a->y + a->road[Z_ROAD_UP].size;
+        int endX = a->x + a->w - a->road[Z_ROAD_RIGHT].size;
+        int endY = a->y + a->h - a->road[Z_ROAD_DOWN].size;
+
+        for(int y = startY; y < endY; y++) {
+            for(int x = startX; x < endX; x++) {
+                Map->tiles[y][x].id = U_TILE_ID_BUILDING;
             }
         }
     }
@@ -291,7 +307,7 @@ static void mapGenAreasFloodFill(NMap* Map)
     for(int y = N_MAP_H; y--; ) {
         for(int x = N_MAP_W; x--; ) {
             if(!A_FLAG_TEST_ANY(Map->tiles[y][x].flags, Z_TILE_FLAG_VISITED)) {
-                Map->tiles[y][x].id = U_TILE_ID_BUILDING;
+                Map->tiles[y][x].id = U_TILE_ID_VOID;
             }
         }
     }
@@ -325,8 +341,9 @@ static void mapGen(NMap* Map)
     // Split up the blocks farthest from center
     mapGenAreasDivideN(Map, z_area_cmpDistanceInv, 4, 2, 1, 1);
 
-    mapGenAreasDrawRoadsOnTiles(Map);
+    mapGenAreasDrawRoads(Map);
     mapGenAreasFloodFill(Map);
+    mapGenAreasDrawBuildings(Map);
 }
 
 void n_map_new(void)
@@ -350,22 +367,23 @@ void n_map_tick(void)
 
 void n_map_draw(void)
 {
-    a_pixel_colorSetHex(0xaa8844);
-    a_draw_fill();
+    #if 0
+        a_pixel_colorSetHex(0xaa8844);
+        a_draw_fill();
 
-    int offsetX = (a_screen_sizeGetWidth() - N_MAP_W) / 2;
-    int offsetY = (a_screen_sizeGetHeight() - N_MAP_H) / 2;
+        int offsetX = (a_screen_sizeGetWidth() - N_MAP_W) / 2;
+        int offsetY = (a_screen_sizeGetHeight() - N_MAP_H) / 2;
 
-    for(int y = 0; y < N_MAP_H; y++) {
-        for(int x = 0; x < N_MAP_W; x++) {
-            if(g_map.tiles[y][x].id > 0) {
-                a_pixel_colorSetHex(0x88cc28);
-                a_draw_pixel(offsetX + x, offsetY + y);
+        for(int y = 0; y < N_MAP_H; y++) {
+            for(int x = 0; x < N_MAP_W; x++) {
+                if(g_map.tiles[y][x].id > 0) {
+                    a_pixel_colorSetHex(0x88cc28);
+                    a_draw_pixel(offsetX + x, offsetY + y);
             }
         }
-    }
 
-    return;
+        return;
+    #endif
 
     AVectorInt tileStart, tileEnd;
     AVectorInt screenStart;

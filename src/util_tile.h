@@ -22,6 +22,7 @@
 
 typedef enum {
     U_TILE_ID_INVALID = -1,
+    U_TILE_ID_VOID,
     U_TILE_ID_BUILDING,
     U_TILE_ID_ROAD_H,
     U_TILE_ID_ROAD_V,

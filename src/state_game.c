@@ -60,10 +60,12 @@ A_STATE(t_game)
             g_game.coords.x += Z_MOVE_INC;
         }
 
-        if(a_fps_ticksNth(A_CONFIG_FPS_RATE_TICK / 2)) {
-            n_map_free();
-            n_map_new();
-        }
+        #if 0
+            if(a_fps_ticksNth(A_CONFIG_FPS_RATE_TICK / 2)) {
+                n_map_free();
+                n_map_new();
+            }
+        #endif
 
         n_map_tick();
         n_camera_tick(g_game.coords);
