@@ -72,7 +72,7 @@ static void z_area_free(ZArea* Area)
     free(Area);
 }
 
-static AList* z_area_subdivide(ZArea* StartArea, int Iterations, int BlockSizeMin, int RoadSize)
+static AList* z_area_subdivide(ZArea* StartArea, int BlockSizeMin, int RoadSize, int Iterations)
 {
     AList* areas = a_list_new();
 
@@ -187,29 +187,31 @@ static int z_area_cmpDistanceInv(void* ItemA, void* ItemB)
     return z_area_distanceGetSq(ItemB) - z_area_distanceGetSq(ItemA);
 }
 
-static void mapGenAreasDivide(NMap* Map, AListCompare* SortCallback, unsigned Num, int Iterations, int BlockSizeMin, int RoadSize)
+static void mapGenAreasDivideN(NMap* Map, AListCompare* SortCallback, unsigned Num, int BlockSizeMin, int RoadSize, int Iterations)
 {
+    Num = a_math_minu(Num, a_list_sizeGet(Map->areas));
+
     if(SortCallback && Num > 1) {
         a_list_sort(Map->areas, SortCallback);
     }
 
     while(Num--) {
         AList* subAreas = z_area_subdivide(a_list_pop(Map->areas),
-                                           Iterations,
                                            BlockSizeMin,
-                                           RoadSize);
+                                           RoadSize,
+                                           Iterations);
 
         a_list_appendMove(Map->areas, subAreas);
         a_list_free(subAreas);
     }
 }
 
-static void mapGenAreasDivideP(NMap* Map, AListCompare* SortCallback, unsigned Percentage, int Iterations, int BlockSizeMin, int RoadSize)
+static void mapGenAreasDivideP(NMap* Map, AListCompare* SortCallback, unsigned Percentage, int BlockSizeMin, int RoadSize, int Iterations)
 {
     unsigned num = a_list_sizeGet(Map->areas) * Percentage / 100;
 
-    mapGenAreasDivide(
-        Map, SortCallback, num, Iterations, BlockSizeMin, RoadSize);
+    mapGenAreasDivideN(
+        Map, SortCallback, num, BlockSizeMin, RoadSize, Iterations);
 }
 
 static void mapGenAreasDiscardAroundEdge(NMap* Map)
@@ -308,18 +310,20 @@ static void mapGen(NMap* Map)
     a_list_addLast(Map->areas, entireMap);
 
     // Main shape
-    mapGenAreasDivide(Map, NULL, 1, 32, 32, 4);
-    mapGenAreasDiscardAroundEdge(Map);
+    mapGenAreasDivideN(Map, NULL, 1, 24, 4, 16);
 
     // Split into smaller blocks around the center
-    mapGenAreasDivideP(Map, z_area_cmpDistance, 50, 8, 16, 2);
-    mapGenAreasDivideP(Map, z_area_cmpDistance, 25, 8, 8, 1);
+    mapGenAreasDivideP(Map, z_area_cmpDistance, 50, 8, 2, 8);
+    mapGenAreasDivideP(Map, z_area_cmpDistance, 25, 4, 1, 8);
+
+    // Clean map edges
+    mapGenAreasDiscardAroundEdge(Map);
 
     // Split up the largest blocks
-    mapGenAreasDivide(Map, z_area_cmpSizeInv, 3, 2, 8, 2);
+    mapGenAreasDivideN(Map, z_area_cmpSizeInv, 2, 8, 2, 2);
 
     // Split up the blocks farthest from center
-    mapGenAreasDivide(Map, z_area_cmpDistanceInv, 4, 3, 8, 1);
+    mapGenAreasDivideN(Map, z_area_cmpDistanceInv, 4, 8, 1, 3);
 
     mapGenAreasDrawRoadsOnTiles(Map);
     mapGenAreasFloodFill(Map);

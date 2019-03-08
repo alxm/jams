@@ -20,8 +20,8 @@
 
 #include <a2x.h>
 
-#define N_MAP_W 256
-#define N_MAP_H 256
+#define N_MAP_W 128
+#define N_MAP_H 128
 
 extern void n_map_new(void);
 extern void n_map_free(void);
