@@ -1,4 +1,4 @@
 #!/bin/sh
-geany -i src/* make/* assets/tiles/*.txt dev.sh README.md &
-gimp -n assets/tiles/*.png &
+geany -i assets/gfx/*.py assets/tiles/*.txt make/* src/* dev.sh README.md &
+gimp -n assets/gfx/*.png assets/tiles/*.png &
 cd make

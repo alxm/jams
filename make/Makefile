@@ -16,3 +16,10 @@ A_CONFIG_SCREEN_HEIGHT := 200
 #A_CONFIG_SCREEN_ZOOM := 4
 
 include $(A2X_PATH)/make/dev
+
+Z_GFX_PAL_PY := ../assets/gfx/pal.py
+Z_GFX_PAL_PNG := ../assets/gfx/palette.png
+Z_GFX_PNG_FILES := $(wildcard ../assets/tiles/*.png)
+
+gfx :
+	python3 $(Z_GFX_PAL_PY) $(Z_GFX_PAL_PNG) $(Z_GFX_PNG_FILES)
