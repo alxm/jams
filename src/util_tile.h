@@ -20,15 +20,22 @@
 
 #include <a2x.h>
 
+#define U__TILE_X \
+    Z__X(U_TILE_ID_VOID) \
+    Z__X(U_TILE_ID_BUILDING) \
+    Z__X(U_TILE_ID_ROAD_H) \
+    Z__X(U_TILE_ID_ROAD_V) \
+    Z__X(U_TILE_ID_SIDEWALK) \
+
+#define Z__X(T) T,
+
 typedef enum {
     U_TILE_ID_INVALID = -1,
-    U_TILE_ID_VOID,
-    U_TILE_ID_BUILDING,
-    U_TILE_ID_ROAD_H,
-    U_TILE_ID_ROAD_V,
-    U_TILE_ID_SIDEWALK,
+    U__TILE_X
     U_TILE_ID_NUM
-} UTile;
+} UTileId;
+
+#undef Z__X
 
 typedef enum {
     U_TILE_FLAG_NOMOVE = A_FLAG_BIT(0),
@@ -37,6 +44,6 @@ typedef enum {
 extern void u_tile_load(void);
 extern void u_tile_unload(void);
 
-extern bool u_tile_flagsTest(UTile Tile, UTileFlags Flags);
-extern const ASprite* u_tile_spriteGet(UTile Tile);
-extern APixel u_tile_colorGet(UTile Tile);
+extern bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags);
+extern const ASprite* u_tile_spriteGet(UTileId Tile);
+extern APixel u_tile_colorGet(UTileId Tile);

@@ -21,33 +21,76 @@
 #include "util_coords.h"
 
 typedef struct {
-    AVectorInt coords;
     UTileFlags flags;
+    APixel color;
     ASprite* sprite;
-    uint32_t hex;
 } ZTile;
 
-static ZTile g_tiles[U_TILE_ID_NUM] = {
-    [U_TILE_ID_VOID] = {{0, 0}, U_TILE_FLAG_NOMOVE, NULL, 0xaa8844},
-    [U_TILE_ID_BUILDING] = {{16, 0}, U_TILE_FLAG_NOMOVE, NULL, 0x88cc28},
-    [U_TILE_ID_ROAD_H] = {{32, 0}, 0, NULL, 0x44770f},
-    [U_TILE_ID_ROAD_V] = {{48, 0}, 0, NULL, 0x77440f},
-    [U_TILE_ID_SIDEWALK] = {{64, 0}, 0, NULL, 0x99661f},
-};
+static ZTile g_tiles[U_TILE_ID_NUM];
+
+static void tileLoad(UTileId Tile, const ABlock* Block, const ASprite* Sheet)
+{
+    ZTile* t = &g_tiles[Tile];
+
+    const ABlock* flags = a_block_keyGetBlock(Block, "flags");
+    AVectorInt coords = a_block_keyGetCoords(Block, "frames");
+
+    if(flags) {
+        A_LIST_ITERATE(a_block_blocksGet(flags), const ABlock*, flag) {
+            const char* fStr = a_block_lineGetString(flag, 0);
+
+            if(a_str_equal(fStr, "nomove")) {
+                A_FLAG_SET(t->flags, U_TILE_FLAG_NOMOVE);
+            }
+        }
+    }
+
+    t->color = a_block_keyGetPixel(Block, "hex");
+    t->sprite = a_sprite_newFromSpriteEx(Sheet,
+                                         coords.x,
+                                         coords.y,
+                                         Z_COORDS_PIXELS_PER_UNIT,
+                                         Z_COORDS_PIXELS_PER_UNIT);
+}
 
 void u_tile_load(void)
 {
-    ASprite* sheet = a_sprite_newFromPng("assets/gfx/tiles.png");
+    AStrHash* map = a_strhash_new();
 
-    for(int t = 0; t < U_TILE_ID_NUM; t++) {
-        g_tiles[t].sprite = a_sprite_newFromSpriteEx(sheet,
-                                                     g_tiles[t].coords.x,
-                                                     g_tiles[t].coords.y,
-                                                     Z_COORDS_PIXELS_PER_UNIT,
-                                                     Z_COORDS_PIXELS_PER_UNIT);
+    #define Z__X(T) a_strhash_add(map, #T, (void*)(intptr_t)T);
+    U__TILE_X
+    #undef Z__X
+
+    ADir* dir = a_dir_new("assets/tiles");
+
+    A_LIST_ITERATE(a_dir_entriesListGet(dir), const APath*, path) {
+        if(!a_str_endsWith(a_path_getName(path), ".txt")) {
+            continue;
+        }
+
+        const char* fullPath = a_path_getFull(path);
+        char* fullPathPrefix = a_str_prefixGetToLast(fullPath, '.');
+
+        char buffer[64];
+        a_str_fmt(buffer, sizeof(buffer), false, "%s.png", fullPathPrefix);
+
+        ASprite* sheet = a_sprite_newFromPng(buffer);
+        ABlock* root = a_block_new(a_path_getFull(path));
+
+        A_LIST_ITERATE(a_block_blocksGet(root), const ABlock*, b) {
+            tileLoad((UTileId)(intptr_t)
+                        a_strhash_get(map, a_block_lineGetString(b, 0)),
+                     b,
+                     sheet);
+        }
+
+        a_block_free(root);
+        a_sprite_free(sheet);
+        free(fullPathPrefix);
     }
 
-    a_sprite_free(sheet);
+    a_dir_free(dir);
+    a_strhash_free(map);
 }
 
 void u_tile_unload(void)
@@ -57,17 +100,17 @@ void u_tile_unload(void)
     }
 }
 
-bool u_tile_flagsTest(UTile Tile, UTileFlags Flags)
+bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags)
 {
     return A_FLAG_TEST_ALL(g_tiles[Tile].flags, Flags);
 }
 
-const ASprite* u_tile_spriteGet(UTile Tile)
+const ASprite* u_tile_spriteGet(UTileId Tile)
 {
     return g_tiles[Tile].sprite;
 }
 
-APixel u_tile_colorGet(UTile Tile)
+APixel u_tile_colorGet(UTileId Tile)
 {
-    return a_pixel_fromHex(g_tiles[Tile].hex);
+    return g_tiles[Tile].color;
 }

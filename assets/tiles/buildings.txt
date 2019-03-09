@@ -1,0 +1,7 @@
+U_TILE_ID_BUILDING
+    flags
+        nomove
+    hex
+        88cc28
+    frames
+        0, 0

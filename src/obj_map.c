@@ -46,7 +46,7 @@ typedef struct {
 
 typedef struct {
     const ZArea* area;
-    UTile id;
+    UTileId id;
     unsigned flags;
 } ZTile;
 

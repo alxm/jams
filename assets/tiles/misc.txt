@@ -1,0 +1,7 @@
+U_TILE_ID_VOID
+    flags
+        nomove
+    hex
+        aa8844
+    frames
+        0, 0
