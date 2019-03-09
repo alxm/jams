@@ -23,6 +23,7 @@
 #include "util_tile.h"
 
 typedef enum {
+    Z_TILE_FLAG_ROAD = A_FLAG_BIT(0),
     Z_TILE_FLAG_VISITED = A_FLAG_BIT(1),
 } ZTileFlags;
 
@@ -44,6 +45,7 @@ typedef struct {
 } ZArea;
 
 typedef struct {
+    const ZArea* area;
     UTile id;
     unsigned flags;
 } ZTile;
@@ -259,42 +261,90 @@ static void mapGenAreasDiscardAroundEdge(NMap* Map)
     }
 }
 
-static void mapGenAreasDrawRoads(NMap* Map)
+static void mapGenAreasShrinkToUsableSize(NMap* Map)
 {
     A_LIST_ITERATE(Map->areas, ZArea*, a) {
-        for(int x = a->x + a->w; x-- > a->x; ) {
-            for(int r = a->road[Z_ROAD_UP].size; r--; ) {
-                Map->tiles[a->y + r][x].id = U_TILE_ID_ROAD_H;
-            }
+        a->x += a->road[Z_ROAD_LEFT].size;
+        a->y += a->road[Z_ROAD_UP].size;
+        a->w -= a->road[Z_ROAD_LEFT].size + a->road[Z_ROAD_RIGHT].size;
+        a->h -= a->road[Z_ROAD_UP].size + a->road[Z_ROAD_DOWN].size;
+    }
+}
 
-            for(int r = a->road[Z_ROAD_DOWN].size; r--; ) {
-                Map->tiles[a->y + a->h - 1 - r][x].id = U_TILE_ID_ROAD_H;
-            }
-        }
-
-        for(int y = a->y + a->h; y-- > a->y; ) {
-            for(int r = a->road[Z_ROAD_LEFT].size; r--; ) {
-                Map->tiles[y][a->x + r].id = U_TILE_ID_ROAD_V;
-            }
-
-            for(int r = a->road[Z_ROAD_RIGHT].size; r--; ) {
-                Map->tiles[y][a->x + a->w - 1 - r].id = U_TILE_ID_ROAD_V;
+static void mapGenAreasLinkTiles(NMap* Map)
+{
+    A_LIST_ITERATE(Map->areas, ZArea*, a) {
+        for(int y = a->y; y < a->y + a->h; y++) {
+            for(int x = a->x; x < a->x + a->w; x++) {
+                Map->tiles[y][x].area = a;
             }
         }
     }
 }
 
-static void mapGenAreasDrawBuildings(NMap* Map)
+static void mapGenAreasPutRoads(NMap* Map)
 {
     A_LIST_ITERATE(Map->areas, ZArea*, a) {
-        int startX = a->x + a->road[Z_ROAD_LEFT].size;
-        int startY = a->y + a->road[Z_ROAD_UP].size;
-        int endX = a->x + a->w - a->road[Z_ROAD_RIGHT].size;
-        int endY = a->y + a->h - a->road[Z_ROAD_DOWN].size;
+        for(int x = a->x; x < a->x + a->w; x++) {
+            for(int r = a->road[Z_ROAD_UP].size; r--; ) {
+                ZTile* t = &Map->tiles[a->y + r][x];
 
-        for(int y = startY; y < endY; y++) {
-            for(int x = startX; x < endX; x++) {
+                t->id = U_TILE_ID_ROAD_H;
+                A_FLAG_SET(t->flags, Z_TILE_FLAG_ROAD);
+            }
+
+            for(int r = a->road[Z_ROAD_DOWN].size; r--; ) {
+                ZTile* t = &Map->tiles[a->y + a->h - 1 - r][x];
+
+                t->id = U_TILE_ID_ROAD_H;
+                A_FLAG_SET(t->flags, Z_TILE_FLAG_ROAD);
+            }
+        }
+
+        for(int y = a->y; y < a->y + a->h; y++) {
+            for(int r = a->road[Z_ROAD_LEFT].size; r--; ) {
+                ZTile* t = &Map->tiles[y][a->x + r];
+
+                t->id = U_TILE_ID_ROAD_V;
+                A_FLAG_SET(t->flags, Z_TILE_FLAG_ROAD);
+            }
+
+            for(int r = a->road[Z_ROAD_RIGHT].size; r--; ) {
+                ZTile* t = &Map->tiles[y][a->x + a->w - 1 - r];
+
+                t->id = U_TILE_ID_ROAD_V;
+                A_FLAG_SET(t->flags, Z_TILE_FLAG_ROAD);
+            }
+        }
+    }
+}
+
+static void mapGenAreasPutBlocks(NMap* Map)
+{
+    A_LIST_ITERATE(Map->areas, ZArea*, a) {
+        for(int y = a->y; y < a->y + a->h; y++) {
+            for(int x = a->x; x < a->x + a->w; x++) {
                 Map->tiles[y][x].id = U_TILE_ID_BUILDING;
+            }
+        }
+
+        if(a->w >= 5) {
+            if(a_random_chance(4, 5)) {
+                for(int y = a->y; y < a->y + a->h; y++) {
+                    Map->tiles[y][a->x].id = U_TILE_ID_SIDEWALK;
+                }
+            }
+
+            if(a_random_chance(4, 5)) {
+                for(int y = a->y; y < a->y + a->h; y++) {
+                    Map->tiles[y][a->x + a->w - 1].id = U_TILE_ID_SIDEWALK;
+                }
+            }
+        }
+
+        if(a->h >= 3) {
+            for(int x = a->x; x < a->x + a->w; x++) {
+                Map->tiles[a->y + a->h - 1][x].id = U_TILE_ID_SIDEWALK;
             }
         }
     }
@@ -304,7 +354,7 @@ static void mapGenAreasFloodFillVisit(NMap* Map, AList* Queue, int X, int Y)
 {
     ZTile* tile = &Map->tiles[Y][X];
 
-    if(!u_tile_flagsTest(tile->id, U_TILE_FLAG_NOMOVE)
+    if(A_FLAG_TEST_ANY(tile->flags, Z_TILE_FLAG_ROAD)
         && !A_FLAG_TEST_ANY(tile->flags, Z_TILE_FLAG_VISITED)) {
 
         A_FLAG_SET(tile->flags, Z_TILE_FLAG_VISITED);
@@ -319,9 +369,26 @@ static void mapGenAreasFloodFill(NMap* Map)
     ZArea* centerMost = a_list_peek(Map->areas);
     AVectorInt start = {centerMost->x, centerMost->y};
 
-    if(u_tile_flagsTest(Map->tiles[start.y][start.x].id, U_TILE_FLAG_NOMOVE)) {
-        start.x += centerMost->w - 1;
-        start.y += centerMost->h - 1;
+    if(!A_FLAG_TEST_ANY(Map->tiles[start.y][start.x].flags, Z_TILE_FLAG_ROAD)) {
+        AVectorInt corners[3] = {
+            {start.x + centerMost->w - 1, start.y},
+            {start.x + centerMost->w - 1, start.y + centerMost->h - 1},
+            {start.x, start.y + centerMost->h - 1},
+        };
+
+        for(int c = A_ARRAY_LEN(corners); c--; ) {
+            start = corners[c];
+
+            if(A_FLAG_TEST_ANY(
+                Map->tiles[start.y][start.x].flags, Z_TILE_FLAG_ROAD)) {
+
+                break;
+            }
+        }
+    }
+
+    if(!A_FLAG_TEST_ANY(Map->tiles[start.y][start.x].flags, Z_TILE_FLAG_ROAD)) {
+        A_FATAL("Flood fill could not find a starting point");
     }
 
     AList* queue = a_list_new();
@@ -337,15 +404,35 @@ static void mapGenAreasFloodFill(NMap* Map)
         mapGenAreasFloodFillVisit(Map, queue, coords.x + 1, coords.y);
     }
 
-    for(int y = N_MAP_H; y--; ) {
-        for(int x = N_MAP_W; x--; ) {
-            if(!A_FLAG_TEST_ANY(Map->tiles[y][x].flags, Z_TILE_FLAG_VISITED)) {
-                Map->tiles[y][x].id = U_TILE_ID_VOID;
+    a_list_free(queue);
+
+    A_LIST_ITERATE(Map->areas, ZArea*, a) {
+        AVectorInt corners[4] = {
+            {a->x, a->y},
+            {a->x + a->w - 1, a->y},
+            {a->x + a->w - 1, a->y + a->h - 1},
+            {a->x, a->y + a->h - 1},
+        };
+
+        for(int c = A_ARRAY_LEN(corners); c--; ) {
+            const ZTile* t = &Map->tiles[corners[c].y][corners[c].x];
+
+            if(A_FLAG_TEST_ANY(t->flags, Z_TILE_FLAG_ROAD)
+                && !A_FLAG_TEST_ANY(t->flags, Z_TILE_FLAG_VISITED)) {
+
+                for(int y = a->y; y < a->y + a->h; y++) {
+                    for(int x = a->x; x < a->x + a->w; x++) {
+                        Map->tiles[y][x].id = U_TILE_ID_VOID;
+                    }
+                }
+
+                z_area_free(a);
+                A_LIST_REMOVE_CURRENT();
+
+                break;
             }
         }
     }
-
-    a_list_free(queue);
 }
 
 static void mapGen(NMap* Map)
@@ -374,9 +461,16 @@ static void mapGen(NMap* Map)
     // Split up the blocks farthest from center
     mapGenAreasDivideP(Map, z_area_cmpDistanceInv, 20, 4, 1, 3);
 
-    mapGenAreasDrawRoads(Map);
+    // Each tile knows what block it's in
+    mapGenAreasLinkTiles(Map);
+
+    // Put road tiles and clear unreachable ones
+    mapGenAreasPutRoads(Map);
     mapGenAreasFloodFill(Map);
-    mapGenAreasDrawBuildings(Map);
+
+    // Shrink blocks away from streets and populate each one
+    mapGenAreasShrinkToUsableSize(Map);
+    mapGenAreasPutBlocks(Map);
 }
 
 void n_map_new(void)

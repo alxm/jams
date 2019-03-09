@@ -26,6 +26,7 @@ typedef enum {
     U_TILE_ID_BUILDING,
     U_TILE_ID_ROAD_H,
     U_TILE_ID_ROAD_V,
+    U_TILE_ID_SIDEWALK,
     U_TILE_ID_NUM
 } UTile;
 

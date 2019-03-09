@@ -23,7 +23,7 @@
 #include "util_coords.h"
 #include "util_input.h"
 
-#define Z_MOVE_INC (4 * A_FIX_ONE / Z_COORDS_PIXELS_PER_UNIT)
+#define Z_MOVE_INC (16 * A_FIX_ONE / Z_COORDS_PIXELS_PER_UNIT)
 
 typedef struct {
     AVectorFix coords;

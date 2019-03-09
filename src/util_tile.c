@@ -32,6 +32,7 @@ static ZTile g_tiles[U_TILE_ID_NUM] = {
     [U_TILE_ID_BUILDING] = {{16, 0}, U_TILE_FLAG_NOMOVE, NULL, 0x88cc28},
     [U_TILE_ID_ROAD_H] = {{32, 0}, 0, NULL, 0x44770f},
     [U_TILE_ID_ROAD_V] = {{48, 0}, 0, NULL, 0x77440f},
+    [U_TILE_ID_SIDEWALK] = {{64, 0}, 0, NULL, 0x99661f},
 };
 
 void u_tile_load(void)

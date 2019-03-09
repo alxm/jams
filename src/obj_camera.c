@@ -21,6 +21,8 @@
 #include "obj_map.h"
 #include "util_coords.h"
 
+#define Z_INERTIA_SHIFT 0
+
 typedef struct {
     AVectorFix coords;
     AVectorInt shake;
@@ -49,20 +51,18 @@ void n_camera_free(void)
 
 void n_camera_tick(AVectorFix Origin)
 {
-    #define Z_SHIFT 3
-
     AFix halfScrWUnits = z_coords_pixelsToUnits(a_screen_sizeGetWidth() / 2);
     AFix halfScrHUnits = z_coords_pixelsToUnits(a_screen_sizeGetHeight() / 2);
 
     g_camera.coords.x = a_math_clamp(
-        (Origin.x >> Z_SHIFT)
-            + (g_camera.coords.x - (g_camera.coords.x >> Z_SHIFT)),
+        (Origin.x >> Z_INERTIA_SHIFT)
+            + (g_camera.coords.x - (g_camera.coords.x >> Z_INERTIA_SHIFT)),
         halfScrWUnits,
         a_fix_fromInt(N_MAP_W) - halfScrWUnits);
 
     g_camera.coords.y = a_math_clamp(
-        (Origin.y >> Z_SHIFT)
-            + (g_camera.coords.y - (g_camera.coords.y >> Z_SHIFT)),
+        (Origin.y >> Z_INERTIA_SHIFT)
+            + (g_camera.coords.y - (g_camera.coords.y >> Z_INERTIA_SHIFT)),
         halfScrHUnits,
         a_fix_fromInt(N_MAP_H) - halfScrHUnits);
 
