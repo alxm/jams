@@ -42,7 +42,7 @@
     Z__3X3(U_TILE_ID_SIDEWALK_) \
     \
     Z__3X3(U_TILE_ID_B0_ROOF_) \
-    Z__3X3(U_TILE_ID_B0_WALL_) \
+    Z__3X3(U_TILE_ID_B0_FRONT_) \
     \
 
 #define Z__X(T) T,

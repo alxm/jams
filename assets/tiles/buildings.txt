@@ -3,10 +3,10 @@
         flags
             nomove
         frames
-            80, 0
+            0, 0
 
-    U_TILE_ID_B0_WALL_
+    U_TILE_ID_B0_FRONT_
         flags
             nomove
         frames
-            80, 48
+            0, 48
