@@ -1,7 +1,12 @@
-U_TILE_ID_BUILDING
-    flags
-        nomove
-    hex
-        88cc28
-    frames
-        0, 0
+3x3
+    U_TILE_ID_B0_ROOF_
+        flags
+            nomove
+        frames
+            80, 0
+
+    U_TILE_ID_B0_WALL_
+        flags
+            nomove
+        frames
+            80, 48

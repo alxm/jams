@@ -1,7 +1,13 @@
-U_TILE_ID_VOID
+U_TILE_ID_MISC_VOID
     flags
         nomove
     hex
         aa8844
     frames
         0, 0
+
+U_TILE_ID_MISC_TREE
+    flags
+        nomove
+    frames
+        16, 0

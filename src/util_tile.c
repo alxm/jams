@@ -32,6 +32,12 @@ struct UTileInstance {
 };
 
 static ZTile g_tiles[U_TILE_ID_NUM];
+static AStrHash* g_enumMap;
+
+static inline UTileId u_tile_stringToId(const char* Name)
+{
+    return (UTileId)(intptr_t)a_strhash_get(g_enumMap, Name);
+}
 
 static UTileInstance* instanceNew(const ZTile* Template, const ASprite* Sheet, AVectorInt Coords)
 {
@@ -54,14 +60,20 @@ static void instanceFree(UTileInstance* Tile)
     free(Tile);
 }
 
-static void tileLoad(UTileId Tile, const ABlock* Block, const ASprite* Sheet)
+static void tileLoad(const char* Id, const ABlock* Block, const ASprite* Sheet, int OffsetX, int OffsetY)
 {
-    ZTile* t = &g_tiles[Tile];
+    UTileId id = u_tile_stringToId(Id);
+
+    if(id < 0 || id >= U_TILE_ID_NUM) {
+        A_FATAL("Invalid enum %s (%d)", Id, id);
+    }
+
+    a_out_printf("Loading %s (%d)", Id, id);
+
+    ZTile* t = &g_tiles[id];
 
     const ABlock* flags = a_block_keyGetBlock(Block, "flags");
-    APixel color = a_block_keyGetPixel(Block, "hex");
     const ABlock* frames = a_block_keyGetBlock(Block, "frames");
-    AList* coordsList = a_block_blocksGet(frames);
 
     if(flags) {
         A_LIST_ITERATE(a_block_blocksGet(flags), const ABlock*, flag) {
@@ -73,11 +85,15 @@ static void tileLoad(UTileId Tile, const ABlock* Block, const ASprite* Sheet)
         }
     }
 
-    t->color = color;
+    t->color = a_block_keyGetPixel(Block, "hex");
     t->instances = a_list_new();
 
-    A_LIST_ITERATE(coordsList, const ABlock*, coordsLine) {
+    A_LIST_ITERATE(a_block_blocksGet(frames), const ABlock*, coordsLine) {
         AVectorInt coords = a_block_lineGetCoords(coordsLine, 0);
+
+        coords.x += OffsetX;
+        coords.y += OffsetY;
+
         UTileInstance* instance = instanceNew(t, Sheet, coords);
 
         a_list_addLast(t->instances, instance);
@@ -93,9 +109,9 @@ static void tileFree(UTileId Tile)
 
 void u_tile_load(void)
 {
-    AStrHash* map = a_strhash_new();
+    g_enumMap = a_strhash_new();
 
-    #define Z__X(T) a_strhash_add(map, #T, (void*)(intptr_t)T);
+    #define Z__X(T) a_strhash_add(g_enumMap, #T, (void*)(intptr_t)T);
     U__TILE_X
     #undef Z__X
 
@@ -116,10 +132,31 @@ void u_tile_load(void)
         ABlock* root = a_block_new(a_path_getFull(path));
 
         A_LIST_ITERATE(a_block_blocksGet(root), const ABlock*, b) {
-            tileLoad((UTileId)(intptr_t)
-                        a_strhash_get(map, a_block_lineGetString(b, 0)),
-                     b,
-                     sheet);
+            const char* id = a_block_lineGetString(b, 0);
+
+            if(a_strhash_contains(g_enumMap, id)) {
+                tileLoad(id, b, sheet, 0, 0);
+            } else if(a_str_equal(id, "3x3")) {
+                AList* tileBlocks = a_block_blocksGet(b);
+
+                A_LIST_ITERATE(tileBlocks, const ABlock*, b) {
+                    const char* name = a_block_lineGetString(b, 0);
+
+                    a_out_printf("Loading %s*", name);
+
+                    for(int y = 0; y < 3; y++) {
+                        for(int x = 0; x < 3; x++) {
+                            tileLoad(a_str_fmt512("%s%d", name, y * 3 + x + 1),
+                                     b,
+                                     sheet,
+                                     x * Z_COORDS_PIXELS_PER_UNIT,
+                                     y * Z_COORDS_PIXELS_PER_UNIT);
+                        }
+                    }
+                }
+            } else {
+                a_out_error("Unknown tile %s", id);
+            }
         }
 
         a_block_free(root);
@@ -128,7 +165,7 @@ void u_tile_load(void)
     }
 
     a_dir_free(dir);
-    a_strhash_free(map);
+
 }
 
 void u_tile_unload(void)
@@ -136,6 +173,8 @@ void u_tile_unload(void)
     for(int t = U_TILE_ID_NUM; t--; ) {
         tileFree(t);
     }
+
+    a_strhash_free(g_enumMap);
 }
 
 const UTileInstance* u_tile_get(UTileId Tile)

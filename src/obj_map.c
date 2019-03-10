@@ -325,7 +325,7 @@ static void mapGenAreasPutBlocks(NMap* Map)
     A_LIST_ITERATE(Map->areas, ZArea*, a) {
         for(int y = a->y; y < a->y + a->h; y++) {
             for(int x = a->x; x < a->x + a->w; x++) {
-                Map->tiles[y][x].id = U_TILE_ID_BUILDING;
+                Map->tiles[y][x].id = U_TILE_ID_MISC_TREE;
             }
         }
 
@@ -335,25 +335,25 @@ static void mapGenAreasPutBlocks(NMap* Map)
         if(sides) {
             for(int y = a->y; y < a->y + a->h; y++) {
                 Map->tiles[y][a->x].id =
-                    U_TILE_ID_SIDEWALK_EDGE_W;
+                    U_TILE_ID_SIDEWALK_4;
 
                 Map->tiles[y][a->x + a->w - 1].id =
-                    U_TILE_ID_SIDEWALK_EDGE_E;
+                    U_TILE_ID_SIDEWALK_6;
             }
         }
 
         if(bottom) {
             for(int x = a->x; x < a->x + a->w; x++) {
                 Map->tiles[a->y + a->h - 1][x].id =
-                    U_TILE_ID_SIDEWALK_EDGE_S;
+                    U_TILE_ID_SIDEWALK_8;
             }
         }
 
         if(sides || bottom) {
             Map->tiles[a->y + a->h - 1][a->x].id =
-                U_TILE_ID_SIDEWALK_EDGE_SW;
+                U_TILE_ID_SIDEWALK_7;
             Map->tiles[a->y + a->h - 1][a->x + a->w - 1].id =
-                U_TILE_ID_SIDEWALK_EDGE_SE;
+                U_TILE_ID_SIDEWALK_9;
         }
     }
 }
@@ -430,7 +430,7 @@ static void mapGenAreasFloodFill(NMap* Map)
 
                 for(int y = a->y; y < a->y + a->h; y++) {
                     for(int x = a->x; x < a->x + a->w; x++) {
-                        Map->tiles[y][x].id = U_TILE_ID_VOID;
+                        Map->tiles[y][x].id = U_TILE_ID_MISC_VOID;
                     }
                 }
 
