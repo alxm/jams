@@ -24,11 +24,13 @@ typedef struct {
     UTileFlags flags;
     APixel color;
     AList* instances;
+    unsigned repeatTotal;
 } ZTile;
 
 struct UTileInstance {
     const ZTile* template;
     ASprite* sprite;
+    unsigned repeat;
 };
 
 static ZTile g_tiles[U_TILE_ID_NUM];
@@ -39,7 +41,7 @@ static inline UTileId u_tile_stringToId(const char* Name)
     return (UTileId)(intptr_t)a_strhash_get(g_enumMap, Name);
 }
 
-static UTileInstance* instanceNew(const ZTile* Template, const ASprite* Sheet, AVectorInt Coords)
+static UTileInstance* instanceNew(const ZTile* Template, const ASprite* Sheet, AVectorInt Coords, unsigned Repeat)
 {
     UTileInstance* i = a_mem_malloc(sizeof(UTileInstance));
 
@@ -49,6 +51,7 @@ static UTileInstance* instanceNew(const ZTile* Template, const ASprite* Sheet, A
                                          Coords.y,
                                          Z_COORDS_PIXELS_PER_UNIT,
                                          Z_COORDS_PIXELS_PER_UNIT);
+    i->repeat = Repeat;
 
     return i;
 }
@@ -87,16 +90,26 @@ static void tileLoad(const char* Id, const ABlock* Block, const ASprite* Sheet, 
 
     t->color = a_block_keyGetPixel(Block, "hex");
     t->instances = a_list_new();
+    t->repeatTotal = 0;
 
     A_LIST_ITERATE(a_block_blocksGet(frames), const ABlock*, coordsLine) {
-        AVectorInt coords = a_block_lineGetCoords(coordsLine, 0);
+        AVectorInt coords = {0, 0};
+        unsigned repeat = 1;
+        const char* line = a_block_lineGetString(coordsLine, 0);
+
+        if(sscanf(line, "%d, %d x%u", &coords.x, &coords.y, &repeat) != 3) {
+            if(sscanf(line, "%d, %d", &coords.x, &coords.y) != 2) {
+                A_FATAL("Bad coords line '%s'", line);
+            }
+        }
 
         coords.x += OffsetX;
         coords.y += OffsetY;
 
-        UTileInstance* instance = instanceNew(t, Sheet, coords);
+        UTileInstance* instance = instanceNew(t, Sheet, coords, repeat);
 
         a_list_addLast(t->instances, instance);
+        t->repeatTotal += repeat;
     }
 }
 
@@ -182,14 +195,14 @@ const UTileInstance* u_tile_get(UTileId Tile)
     unsigned num = a_list_sizeGet(g_tiles[Tile].instances);
 
     if(num > 0) {
-        unsigned target = a_random_intu((1u << num) - 1);
         unsigned n = 0;
+        unsigned target = a_random_intu(g_tiles[Tile].repeatTotal);
 
-        for(unsigned i = 0; i < num; i++) {
-            n += 1u << (num - 1 - i);
+        A_LIST_ITERATE(g_tiles[Tile].instances, const UTileInstance*, i) {
+            n += i->repeat;
 
             if(n > target) {
-                return a_list_getByIndex(g_tiles[Tile].instances, i);
+                return i;
             }
         }
     }
