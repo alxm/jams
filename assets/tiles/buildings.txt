@@ -10,3 +10,22 @@
             nomove
         frames
             0, 48
+            64, 48
+
+U_TILE_ID_B0_DOOR_7
+    flags
+        nomove
+    frames
+        80, 208
+
+U_TILE_ID_B0_DOOR_8
+    flags
+        nomove
+    frames
+        112, 208
+
+U_TILE_ID_B0_DOOR_9
+    flags
+        nomove
+    frames
+        144, 208

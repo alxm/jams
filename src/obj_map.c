@@ -400,14 +400,23 @@ static void mapGenAreaPutSidewalks(NMap* Map, ZArea* Area)
 static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
 {
     int roofLen = a_math_max(2, Area->h / 4);
+    int frontLen = Area->h - roofLen;
 
     putGrid(Map, Area->x, Area->y, Area->w, roofLen, U_TILE_ID_B0_ROOF_1);
     putGrid(Map,
             Area->x,
             Area->y + roofLen,
             Area->w,
-            Area->h - roofLen,
+            frontLen,
             U_TILE_ID_B0_FRONT_1);
+
+    int doorX = a_random_int(Area->w);
+
+    put(Map,
+        Area->x + doorX,
+        Area->y + Area->h - 1,
+        doorX == 0 ? U_TILE_ID_B0_DOOR_7
+            : doorX == Area->w - 1 ? U_TILE_ID_B0_DOOR_9 : U_TILE_ID_B0_DOOR_8);
 }
 
 static void mapGenAreasPutBlocks(NMap* Map)

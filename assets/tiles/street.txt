@@ -14,8 +14,6 @@ U_TILE_ID_ROAD_V
     U_TILE_ID_SIDEWALK_
         hex
             99661f
-        flags
-            nomove
         frames
             0, 16
             48, 16
