@@ -179,7 +179,22 @@ void u_tile_unload(void)
 
 const UTileInstance* u_tile_get(UTileId Tile)
 {
-    return a_list_getRandom(g_tiles[Tile].instances);
+    unsigned num = a_list_sizeGet(g_tiles[Tile].instances);
+
+    if(num > 0) {
+        unsigned target = a_random_intu((1u << num) - 1);
+        unsigned n = 0;
+
+        for(unsigned i = 0; i < num; i++) {
+            n += 1u << (num - 1 - i);
+
+            if(n > target) {
+                return a_list_getByIndex(g_tiles[Tile].instances, i);
+            }
+        }
+    }
+
+    A_FATAL("No instances of tile %d", Tile);
 }
 
 bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags)

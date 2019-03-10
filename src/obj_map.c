@@ -429,14 +429,16 @@ static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
 
     if(frontLen > 1) {
         for(int y = Area->y + roofLen; y < Area->y + Area->h - 1; y++) {
-            for(int x = Area->x; x < Area->x + Area->w; x++) {
-                if(a_random_chance(2, 3)) {
-                    if(x == Area->x) {
-                        put(Map, x, y, U_TILE_ID_B0_WINDOW_4);
-                    } else if(x == Area->x + Area->w - 1) {
-                        put(Map, x, y, U_TILE_ID_B0_WINDOW_6);
-                    } else {
-                        put(Map, x, y, U_TILE_ID_B0_WINDOW_5);
+            if(a_random_chance(3, 4)) {
+                for(int x = Area->x; x < Area->x + Area->w; x++) {
+                    if(a_random_chance(9, 10)) {
+                        if(x == Area->x) {
+                            put(Map, x, y, U_TILE_ID_B0_WINDOW_4);
+                        } else if(x == Area->x + Area->w - 1) {
+                            put(Map, x, y, U_TILE_ID_B0_WINDOW_6);
+                        } else {
+                            put(Map, x, y, U_TILE_ID_B0_WINDOW_5);
+                        }
                     }
                 }
             }
