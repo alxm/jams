@@ -11,8 +11,8 @@
         flags
             nomove
         frames
-            0, 48
-            64, 48
+            0, 48 x3
+            64, 48 x2
             128, 48
 
 U_TILE_ID_B0_DOOR_7
