@@ -20,7 +20,7 @@
 
 #include <a2x.h>
 
-#define Z__3X3(T) \
+#define Z__3(T) \
     Z__X(T##1) \
     Z__X(T##2) \
     Z__X(T##3) \
@@ -34,15 +34,15 @@
 #define U__TILE_X \
     \
     Z__X(U_TILE_ID_MISC_VOID) \
-    Z__X(U_TILE_ID_MISC_TREE) \
+    Z__3(U_TILE_ID_MISC_TREE_) \
     \
     Z__X(U_TILE_ID_ROAD_H) \
     Z__X(U_TILE_ID_ROAD_V) \
     \
-    Z__3X3(U_TILE_ID_SIDEWALK_) \
+    Z__3(U_TILE_ID_SIDEWALK_) \
     \
-    Z__3X3(U_TILE_ID_B0_ROOF_) \
-    Z__3X3(U_TILE_ID_B0_FRONT_) \
+    Z__3(U_TILE_ID_B0_ROOF_) \
+    Z__3(U_TILE_ID_B0_FRONT_) \
     \
 
 #define Z__X(T) T,

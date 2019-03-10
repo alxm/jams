@@ -327,15 +327,6 @@ static void mapGenAreasPutRoads(NMap* Map)
     }
 }
 
-static void mapGenAreaPutForest(NMap* Map, ZArea* Area)
-{
-    for(int y = Area->y; y < Area->y + Area->h; y++) {
-        for(int x = Area->x; x < Area->x + Area->w; x++) {
-            Map->tiles[y][x].id = U_TILE_ID_MISC_TREE;
-        }
-    }
-}
-
 static inline void put(NMap* Map, int X, int Y, UTileId Tile)
 {
     Map->tiles[Y][X].id = Tile;
@@ -364,7 +355,12 @@ static void putGrid(NMap* Map, int X, int Y, int W, int H, UTileId TileBase)
     put(Map, X + W - 1, Y + H - 1, TileBase + 8);
 }
 
-static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
+static void mapGenAreaPutForest(NMap* Map, ZArea* Area)
+{
+    putGrid(Map, Area->x, Area->y, Area->w, Area->h, U_TILE_ID_MISC_TREE_1);
+}
+
+static void mapGenAreaPutSidewalks(NMap* Map, ZArea* Area)
 {
     bool bottom = Area->h >= Z_BUILDING_MIN_H + 1;
     bool sides = bottom && Area->w >= Z_BUILDING_MIN_W + 2
@@ -372,26 +368,23 @@ static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
 
     if(sides) {
         for(int y = Area->y; y < Area->y + Area->h; y++) {
-            Map->tiles[y][Area->x].id =
-                U_TILE_ID_SIDEWALK_4;
-
-            Map->tiles[y][Area->x + Area->w - 1].id =
-                U_TILE_ID_SIDEWALK_6;
+            put(Map, Area->x, y, U_TILE_ID_SIDEWALK_4);
+            put(Map, Area->x + Area->w - 1, y, U_TILE_ID_SIDEWALK_6);
         }
     }
 
     if(bottom) {
         for(int x = Area->x; x < Area->x + Area->w; x++) {
-            Map->tiles[Area->y + Area->h - 1][x].id =
-                U_TILE_ID_SIDEWALK_8;
+            put(Map, x, Area->y + Area->h - 1, U_TILE_ID_SIDEWALK_8);
         }
     }
 
     if(sides || bottom) {
-        Map->tiles[Area->y + Area->h - 1][Area->x].id =
-            U_TILE_ID_SIDEWALK_7;
-        Map->tiles[Area->y + Area->h - 1][Area->x + Area->w - 1].id =
-            U_TILE_ID_SIDEWALK_9;
+        put(Map, Area->x, Area->y + Area->h - 1, U_TILE_ID_SIDEWALK_7);
+        put(Map,
+            Area->x + Area->w - 1,
+            Area->y + Area->h - 1,
+            U_TILE_ID_SIDEWALK_9);
 
         if(sides) {
             Area->x += 1;
@@ -402,8 +395,11 @@ static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
             Area->h -= 1;
         }
     }
+}
 
-    int roofLen = a_math_max(2, Area->h / 3);
+static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
+{
+    int roofLen = a_math_max(2, Area->h / 4);
 
     putGrid(Map, Area->x, Area->y, Area->w, roofLen, U_TILE_ID_B0_ROOF_1);
     putGrid(Map,
@@ -420,6 +416,7 @@ static void mapGenAreasPutBlocks(NMap* Map)
         if(a_random_chance(9, 10)
             && a->w >= Z_BUILDING_MIN_W && a->h >= Z_BUILDING_MIN_H) {
 
+            mapGenAreaPutSidewalks(Map, a);
             mapGenAreaPutBuilding(Map, a);
         } else {
             mapGenAreaPutForest(Map, a);

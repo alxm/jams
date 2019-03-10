@@ -6,8 +6,9 @@ U_TILE_ID_MISC_VOID
     frames
         0, 0
 
-U_TILE_ID_MISC_TREE
-    flags
-        nomove
-    frames
-        16, 0
+3x3
+    U_TILE_ID_MISC_TREE_
+        flags
+            nomove
+        frames
+            0, 64
