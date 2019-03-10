@@ -10,8 +10,23 @@ U_TILE_ID_ROAD_V
     frames
         16, 0
 
-U_TILE_ID_SIDEWALK
+U_TILE_ID_SIDEWALK_EDGE_E
     hex
         99661f
     frames
-        0, 16
+        32, 32
+        80, 32
+
+U_TILE_ID_SIDEWALK_EDGE_S
+    hex
+        99661f
+    frames
+        16, 48
+        64, 48
+
+U_TILE_ID_SIDEWALK_EDGE_W
+    hex
+        99661f
+    frames
+        0, 32
+        48, 32

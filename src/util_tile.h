@@ -25,7 +25,9 @@
     Z__X(U_TILE_ID_BUILDING) \
     Z__X(U_TILE_ID_ROAD_H) \
     Z__X(U_TILE_ID_ROAD_V) \
-    Z__X(U_TILE_ID_SIDEWALK) \
+    Z__X(U_TILE_ID_SIDEWALK_EDGE_E) \
+    Z__X(U_TILE_ID_SIDEWALK_EDGE_S) \
+    Z__X(U_TILE_ID_SIDEWALK_EDGE_W) \
 
 #define Z__X(T) T,
 
@@ -41,9 +43,13 @@ typedef enum {
     U_TILE_FLAG_NOMOVE = A_FLAG_BIT(0),
 } UTileFlags;
 
+typedef struct UTileInstance UTileInstance;
+
 extern void u_tile_load(void);
 extern void u_tile_unload(void);
 
+extern const UTileInstance* u_tile_get(UTileId Tile);
+
 extern bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags);
-extern const ASprite* u_tile_spriteGet(UTileId Tile);
+extern const ASprite* u_tile_spriteGet(const UTileInstance* Tile);
 extern APixel u_tile_colorGet(UTileId Tile);

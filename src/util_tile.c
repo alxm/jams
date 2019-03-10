@@ -23,17 +23,45 @@
 typedef struct {
     UTileFlags flags;
     APixel color;
-    ASprite* sprite;
+    AList* instances;
 } ZTile;
 
+struct UTileInstance {
+    const ZTile* template;
+    ASprite* sprite;
+};
+
 static ZTile g_tiles[U_TILE_ID_NUM];
+
+static UTileInstance* instanceNew(const ZTile* Template, const ASprite* Sheet, AVectorInt Coords)
+{
+    UTileInstance* i = a_mem_malloc(sizeof(UTileInstance));
+
+    i->template = Template;
+    i->sprite = a_sprite_newFromSpriteEx(Sheet,
+                                         Coords.x,
+                                         Coords.y,
+                                         Z_COORDS_PIXELS_PER_UNIT,
+                                         Z_COORDS_PIXELS_PER_UNIT);
+
+    return i;
+}
+
+static void instanceFree(UTileInstance* Tile)
+{
+    a_sprite_free(Tile->sprite);
+
+    free(Tile);
+}
 
 static void tileLoad(UTileId Tile, const ABlock* Block, const ASprite* Sheet)
 {
     ZTile* t = &g_tiles[Tile];
 
     const ABlock* flags = a_block_keyGetBlock(Block, "flags");
-    AVectorInt coords = a_block_keyGetCoords(Block, "frames");
+    APixel color = a_block_keyGetPixel(Block, "hex");
+    const ABlock* frames = a_block_keyGetBlock(Block, "frames");
+    AList* coordsList = a_block_blocksGet(frames);
 
     if(flags) {
         A_LIST_ITERATE(a_block_blocksGet(flags), const ABlock*, flag) {
@@ -45,12 +73,22 @@ static void tileLoad(UTileId Tile, const ABlock* Block, const ASprite* Sheet)
         }
     }
 
-    t->color = a_block_keyGetPixel(Block, "hex");
-    t->sprite = a_sprite_newFromSpriteEx(Sheet,
-                                         coords.x,
-                                         coords.y,
-                                         Z_COORDS_PIXELS_PER_UNIT,
-                                         Z_COORDS_PIXELS_PER_UNIT);
+    t->color = color;
+    t->instances = a_list_new();
+
+    A_LIST_ITERATE(coordsList, const ABlock*, coordsLine) {
+        AVectorInt coords = a_block_lineGetCoords(coordsLine, 0);
+        UTileInstance* instance = instanceNew(t, Sheet, coords);
+
+        a_list_addLast(t->instances, instance);
+    }
+}
+
+static void tileFree(UTileId Tile)
+{
+    ZTile* t = &g_tiles[Tile];
+
+    a_list_freeEx(t->instances, (AFree*)instanceFree);
 }
 
 void u_tile_load(void)
@@ -95,9 +133,14 @@ void u_tile_load(void)
 
 void u_tile_unload(void)
 {
-    for(int t = 0; t < U_TILE_ID_NUM; t++) {
-        a_sprite_free(g_tiles[t].sprite);
+    for(int t = U_TILE_ID_NUM; t--; ) {
+        tileFree(t);
     }
+}
+
+const UTileInstance* u_tile_get(UTileId Tile)
+{
+    return a_list_getRandom(g_tiles[Tile].instances);
 }
 
 bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags)
@@ -105,9 +148,9 @@ bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags)
     return A_FLAG_TEST_ALL(g_tiles[Tile].flags, Flags);
 }
 
-const ASprite* u_tile_spriteGet(UTileId Tile)
+const ASprite* u_tile_spriteGet(const UTileInstance* Tile)
 {
-    return g_tiles[Tile].sprite;
+    return Tile->sprite;
 }
 
 APixel u_tile_colorGet(UTileId Tile)

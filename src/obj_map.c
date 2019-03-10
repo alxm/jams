@@ -47,6 +47,7 @@ typedef struct {
 typedef struct {
     const ZArea* area;
     UTileId id;
+    const UTileInstance* tile;
     unsigned flags;
 } ZTile;
 
@@ -329,22 +330,19 @@ static void mapGenAreasPutBlocks(NMap* Map)
         }
 
         if(a->w >= 5) {
-            if(a_random_chance(4, 5)) {
-                for(int y = a->y; y < a->y + a->h; y++) {
-                    Map->tiles[y][a->x].id = U_TILE_ID_SIDEWALK;
-                }
-            }
+            for(int y = a->y; y < a->y + a->h; y++) {
+                Map->tiles[y][a->x].id =
+                    U_TILE_ID_SIDEWALK_EDGE_W;
 
-            if(a_random_chance(4, 5)) {
-                for(int y = a->y; y < a->y + a->h; y++) {
-                    Map->tiles[y][a->x + a->w - 1].id = U_TILE_ID_SIDEWALK;
-                }
+                Map->tiles[y][a->x + a->w - 1].id =
+                    U_TILE_ID_SIDEWALK_EDGE_E;
             }
         }
 
         if(a->h >= 3) {
             for(int x = a->x; x < a->x + a->w; x++) {
-                Map->tiles[a->y + a->h - 1][x].id = U_TILE_ID_SIDEWALK;
+                Map->tiles[a->y + a->h - 1][x].id =
+                    U_TILE_ID_SIDEWALK_EDGE_S;
             }
         }
     }
@@ -435,6 +433,15 @@ static void mapGenAreasFloodFill(NMap* Map)
     }
 }
 
+static void mapGenTilesGetInstances(NMap* Map)
+{
+    for(int y = N_MAP_H; y--; ) {
+        for(int x = N_MAP_W; x--; ) {
+            Map->tiles[y][x].tile = u_tile_get(Map->tiles[y][x].id);
+        }
+    }
+}
+
 static void mapGen(NMap* Map)
 {
     ZArea* entireMap = z_area_new(0, 0, N_MAP_W, N_MAP_H);
@@ -471,6 +478,9 @@ static void mapGen(NMap* Map)
     // Shrink blocks away from streets and populate each one
     mapGenAreasShrinkToUsableSize(Map);
     mapGenAreasPutBlocks(Map);
+
+    // Get tile sprites
+    mapGenTilesGetInstances(Map);
 }
 
 void n_map_new(void)
@@ -523,7 +533,7 @@ void n_map_draw(void)
             tileX < tileEnd.x;
             tileX++, screenX += Z_COORDS_PIXELS_PER_UNIT) {
 
-            a_sprite_blit(u_tile_spriteGet(g_map.tiles[tileY][tileX].id),
+            a_sprite_blit(u_tile_spriteGet(g_map.tiles[tileY][tileX].tile),
                           screenX,
                           screenY);
         }
