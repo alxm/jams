@@ -329,7 +329,10 @@ static void mapGenAreasPutBlocks(NMap* Map)
             }
         }
 
-        if(a->w >= 5) {
+        bool sides = a->w >= 5;
+        bool bottom = a->h >= 3;
+
+        if(sides) {
             for(int y = a->y; y < a->y + a->h; y++) {
                 Map->tiles[y][a->x].id =
                     U_TILE_ID_SIDEWALK_EDGE_W;
@@ -339,11 +342,18 @@ static void mapGenAreasPutBlocks(NMap* Map)
             }
         }
 
-        if(a->h >= 3) {
+        if(bottom) {
             for(int x = a->x; x < a->x + a->w; x++) {
                 Map->tiles[a->y + a->h - 1][x].id =
                     U_TILE_ID_SIDEWALK_EDGE_S;
             }
+        }
+
+        if(sides || bottom) {
+            Map->tiles[a->y + a->h - 1][a->x].id =
+                U_TILE_ID_SIDEWALK_EDGE_SW;
+            Map->tiles[a->y + a->h - 1][a->x + a->w - 1].id =
+                U_TILE_ID_SIDEWALK_EDGE_SE;
         }
     }
 }
