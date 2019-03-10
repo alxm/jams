@@ -4,6 +4,8 @@
             nomove
         frames
             0, 0
+            64, 0
+            128, 0
 
     U_TILE_ID_B0_FRONT_
         flags
@@ -16,16 +18,47 @@ U_TILE_ID_B0_DOOR_7
     flags
         nomove
     frames
-        80, 208
+        0, 224
 
 U_TILE_ID_B0_DOOR_8
     flags
         nomove
     frames
-        112, 208
+        16, 224
 
 U_TILE_ID_B0_DOOR_9
     flags
         nomove
     frames
-        144, 208
+        48, 224
+
+U_TILE_ID_B0_WINDOW_4
+    flags
+        nomove
+    frames
+        0, 160
+        0, 176
+        0, 192
+        80, 160
+        80, 192
+
+U_TILE_ID_B0_WINDOW_5
+    flags
+        nomove
+    frames
+        16, 160
+        16, 176
+        32, 176
+        16, 192
+        96, 160
+        96, 192
+
+U_TILE_ID_B0_WINDOW_6
+    flags
+        nomove
+    frames
+        48, 160
+        48, 176
+        48, 192
+        128, 160
+        128, 192

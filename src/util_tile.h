@@ -46,6 +46,9 @@
     Z__X(U_TILE_ID_B0_DOOR_7) \
     Z__X(U_TILE_ID_B0_DOOR_8) \
     Z__X(U_TILE_ID_B0_DOOR_9) \
+    Z__X(U_TILE_ID_B0_WINDOW_4) \
+    Z__X(U_TILE_ID_B0_WINDOW_5) \
+    Z__X(U_TILE_ID_B0_WINDOW_6) \
     \
 
 #define Z__X(T) T,

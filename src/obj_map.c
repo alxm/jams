@@ -51,7 +51,7 @@ typedef struct {
     const ZArea* area;
     UTileId id;
     const UTileInstance* tile;
-    unsigned flags;
+    ZTileFlags flags;
 } ZTile;
 
 typedef struct {
@@ -362,19 +362,21 @@ static void mapGenAreaPutForest(NMap* Map, ZArea* Area)
 
 static void mapGenAreaPutSidewalks(NMap* Map, ZArea* Area)
 {
+    bool sides = Area->w >= Z_BUILDING_MIN_W + 2;
     bool bottom = Area->h >= Z_BUILDING_MIN_H + 1;
-    bool sides = bottom && Area->w >= Z_BUILDING_MIN_W + 2
-                    && a_random_chance(3, 4);
 
     if(sides) {
-        for(int y = Area->y; y < Area->y + Area->h; y++) {
+        put(Map, Area->x, Area->y, U_TILE_ID_SIDEWALK_1);
+        put(Map, Area->x + Area->w - 1, Area->y, U_TILE_ID_SIDEWALK_3);
+
+        for(int y = Area->y + 1; y < Area->y + Area->h - 1; y++) {
             put(Map, Area->x, y, U_TILE_ID_SIDEWALK_4);
             put(Map, Area->x + Area->w - 1, y, U_TILE_ID_SIDEWALK_6);
         }
     }
 
     if(bottom) {
-        for(int x = Area->x; x < Area->x + Area->w; x++) {
+        for(int x = Area->x + 1; x < Area->x + Area->w - 1; x++) {
             put(Map, x, Area->y + Area->h - 1, U_TILE_ID_SIDEWALK_8);
         }
     }
@@ -417,6 +419,22 @@ static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
         Area->y + Area->h - 1,
         doorX == 0 ? U_TILE_ID_B0_DOOR_7
             : doorX == Area->w - 1 ? U_TILE_ID_B0_DOOR_9 : U_TILE_ID_B0_DOOR_8);
+
+    if(frontLen > 1) {
+        for(int y = Area->y + roofLen; y < Area->y + Area->h - 1; y++) {
+            for(int x = Area->x; x < Area->x + Area->w; x++) {
+                if(a_random_chance(2, 3)) {
+                    if(x == Area->x) {
+                        put(Map, x, y, U_TILE_ID_B0_WINDOW_4);
+                    } else if(x == Area->x + Area->w - 1) {
+                        put(Map, x, y, U_TILE_ID_B0_WINDOW_6);
+                    } else {
+                        put(Map, x, y, U_TILE_ID_B0_WINDOW_5);
+                    }
+                }
+            }
+        }
+    }
 }
 
 static void mapGenAreasPutBlocks(NMap* Map)
