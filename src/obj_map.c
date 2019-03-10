@@ -261,6 +261,10 @@ static void mapGenAreasDiscardAroundEdge(NMap* Map)
 
             z_area_free(a);
             A_LIST_REMOVE_CURRENT();
+
+            if(a_list_isEmpty(Map->areas)) {
+                A_FATAL("Discard edges: Removed last area");
+            }
         }
     }
 }
@@ -461,7 +465,7 @@ static void mapGenAreasFloodFill(NMap* Map)
     }
 
     if(!A_FLAG_TEST_ANY(Map->tiles[start.y][start.x].flags, Z_TILE_FLAG_ROAD)) {
-        A_FATAL("Flood fill could not find a starting point");
+        A_FATAL("Flood fill: Could not find an origin");
     }
 
     AList* queue = a_list_new();
@@ -501,6 +505,10 @@ static void mapGenAreasFloodFill(NMap* Map)
 
                 z_area_free(a);
                 A_LIST_REMOVE_CURRENT();
+
+                if(a_list_isEmpty(Map->areas)) {
+                    A_FATAL("Flood fill: Removed last area");
+                }
 
                 break;
             }
