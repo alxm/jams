@@ -23,7 +23,9 @@
 #include "util_tile.h"
 
 #define Z_BUILDING_MIN_W 2
-#define Z_BUILDING_MIN_H 4
+#define Z_BUILDING_MIN_H_ROOF 2
+#define Z_BUILDING_MIN_H_FRONT 2
+#define Z_BUILDING_MIN_H (Z_BUILDING_MIN_H_ROOF + Z_BUILDING_MIN_H_FRONT)
 
 typedef enum {
     Z_TILE_FLAG_ROAD = A_FLAG_BIT(0),
@@ -401,7 +403,12 @@ static void mapGenAreaPutSidewalks(NMap* Map, ZArea* Area)
 
 static void mapGenAreaPutBuilding(NMap* Map, ZArea* Area)
 {
-    int roofLen = a_math_max(2, Area->h / 4);
+    int roofLen = a_random_range(
+                    Z_BUILDING_MIN_H_ROOF,
+                    a_math_max(Z_BUILDING_MIN_H_ROOF,
+                               a_math_min(Area->h / 2,
+                                          Area->h - Z_BUILDING_MIN_H_FRONT))
+                        + 1);
     int frontLen = Area->h - roofLen;
 
     putGrid(Map, Area->x, Area->y, Area->w, roofLen, U_TILE_ID_B0_ROOF_1);

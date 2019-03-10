@@ -4,8 +4,6 @@
             nomove
         frames
             0, 0
-            64, 0
-            128, 0
 
     U_TILE_ID_B0_FRONT_
         flags
