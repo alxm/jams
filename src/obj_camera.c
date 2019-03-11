@@ -21,7 +21,7 @@
 #include "obj_map.h"
 #include "util_coords.h"
 
-#define Z_INERTIA_SHIFT 0
+#define Z_INERTIA_SHIFT 2
 
 typedef struct {
     AVectorFix coords;
@@ -31,9 +31,9 @@ typedef struct {
 
 static NCamera g_camera;
 
-void n_camera_new(AVectorFix Coords)
+void n_camera_new(AVectorInt TileCoords)
 {
-    g_camera.coords = Coords;
+    g_camera.coords = a_vectorint_toFix(TileCoords);
     g_camera.shake = (AVectorInt){0, 0};
 
     if(g_camera.shakeTimer == NULL) {
@@ -49,19 +49,23 @@ void n_camera_free(void)
     g_camera.shakeTimer = NULL;
 }
 
-void n_camera_tick(AVectorFix Origin)
+void n_camera_tick(AVectorInt TileCoords)
 {
+    AVectorFix target = a_vectorint_toFix(TileCoords);
+    target.x += A_FIX_ONE / 2;
+    target.y += A_FIX_ONE / 2;
+
     AFix halfScrWUnits = z_coords_pixelsToUnits(a_screen_sizeGetWidth() / 2);
     AFix halfScrHUnits = z_coords_pixelsToUnits(a_screen_sizeGetHeight() / 2);
 
     g_camera.coords.x = a_math_clamp(
-        (Origin.x >> Z_INERTIA_SHIFT)
+        (target.x >> Z_INERTIA_SHIFT)
             + (g_camera.coords.x - (g_camera.coords.x >> Z_INERTIA_SHIFT)),
         halfScrWUnits,
         a_fix_fromInt(N_MAP_W) - halfScrWUnits);
 
     g_camera.coords.y = a_math_clamp(
-        (Origin.y >> Z_INERTIA_SHIFT)
+        (target.y >> Z_INERTIA_SHIFT)
             + (g_camera.coords.y - (g_camera.coords.y >> Z_INERTIA_SHIFT)),
         halfScrHUnits,
         a_fix_fromInt(N_MAP_H) - halfScrHUnits);

@@ -31,3 +31,4 @@ extern void n_map_draw(void);
 
 extern void n_map_visibleGet(AVectorInt* TileStart, AVectorInt* TileEnd, AVectorInt* ScreenStart);
 extern AVectorInt n_map_startGet(void);
+extern bool n_map_canWalk(int X, int Y);

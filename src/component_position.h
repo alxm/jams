@@ -25,6 +25,7 @@ typedef struct CPosition CPosition;
 extern const size_t c_position_size;
 extern AFree c_position_free;
 
-extern void c_position_init(CPosition* Position, AVectorFix Coords);
+extern void c_position_init(CPosition* Position, AVectorInt Coords);
 
-extern AVectorFix c_position_coordsGet(const CPosition* Position);
+extern AVectorInt c_position_coordsGet(const CPosition* Position);
+extern void c_position_coordsSet(CPosition* Position, AVectorInt Coords);

@@ -74,4 +74,3 @@ extern const UTileInstance* u_tile_get(UTileId Tile);
 
 extern bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags);
 extern const ASprite* u_tile_spriteGet(const UTileInstance* Tile);
-extern APixel u_tile_colorGet(UTileId Tile);

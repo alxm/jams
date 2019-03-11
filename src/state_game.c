@@ -19,6 +19,7 @@
 #include "state_game.h"
 
 #include "component_position.h"
+#include "component_sprite.h"
 #include "obj_camera.h"
 #include "obj_map.h"
 #include "util_coords.h"
@@ -34,16 +35,6 @@ typedef struct {
 
 static NGame g_game;
 
-static AEntity* newEntity(const char* Template, AVectorFix Coords)
-{
-    AEntity* e = a_entity_newEx(Template, NULL, &g_game);
-
-    CPosition* pos = a_entity_componentAdd(e, U_COM_POSITION);
-    c_position_init(pos, Coords);
-
-    return e;
-}
-
 A_STATE(t_game)
 {
     A_STATE_INIT
@@ -51,40 +42,61 @@ A_STATE(t_game)
         n_map_new();
 
         AVectorInt start = n_map_startGet();
-        g_game.coords.x = a_fix_fromInt(start.x) + A_FIX_ONE / 2;
-        g_game.coords.y = a_fix_fromInt(start.y) + A_FIX_ONE / 2;
 
-        g_game.player = newEntity("actor.player", g_game.coords);
-        n_camera_new(g_game.coords);
+        n_camera_new(start);
+
+        g_game.player = a_entity_newEx("actor.player", NULL, &g_game);
+
+        CPosition* pos = a_entity_componentAdd(g_game.player, U_COM_POSITION);
+        c_position_init(pos, start);
+
+        for(int i = U_BUTTON_UP; i <= U_BUTTON_RIGHT; i++) {
+            a_button_pressSetRepeat(u_input_get(i), 200);
+        }
     }
 
     A_STATE_TICK
     {
+        CPosition* pos = a_entity_componentReq(g_game.player, U_COM_POSITION);
+        CSprite* spr = a_entity_componentReq(g_game.player, U_COM_SPRITE);
+        AVectorInt coords = c_position_coordsGet(pos);
+
         if(a_button_pressGet(u_input_get(U_BUTTON_UP))) {
-            g_game.coords.y -= Z_MOVE_INC;
+            if(n_map_canWalk(coords.x, coords.y - 1)) {
+                coords.y--;
+            }
+
+            c_sprite_directionSet(spr, C_SPRITE_DIR_UP);
         }
 
         if(a_button_pressGet(u_input_get(U_BUTTON_DOWN))) {
-            g_game.coords.y += Z_MOVE_INC;
+            if(n_map_canWalk(coords.x, coords.y + 1)) {
+                coords.y++;
+            }
+
+            c_sprite_directionSet(spr, C_SPRITE_DIR_DOWN);
         }
 
         if(a_button_pressGet(u_input_get(U_BUTTON_LEFT))) {
-            g_game.coords.x -= Z_MOVE_INC;
+            if(n_map_canWalk(coords.x - 1, coords.y)) {
+                coords.x--;
+            }
+
+            c_sprite_directionSet(spr, C_SPRITE_DIR_LEFT);
         }
 
         if(a_button_pressGet(u_input_get(U_BUTTON_RIGHT))) {
-            g_game.coords.x += Z_MOVE_INC;
+            if(n_map_canWalk(coords.x + 1, coords.y)) {
+                coords.x++;
+            }
+
+            c_sprite_directionSet(spr, C_SPRITE_DIR_RIGHT);
         }
 
-        #if Z_SHOW_MAP
-            if(a_fps_ticksNth(A_CONFIG_FPS_RATE_TICK / 2)) {
-                n_map_free();
-                n_map_new();
-            }
-        #endif
+        c_position_coordsSet(pos, coords);
 
         n_map_tick();
-        n_camera_tick(g_game.coords);
+        n_camera_tick(coords);
         a_system_run(U_SYS_MOVE_TICK);
         a_system_run(U_SYS_SPRITE_TICK);
     }

@@ -19,12 +19,12 @@
 #include "component_position.h"
 
 struct CPosition {
-    AVectorFix coords;
+    AVectorInt coords;
 };
 
 const size_t c_position_size = sizeof(CPosition);
 
-void c_position_init(CPosition* Position, AVectorFix Coords)
+void c_position_init(CPosition* Position, AVectorInt Coords)
 {
     Position->coords = Coords;
 }
@@ -37,7 +37,12 @@ void c_position_free(void* Self)
 }
 
 
-AVectorFix c_position_coordsGet(const CPosition* Position)
+AVectorInt c_position_coordsGet(const CPosition* Position)
 {
     return Position->coords;
+}
+
+void c_position_coordsSet(CPosition* Position, AVectorInt Coords)
+{
+    Position->coords = Coords;
 }

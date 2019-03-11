@@ -634,23 +634,6 @@ void n_map_tick(void)
 
 void n_map_draw(void)
 {
-    #if Z_SHOW_MAP
-        a_pixel_colorSetHex(0xaa8844);
-        a_draw_fill();
-
-        int offsetX = (a_screen_sizeGetWidth() - N_MAP_W) / 2;
-        int offsetY = (a_screen_sizeGetHeight() - N_MAP_H) / 2;
-
-        for(int y = 0; y < N_MAP_H; y++) {
-            for(int x = 0; x < N_MAP_W; x++) {
-                a_pixel_colorSetPixel(u_tile_colorGet(g_map.tiles[y][x].id));
-                a_draw_pixel(offsetX + x, offsetY + y);
-            }
-        }
-
-        return;
-    #endif
-
     AVectorInt tileStart, tileEnd;
     AVectorInt screenStart;
     n_map_visibleGet(&tileStart, &tileEnd, &screenStart);
@@ -732,4 +715,9 @@ void n_map_visibleGet(AVectorInt* TileStart, AVectorInt* TileEnd, AVectorInt* Sc
 AVectorInt n_map_startGet(void)
 {
     return g_map.start;
+}
+
+bool n_map_canWalk(int X, int Y)
+{
+    return !u_tile_flagsTest(g_map.tiles[Y][X].id, U_TILE_FLAG_NOMOVE);
 }

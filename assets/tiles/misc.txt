@@ -1,8 +1,6 @@
 U_TILE_ID_MISC_VOID
     flags
         nomove
-    hex
-        aa8844
     frames
         0, 0
 

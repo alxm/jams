@@ -107,7 +107,10 @@ void c_sprite_draw(const CSprite* Sprite, AVectorInt Coords)
     ASprite* sprite =
         Sprite->data->frames[Sprite->state][Sprite->direction][frame];
 
-    a_sprite_blit(sprite,
-                  Coords.x - a_sprite_sizeGetWidth(sprite) / 2,
-                  Coords.y - a_sprite_sizeGetHeight(sprite) * 3 / 4);
+    a_sprite_blit(sprite, Coords.x, Coords.y);
+}
+
+void c_sprite_directionSet(CSprite* Sprite, CSpriteDirection Direction)
+{
+    Sprite->direction = Direction;
 }

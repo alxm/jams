@@ -1,19 +1,13 @@
 U_TILE_ID_ROAD_H
-    hex
-        44770f
     frames
         0, 0
 
 U_TILE_ID_ROAD_V
-    hex
-        77440f
     frames
         16, 0
 
 3x3
     U_TILE_ID_SIDEWALK_
-        hex
-            99661f
         frames
             0, 16
             48, 16

@@ -45,3 +45,5 @@ extern AFree c_sprite_free;
 
 extern void c_sprite_tick(CSprite* Sprite);
 extern void c_sprite_draw(const CSprite* Sprite, AVectorInt Coords);
+
+extern void c_sprite_directionSet(CSprite* Sprite, CSpriteDirection Direction);

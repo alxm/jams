@@ -22,7 +22,6 @@
 
 typedef struct {
     UTileFlags flags;
-    APixel color;
     AList* instances;
     unsigned repeatTotal;
 } ZTile;
@@ -88,7 +87,6 @@ static void tileLoad(const char* Id, const ABlock* Block, const ASprite* Sheet, 
         }
     }
 
-    t->color = a_block_keyGetPixel(Block, "hex");
     t->instances = a_list_new();
     t->repeatTotal = 0;
 
@@ -218,9 +216,4 @@ bool u_tile_flagsTest(UTileId Tile, UTileFlags Flags)
 const ASprite* u_tile_spriteGet(const UTileInstance* Tile)
 {
     return Tile->sprite;
-}
-
-APixel u_tile_colorGet(UTileId Tile)
-{
-    return g_tiles[Tile].color;
 }
