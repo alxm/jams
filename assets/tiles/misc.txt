@@ -12,3 +12,6 @@ U_TILE_ID_MISC_VOID
             nomove
         frames
             0, 64
+            0, 112
+            0, 160
+            0, 208
