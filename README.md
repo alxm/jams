@@ -1,6 +1,8 @@
 # City
 
-A roguelike game for 7DRL 2019.
+An unfinished roguelike game for 7DRL 2019.
+
+![City roguelike screenshot](https://github.com/alxm/city/raw/master/assets/screenshots/City-00121.png "City roguelike screenshot")
 
 ## License
 
