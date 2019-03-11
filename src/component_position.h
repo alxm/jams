@@ -16,27 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_load.h"
+#pragma once
 
-#include "util_ecs.h"
-#include "util_input.h"
-#include "util_state.h"
-#include "util_tile.h"
+#include <a2x.h>
 
-void t_load(void)
-{
-    A_STATE_INIT
-    {
-        u_ecs_load();
-        u_input_load();
-        u_tile_load();
+typedef struct CPosition CPosition;
 
-        a_state_push(U_STATE_GAME);
-    }
+extern const size_t c_position_size;
+extern AFree c_position_free;
 
-    A_STATE_FREE
-    {
-        u_input_unload();
-        u_tile_unload();
-    }
-}
+extern void c_position_init(CPosition* Position, AVectorFix Coords);
+
+extern AVectorFix c_position_coordsGet(const CPosition* Position);

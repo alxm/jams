@@ -16,27 +16,28 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_load.h"
+#include "component_position.h"
 
-#include "util_ecs.h"
-#include "util_input.h"
-#include "util_state.h"
-#include "util_tile.h"
+struct CPosition {
+    AVectorFix coords;
+};
 
-void t_load(void)
+const size_t c_position_size = sizeof(CPosition);
+
+void c_position_init(CPosition* Position, AVectorFix Coords)
 {
-    A_STATE_INIT
-    {
-        u_ecs_load();
-        u_input_load();
-        u_tile_load();
+    Position->coords = Coords;
+}
 
-        a_state_push(U_STATE_GAME);
-    }
+void c_position_free(void* Self)
+{
+    CPosition* position = Self;
 
-    A_STATE_FREE
-    {
-        u_input_unload();
-        u_tile_unload();
-    }
+    A_UNUSED(position);
+}
+
+
+AVectorFix c_position_coordsGet(const CPosition* Position)
+{
+    return Position->coords;
 }

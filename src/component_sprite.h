@@ -16,27 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_load.h"
+#pragma once
 
-#include "util_ecs.h"
-#include "util_input.h"
-#include "util_state.h"
-#include "util_tile.h"
+#include <a2x.h>
 
-void t_load(void)
-{
-    A_STATE_INIT
-    {
-        u_ecs_load();
-        u_input_load();
-        u_tile_load();
+typedef enum {
+    C_SPRITE_STATE_INVALID = -1,
+    C_SPRITE_STATE_WALK,
+    C_SPRITE_STATE_NUM
+} CSpriteState;
 
-        a_state_push(U_STATE_GAME);
-    }
+typedef enum {
+    C_SPRITE_DIR_INVALID = -1,
+    C_SPRITE_DIR_UP,
+    C_SPRITE_DIR_DOWN,
+    C_SPRITE_DIR_LEFT,
+    C_SPRITE_DIR_RIGHT,
+    C_SPRITE_DIR_NUM
+} CSpriteDirection;
 
-    A_STATE_FREE
-    {
-        u_input_unload();
-        u_tile_unload();
-    }
-}
+typedef struct CSprite CSprite;
+
+extern const size_t c_sprite_size, c_sprite_dataSize;
+extern AComponentDataInit c_sprite_dataInit;
+extern AFree c_sprite_dataFree;
+extern AInitWithData c_sprite_initWithData;
+extern AFree c_sprite_free;
+
+extern void c_sprite_tick(CSprite* Sprite);
+extern void c_sprite_draw(const CSprite* Sprite, AVectorInt Coords);

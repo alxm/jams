@@ -1,0 +1,5 @@
+actor.player
+    sprite
+        files
+            walk
+                player_walk.png

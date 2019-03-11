@@ -16,27 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_load.h"
+#pragma once
 
-#include "util_ecs.h"
-#include "util_input.h"
-#include "util_state.h"
-#include "util_tile.h"
+#include <a2x.h>
 
-void t_load(void)
-{
-    A_STATE_INIT
-    {
-        u_ecs_load();
-        u_input_load();
-        u_tile_load();
+typedef enum {
+    U_COM_INVALID = -1,
+    U_COM_ACTION,
+    U_COM_POSITION,
+    U_COM_SPRITE,
+    U_COM_NUM
+} UComponentId;
 
-        a_state_push(U_STATE_GAME);
-    }
+typedef enum {
+    U_SYS_INVALD = -1,
+    U_SYS_MOVE_TICK,
+    U_SYS_SPRITE_TICK,
+    U_SYS_SPRITE_DRAW,
+    U_SYS_NUM
+} USystemId;
 
-    A_STATE_FREE
-    {
-        u_input_unload();
-        u_tile_unload();
-    }
-}
+extern void u_ecs_load(void);

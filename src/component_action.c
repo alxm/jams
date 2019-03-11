@@ -16,27 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_load.h"
+#include "component_action.h"
 
-#include "util_ecs.h"
-#include "util_input.h"
-#include "util_state.h"
-#include "util_tile.h"
+struct CAction {
+    int value;
+};
 
-void t_load(void)
+const size_t c_action_size = sizeof(CAction);
+
+void c_action_init(void* Self)
 {
-    A_STATE_INIT
-    {
-        u_ecs_load();
-        u_input_load();
-        u_tile_load();
+    CAction* action = Self;
 
-        a_state_push(U_STATE_GAME);
-    }
+    action->value = 1;
+}
 
-    A_STATE_FREE
-    {
-        u_input_unload();
-        u_tile_unload();
-    }
+void c_action_free(void* Self)
+{
+    CAction* action = Self;
+
+    A_UNUSED(action);
+}
+
+int c_action_valueGet(const CAction* Action)
+{
+    return Action->value;
+}
+
+void c_action_valueSet(CAction* Action, int Value)
+{
+    Action->value = Value;
 }

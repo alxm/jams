@@ -59,6 +59,7 @@ typedef struct {
 typedef struct {
     AList* areas;
     ZTile tiles[N_MAP_H][N_MAP_W];
+    AVectorInt start;
 } NMap;
 
 static NMap g_map;
@@ -558,6 +559,16 @@ static void mapGenTilesGetInstances(NMap* Map)
     }
 }
 
+static void mapGenAreasMarkStart(NMap* Map)
+{
+    a_list_sort(Map->areas, z_area_cmpDistance);
+
+    const ZArea* center = a_list_peek(Map->areas);
+
+    Map->start.x = center->x + center->w / 2;
+    Map->start.y = center->y + center->h;
+}
+
 static void mapGen(NMap* Map)
 {
     ZArea* entireMap = z_area_new(0, 0, N_MAP_W, N_MAP_H);
@@ -597,6 +608,9 @@ static void mapGen(NMap* Map)
 
     // Get tile sprites
     mapGenTilesGetInstances(Map);
+
+    // Set starting position
+    mapGenAreasMarkStart(Map);
 }
 
 void n_map_new(void)
@@ -713,4 +727,9 @@ void n_map_visibleGet(AVectorInt* TileStart, AVectorInt* TileEnd, AVectorInt* Sc
 
         *ScreenStart = topLeftScreen;
     }
+}
+
+AVectorInt n_map_startGet(void)
+{
+    return g_map.start;
 }

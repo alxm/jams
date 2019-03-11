@@ -18,28 +18,44 @@
 
 #include "state_game.h"
 
+#include "component_position.h"
 #include "obj_camera.h"
 #include "obj_map.h"
 #include "util_coords.h"
+#include "util_ecs.h"
 #include "util_input.h"
 
 #define Z_MOVE_INC (16 * A_FIX_ONE / Z_COORDS_PIXELS_PER_UNIT)
 
 typedef struct {
     AVectorFix coords;
+    AEntity* player;
 } NGame;
 
 static NGame g_game;
+
+static AEntity* newEntity(const char* Template, AVectorFix Coords)
+{
+    AEntity* e = a_entity_newEx(Template, NULL, &g_game);
+
+    CPosition* pos = a_entity_componentAdd(e, U_COM_POSITION);
+    c_position_init(pos, Coords);
+
+    return e;
+}
 
 A_STATE(t_game)
 {
     A_STATE_INIT
     {
-        g_game.coords.x = a_fix_fromInt(N_MAP_W / 2) + A_FIX_ONE / 2;
-        g_game.coords.y = a_fix_fromInt(N_MAP_H / 2) + A_FIX_ONE / 2;
-
-        n_camera_new(g_game.coords);
         n_map_new();
+
+        AVectorInt start = n_map_startGet();
+        g_game.coords.x = a_fix_fromInt(start.x) + A_FIX_ONE / 2;
+        g_game.coords.y = a_fix_fromInt(start.y) + A_FIX_ONE / 2;
+
+        g_game.player = newEntity("actor.player", g_game.coords);
+        n_camera_new(g_game.coords);
     }
 
     A_STATE_TICK
@@ -69,15 +85,19 @@ A_STATE(t_game)
 
         n_map_tick();
         n_camera_tick(g_game.coords);
+        a_system_run(U_SYS_MOVE_TICK);
+        a_system_run(U_SYS_SPRITE_TICK);
     }
 
     A_STATE_DRAW
     {
         n_map_draw();
+        a_system_run(U_SYS_SPRITE_DRAW);
     }
 
     A_STATE_FREE
     {
+        a_entity_removeSet(g_game.player);
         n_camera_free();
         n_map_free();
     }
