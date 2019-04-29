@@ -18,6 +18,7 @@
 
 #include "util_font.h"
 
+#include "util_color.h"
 #include "util_gfx.h"
 
 typedef struct {
@@ -46,4 +47,18 @@ void u_font_unload(void)
 const AFont* u_font_get(UFontId Id)
 {
     return g_fonts[Id].font;
+}
+
+void u_font_int(int Number, int NumDigits, int X, int Y)
+{
+    a_font_coordsSet(X, Y);
+    a_font_alignSet(A_FONT_ALIGN_LEFT);
+    a_color_baseSetPixel(u_color_get(U_COLOR_GRAY_MEDIUM));
+
+    a_font_printf("%0*d", NumDigits, Number);
+
+    a_font_alignSet(A_FONT_ALIGN_RIGHT);
+    a_color_baseSetPixel(u_color_get(U_COLOR_GRAY_LIGHT));
+
+    a_font_printf("%d", Number);
 }

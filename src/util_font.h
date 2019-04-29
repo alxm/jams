@@ -30,3 +30,4 @@ extern void u_font_load(void);
 extern void u_font_unload(void);
 
 extern const AFont* u_font_get(UFontId Id);
+extern void u_font_int(int Number, int NumDigits, int X, int Y);

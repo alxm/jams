@@ -20,7 +20,15 @@
 
 #include <a2x.h>
 
-extern void n_hud_new(void);
+typedef enum {
+    Z_RESOURCE_INVALID = -1,
+    Z_RESOURCE_TRIANGLE,
+    Z_RESOURCE_SQUARE,
+    Z_RESOURCE_CIRCLE,
+    Z_RESOURCE_NUM
+} ZResourceId;
 
-extern void n_hud_tick(void);
-extern void n_hud_draw(void);
+extern void n_market_new(void);
+
+extern void n_market_tick(void);
+extern void n_market_draw(void);
