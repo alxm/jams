@@ -23,6 +23,7 @@
 #include "obj_market.h"
 
 extern void n_game_new(void);
+extern void n_game_free(void);
 
 extern void n_game_tick(void);
 extern void n_game_draw(void);

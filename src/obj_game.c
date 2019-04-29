@@ -44,6 +44,11 @@ void n_game_new(void)
     n_market_new();
 }
 
+void n_game_free(void)
+{
+    n_event_free();
+}
+
 void n_game_tick(void)
 {
     n_event_tick();

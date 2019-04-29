@@ -39,6 +39,6 @@ A_STATE(s_game)
 
     A_STATE_FREE
     {
-        //
+        n_game_free();
     }
 }

@@ -20,13 +20,8 @@
 
 #include <a2x.h>
 
-typedef enum {
-    N_EVENT_INVALID = -1,
-    N_EVENT_INTRO,
-    N_EVENT_NUM
-} NEventId;
-
 extern void n_event_new(void);
+extern void n_event_free(void);
 
 extern void n_event_tick(void);
 extern void n_event_draw(void);
