@@ -1,6 +1,6 @@
 /*
     Copyright 2019 Alex Margarit <alex@alxm.org>
-    This file is part of Coffin Digital, a video game.
+    This file is part of Coffin Digital, a video hud.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,29 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_game.h"
+#pragma once
 
-#include "obj_game.h"
+#include <a2x.h>
 
-A_STATE(s_game)
-{
-    A_STATE_INIT
-    {
-        n_game_new();
-    }
+extern void n_hud_new(void);
 
-    A_STATE_TICK
-    {
-        n_game_tick();
-    }
-
-    A_STATE_DRAW
-    {
-        n_game_draw();
-    }
-
-    A_STATE_FREE
-    {
-        //
-    }
-}
+extern void n_hud_tick(void);
+extern void n_hud_draw(void);

@@ -16,29 +16,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_game.h"
-
 #include "obj_game.h"
 
-A_STATE(s_game)
+#include "obj_hud.h"
+#include "util_gfx.h"
+
+typedef struct {
+    unsigned level;
+    unsigned score;
+    unsigned lives;
+} NGame;
+
+static NGame g_game;
+
+void n_game_new(void)
 {
-    A_STATE_INIT
-    {
-        n_game_new();
-    }
+    g_game.score = 0;
+    g_game.lives = 0;
 
-    A_STATE_TICK
-    {
-        n_game_tick();
-    }
+    n_hud_new();
+}
 
-    A_STATE_DRAW
-    {
-        n_game_draw();
-    }
+void n_game_tick(void)
+{
+    n_hud_tick();
+}
 
-    A_STATE_FREE
-    {
-        //
-    }
+void n_game_draw(void)
+{
+    a_color_blendSet(A_COLOR_BLEND_PLAIN);
+    a_sprite_blit(u_gfx_get(U_GFX_SCREEN), 0, 0);
+
+    n_hud_draw();
+
+    a_color_blendSet(A_COLOR_BLEND_MOD);
+    a_sprite_blit(u_gfx_getNext(U_GFX_NOISE), 0, 0);
 }
