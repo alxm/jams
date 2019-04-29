@@ -18,13 +18,17 @@
 
 #include "obj_game.h"
 
+#include "obj_event.h"
 #include "obj_hud.h"
 #include "util_color.h"
 #include "util_gfx.h"
 
+#define Z_CREDITS_START 2000
+
 typedef struct {
     int resources[Z_RESOURCE_NUM];
     int credits;
+    int event;
 } NGame;
 
 static NGame g_game;
@@ -33,12 +37,16 @@ void n_game_new(void)
 {
     memset(&g_game, 0, sizeof(NGame));
 
+    g_game.credits = Z_CREDITS_START;
+
+    n_event_new();
     n_hud_new();
     n_market_new();
 }
 
 void n_game_tick(void)
 {
+    n_event_tick();
     n_market_tick();
     n_hud_tick();
 }
@@ -48,6 +56,7 @@ void n_game_draw(void)
     a_color_blendSet(A_COLOR_BLEND_PLAIN);
     a_sprite_blit(u_gfx_get(U_GFX_SCREEN), 0, 0);
 
+    n_event_draw();
     n_market_draw();
     n_hud_draw();
 
