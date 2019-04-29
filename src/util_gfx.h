@@ -22,9 +22,13 @@
 
 typedef enum {
     U_GFX_INVALID = -1,
+    U_GFX_NOISE,
     U_GFX_SCREEN,
     U_GFX_NUM
 } UGfxId;
 
 extern void u_gfx_load(void);
 extern void u_gfx_unload(void);
+
+extern const ASprite* u_gfx_get(UGfxId Id);
+extern const ASprite* u_gfx_getNext(UGfxId Id);

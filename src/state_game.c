@@ -18,6 +18,7 @@
 
 #include "state_game.h"
 
+#include "util_gfx.h"
 #include "util_input.h"
 
 A_STATE(s_game)
@@ -34,7 +35,11 @@ A_STATE(s_game)
 
     A_STATE_DRAW
     {
-        //
+        a_color_blendSet(A_COLOR_BLEND_PLAIN);
+        a_sprite_blit(u_gfx_get(U_GFX_SCREEN), 0, 0);
+
+        a_color_blendSet(A_COLOR_BLEND_MOD);
+        a_sprite_blit(u_gfx_getNext(U_GFX_NOISE), 0, 0);
     }
 
     A_STATE_FREE

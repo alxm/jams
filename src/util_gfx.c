@@ -19,24 +19,39 @@
 #include "util_gfx.h"
 
 typedef struct {
-    ASprite* sprite;
+    const char* path;
+    bool frames;
+    union {
+        ASprite* sprite;
+        ASpriteFrames* frames;
+    } u;
 } UGfx;
 
-static UGfx g_sprites[U_GFX_NUM];
-
-static const char* g_paths[U_GFX_NUM] = {
-    [U_GFX_SCREEN] = "screen.png",
+static UGfx g_gfx[U_GFX_NUM] = {
+    [U_GFX_NOISE] = {.path = "noise_grid512x320.png", .frames = true},
+    [U_GFX_SCREEN] = {.path = "screen.png"},
 };
 
 static void gfxLoad(UGfxId Id)
 {
-    g_sprites[Id].sprite = a_sprite_newFromPng(
-                            a_str_fmt512("assets/gfx/%s", g_paths[Id]));
+    if(g_gfx[Id].frames) {
+        g_gfx[Id].u.frames = a_spriteframes_newFromPng(
+                                a_str_fmt512("assets/gfx/%s", g_gfx[Id].path),
+                                0,
+                                0);
+    } else {
+        g_gfx[Id].u.sprite = a_sprite_newFromPng(
+                                a_str_fmt512("assets/gfx/%s", g_gfx[Id].path));
+    }
 }
 
 static void gfxFree(UGfxId Id)
 {
-    a_sprite_free(g_sprites[Id].sprite);
+    if(g_gfx[Id].frames) {
+        a_spriteframes_free(g_gfx[Id].u.frames, true);
+    } else {
+        a_sprite_free(g_gfx[Id].u.sprite);
+    }
 }
 
 void u_gfx_load(void)
@@ -44,11 +59,31 @@ void u_gfx_load(void)
     for(int i = U_GFX_NUM; i--; ) {
         gfxLoad(i);
     }
+
+    a_spriteframes_speedSet(g_gfx[U_GFX_NOISE].u.frames, A_TIMER_MS, 250);
 }
 
 void u_gfx_unload(void)
 {
     for(int i = U_GFX_NUM; i--; ) {
         gfxFree(i);
+    }
+}
+
+const ASprite* u_gfx_get(UGfxId Id)
+{
+    if(g_gfx[Id].frames) {
+        return a_spriteframes_getCurrent(g_gfx[Id].u.frames);
+    } else {
+        return g_gfx[Id].u.sprite;
+    }
+}
+
+const ASprite* u_gfx_getNext(UGfxId Id)
+{
+    if(g_gfx[Id].frames) {
+        return a_spriteframes_getNext(g_gfx[Id].u.frames);
+    } else {
+        return g_gfx[Id].u.sprite;
     }
 }
