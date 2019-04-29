@@ -18,21 +18,19 @@
 
 #include "obj_hud.h"
 
+#include "obj_game.h"
 #include "util_color.h"
 #include "util_font.h"
 
 typedef struct {
-    unsigned level;
-    unsigned score;
-    unsigned lives;
+    int x;
 } NHud;
 
 static NHud g_hud;
 
 void n_hud_new(void)
 {
-    g_hud.score = 0;
-    g_hud.lives = 0;
+    memset(&g_hud, 0, sizeof(NHud));
 }
 
 void n_hud_tick(void)
@@ -68,10 +66,10 @@ void n_hud_draw(void)
     a_color_fillBlitSet(true);
     a_font_fontSet(u_font_get(U_FONT_DEFAULT));
 
-    writePad(12, 4, 140, 60);
-    writePad(40, 4, 183, 60);
-    writePad(20, 4, 226, 60);
-    writePad(4380, 6, 268, 60);
+    writePad(n_game_resourceGet(Z_RESOURCE_TRIANGLE), 4, 140, 60);
+    writePad(n_game_resourceGet(Z_RESOURCE_SQUARE), 4, 183, 60);
+    writePad(n_game_resourceGet(Z_RESOURCE_CIRCLE), 4, 226, 60);
+    writePad(n_game_creditsGet(), 6, 268, 60);
 
     drawDate();
 

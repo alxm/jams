@@ -22,17 +22,15 @@
 #include "util_gfx.h"
 
 typedef struct {
-    unsigned level;
-    unsigned score;
-    unsigned lives;
+    int resources[Z_RESOURCE_NUM];
+    int credits;
 } NGame;
 
 static NGame g_game;
 
 void n_game_new(void)
 {
-    g_game.score = 0;
-    g_game.lives = 0;
+    memset(&g_game, 0, sizeof(NGame));
 
     n_hud_new();
 }
@@ -51,4 +49,14 @@ void n_game_draw(void)
 
     a_color_blendSet(A_COLOR_BLEND_MOD);
     a_sprite_blit(u_gfx_getNext(U_GFX_NOISE), 0, 0);
+}
+
+int n_game_resourceGet(ZResource Id)
+{
+    return g_game.resources[Id];
+}
+
+int n_game_creditsGet(void)
+{
+    return g_game.credits;
 }

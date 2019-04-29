@@ -20,7 +20,18 @@
 
 #include <a2x.h>
 
+typedef enum {
+    Z_RESOURCE_INVALID = -1,
+    Z_RESOURCE_TRIANGLE,
+    Z_RESOURCE_SQUARE,
+    Z_RESOURCE_CIRCLE,
+    Z_RESOURCE_NUM
+} ZResource;
+
 extern void n_game_new(void);
 
 extern void n_game_tick(void);
 extern void n_game_draw(void);
+
+extern int n_game_resourceGet(ZResource Id);
+extern int n_game_creditsGet(void);
