@@ -23,6 +23,8 @@
 typedef enum {
     U_FONT_INVALID = -1,
     U_FONT_DEFAULT,
+    U_FONT_GRAY_LIGHT,
+    U_FONT_GRAY_MEDIUM,
     U_FONT_NUM,
 } UFontId;
 
@@ -30,4 +32,4 @@ extern void u_font_load(void);
 extern void u_font_unload(void);
 
 extern const AFont* u_font_get(UFontId Id);
-extern void u_font_int(int Number, int NumDigits, int X, int Y);
+extern void u_font_int(int Number, int NumDigits, UFontId FontPadding, UFontId FontNumber, int X, int Y);

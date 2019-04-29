@@ -22,18 +22,24 @@
 #include "util_gfx.h"
 
 typedef struct {
-    UGfxId id;
+    UColorId color;
     AFont* font;
 } UFont;
 
 static UFont g_fonts[U_FONT_NUM] = {
-    [U_FONT_DEFAULT] = {.id = U_GFX_FONT_DEFAULT},
+    [U_FONT_GRAY_LIGHT] = {.color = U_COLOR_GRAY_LIGHT},
+    [U_FONT_GRAY_MEDIUM] = {.color = U_COLOR_GRAY_MEDIUM},
 };
 
 void u_font_load(void)
 {
-    for(int i = U_FONT_NUM; i--; ) {
-        g_fonts[i].font = a_font_newFromSprite(u_gfx_get(g_fonts[i].id), 0, 0);
+    g_fonts[U_FONT_DEFAULT].font = a_font_newFromSprite(
+                                u_gfx_get(U_GFX_FONT_DEFAULT), 0, 0);
+
+
+    for(int i = 1; i < U_FONT_NUM; i++) {
+        g_fonts[i].font = a_font_dup(g_fonts[U_FONT_DEFAULT].font,
+                                     u_color_get(g_fonts[i].color));
     }
 }
 
@@ -49,16 +55,16 @@ const AFont* u_font_get(UFontId Id)
     return g_fonts[Id].font;
 }
 
-void u_font_int(int Number, int NumDigits, int X, int Y)
+void u_font_int(int Number, int NumDigits, UFontId FontPadding, UFontId FontNumber, int X, int Y)
 {
     a_font_coordsSet(X, Y);
     a_font_alignSet(A_FONT_ALIGN_LEFT);
-    a_color_baseSetPixel(u_color_get(U_COLOR_GRAY_MEDIUM));
 
+    a_font_fontSet(u_font_get(FontPadding));
     a_font_printf("%0*d", NumDigits, Number);
 
     a_font_alignSet(A_FONT_ALIGN_RIGHT);
-    a_color_baseSetPixel(u_color_get(U_COLOR_GRAY_LIGHT));
+    a_font_fontSet(u_font_get(FontNumber));
 
     a_font_printf("%d", Number);
 }

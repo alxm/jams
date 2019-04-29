@@ -29,7 +29,7 @@ typedef enum {
 } ZCommand;
 
 typedef struct {
-    ZCommand command;
+    const ZCommand command;
     union {
         const char* buffer;
         unsigned millis;
@@ -40,6 +40,13 @@ static ZEvent g_events[] = {
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "Hello and welcome to Coffin Digital"},
     {.command = Z_COMMAND_WAIT, .context.millis = 400},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have1."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have2."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have3."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have4."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have5."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have6."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have7."},
     {.command = Z_COMMAND_WAIT, .context.millis = 1000},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = ";-)"},
     {.command = Z_COMMAND_INVALID},
@@ -61,13 +68,16 @@ void n_event_free(void)
 
 void n_event_tick(void)
 {
-    const ZEvent* e = &g_events[g_index];
+    ZEvent* e = &g_events[g_index];
 
     switch(e->command) {
         case Z_COMMAND_MESSAGE: {
-            a_out_info("%s", e->context.buffer);
-            n_log_write(U_FONT_DEFAULT, "%s", e->context.buffer);
-            g_index++;
+            if(e->context.buffer) {
+                n_log_write(U_FONT_GRAY_LIGHT, "%s", e->context.buffer);
+                e->context.buffer = NULL;
+            } else if(n_log_done()) {
+                g_index++;
+            }
         } break;
 
         case Z_COMMAND_WAIT: {

@@ -120,17 +120,34 @@ static void drawBorder(void)
 
 void n_hud_draw(void)
 {
-    a_color_fillBlitSet(true);
-    a_font_fontSet(u_font_get(U_FONT_DEFAULT));
+    u_font_int(n_game_resourceGet(Z_RESOURCE_TRIANGLE),
+               4,
+               U_FONT_GRAY_MEDIUM,
+               U_FONT_GRAY_LIGHT,
+               140,
+               60);
 
-    u_font_int(n_game_resourceGet(Z_RESOURCE_TRIANGLE), 4, 140, 60);
-    u_font_int(n_game_resourceGet(Z_RESOURCE_SQUARE), 4, 183, 60);
-    u_font_int(n_game_resourceGet(Z_RESOURCE_CIRCLE), 4, 226, 60);
-    u_font_int(n_game_creditsGet(), 6, 268, 60);
+    u_font_int(n_game_resourceGet(Z_RESOURCE_SQUARE),
+               4,
+               U_FONT_GRAY_MEDIUM,
+               U_FONT_GRAY_LIGHT,
+               183,
+               60);
+
+    u_font_int(n_game_resourceGet(Z_RESOURCE_CIRCLE),
+               4,
+               U_FONT_GRAY_MEDIUM,
+               U_FONT_GRAY_LIGHT,
+               226,
+               60);
+
+    u_font_int(n_game_creditsGet(),
+               6,
+               U_FONT_GRAY_MEDIUM,
+               U_FONT_GRAY_LIGHT,
+               268,
+               60);
 
     drawDate();
-
-    a_color_fillBlitSet(false);
-
     drawBorder();
 }

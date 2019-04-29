@@ -29,6 +29,7 @@ typedef struct {
 
 static UGfx g_gfx[U_GFX_NUM] = {
     [U_GFX_FONT_DEFAULT] = {.path = "font_grid6x8.png"},
+    [U_GFX_ICON_MSG] = {.path = "icon_msg.png"},
     [U_GFX_NOISE] = {.path = "noise_grid512x320.png", .frames = true},
     [U_GFX_SCREEN] = {.path = "screen.png"},
 };

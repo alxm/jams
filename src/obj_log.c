@@ -18,6 +18,8 @@
 
 #include "obj_log.h"
 
+#include "util_gfx.h"
+
 typedef struct {
     AList* lines;
     AList* backlog;
@@ -93,6 +95,11 @@ void n_log_write(UFontId Font, const char* Format, ...)
     }
 }
 
+bool n_log_done(void)
+{
+    return a_list_isEmpty(g_log.backlog);
+}
+
 void n_log_inc(void)
 {
     g_log.indent++;
@@ -119,23 +126,24 @@ void n_log_tick(void)
 
 void n_log_draw(void)
 {
-    int X = 76;
-    int Y = 181;
-    int numLines = (int)a_list_sizeGet(g_log.lines);
-
-    a_font_coordsSet(X, Y - (numLines - 1) * a_font_lineHeightGet());
+    a_font_coordsSet(76, 181);
 
     A_LIST_ITERATE(g_log.lines, const NLogLine*, line) {
         for(int i = 0; i < line->indent; i++) {
             a_font_print("  ");
         }
 
-        a_font_fontSet(u_font_get(U_FONT_DEFAULT));
-        a_font_print("> ");
+        int x = a_font_coordsGetX();
+        int y = a_font_coordsGetY();
+        const ASprite* bullet = u_gfx_get(U_GFX_ICON_MSG);
+
+        a_sprite_blit(bullet, x, y + 1);
 
         a_font_fontSet(u_font_get(line->font));
+        a_font_print(" ");
         a_font_print(line->text);
 
+        a_font_lineHeightSet(10);
         a_font_newLine();
     }
 }
