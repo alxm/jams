@@ -20,6 +20,7 @@
 
 #include "obj_event.h"
 #include "obj_hud.h"
+#include "obj_log.h"
 #include "util_color.h"
 #include "util_gfx.h"
 
@@ -41,11 +42,13 @@ void n_game_new(void)
 
     n_event_new();
     n_hud_new();
+    n_log_new();
     n_market_new();
 }
 
 void n_game_free(void)
 {
+    n_log_free();
     n_event_free();
 }
 
@@ -54,6 +57,7 @@ void n_game_tick(void)
     n_event_tick();
     n_market_tick();
     n_hud_tick();
+    n_log_tick();
 }
 
 void n_game_draw(void)
@@ -64,6 +68,7 @@ void n_game_draw(void)
     n_event_draw();
     n_market_draw();
     n_hud_draw();
+    n_log_draw();
 
     a_color_blendSet(A_COLOR_BLEND_MOD);
     a_sprite_blit(u_gfx_getNext(U_GFX_NOISE), 0, 0);

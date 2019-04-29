@@ -18,6 +18,9 @@
 
 #include "obj_event.h"
 
+#include "obj_log.h"
+#include "util_font.h"
+
 typedef enum {
     Z_COMMAND_INVALID = -1,
     Z_COMMAND_MESSAGE,
@@ -63,6 +66,7 @@ void n_event_tick(void)
     switch(e->command) {
         case Z_COMMAND_MESSAGE: {
             a_out_info("%s", e->context.buffer);
+            n_log_write(U_FONT_DEFAULT, "%s", e->context.buffer);
             g_index++;
         } break;
 
