@@ -38,6 +38,9 @@ A_STATE(s_game)
         a_color_blendSet(A_COLOR_BLEND_PLAIN);
         a_sprite_blit(u_gfx_get(U_GFX_SCREEN), 0, 0);
 
+        a_font_coordsSet(371, 60);
+        a_font_printf("SAT, Week 8");
+
         a_color_blendSet(A_COLOR_BLEND_MOD);
         a_sprite_blit(u_gfx_getNext(U_GFX_NOISE), 0, 0);
     }
