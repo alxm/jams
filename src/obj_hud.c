@@ -29,6 +29,10 @@ typedef struct {
         int left[3];
         int right[3];
     } border;
+    struct {
+        int week;
+        int dayOfWeek;
+    } time;
 } NHud;
 
 static NHud g_hud;
@@ -78,7 +82,19 @@ static void drawDate(void)
     a_font_alignSet(A_FONT_ALIGN_LEFT);
     a_color_baseSetPixel(u_color_get(U_COLOR_GRAY_LIGHT));
 
-    a_font_printf("SAT, Week 8");
+    static const char* dayNames[] = {
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT",
+        "SUN",
+    };
+
+    a_font_printf("%s, Week %d",
+                  dayNames[g_hud.time.dayOfWeek],
+                  g_hud.time.week + 1);
 }
 
 static void drawBorder(void)
