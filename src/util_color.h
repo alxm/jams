@@ -21,6 +21,7 @@
 #include <a2x.h>
 
 typedef enum {
+    U_COLOR_INVALID = -1,
     U_COLOR_PURPLE,
     U_COLOR_PINK,
     U_COLOR_YELLOW,
