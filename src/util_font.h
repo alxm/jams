@@ -16,43 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_game.h"
+#pragma once
 
-#include "util_color.h"
-#include "util_font.h"
-#include "util_gfx.h"
-#include "util_input.h"
+#include <a2x.h>
 
-A_STATE(s_game)
-{
-    A_STATE_INIT
-    {
-        //
-    }
+typedef enum {
+    U_FONT_INVALID = -1,
+    U_FONT_DEFAULT,
+    U_FONT_NUM,
+} UFontId;
 
-    A_STATE_TICK
-    {
-        //
-    }
+extern void u_font_load(void);
+extern void u_font_unload(void);
 
-    A_STATE_DRAW
-    {
-        a_color_blendSet(A_COLOR_BLEND_PLAIN);
-        a_sprite_blit(u_gfx_get(U_GFX_SCREEN), 0, 0);
-
-        a_color_fillBlitSet(true);
-        a_color_baseSetPixel(u_color_get(U_COLOR_GRAY_LIGHT));
-        a_font_coordsSet(371, 60);
-        a_font_fontSet(u_font_get(U_FONT_DEFAULT));
-        a_font_printf("SAT, Week 8");
-        a_color_fillBlitSet(false);
-
-        a_color_blendSet(A_COLOR_BLEND_MOD);
-        a_sprite_blit(u_gfx_getNext(U_GFX_NOISE), 0, 0);
-    }
-
-    A_STATE_FREE
-    {
-        //
-    }
-}
+extern const AFont* u_font_get(UFontId Id);

@@ -18,6 +18,8 @@
 
 #include "state_load.h"
 
+#include "util_color.h"
+#include "util_font.h"
 #include "util_gfx.h"
 #include "util_input.h"
 #include "util_state.h"
@@ -26,7 +28,9 @@ void s_load(void)
 {
     A_STATE_INIT
     {
+        u_color_load();
         u_gfx_load();
+        u_font_load();
         u_input_load();
 
         a_state_push(U_STATE_GAME);
@@ -34,7 +38,8 @@ void s_load(void)
 
     A_STATE_FREE
     {
-        u_gfx_unload();
         u_input_unload();
+        u_font_unload();
+        u_gfx_unload();
     }
 }

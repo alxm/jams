@@ -28,6 +28,7 @@ typedef struct {
 } UGfx;
 
 static UGfx g_gfx[U_GFX_NUM] = {
+    [U_GFX_FONT_DEFAULT] = {.path = "font_grid6x8.png"},
     [U_GFX_NOISE] = {.path = "noise_grid512x320.png", .frames = true},
     [U_GFX_SCREEN] = {.path = "screen.png"},
 };
@@ -60,7 +61,7 @@ void u_gfx_load(void)
         gfxLoad(i);
     }
 
-    a_spriteframes_speedSet(g_gfx[U_GFX_NOISE].u.frames, A_TIMER_MS, 250);
+    a_spriteframes_speedSet(g_gfx[U_GFX_NOISE].u.frames, A_TIMER_MS, 150);
 }
 
 void u_gfx_unload(void)

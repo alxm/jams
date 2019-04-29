@@ -22,6 +22,7 @@
 
 typedef enum {
     U_GFX_INVALID = -1,
+    U_GFX_FONT_DEFAULT,
     U_GFX_NOISE,
     U_GFX_SCREEN,
     U_GFX_NUM

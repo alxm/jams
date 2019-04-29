@@ -16,43 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "state_game.h"
-
-#include "util_color.h"
 #include "util_font.h"
+
 #include "util_gfx.h"
-#include "util_input.h"
 
-A_STATE(s_game)
+typedef struct {
+    UGfxId id;
+    AFont* font;
+} UFont;
+
+static UFont g_fonts[U_FONT_NUM] = {
+    [U_FONT_DEFAULT] = {.id = U_GFX_FONT_DEFAULT},
+};
+
+void u_font_load(void)
 {
-    A_STATE_INIT
-    {
-        //
+    for(int i = U_FONT_NUM; i--; ) {
+        g_fonts[i].font = a_font_newFromSprite(u_gfx_get(g_fonts[i].id), 0, 0);
     }
+}
 
-    A_STATE_TICK
-    {
-        //
+void u_font_unload(void)
+{
+    for(int i = U_FONT_NUM; i--; ) {
+        a_font_free(g_fonts[i].font);
     }
+}
 
-    A_STATE_DRAW
-    {
-        a_color_blendSet(A_COLOR_BLEND_PLAIN);
-        a_sprite_blit(u_gfx_get(U_GFX_SCREEN), 0, 0);
-
-        a_color_fillBlitSet(true);
-        a_color_baseSetPixel(u_color_get(U_COLOR_GRAY_LIGHT));
-        a_font_coordsSet(371, 60);
-        a_font_fontSet(u_font_get(U_FONT_DEFAULT));
-        a_font_printf("SAT, Week 8");
-        a_color_fillBlitSet(false);
-
-        a_color_blendSet(A_COLOR_BLEND_MOD);
-        a_sprite_blit(u_gfx_getNext(U_GFX_NOISE), 0, 0);
-    }
-
-    A_STATE_FREE
-    {
-        //
-    }
+const AFont* u_font_get(UFontId Id)
+{
+    return g_fonts[Id].font;
 }
