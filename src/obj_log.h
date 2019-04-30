@@ -26,6 +26,7 @@ extern void n_log_new(void);
 extern void n_log_free(void);
 
 extern void n_log_write(UFontId FontMain, UFontId FontHighlight, const char* Format, ...);
+extern void n_log_break(void);
 extern bool n_log_done(void);
 
 extern void n_log_inc(void);

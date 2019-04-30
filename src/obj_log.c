@@ -111,6 +111,11 @@ void n_log_write(UFontId FontMain, UFontId FontHighlight, const char* Format, ..
     }
 }
 
+void n_log_break(void)
+{
+    n_log_write(U_FONT_INVALID, U_FONT_INVALID, "");
+}
+
 bool n_log_done(void)
 {
     return a_list_isEmpty(g_log.backlog);

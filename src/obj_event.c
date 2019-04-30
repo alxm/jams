@@ -19,19 +19,22 @@
 #include "obj_event.h"
 
 #include "obj_log.h"
-#include "util_font.h"
 #include "obj_visitor.h"
+#include "util_font.h"
+#include "util_input.h"
 
 typedef enum {
     Z_COMMAND_INVALID = -1,
     Z_COMMAND_MESSAGE,
+    Z_COMMAND_MESSAGE_BREAK,
     Z_COMMAND_VISITOR,
-    Z_COMMAND_WAIT,
+    Z_COMMAND_WAIT_MS,
+    Z_COMMAND_WAIT_SPACE,
     Z_COMMAND_NUM
 } ZCommand;
 
 typedef struct {
-    const ZCommand command;
+    ZCommand command;
     union {
         const char* buffer;
         unsigned millis;
@@ -39,14 +42,19 @@ typedef struct {
     } context;
 } ZEvent;
 
-static ZEvent g_events[] = {
+static const ZEvent g_events[] = {
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "Hello and welcome to `Coffin Digital`, a `sanctioned company`."},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "As `Resource Manager`, your goal is to source assets"},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "that will grow our resource pool."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = ""},
-    {.command = Z_COMMAND_WAIT, .context.millis = 500},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "Your lease term is 2 weeks, proceed."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = ""},
+    {.command = Z_COMMAND_MESSAGE_BREAK},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "..."},
+    {.command = Z_COMMAND_WAIT_MS, .context.millis = 400},
+    {.command = Z_COMMAND_WAIT_SPACE},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "Your first visitor."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "This is our chance to see if this asset has the resources"},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "we seek to add to our pool"},
+    {.command = Z_COMMAND_MESSAGE_BREAK},
     {.command = Z_COMMAND_VISITOR, .context.visitor = N_VISITOR_0},
     {.command = Z_COMMAND_INVALID},
 };
@@ -58,7 +66,7 @@ static struct {
 
 static unsigned g_index;
 
-static void eventNext(void)
+static void eventDone(void)
 {
     g_index++;
 
@@ -81,23 +89,49 @@ void n_event_free(void)
 
 void n_event_tick(void)
 {
-    ZEvent* e = &g_events[g_index];
+    const ZEvent* e = &g_events[g_index];
 
     switch(e->command) {
         case Z_COMMAND_MESSAGE: {
-            if(e->context.buffer) {
-                n_log_write(
-                    U_FONT_GRAY_LIGHT, U_FONT_YELLOW, "%s", e->context.buffer);
-                e->context.buffer = NULL;
-            } else if(n_log_done()) {
-                eventNext();
+            switch(g_context.flag) {
+                case 0: {
+                    g_context.flag++;
+
+                    n_log_write(U_FONT_GRAY_LIGHT,
+                                U_FONT_YELLOW,
+                                "%s",
+                                e->context.buffer);
+                } break;
+
+                case 1: {
+                    if(n_log_done()) {
+                        eventDone();
+                    }
+                } break;
+            }
+        } break;
+
+        case Z_COMMAND_MESSAGE_BREAK: {
+            switch(g_context.flag) {
+                case 0: {
+                    g_context.flag++;
+
+                    n_log_break();
+                } break;
+
+                case 1: {
+                    if(n_log_done()) {
+                        eventDone();
+                    }
+                } break;
             }
         } break;
 
         case Z_COMMAND_VISITOR: {
             switch(g_context.flag) {
                 case 0: {
-                    g_context.flag = 1;
+                    g_context.flag++;
+
                     n_visitor_new(e->context.visitor);
                 } break;
 
@@ -107,12 +141,47 @@ void n_event_tick(void)
             }
         } break;
 
-        case Z_COMMAND_WAIT: {
+        case Z_COMMAND_WAIT_MS: {
             if(a_timer_expiredGet(g_context.timer)) {
-                eventNext();
+                eventDone();
             } else if(!a_timer_isRunning(g_context.timer)) {
                 a_timer_periodSet(g_context.timer, e->context.millis);
                 a_timer_start(g_context.timer);
+            }
+        } break;
+
+        case Z_COMMAND_WAIT_SPACE: {
+            switch(g_context.flag) {
+                case 0: {
+                    g_context.flag++;
+
+                    n_log_break();
+                    n_log_write(U_FONT_GRAY_LIGHT,
+                                U_FONT_PINK,
+                                "Press `SPACE` to continue");
+
+                    a_button_pressClear(u_input_get(U_BUTTON_ACTION));
+                } break;
+
+                case 1: {
+                    if(a_button_pressGet(u_input_get(U_BUTTON_ACTION))) {
+                        g_context.flag++;
+                    }
+                } break;
+
+                case 2: {
+                    g_context.flag++;
+
+                    n_log_break();
+                } break;
+
+                case 3: {
+                    if(n_log_done()) {
+                        g_context.flag++;
+
+                        eventDone();
+                    }
+                } break;
             }
         } break;
 
