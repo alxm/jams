@@ -29,6 +29,9 @@ typedef struct {
 static UFont g_fonts[U_FONT_NUM] = {
     [U_FONT_GRAY_LIGHT] = {.color = U_COLOR_GRAY_LIGHT},
     [U_FONT_GRAY_MEDIUM] = {.color = U_COLOR_GRAY_MEDIUM},
+    [U_FONT_PINK] = {.color = U_COLOR_PINK},
+    [U_FONT_PURPLE] = {.color = U_COLOR_PURPLE},
+    [U_FONT_YELLOW] = {.color = U_COLOR_YELLOW},
 };
 
 void u_font_load(void)

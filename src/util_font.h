@@ -25,6 +25,9 @@ typedef enum {
     U_FONT_DEFAULT,
     U_FONT_GRAY_LIGHT,
     U_FONT_GRAY_MEDIUM,
+    U_FONT_PINK,
+    U_FONT_PURPLE,
+    U_FONT_YELLOW,
     U_FONT_NUM,
 } UFontId;
 

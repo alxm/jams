@@ -37,18 +37,14 @@ typedef struct {
 } ZEvent;
 
 static ZEvent g_events[] = {
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "Hello and welcome to Coffin Digital"},
-    {.command = Z_COMMAND_WAIT, .context.millis = 400},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have1."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have2."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have3."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have4."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have5."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have6."},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "That's all I have7."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "Hello and welcome to `Coffin Digital`, a `sanctioned company`."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "As `Resource Manager`, your goal is to source assets"},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "that will grow our resource pool."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = ""},
     {.command = Z_COMMAND_WAIT, .context.millis = 1000},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = ";-)"},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "Your lease term is 4 weeks, proceed."},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = ""},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "_"},
     {.command = Z_COMMAND_INVALID},
 };
 
@@ -73,7 +69,8 @@ void n_event_tick(void)
     switch(e->command) {
         case Z_COMMAND_MESSAGE: {
             if(e->context.buffer) {
-                n_log_write(U_FONT_GRAY_LIGHT, "%s", e->context.buffer);
+                n_log_write(
+                    U_FONT_GRAY_LIGHT, U_FONT_YELLOW, "%s", e->context.buffer);
                 e->context.buffer = NULL;
             } else if(n_log_done()) {
                 g_index++;

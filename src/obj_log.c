@@ -25,29 +25,35 @@ typedef struct {
     AList* backlog;
     unsigned maxLines;
     int indent;
+    ATimer* updateDelay;
 } NLog;
 
 typedef struct NLogLine {
-    UFontId font;
+    UFontId fonts[2];
     int indent;
     char* text;
+    AList* chunks;
 } NLogLine;
 
 static NLog g_log;
 
-static NLogLine* lineNew(UFontId Font, int Indent, char* Buffer)
+static NLogLine* lineNew(UFontId FontMain, UFontId FontHighlight, int Indent, char* Buffer)
 {
     NLogLine* line = a_mem_malloc(sizeof(NLogLine));
 
-    line->font = Font;
+    line->fonts[0] = FontMain;
+    line->fonts[1] = FontHighlight;
     line->indent = Indent;
     line->text = Buffer;
+    line->chunks = a_str_split(Buffer, "`");
 
     return line;
 }
 
 static void lineFree(NLogLine* Line)
 {
+    a_list_freeEx(Line->chunks, free);
+
     free(Line->text);
     free(Line);
 }
@@ -58,15 +64,18 @@ void n_log_new(void)
     g_log.backlog = a_list_new();
     g_log.maxLines = 8;
     g_log.indent = 0;
+    g_log.updateDelay = a_timer_new(A_TIMER_MS, 200, false);
 }
 
 void n_log_free(void)
 {
     a_list_freeEx(g_log.lines, (AFree*)lineFree);
     a_list_freeEx(g_log.backlog, (AFree*)lineFree);
+
+    a_timer_free(g_log.updateDelay);
 }
 
-void n_log_write(UFontId Font, const char* Format, ...)
+void n_log_write(UFontId FontMain, UFontId FontHighlight, const char* Format, ...)
 {
     va_list args;
     va_start(args, Format);
@@ -87,8 +96,15 @@ void n_log_write(UFontId Font, const char* Format, ...)
         va_end(args);
 
         if(needed >= 0 && (size_t)needed < size) {
-            a_list_addLast(g_log.backlog, lineNew(Font, g_log.indent, buffer));
+            a_list_addLast(
+                g_log.backlog,
+                lineNew(FontMain, FontHighlight, g_log.indent, buffer));
+
             a_out_text(buffer);
+
+            if(!a_timer_isRunning(g_log.updateDelay)) {
+                a_timer_start(g_log.updateDelay);
+            }
         } else {
             free(buffer);
         }
@@ -112,7 +128,7 @@ void n_log_dec(void)
 
 void n_log_tick(void)
 {
-    if(!a_list_peek(g_log.backlog) || !a_fps_ticksNth(a_time_msToTicks(200))) {
+    if(!a_list_peek(g_log.backlog) || !a_timer_expiredGet(g_log.updateDelay)) {
         return;
     }
 
@@ -121,6 +137,10 @@ void n_log_tick(void)
 
     if(a_list_sizeGet(g_log.lines) > g_log.maxLines) {
         lineFree(a_list_pop(g_log.lines));
+    }
+
+    if(a_list_peek(g_log.backlog)) {
+        a_timer_start(g_log.updateDelay);
     }
 }
 
@@ -133,15 +153,16 @@ void n_log_draw(void)
             a_font_print("  ");
         }
 
-        int x = a_font_coordsGetX();
-        int y = a_font_coordsGetY();
-        const ASprite* bullet = u_gfx_get(U_GFX_ICON_MSG);
+        int highlight = 0;
 
-        a_sprite_blit(bullet, x, y + 1);
+        A_LIST_ITERATE(line->chunks, const char*, text) {
+            a_font_fontSet(u_font_get(line->fonts[highlight]));
+            a_font_print(text);
 
-        a_font_fontSet(u_font_get(line->font));
-        a_font_print(" ");
-        a_font_print(line->text);
+            if(!A_LIST_IS_LAST()) {
+                highlight = 1 - highlight;
+            }
+        }
 
         a_font_lineHeightSet(10);
         a_font_newLine();
