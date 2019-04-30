@@ -20,10 +20,12 @@
 
 #include "obj_log.h"
 #include "util_font.h"
+#include "obj_visitor.h"
 
 typedef enum {
     Z_COMMAND_INVALID = -1,
     Z_COMMAND_MESSAGE,
+    Z_COMMAND_VISITOR,
     Z_COMMAND_WAIT,
     Z_COMMAND_NUM
 } ZCommand;
@@ -33,6 +35,7 @@ typedef struct {
     union {
         const char* buffer;
         unsigned millis;
+        NVisitorId visitor;
     } context;
 } ZEvent;
 
@@ -41,25 +44,39 @@ static ZEvent g_events[] = {
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "As `Resource Manager`, your goal is to source assets"},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = "that will grow our resource pool."},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = ""},
-    {.command = Z_COMMAND_WAIT, .context.millis = 1000},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "Your lease term is 4 weeks, proceed."},
+    {.command = Z_COMMAND_WAIT, .context.millis = 500},
+    {.command = Z_COMMAND_MESSAGE, .context.buffer = "Your lease term is 2 weeks, proceed."},
     {.command = Z_COMMAND_MESSAGE, .context.buffer = ""},
-    {.command = Z_COMMAND_MESSAGE, .context.buffer = "_"},
+    {.command = Z_COMMAND_VISITOR, .context.visitor = N_VISITOR_0},
     {.command = Z_COMMAND_INVALID},
 };
 
+static struct {
+    int flag;
+    ATimer* timer;
+} g_context;
+
 static unsigned g_index;
-static ATimer* g_timer;
+
+static void eventNext(void)
+{
+    g_index++;
+
+    g_context.flag = 0;
+
+    a_timer_stop(g_context.timer);
+}
 
 void n_event_new(void)
 {
     g_index = 0;
-    g_timer = a_timer_new(A_TIMER_MS, 0, false);
+
+    g_context.timer = a_timer_new(A_TIMER_MS, 0, false);
 }
 
 void n_event_free(void)
 {
-    a_timer_free(g_timer);
+    a_timer_free(g_context.timer);
 }
 
 void n_event_tick(void)
@@ -73,16 +90,29 @@ void n_event_tick(void)
                     U_FONT_GRAY_LIGHT, U_FONT_YELLOW, "%s", e->context.buffer);
                 e->context.buffer = NULL;
             } else if(n_log_done()) {
-                g_index++;
+                eventNext();
+            }
+        } break;
+
+        case Z_COMMAND_VISITOR: {
+            switch(g_context.flag) {
+                case 0: {
+                    g_context.flag = 1;
+                    n_visitor_new(e->context.visitor);
+                } break;
+
+                case 1: {
+                    //
+                } break;
             }
         } break;
 
         case Z_COMMAND_WAIT: {
-            if(a_timer_expiredGet(g_timer)) {
-                g_index++;
-            } else if(!a_timer_isRunning(g_timer)) {
-                a_timer_periodSet(g_timer, e->context.millis);
-                a_timer_start(g_timer);
+            if(a_timer_expiredGet(g_context.timer)) {
+                eventNext();
+            } else if(!a_timer_isRunning(g_context.timer)) {
+                a_timer_periodSet(g_context.timer, e->context.millis);
+                a_timer_start(g_context.timer);
             }
         } break;
 

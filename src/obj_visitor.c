@@ -16,21 +16,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "obj_visitor.h"
 
-#include <a2x.h>
+#include "util_gfx.h"
 
-typedef enum {
-    U_GFX_INVALID = -1,
-    U_GFX_FACE_0,
-    U_GFX_FONT_DEFAULT,
-    U_GFX_NOISE,
-    U_GFX_SCREEN,
-    U_GFX_NUM
-} UGfxId;
+typedef struct {
+    UGfxId face;
+} NVisitor;
 
-extern void u_gfx_load(void);
-extern void u_gfx_unload(void);
+static NVisitor g_visitors[N_VISITOR_NUM] = {
+    [N_VISITOR_0] = {U_GFX_FACE_0},
+};
 
-extern const ASprite* u_gfx_get(UGfxId Id);
-extern const ASprite* u_gfx_getNext(UGfxId Id);
+static NVisitorId g_id = N_VISITOR_INVALID;
+
+void n_visitor_new(NVisitorId Id)
+{
+    g_id = Id;
+}
+
+void n_visitor_tick(void)
+{
+    if(g_id == N_VISITOR_INVALID) {
+        return;
+    }
+
+    //
+}
+
+void n_visitor_draw(void)
+{
+    if(g_id == N_VISITOR_INVALID) {
+        return;
+    }
+
+    const NVisitor* v = &g_visitors[g_id];
+
+    a_sprite_blit(u_gfx_getNext(v->face), 73, 83);
+}

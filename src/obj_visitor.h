@@ -21,16 +21,12 @@
 #include <a2x.h>
 
 typedef enum {
-    U_GFX_INVALID = -1,
-    U_GFX_FACE_0,
-    U_GFX_FONT_DEFAULT,
-    U_GFX_NOISE,
-    U_GFX_SCREEN,
-    U_GFX_NUM
-} UGfxId;
+    N_VISITOR_INVALID = -1,
+    N_VISITOR_0,
+    N_VISITOR_NUM
+} NVisitorId;
 
-extern void u_gfx_load(void);
-extern void u_gfx_unload(void);
+extern void n_visitor_new(NVisitorId Id);
 
-extern const ASprite* u_gfx_get(UGfxId Id);
-extern const ASprite* u_gfx_getNext(UGfxId Id);
+extern void n_visitor_tick(void);
+extern void n_visitor_draw(void);
