@@ -29,6 +29,8 @@ typedef struct {
 
 static UGfx g_gfx[U_GFX_NUM] = {
     [U_GFX_FACE_0] = {.path = "face0_grid128x64.png", .frames = true},
+    [U_GFX_FACE_1] = {.path = "face1_grid128x64.png", .frames = true},
+    [U_GFX_FACE_2] = {.path = "face2_grid128x64.png", .frames = true},
     [U_GFX_FONT_DEFAULT] = {.path = "font_grid6x8.png"},
     [U_GFX_NOISE] = {.path = "noise_grid512x320.png", .frames = true},
     [U_GFX_SCREEN] = {.path = "screen.png"},

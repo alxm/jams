@@ -24,15 +24,32 @@ typedef struct {
     UGfxId face;
 } NVisitor;
 
+static const char* g_names[] = {
+    "Raylee Scott",
+    "Blair Johnson",
+    "Riley Day",
+    "Jessie Dean",
+    "Jessie Walsh",
+    "Gene Adkins",
+    "Clem Tucker",
+    "Taylor Leach",
+    "Steff Daugherty",
+    "Harley Hubbard",
+};
+
 static NVisitor g_visitors[N_VISITOR_NUM] = {
     [N_VISITOR_0] = {U_GFX_FACE_0},
+    [N_VISITOR_1] = {U_GFX_FACE_1},
+    [N_VISITOR_2] = {U_GFX_FACE_2},
 };
 
 static NVisitorId g_id = N_VISITOR_INVALID;
+static const char* g_name;
 
-void n_visitor_new(NVisitorId Id)
+void n_visitor_new(void)
 {
-    g_id = Id;
+    g_id = a_random_int(N_VISITOR_NUM);
+    g_name = g_names[a_random_intu(A_ARRAY_LEN(g_names))];
 }
 
 void n_visitor_tick(void)
@@ -53,4 +70,9 @@ void n_visitor_draw(void)
     const NVisitor* v = &g_visitors[g_id];
 
     a_sprite_blit(u_gfx_getNext(v->face), 73, 83);
+}
+
+const char* n_visitor_nameGet(void)
+{
+    return g_name;
 }

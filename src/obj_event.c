@@ -132,11 +132,16 @@ void n_event_tick(void)
                 case 0: {
                     g_context.flag++;
 
-                    n_visitor_new(e->context.visitor);
+                    n_visitor_new();
                 } break;
 
                 case 1: {
-                    //
+                    g_context.flag++;
+
+                    n_log_write(U_FONT_GRAY_LIGHT,
+                                U_FONT_YELLOW,
+                                "Hello there, I am %s",
+                                n_visitor_nameGet());
                 } break;
             }
         } break;

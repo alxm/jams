@@ -23,10 +23,14 @@
 typedef enum {
     N_VISITOR_INVALID = -1,
     N_VISITOR_0,
+    N_VISITOR_1,
+    N_VISITOR_2,
     N_VISITOR_NUM
 } NVisitorId;
 
-extern void n_visitor_new(NVisitorId Id);
+extern void n_visitor_new(void);
 
 extern void n_visitor_tick(void);
 extern void n_visitor_draw(void);
+
+extern const char* n_visitor_nameGet(void);
