@@ -1,0 +1,22 @@
+A_CONFIG_APP_AUTHOR := alxm
+A_CONFIG_APP_BIN := CoffinDigital.html
+A_CONFIG_APP_TITLE := CoffinDigital
+
+A_CONFIG_APP_VERSION_MAJOR := 0
+A_CONFIG_APP_VERSION_MINOR := 0
+A_CONFIG_APP_VERSION_MICRO := 1
+
+A_CONFIG_SCREEN_WIDTH := 512
+A_CONFIG_SCREEN_HEIGHT := 320
+A_CONFIG_SCREEN_ZOOM := 2
+
+A_CONFIG_COLOR_SCREEN_BORDER := 0x7a9899
+
+Z_ROOT := ..
+Z_DIR_GFX := assets/gfx
+Z_DIR_SFX := assets/sfx
+
+A_CONFIG_EMBED_PATHS_EMSCRIPTEN := \
+	$(addprefix $(Z_DIR_GFX)/, $(notdir $(wildcard $(Z_ROOT)/$(Z_DIR_GFX)/*.png))) \
+
+include $(A2X_PATH)/make/emscripten
