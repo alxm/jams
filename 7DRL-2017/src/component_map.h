@@ -1,0 +1,27 @@
+/*
+    Copyright 2017 Alex Margarit <http://www.alxm.org/>
+    Space Station Plunder (SSP) - A roguelike game made for 7DRL 2017!
+
+    SSP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SSP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SSP.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+typedef struct ZCompMap ZCompMap;
+
+extern size_t z_comp_map_size(void);
+extern void z_comp_map_init(ZCompMap* Map);
+
+extern ASprite* z_comp_map_getTileSprite(const ZCompMap* Map, int X, int Y);
+
+extern AEntity* z_comp_map_getTileEntity(ZCompMap* Map, int X, int Y);
+extern void z_comp_map_setTileEntity(ZCompMap* Map, int X, int Y, AEntity* Entity);
