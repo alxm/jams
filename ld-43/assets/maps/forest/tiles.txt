@@ -1,0 +1,28 @@
+void
+    void.png
+    000000
+    block
+entrance
+    caveentrance.png
+    1a8f0b
+    code
+        2
+rocksleft
+    rocksleft.png
+    0a1f6f
+    block
+rocksright
+    rocksright.png
+    6382f9
+    block
+rockstop
+    rockstop.png
+    1b43d4
+    block
+floor
+    floor1.png
+    767676
+tree
+    tree1.png
+    012e03
+    block

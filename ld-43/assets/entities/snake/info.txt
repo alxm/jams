@@ -1,0 +1,14 @@
+snake
+    ai
+        0
+    damage
+        1
+    health
+        4
+    position
+    sprite
+        frames
+            snake/all.png
+            snake/all.png
+            snake/all.png
+            snake/all.png

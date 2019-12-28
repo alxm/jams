@@ -1,0 +1,32 @@
+void
+    void1.png
+    000000
+    block
+floor
+    floor1.png
+    767676
+wall
+    wall1.png
+    ffffff
+    block
+door
+    door1.png
+    1a8f0b
+    code
+        1
+shrine1
+    shrine1.png
+    700c47
+    block
+shrine2
+    shrine2.png
+    f644ad
+    block
+shrine3
+    shrine3.png
+    a64f82
+    block
+shrine4
+    shrine4.png
+    450e2f
+    block

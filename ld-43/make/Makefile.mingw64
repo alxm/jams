@@ -1,0 +1,5 @@
+A_CONFIG_APP_NAME := caveshrine.exe
+
+A_CONFIG_EMBED_PATHS := assets
+
+include $(A2X_PATH)/make/project/Makefile.mingw64

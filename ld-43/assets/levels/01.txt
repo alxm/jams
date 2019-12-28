@@ -1,0 +1,13 @@
+cave
+    snake
+        9, 5
+    snake
+        6, 5
+
+forest
+    snake
+        10, 5
+    snake
+        10, 6
+    snake
+        5, 5
