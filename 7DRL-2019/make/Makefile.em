@@ -1,0 +1,18 @@
+A_CONFIG_APP_AUTHOR := alxm
+A_CONFIG_APP_BIN := city.html
+A_CONFIG_APP_TITLE := City
+
+A_CONFIG_APP_VERSION_MAJOR := 1
+A_CONFIG_APP_VERSION_MINOR := 0
+A_CONFIG_APP_VERSION_MICRO := 0
+
+A_CONFIG_EMBED_PATHS := \
+	assets/actors \
+	assets/tiles \
+	assets/gfx/alxm.png \
+
+A_CONFIG_SCREEN_WIDTH := 320
+A_CONFIG_SCREEN_HEIGHT := 200
+A_CONFIG_SCREEN_ZOOM := 2
+
+include $(A2X_PATH)/make/emscripten

@@ -1,0 +1,71 @@
+3x3
+    U_TILE_ID_B0_ROOF_
+        flags
+            nomove
+        frames
+            0, 0 x10
+            64, 0
+            128, 0 x2
+
+    U_TILE_ID_B0_FRONT_
+        flags
+            nomove
+        frames
+            0, 48 x3
+            64, 48 x2
+            128, 48
+
+U_TILE_ID_B0_DOOR_7
+    flags
+        nomove
+    frames
+        0, 224
+
+U_TILE_ID_B0_DOOR_8
+    flags
+        nomove
+    frames
+        16, 224
+
+U_TILE_ID_B0_DOOR_9
+    flags
+        nomove
+    frames
+        48, 224
+
+U_TILE_ID_B0_WINDOW_4
+    flags
+        nomove
+    frames
+        0, 160 x16
+        80, 160 x8
+
+        0, 176
+
+        0, 192 x4
+        80, 192 x2
+
+U_TILE_ID_B0_WINDOW_5
+    flags
+        nomove
+    frames
+        16, 160 x16
+        96, 160 x8
+
+        16, 176
+        32, 176
+
+        16, 192 x4
+        96, 192 x2
+
+U_TILE_ID_B0_WINDOW_6
+    flags
+        nomove
+    frames
+        48, 160 x16
+        128, 160 x8
+
+        48, 176
+
+        48, 192 x4
+        128, 192 x2

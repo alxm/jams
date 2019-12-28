@@ -1,0 +1,13 @@
+U_TILE_ID_ROAD_H
+    frames
+        0, 0
+
+U_TILE_ID_ROAD_V
+    frames
+        16, 0
+
+3x3
+    U_TILE_ID_SIDEWALK_
+        frames
+            0, 16
+            48, 16
