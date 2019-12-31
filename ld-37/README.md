@@ -3,7 +3,7 @@ Motel 37
 
 Motel 37 is a game I made for the Ludum Dare 37 48h Compo.
 
-![Screenshot 1](https://github.com/alxm/motel37/raw/master/screenshots/Motel-37-00001.png "Screenshot 1") ![Screenshot 2](https://github.com/alxm/motel37/raw/master/screenshots/Motel-37-00002.png "Screenshot 2")
+![Screenshot 1](./screenshots/Motel-37-00001.png "Screenshot 1") ![Screenshot 2](./screenshots/Motel-37-00002.png "Screenshot 2")
 
 Build from Source
 -----------------

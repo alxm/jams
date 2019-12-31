@@ -4,7 +4,7 @@ A game for Ludum Dare 39, with theme "Running out of Power". You play as a despo
 
 Download binaries from [https://alxm.itch.io/despot3900](https://alxm.itch.io/despot3900)
 
-![Screenshot](https://github.com/alxm/despot3900/raw/master/screenshots/Despot-3900-00001.png "Screenshot")
+![Screenshot](./screenshots/Despot-3900-00001.png "Screenshot")
 
 ## Manual
 

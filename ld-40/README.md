@@ -4,7 +4,7 @@ Unfinished RTS game prototype for Ludum Dare 40. Jam theme was "The more you hav
 
 Download binaries from [https://alxm.itch.io/mineop40](https://alxm.itch.io/mineop40)
 
-![Screenshot](https://github.com/alxm/mineop40/raw/master/screenshots/MineOp40.gif "Screenshot")
+![Screenshot](./screenshots/MineOp40.gif "Screenshot")
 
 ## Controls
 

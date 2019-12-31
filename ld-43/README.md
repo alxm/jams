@@ -2,8 +2,8 @@
 
 *Cave Shrine* is an unfinished game I made for Ludum Dare 43.
 
-![Cave Shrine screenshot](https://github.com/alxm/cave-shrine/raw/master/assets/screenshots/Cave-Shrine-01.png "Cave Shrine screenshot")
-![Cave Shrine screenshot](https://github.com/alxm/cave-shrine/raw/master/assets/screenshots/Cave-Shrine-02.png "Cave Shrine screenshot")
+![Cave Shrine screenshot](./assets/screenshots/Cave-Shrine-01.png "Cave Shrine screenshot")
+![Cave Shrine screenshot](./assets/screenshots/Cave-Shrine-02.png "Cave Shrine screenshot")
 
 Download binaries from [https://alxm.itch.io/cave-shrine](https://alxm.itch.io/cave-shrine)
 

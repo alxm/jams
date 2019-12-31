@@ -3,8 +3,8 @@ Space Station Plunder
 
 A space roguelike game made for 7DRL 2017! Original development happened March 5th-12th.
 
-![Space Station Plunder](https://github.com/alxm/space-station-plunder/raw/master/screenshots/Space-Station-Plunder-00022.png "Space Station Plunder")
-![Space Station Plunder](https://github.com/alxm/space-station-plunder/raw/master/screenshots/Space-Station-Plunder-00021.png "Space Station Plunder")
+![Space Station Plunder](./screenshots/Space-Station-Plunder-00022.png "Space Station Plunder")
+![Space Station Plunder](./screenshots/Space-Station-Plunder-00021.png "Space Station Plunder")
 
 Controls
 --------

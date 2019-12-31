@@ -2,7 +2,7 @@
 
 An unfinished game prototype for Ludum Dare 44, theme "Your life is currency".
 
-![Coffin Digital screenshot](https://github.com/alxm/coffin-digital/raw/master/assets/Coffin-Digital-01.png "Coffin Digital screenshot")
+![Coffin Digital screenshot](./assets/Coffin-Digital-01.png "Coffin Digital screenshot")
 
 ## License
 

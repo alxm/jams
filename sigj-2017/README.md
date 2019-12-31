@@ -4,7 +4,7 @@ A game for the 48h Seattle Indies Game Jam with the theme "*Definitely not a sca
 
 Download binaries from [https://alxm.itch.io/pestering-peddler](https://alxm.itch.io/pestering-peddler)
 
-![Screenshot](https://github.com/alxm/pestering-peddler/raw/master/screenshots/Pestering-Peddler-01.png "Screenshot")
+![Screenshot](./screenshots/Pestering-Peddler-01.png "Screenshot")
 
 ## Running
 

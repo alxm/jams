@@ -1,7 +1,7 @@
 38th Century
 ============
 
-![Screenshot 1](https://github.com/alxm/38th-century/raw/master/screenshots/38th-Century-00015.png "Screenshot 1") ![Screenshot 2](https://github.com/alxm/38th-century/raw/master/screenshots/38th-Century-00016.png "Screenshot 2")
+![Screenshot 1](./screenshots/38th-Century-00015.png "Screenshot 1") ![Screenshot 2](./screenshots/38th-Century-00016.png "Screenshot 2")
 
 **38th Century** is a simple world simulation game made from scratch in 72h for Ludum Dare 38.
 

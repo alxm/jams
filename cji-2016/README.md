@@ -3,7 +3,7 @@ Church 2
 
 Church 2 is a game prototype I made for the [Cool Jams Inc](https://itch.io/jam/cool-jams-inc) 48h game jam that ran from 2016-12-02 to 2016-12-04. The project is named after the theme I was randomly assigned.
 
-![Church 2 Screenshot 1](https://github.com/alxm/church2/raw/master/screenshots/church2-00004.png "Church2 Screenshot 1") ![Church 2 Screenshot 2](https://github.com/alxm/church2/raw/master/screenshots/church2-00005.png "Church2 Screenshot 2")
+![Church 2 Screenshot 1](./screenshots/church2-00004.png "Church2 Screenshot 1") ![Church 2 Screenshot 2](./screenshots/church2-00005.png "Church2 Screenshot 2")
 
 Build Source
 ------------

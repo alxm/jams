@@ -3,7 +3,7 @@ Rushed Dinosaur Dare
 
 Rushed Dinosaur Dare is a game I made for the Ludum Dare 36 48h Compo.
 
-![RDD Screenshot 1](https://github.com/alxm/rdd/raw/master/screenshots/Rushed-Dinosaur-Dare-00001.png "RDD Screenshot 1") ![RDD Screenshot 2](https://github.com/alxm/rdd/raw/master/screenshots/Rushed-Dinosaur-Dare-00002.png "RDD Screenshot 2")
+![RDD Screenshot 1](./screenshots/Rushed-Dinosaur-Dare-00001.png "RDD Screenshot 1") ![RDD Screenshot 2](./screenshots/Rushed-Dinosaur-Dare-00002.png "RDD Screenshot 2")
 
 Build from Source
 -----------------
