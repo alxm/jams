@@ -18,6 +18,15 @@
 
 #include <faur.h>
 
+#define N_CAM_SCALE 32
+
 extern void n_cam_new(void);
 extern void n_cam_free(void);
-extern void n_cam_tick(void);
+
+extern void n_cam_tick(FVecFix Origin);
+
+extern FVecFix n_cam_coordsGetOrigin(void);
+extern FVecInt n_cam_coordsToScreen(FVecFix Coords);
+
+extern FVecInt n_cam_shakeGet(void);
+extern void n_cam_shakeSet(unsigned Ms);

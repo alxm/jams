@@ -27,6 +27,7 @@ void f_main(void)
 
     F_STATE_FREE
     {
+        n_cam_free();
         u_input_uninit();
     }
 }

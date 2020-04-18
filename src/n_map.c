@@ -34,5 +34,7 @@ void n_map_tick(void)
 
 void n_map_draw(void)
 {
-    //
+    f_color_blendSet(F_COLOR_BLEND_SOLID);
+    f_color_colorSetHex(0x3388aa);
+    f_draw_fill();
 }

@@ -18,6 +18,14 @@
 
 #include <faur.h>
 
+#define N_MAP_W 32
+#define N_MAP_H 32
+
+typedef struct {
+    int w, h;
+    FGrid* grid;
+} NMap;
+
 extern void n_map_new(void);
 extern void n_map_free(void);
 extern void n_map_tick(void);

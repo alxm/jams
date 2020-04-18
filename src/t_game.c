@@ -17,32 +17,67 @@
 #include "t_game.h"
 #include "main.h"
 
+typedef struct {
+    FList* orbs;
+    OOrb* player;
+} NGame;
+
+static NGame g_game;
+
 void t_game(void)
 {
     F_STATE_INIT
     {
-        n_cam_new();
+        g_game.orbs = f_list_new();
+
+        for(int i = 100; i--; ) {
+            OOrb* o = o_orb_new(O_ORB_TYPE_NPC1 + f_random_int(2),
+                                f_random_range(0, f_fix_fromInt(N_MAP_W)),
+                                f_random_range(0, f_fix_fromInt(N_MAP_H)));
+
+            f_list_addLast(g_game.orbs, o);
+        }
+
+        g_game.player = o_orb_new(O_ORB_TYPE_PLAYER,
+                                  f_fix_fromInt(N_MAP_W / 2),
+                                  f_fix_fromInt(N_MAP_H / 2));
+
         n_map_new();
-        o_orb_new();
+        n_cam_new();
     }
 
     F_STATE_TICK
     {
         n_map_tick();
-        o_orb_tick();
-        n_cam_tick();
+
+        o_orb_tick(g_game.player);
+
+        F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
+            o_orb_tick(o);
+        }
+
+        n_cam_tick(g_game.player->coords);
     }
 
     F_STATE_DRAW
     {
         n_map_draw();
-        o_orb_draw();
+
+        F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
+            o_orb_draw(o);
+        }
+
+        o_orb_draw(g_game.player);
     }
 
     F_STATE_FREE
     {
-        o_orb_free();
+        F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
+            o_orb_free(o);
+        }
+
         n_map_free();
-        n_cam_free();
+
+        f_list_free(g_game.orbs);
     }
 }

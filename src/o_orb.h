@@ -18,7 +18,31 @@
 
 #include <faur.h>
 
-extern void o_orb_new(void);
-extern void o_orb_free(void);
-extern void o_orb_tick(void);
-extern void o_orb_draw(void);
+typedef struct OOrb OOrb;
+typedef struct OOrbType OOrbType;
+
+typedef enum {
+    O_ORB_TYPE_INVALID = -1,
+    O_ORB_TYPE_PLAYER,
+    O_ORB_TYPE_NPC1,
+    O_ORB_TYPE_NPC2,
+    O_ORB_TYPE_NUM
+} OOrbTypeId;
+
+typedef void OOrbTickHandler(OOrb* Orb);
+
+struct OOrbType {
+    FFix radius;
+    FColorRgb color;
+    OOrbTickHandler* tick;
+};
+
+struct OOrb {
+    const OOrbType* type;
+    FVecFix coords;
+};
+
+extern OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y);
+extern void o_orb_free(OOrb* Orb);
+extern void o_orb_tick(OOrb* Orb);
+extern void o_orb_draw(OOrb* Orb);
