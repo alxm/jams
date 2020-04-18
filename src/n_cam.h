@@ -18,7 +18,7 @@
 
 #include <faur.h>
 
-#define N_CAM_SCALE 32
+#define N_CAM_SCALE 64
 
 extern void n_cam_new(void);
 extern void n_cam_free(void);

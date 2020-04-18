@@ -40,6 +40,7 @@ struct OOrbType {
 struct OOrb {
     const OOrbType* type;
     FVecFix coords;
+    unsigned offset;
 };
 
 extern OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y);

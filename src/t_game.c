@@ -30,7 +30,7 @@ void t_game(void)
     {
         g_game.orbs = f_list_new();
 
-        for(int i = 100; i--; ) {
+        for(int i = 500; i--; ) {
             OOrb* o = o_orb_new(O_ORB_TYPE_NPC1 + f_random_int(2),
                                 f_random_range(0, f_fix_fromInt(N_MAP_W)),
                                 f_random_range(0, f_fix_fromInt(N_MAP_H)));
