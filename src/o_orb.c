@@ -76,21 +76,21 @@ static void h_orb_npc(OOrb* Orb)
 
 static const OOrbType g_types[O_ORB_TYPE_NUM] = {
     [O_ORB_TYPE_PLAYER] = {
-        .radius = F_FIX_ONE * 2 / 16,
+        .radius = F_FIX_ONE * 32 / 256,
         .color = {0xff, 0, 0},
         .speedMax = F_FIX_ONE * 2 / 128,
         .tick = h_orb_player
     },
 
     [O_ORB_TYPE_NPC1] = {
-        .radius = F_FIX_ONE * 1 / 16,
+        .radius = F_FIX_ONE * 16 / 256,
         .color = {0, 0xff, 0},
         .speedMax = F_FIX_ONE * 1 / 128,
         .tick = h_orb_npc
     },
 
     [O_ORB_TYPE_NPC2] = {
-        .radius = F_FIX_ONE * 3 / 16,
+        .radius = F_FIX_ONE * 48 / 256,
         .color = {0, 0, 0xff},
         .speedMax = F_FIX_ONE * 1 / 128,
         .tick = h_orb_npc
@@ -150,6 +150,7 @@ void o_orb_tick(OOrb* Orb)
 void o_orb_draw(OOrb* Orb)
 {
     FVecInt coords = n_cam_coordsToScreen(Orb->coords);
+    int zoom = n_cam_zoomGet();
 
     f_color_colorSetRgb(
         Orb->type->color.r, Orb->type->color.g, Orb->type->color.b);
@@ -157,21 +158,34 @@ void o_orb_draw(OOrb* Orb)
     f_color_fillDrawSet(false);
     f_color_blendSet(F_COLOR_BLEND_ALPHA_50);
 
+    FFix radius = Orb->type->radius * zoom;
+
     f_draw_circle(
         coords.x,
         coords.y,
-        f_fix_toInt(Orb->type->radius * N_CAM_SCALE
-                        + f_fix_mul(Orb->type->radius * N_CAM_SCALE / 4,
-                                    f_fps_ticksSin(
-                                        3, 2, Orb->offset + F_DEG_022_INT))));
+        f_fix_toInt(radius + f_fix_mul(radius >> 2,
+                                       f_fps_ticksSin(
+                                        1, 3, Orb->offset + F_DEG_022_INT))));
 
-    f_color_fillDrawSet(true);
     f_color_blendSet(F_COLOR_BLEND_ALPHA_25);
 
     f_draw_circle(
         coords.x,
         coords.y,
-        f_fix_toInt(Orb->type->radius * N_CAM_SCALE
-                        + f_fix_mul(Orb->type->radius * N_CAM_SCALE / 4,
-                                    f_fps_ticksSin(1, 1, Orb->offset))));
+        f_fix_toInt(radius + f_fix_mul(radius >> 1,
+                                       f_fps_ticksSin(
+                                        1, 2, Orb->offset + F_DEG_045_INT))));
+
+    f_color_fillDrawSet(true);
+    f_color_blendSet(F_COLOR_BLEND_ALPHA);
+    f_color_alphaSet(
+        F_COLOR_ALPHA_MAX / 4
+            + f_fix_toInt(
+                f_fps_ticksSin(1, 2, Orb->offset) * F_COLOR_ALPHA_MAX / 8));
+
+    f_draw_circle(
+        coords.x,
+        coords.y,
+        f_fix_toInt(radius + f_fix_mul(radius >> 2,
+                                       f_fps_ticksSin(1, 4, Orb->offset))));
 }
