@@ -53,8 +53,10 @@ static void h_orb_player(OOrb* Orb)
         [F_FLAGS_BIT(1) | F_FLAGS_BIT(3)] = F_DEG_315_INT,
     };
 
-    if(pressed) {
+    if(pressed && Orb->physics.angle != angles[pressMask]) {
         Orb->physics.angle = angles[pressMask];
+
+        n_cam_zoomOut();
     }
 }
 

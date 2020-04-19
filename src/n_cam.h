@@ -28,6 +28,7 @@ extern FVecFix n_cam_coordsFromScreen(int X, int Y);
 extern FVecInt n_cam_coordsToScreen(FVecFix Coords);
 
 extern int n_cam_zoomGet(void);
+extern void n_cam_zoomOut(void);
 
 extern FVecInt n_cam_shakeGet(void);
 extern void n_cam_shakeSet(unsigned Ms);
