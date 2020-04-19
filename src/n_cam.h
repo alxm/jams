@@ -26,6 +26,7 @@ extern void n_cam_free(void);
 extern void n_cam_tick(FVecFix Origin);
 
 extern FVecFix n_cam_coordsGetOrigin(void);
+extern FVecFix n_cam_coordsFromScreen(int X, int Y);
 extern FVecInt n_cam_coordsToScreen(FVecFix Coords);
 
 extern FVecInt n_cam_shakeGet(void);

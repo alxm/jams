@@ -57,6 +57,16 @@ FVecFix n_cam_coordsGetOrigin(void)
     return g_cam.coords;
 }
 
+FVecFix n_cam_coordsFromScreen(int X, int Y)
+{
+    FVecInt screen = f_screen_sizeGet();
+
+    return (FVecFix){
+        g_cam.coords.x - f_fix_fromInt(screen.x / 2 - X) / N_CAM_SCALE,
+        g_cam.coords.y - f_fix_fromInt(screen.y / 2 - Y) / N_CAM_SCALE
+    };
+}
+
 FVecInt n_cam_coordsToScreen(FVecFix Coords)
 {
     FVecInt screen = f_screen_sizeGet();
