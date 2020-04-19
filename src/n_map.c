@@ -40,16 +40,25 @@ void n_map_draw(void)
 
     FVecFix topLeft = n_cam_coordsFromScreen(0, 0);
     FVecFix startWorld = {f_fix_ceiling(topLeft.x), f_fix_ceiling(topLeft.y)};
+    FVecInt worldUnits = f_vecfix_toInt(startWorld);
     FVecInt startScreen = n_cam_coordsToScreen(startWorld);
     FVecInt screenSize = f_screen_sizeGet();
 
     f_color_colorSetHex(0x44aaaa);
 
     for(int x = startScreen.x; x < screenSize.x; x += N_CAM_SCALE) {
-        f_draw_linev(x, 0, screenSize.y - 1);
+        if(worldUnits.x > 0 && worldUnits.x < N_MAP_W) {
+            f_draw_linev(x, 0, screenSize.y - 1);
+        }
+
+        worldUnits.x++;
     }
 
     for(int y = startScreen.y; y < screenSize.y; y += N_CAM_SCALE) {
-        f_draw_lineh(0, screenSize.x - 1, y);
+        if(worldUnits.y > 0 && worldUnits.y < N_MAP_H) {
+            f_draw_lineh(0, screenSize.x - 1, y);
+        }
+
+        worldUnits.y++;
     }
 }

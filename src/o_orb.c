@@ -74,27 +74,25 @@ static void h_orb_npc(OOrb* Orb)
     }
 }
 
-#define O_ORB_SPEED_MAX (F_FIX_ONE / 8)
-
 static const OOrbType g_types[O_ORB_TYPE_NUM] = {
     [O_ORB_TYPE_PLAYER] = {
-        .radius = F_FIX_ONE * 1 / 4,
+        .radius = F_FIX_ONE * 2 / 16,
         .color = {0xff, 0, 0},
-        .speedMax = O_ORB_SPEED_MAX * 1 / 2,
+        .speedMax = F_FIX_ONE * 2 / 128,
         .tick = h_orb_player
     },
 
     [O_ORB_TYPE_NPC1] = {
-        .radius = F_FIX_ONE * 2 / 4,
+        .radius = F_FIX_ONE * 1 / 16,
         .color = {0, 0xff, 0},
-        .speedMax = O_ORB_SPEED_MAX * 1 / 4,
+        .speedMax = F_FIX_ONE * 1 / 128,
         .tick = h_orb_npc
     },
 
     [O_ORB_TYPE_NPC2] = {
-        .radius = F_FIX_ONE * 3 / 4,
+        .radius = F_FIX_ONE * 3 / 16,
         .color = {0, 0, 0xff},
-        .speedMax = O_ORB_SPEED_MAX * 1 / 5,
+        .speedMax = F_FIX_ONE * 1 / 128,
         .tick = h_orb_npc
     },
 };
@@ -153,9 +151,22 @@ void o_orb_draw(OOrb* Orb)
 {
     FVecInt coords = n_cam_coordsToScreen(Orb->coords);
 
-    f_color_blendSet(F_COLOR_BLEND_ALPHA_25);
     f_color_colorSetRgb(
         Orb->type->color.r, Orb->type->color.g, Orb->type->color.b);
+
+    f_color_fillDrawSet(false);
+    f_color_blendSet(F_COLOR_BLEND_ALPHA_50);
+
+    f_draw_circle(
+        coords.x,
+        coords.y,
+        f_fix_toInt(Orb->type->radius * N_CAM_SCALE
+                        + f_fix_mul(Orb->type->radius * N_CAM_SCALE / 4,
+                                    f_fps_ticksSin(
+                                        3, 2, Orb->offset + F_DEG_022_INT))));
+
+    f_color_fillDrawSet(true);
+    f_color_blendSet(F_COLOR_BLEND_ALPHA_25);
 
     f_draw_circle(
         coords.x,

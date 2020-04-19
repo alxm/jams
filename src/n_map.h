@@ -18,8 +18,8 @@
 
 #include <faur.h>
 
-#define N_MAP_W 32
-#define N_MAP_H 32
+#define N_MAP_W 4
+#define N_MAP_H 4
 
 typedef struct {
     int w, h;
