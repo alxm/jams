@@ -34,6 +34,7 @@ typedef void OOrbTickHandler(OOrb* Orb);
 struct OOrbType {
     FFix radius;
     FColorRgb color;
+    FFix speedMax;
     OOrbTickHandler* tick;
 };
 
@@ -41,9 +42,17 @@ struct OOrb {
     const OOrbType* type;
     FVecFix coords;
     unsigned offset;
+    struct {
+        FVecFix acceleration;
+        FVecFix velocity;
+        unsigned angle;
+        FTimer* timer;
+        bool turnL, turnR;
+        unsigned turnInc;
+    } physics;
 };
 
-extern OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y);
+extern OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y, unsigned Angle);
 extern void o_orb_free(OOrb* Orb);
 extern void o_orb_tick(OOrb* Orb);
 extern void o_orb_draw(OOrb* Orb);

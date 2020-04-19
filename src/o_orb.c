@@ -17,59 +17,136 @@
 #include "o_orb.h"
 #include "main.h"
 
-#define ORB_SPEED (F_FIX_ONE / 16)
-
 static void h_orb_player(OOrb* Orb)
 {
+    bool pressed = false;
+    unsigned pressMask = 0;
+
     if(f_button_pressGet(u_input_get(U_BUTTON_UP))) {
-        Orb->coords.y -= ORB_SPEED;
+        F_FLAGS_SET(pressMask, F_FLAGS_BIT(0));
+        pressed = true;
     }
 
     if(f_button_pressGet(u_input_get(U_BUTTON_DOWN))) {
-        Orb->coords.y += ORB_SPEED;
+        F_FLAGS_SET(pressMask, F_FLAGS_BIT(1));
+        pressed = true;
     }
 
     if(f_button_pressGet(u_input_get(U_BUTTON_LEFT))) {
-        Orb->coords.x -= ORB_SPEED;
+        F_FLAGS_SET(pressMask, F_FLAGS_BIT(2));
+        pressed = true;
     }
 
     if(f_button_pressGet(u_input_get(U_BUTTON_RIGHT))) {
-        Orb->coords.x += ORB_SPEED;
+        F_FLAGS_SET(pressMask, F_FLAGS_BIT(3));
+        pressed = true;
+    }
+
+    static const unsigned angles[F_FLAGS_BIT(4)] = {
+        [F_FLAGS_BIT(3)] = 0,
+        [F_FLAGS_BIT(0) | F_FLAGS_BIT(3)] = F_DEG_045_INT,
+        [F_FLAGS_BIT(0)] = F_DEG_090_INT,
+        [F_FLAGS_BIT(0) | F_FLAGS_BIT(2)] = F_DEG_135_INT,
+        [F_FLAGS_BIT(2)] = F_DEG_180_INT,
+        [F_FLAGS_BIT(1) | F_FLAGS_BIT(2)] = F_DEG_225_INT,
+        [F_FLAGS_BIT(1)] = F_DEG_270_INT,
+        [F_FLAGS_BIT(1) | F_FLAGS_BIT(3)] = F_DEG_315_INT,
+    };
+
+    if(pressed) {
+        Orb->physics.angle = angles[pressMask];
     }
 }
 
 static void h_orb_npc(OOrb* Orb)
 {
-    Orb->coords.x += f_random_range(-ORB_SPEED/4, ORB_SPEED/4);
-    Orb->coords.y += f_random_range(-ORB_SPEED/4, ORB_SPEED/4);
+    if(f_timer_expiredGet(Orb->physics.timer)) {
+        if(f_random_chance(1, 2)) {
+            Orb->physics.turnL = true;
+            Orb->physics.turnR = false;
+        } else {
+            Orb->physics.turnL = false;
+            Orb->physics.turnR = true;
+        }
+
+        Orb->physics.turnInc = f_random_rangeu(
+                                F_DEG_001_INT, F_DEG_001_INT * 3);
+    }
 }
 
+#define O_ORB_SPEED_MAX (F_FIX_ONE / 8)
+
 static const OOrbType g_types[O_ORB_TYPE_NUM] = {
-    [O_ORB_TYPE_PLAYER] = {F_FIX_ONE * 1 / 4, {0xff, 0, 0}, h_orb_player},
-    [O_ORB_TYPE_NPC1] = {F_FIX_ONE * 2 / 4, {0, 0xff, 0}, h_orb_npc},
-    [O_ORB_TYPE_NPC2] = {F_FIX_ONE * 3 / 4, {0, 0, 0xff}, h_orb_npc},
+    [O_ORB_TYPE_PLAYER] = {
+        .radius = F_FIX_ONE * 1 / 4,
+        .color = {0xff, 0, 0},
+        .speedMax = O_ORB_SPEED_MAX * 1 / 2,
+        .tick = h_orb_player
+    },
+
+    [O_ORB_TYPE_NPC1] = {
+        .radius = F_FIX_ONE * 2 / 4,
+        .color = {0, 0xff, 0},
+        .speedMax = O_ORB_SPEED_MAX * 1 / 4,
+        .tick = h_orb_npc
+    },
+
+    [O_ORB_TYPE_NPC2] = {
+        .radius = F_FIX_ONE * 3 / 4,
+        .color = {0, 0, 0xff},
+        .speedMax = O_ORB_SPEED_MAX * 1 / 5,
+        .tick = h_orb_npc
+    },
 };
 
-OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y)
+OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y, unsigned Angle)
 {
-    OOrb* o = f_mem_malloc(sizeof(OOrb));
+    OOrb* o = f_mem_mallocz(sizeof(OOrb));
 
     o->type = &g_types[Type];
     o->coords.x = X;
     o->coords.y = Y;
     o->offset = f_random_intu(F_FIX_ANGLES_NUM);
+    o->physics.timer = f_timer_new(F_TIMER_MS, 500, true);
+    o->physics.angle = Angle;
+
+    f_timer_runStart(o->physics.timer);
 
     return o;
 }
 
 void o_orb_free(OOrb* Orb)
 {
+    f_timer_free(Orb->physics.timer);
+
     f_mem_free(Orb);
 }
 
 void o_orb_tick(OOrb* Orb)
 {
     Orb->type->tick(Orb);
+
+    Orb->coords.x += Orb->physics.velocity.x;
+    Orb->coords.y += Orb->physics.velocity.y;
+
+    Orb->physics.velocity.x += Orb->physics.acceleration.x;
+    Orb->physics.velocity.y += Orb->physics.acceleration.y;
+    Orb->physics.velocity.x >>= 1;
+    Orb->physics.velocity.y >>= 1;
+
+    unsigned angle = Orb->physics.angle;
+    FFix magnitude = Orb->type->speedMax;
+
+    Orb->physics.acceleration.x += f_fix_mul(f_fix_cos(angle), magnitude);
+    Orb->physics.acceleration.y -= f_fix_mul(f_fix_sin(angle), magnitude);
+    Orb->physics.acceleration.x >>= 1;
+    Orb->physics.acceleration.y >>= 1;
+
+    if(Orb->physics.turnL) {
+        Orb->physics.angle += Orb->physics.turnInc;
+    } else if(Orb->physics.turnR) {
+        Orb->physics.angle -= Orb->physics.turnInc;
+    }
 }
 
 void o_orb_draw(OOrb* Orb)

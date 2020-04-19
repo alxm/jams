@@ -33,14 +33,16 @@ void t_game(void)
         for(int i = 500; i--; ) {
             OOrb* o = o_orb_new(O_ORB_TYPE_NPC1 + f_random_int(2),
                                 f_random_range(0, f_fix_fromInt(N_MAP_W)),
-                                f_random_range(0, f_fix_fromInt(N_MAP_H)));
+                                f_random_range(0, f_fix_fromInt(N_MAP_H)),
+                                f_random_intu(F_FIX_ANGLES_NUM));
 
             f_list_addLast(g_game.orbs, o);
         }
 
         g_game.player = o_orb_new(O_ORB_TYPE_PLAYER,
                                   f_fix_fromInt(N_MAP_W / 2),
-                                  f_fix_fromInt(N_MAP_H / 2));
+                                  f_fix_fromInt(N_MAP_H / 2),
+                                  F_DEG_090_INT);
 
         n_map_new();
         n_cam_new();
