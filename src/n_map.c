@@ -32,6 +32,64 @@ void n_map_tick(void)
     //
 }
 
+static void drawTiles(FVecFix TopLeft)
+{
+    FVecFix start = {f_fix_floor(TopLeft.x), f_fix_floor(TopLeft.y)};
+    FVecInt w = f_vecfix_toInt(start);
+    FVecInt startScreen = n_cam_coordsToScreen(start);
+    FVecInt screenSize = f_screen_sizeGet();
+
+    for(int y = startScreen.y; y < screenSize.y; y += N_CAM_SCALE) {
+        w.x = f_fix_toInt(start.x);
+
+        for(int x = startScreen.x; x < screenSize.x; x += N_CAM_SCALE) {
+            static const uint32_t hex[4] = {
+                0x2277aa,
+                0x2288aa,
+                0x3377aa,
+                0x338899,
+            };
+
+            if(w.x >= 0 && w.x < N_MAP_W
+                && w.y >= 0 && w.y < N_MAP_H) {
+
+                f_color_colorSetHex(hex[((w.x & 1) << 1) | (w.y & 1)]);
+                f_draw_rectangle(x, y, N_CAM_SCALE, N_CAM_SCALE);
+            }
+
+            w.x++;
+        }
+
+        w.y++;
+    }
+}
+
+static void drawGrid(FVecFix TopLeft)
+{
+    FVecFix start = {f_fix_ceiling(TopLeft.x), f_fix_ceiling(TopLeft.y)};
+    FVecInt w = f_vecfix_toInt(start);
+    FVecInt startScreen = n_cam_coordsToScreen(start);
+    FVecInt screenSize = f_screen_sizeGet();
+
+    f_color_colorSetHex(0x44aaaa);
+
+    for(int x = startScreen.x; x < screenSize.x; x += N_CAM_SCALE) {
+        if(w.x >= 0 && w.x <= N_MAP_W) {
+            f_draw_linev(x, 0, screenSize.y - 1);
+        }
+
+        w.x++;
+    }
+
+    for(int y = startScreen.y; y < screenSize.y; y += N_CAM_SCALE) {
+        if(w.y >= 0 && w.y <= N_MAP_H) {
+            f_draw_lineh(0, screenSize.x - 1, y);
+        }
+
+        w.y++;
+    }
+}
+
 void n_map_draw(void)
 {
     f_color_blendSet(F_COLOR_BLEND_SOLID);
@@ -39,26 +97,7 @@ void n_map_draw(void)
     f_draw_fill();
 
     FVecFix topLeft = n_cam_coordsFromScreen(0, 0);
-    FVecFix startWorld = {f_fix_ceiling(topLeft.x), f_fix_ceiling(topLeft.y)};
-    FVecInt worldUnits = f_vecfix_toInt(startWorld);
-    FVecInt startScreen = n_cam_coordsToScreen(startWorld);
-    FVecInt screenSize = f_screen_sizeGet();
 
-    f_color_colorSetHex(0x44aaaa);
-
-    for(int x = startScreen.x; x < screenSize.x; x += N_CAM_SCALE) {
-        if(worldUnits.x > 0 && worldUnits.x < N_MAP_W) {
-            f_draw_linev(x, 0, screenSize.y - 1);
-        }
-
-        worldUnits.x++;
-    }
-
-    for(int y = startScreen.y; y < screenSize.y; y += N_CAM_SCALE) {
-        if(worldUnits.y > 0 && worldUnits.y < N_MAP_H) {
-            f_draw_lineh(0, screenSize.x - 1, y);
-        }
-
-        worldUnits.y++;
-    }
+    drawTiles(topLeft);
+    drawGrid(topLeft);
 }
