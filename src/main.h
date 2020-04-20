@@ -19,6 +19,7 @@
 #include <faur.h>
 
 #include "n_cam.h"
+#include "n_hud.h"
 #include "n_map.h"
 
 #include "o_orb.h"

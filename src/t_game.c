@@ -51,7 +51,6 @@ void t_game(void)
     F_STATE_TICK
     {
         n_map_tick();
-
         o_orb_tick(g_game.player);
 
         F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
@@ -59,6 +58,12 @@ void t_game(void)
         }
 
         n_cam_tick(g_game.player->coords);
+
+        g_game.player->life--;
+
+        if(g_game.player->life <= 0) {
+            f_state_replace(t_game);
+        }
     }
 
     F_STATE_DRAW
@@ -70,21 +75,19 @@ void t_game(void)
         }
 
         o_orb_draw(g_game.player);
+        n_hud_draw();
     }
 
     F_STATE_FREE
     {
-        F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
-            o_orb_free(o);
-        }
+        o_orb_free(g_game.player);
+        f_list_freeEx(g_game.orbs, (FFree*)o_orb_free);
 
         n_map_free();
-
-        f_list_free(g_game.orbs);
     }
 }
 
-OOrb* t_game_getPlayer(void)
+OOrb* t_game_playerGet(void)
 {
     return g_game.player;
 }

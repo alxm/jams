@@ -82,6 +82,7 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color1 = 0xcdea7d,
         .color2 = 0x63ea82,
         .speedMax = F_FIX_ONE * 2 / 128,
+        .lifeMax = 1000,
         .tick = h_orb_player
     },
 
@@ -90,6 +91,7 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color1 = 0x469ed5,
         .color2 = 0xed536c,
         .speedMax = F_FIX_ONE * 1 / 128,
+        .lifeMax = 0,
         .tick = h_orb_npc
     },
 
@@ -98,6 +100,7 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color1 = 0xed536c,
         .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
+        .lifeMax = 0,
         .tick = h_orb_npc
     },
 };
@@ -110,6 +113,7 @@ OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y, unsigned Angle)
     o->coords.x = X;
     o->coords.y = Y;
     o->offset = f_random_intu(F_FIX_ANGLES_NUM);
+    o->life = o->type->lifeMax;
     o->physics.timer = f_timer_new(F_TIMER_MS, 500, true);
     o->physics.angle = Angle;
 
@@ -140,7 +144,7 @@ void o_orb_tick(OOrb* Orb)
         Orb->physics.velocity.x *= -1;
         Orb->physics.acceleration.x *= -1;
 
-        if(Orb == t_game_getPlayer()) {
+        if(Orb == t_game_playerGet()) {
             n_cam_zoomOut();
         }
     }
@@ -151,7 +155,7 @@ void o_orb_tick(OOrb* Orb)
         Orb->physics.velocity.y *= -1;
         Orb->physics.acceleration.y *= -1;
 
-        if(Orb == t_game_getPlayer()) {
+        if(Orb == t_game_playerGet()) {
             n_cam_zoomOut();
         }
     }

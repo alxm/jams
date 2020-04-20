@@ -35,6 +35,7 @@ struct OOrbType {
     FFix radius;
     uint32_t color1, color2;
     FFix speedMax;
+    int lifeMax;
     OOrbTickHandler* tick;
 };
 
@@ -42,6 +43,7 @@ struct OOrb {
     const OOrbType* type;
     FVecFix coords;
     unsigned offset;
+    int life;
     struct {
         FVecFix acceleration;
         FVecFix velocity;

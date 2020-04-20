@@ -22,4 +22,4 @@
 
 extern FState t_game;
 
-extern OOrb* t_game_getPlayer(void);
+extern OOrb* t_game_playerGet(void);

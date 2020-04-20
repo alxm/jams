@@ -14,20 +14,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main.h"
+#pragma once
 
-void f_main(void)
-{
-    F_STATE_INIT
-    {
-        u_input_init();
+#include <faur.h>
 
-        f_state_push(t_game);
-    }
-
-    F_STATE_FREE
-    {
-        n_cam_free();
-        u_input_uninit();
-    }
-}
+extern void n_hud_draw(void);
