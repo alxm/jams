@@ -18,8 +18,8 @@
 #include "main.h"
 
 #define N_CAM_ZOOM_DEFAULT 256
-#define N_CAM_ZOOM_OUT 16
-#define N_CAM_ZOOM_OSC 8
+#define N_CAM_ZOOM_OUT (N_CAM_ZOOM_DEFAULT / 16)
+#define N_CAM_ZOOM_OSC (N_CAM_ZOOM_DEFAULT / 32)
 
 typedef struct {
     FVecFix coords;

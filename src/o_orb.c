@@ -151,8 +151,9 @@ void o_orb_tick(OOrb* Orb)
 
 void o_orb_draw(OOrb* Orb)
 {
-    FVecInt coords = n_cam_coordsToScreen(Orb->coords);
     int zoom = n_cam_zoomGet();
+    FFix radius = Orb->type->radius * zoom;
+    FVecInt coords = n_cam_coordsToScreen(Orb->coords);
 
     f_color_colorSetRgb(
         Orb->type->color.r, Orb->type->color.g, Orb->type->color.b);
@@ -160,34 +161,34 @@ void o_orb_draw(OOrb* Orb)
     f_color_fillDrawSet(false);
     f_color_blendSet(F_COLOR_BLEND_ALPHA_50);
 
-    FFix radius = Orb->type->radius * zoom;
+    FFix sin12 = f_fps_ticksSin(1, 2, Orb->offset);
+    FFix sin13 = f_fps_ticksSin(1, 3, Orb->offset);
+    FFix sin14 = f_fps_ticksSin(1, 4, Orb->offset);
 
-    f_draw_circle(
-        coords.x,
-        coords.y,
-        f_fix_toInt(radius + f_fix_mul(radius >> 2,
-                                       f_fps_ticksSin(
-                                        1, 3, Orb->offset + F_DEG_022_INT))));
+    f_draw_circle(coords.x,
+                  coords.y,
+                  f_fix_toInt(radius + f_fix_mul(radius / 4, sin12)));
 
     f_color_blendSet(F_COLOR_BLEND_ALPHA_25);
 
-    f_draw_circle(
-        coords.x,
-        coords.y,
-        f_fix_toInt(radius + f_fix_mul(radius >> 1,
-                                       f_fps_ticksSin(
-                                        1, 2, Orb->offset + F_DEG_045_INT))));
+    f_draw_circle(coords.x,
+                  coords.y,
+                  f_fix_toInt(radius + f_fix_mul(radius / 2, sin13)));
 
     f_color_fillDrawSet(true);
     f_color_blendSet(F_COLOR_BLEND_ALPHA);
-    f_color_alphaSet(
-        F_COLOR_ALPHA_MAX / 4
-            + f_fix_toInt(
-                f_fps_ticksSin(1, 2, Orb->offset) * F_COLOR_ALPHA_MAX / 8));
 
-    f_draw_circle(
-        coords.x,
-        coords.y,
-        f_fix_toInt(radius + f_fix_mul(radius >> 2,
-                                       f_fps_ticksSin(1, 4, Orb->offset))));
+    f_color_alphaSet(
+        F_COLOR_ALPHA_MAX / 4 + f_fix_toInt(sin14 * F_COLOR_ALPHA_MAX / 8));
+
+    f_draw_circle(coords.x,
+                  coords.y,
+                  f_fix_toInt(radius + f_fix_mul(radius / 4, sin14)));
+
+    f_color_alphaSet(
+        F_COLOR_ALPHA_MAX / 8 + f_fix_toInt(sin12 * F_COLOR_ALPHA_MAX / 16));
+
+    f_draw_circle(coords.x,
+                  coords.y,
+                  f_fix_toInt(radius / 2 + f_fix_mul(radius / 8, sin13)));
 }
