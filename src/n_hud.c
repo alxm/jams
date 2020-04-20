@@ -21,8 +21,9 @@ static void drawLife(uint32_t Color, unsigned OffsetAngle, int OffsetX, int Offs
 {
     const OOrb* player = t_game_playerGet();
 
-    int wmax = f_screen_sizeGetWidth() - 32;
-    int hmax = 32;
+    FVecInt screen = f_screen_sizeGet();
+    int wmax = screen.x - 32;
+    int hmax = screen.y / 16;
 
     int w = wmax * player->life / player->type->lifeMax
                 + f_fix_toInt(

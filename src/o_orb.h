@@ -24,10 +24,19 @@ typedef struct OOrbType OOrbType;
 typedef enum {
     O_ORB_TYPE_INVALID = -1,
     O_ORB_TYPE_PLAYER,
-    O_ORB_TYPE_NPC1,
-    O_ORB_TYPE_NPC2,
+    O_ORB_TYPE_NPC_GOOD,
+    O_ORB_TYPE_NPC_POISON,
     O_ORB_TYPE_NUM
 } OOrbTypeId;
+
+typedef enum {
+    O_ORB_STATE_INVALID = -1,
+    O_ORB_STATE_DRIFT,
+    O_ORB_STATE_TURN_LEFT,
+    O_ORB_STATE_TURN_RIGHT,
+    O_ORB_STATE_FOLLOW,
+    O_ORB_STATE_NUM
+} OOrbStateId;
 
 typedef void OOrbTickHandler(OOrb* Orb);
 
@@ -45,11 +54,13 @@ struct OOrb {
     unsigned offset;
     int life;
     struct {
+        OOrbStateId id;
+        FTimer* timer;
+    } state;
+    struct {
         FVecFix acceleration;
         FVecFix velocity;
         unsigned angle;
-        FTimer* timer;
-        bool turnL, turnR;
         unsigned turnInc;
     } physics;
 };

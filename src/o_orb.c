@@ -62,23 +62,12 @@ static void h_orb_player(OOrb* Orb)
 
 static void h_orb_npc(OOrb* Orb)
 {
-    if(f_timer_expiredGet(Orb->physics.timer)) {
-        if(f_random_chance(1, 2)) {
-            Orb->physics.turnL = true;
-            Orb->physics.turnR = false;
-        } else {
-            Orb->physics.turnL = false;
-            Orb->physics.turnR = true;
-        }
-
-        Orb->physics.turnInc = f_random_rangeu(
-                                F_DEG_001_INT, F_DEG_001_INT * 3);
-    }
+    F_UNUSED(Orb);
 }
 
 static const OOrbType g_types[O_ORB_TYPE_NUM] = {
     [O_ORB_TYPE_PLAYER] = {
-        .radius = F_FIX_ONE * 32 / 256,
+        .radius = F_FIX_ONE * 48 / 256,
         .color1 = 0xcdea7d,
         .color2 = 0x63ea82,
         .speedMax = F_FIX_ONE * 2 / 128,
@@ -86,17 +75,17 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .tick = h_orb_player
     },
 
-    [O_ORB_TYPE_NPC1] = {
-        .radius = F_FIX_ONE * 16 / 256,
+    [O_ORB_TYPE_NPC_GOOD] = {
+        .radius = F_FIX_ONE * 32 / 256,
         .color1 = 0x469ed5,
-        .color2 = 0xed536c,
+        .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
         .lifeMax = 0,
         .tick = h_orb_npc
     },
 
-    [O_ORB_TYPE_NPC2] = {
-        .radius = F_FIX_ONE * 48 / 256,
+    [O_ORB_TYPE_NPC_POISON] = {
+        .radius = F_FIX_ONE * 64 / 256,
         .color1 = 0xed536c,
         .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
@@ -113,27 +102,28 @@ OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y, unsigned Angle)
     o->coords.x = X;
     o->coords.y = Y;
     o->origin = o->coords;
-    o->offset = f_random_intu(F_FIX_ANGLES_NUM);
+    o->offset = f_random_intu(F_DEG_360_INT);
     o->life = o->type->lifeMax;
-    o->physics.timer = f_timer_new(F_TIMER_MS, 500, true);
+
+    o->state.id = O_ORB_STATE_DRIFT;
+    o->state.timer = f_timer_new(F_TIMER_MS, f_random_rangeu(500, 800), true);
+
     o->physics.angle = Angle;
 
-    f_timer_runStart(o->physics.timer);
+    f_timer_runStart(o->state.timer);
 
     return o;
 }
 
 void o_orb_free(OOrb* Orb)
 {
-    f_timer_free(Orb->physics.timer);
+    f_timer_free(Orb->state.timer);
 
     f_mem_free(Orb);
 }
 
-void o_orb_tick(OOrb* Orb)
+static void move(OOrb* Orb)
 {
-    Orb->type->tick(Orb);
-
     FVecFix old = Orb->coords;
 
     Orb->coords.x += Orb->physics.velocity.x;
@@ -169,16 +159,80 @@ void o_orb_tick(OOrb* Orb)
     unsigned angle = Orb->physics.angle;
     FFix magnitude = Orb->type->speedMax;
 
+    if(Orb->state.id == O_ORB_STATE_FOLLOW) {
+        magnitude *= 4;
+    }
+
     Orb->physics.acceleration.x += f_fix_mul(f_fix_cos(angle), magnitude);
     Orb->physics.acceleration.y -= f_fix_mul(f_fix_sin(angle), magnitude);
     Orb->physics.acceleration.x >>= 1;
     Orb->physics.acceleration.y >>= 1;
+}
 
-    if(Orb->physics.turnL) {
-        Orb->physics.angle += Orb->physics.turnInc;
-    } else if(Orb->physics.turnR) {
-        Orb->physics.angle -= Orb->physics.turnInc;
+static void logic(OOrb* Orb)
+{
+    const OOrb* player = t_game_playerGet();
+
+    if(Orb == player) {
+        return;
     }
+
+    switch(Orb->state.id) {
+        case O_ORB_STATE_DRIFT: {
+            if(Orb->type == &g_types[O_ORB_TYPE_NPC_GOOD]) {
+                FVecFix delta = {Orb->coords.x - player->coords.x,
+                                 Orb->coords.y - player->coords.y};
+                FFix distance = f_fix_mul(delta.x, delta.x)
+                                    + f_fix_mul(delta.y, delta.y);
+                FFix threshold = F_FIX_ONE;
+                threshold = f_fix_mul(threshold, threshold);
+
+                if(distance < threshold) {
+                    Orb->state.id = O_ORB_STATE_FOLLOW;
+                }
+            } else if(f_timer_expiredGet(Orb->state.timer)) {
+                Orb->state.id = f_random_chance(1, 2)
+                                    ? O_ORB_STATE_TURN_LEFT
+                                    : O_ORB_STATE_TURN_RIGHT;
+
+                Orb->physics.turnInc = f_random_rangeu(
+                                        F_DEG_001_INT, F_DEG_001_INT * 3);
+            }
+        } break;
+
+        case O_ORB_STATE_TURN_LEFT: {
+            Orb->physics.angle += Orb->physics.turnInc;
+
+            if(f_timer_expiredGet(Orb->state.timer)) {
+                Orb->state.id = O_ORB_STATE_DRIFT;
+            }
+        } break;
+
+        case O_ORB_STATE_TURN_RIGHT: {
+            Orb->physics.angle -= Orb->physics.turnInc;
+
+            if(f_timer_expiredGet(Orb->state.timer)) {
+                Orb->state.id = O_ORB_STATE_DRIFT;
+            }
+        } break;
+
+        case O_ORB_STATE_FOLLOW: {
+            Orb->origin = player->coords;
+            Orb->physics.angle = f_fix_atan(Orb->coords.x,
+                                            Orb->coords.y,
+                                            player->coords.x,
+                                            player->coords.y);
+        } break;
+
+        default: break;
+    }
+}
+
+void o_orb_tick(OOrb* Orb)
+{
+    Orb->type->tick(Orb);
+    move(Orb);
+    logic(Orb);
 }
 
 void o_orb_draw0(OOrb* Orb)

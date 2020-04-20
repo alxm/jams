@@ -31,10 +31,11 @@ void t_game(void)
         g_game.orbs = f_list_new();
 
         for(int i = 100; i--; ) {
-            OOrb* o = o_orb_new(O_ORB_TYPE_NPC1 + f_random_int(2),
+            OOrb* o = o_orb_new(f_random_chance(3, 4)
+                                    ? O_ORB_TYPE_NPC_GOOD : O_ORB_TYPE_NPC_POISON,
                                 f_random_range(0, f_fix_fromInt(N_MAP_W)),
                                 f_random_range(0, f_fix_fromInt(N_MAP_H)),
-                                f_random_intu(F_FIX_ANGLES_NUM));
+                                f_random_intu(F_DEG_360_INT));
 
             f_list_addLast(g_game.orbs, o);
         }
