@@ -33,7 +33,7 @@ typedef void OOrbTickHandler(OOrb* Orb);
 
 struct OOrbType {
     FFix radius;
-    FColorRgb color;
+    uint32_t color1, color2;
     FFix speedMax;
     OOrbTickHandler* tick;
 };

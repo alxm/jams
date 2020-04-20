@@ -45,10 +45,10 @@ static void drawTiles(FVecFix TopLeft)
 
         for(int x = startScreen.x; x < screenSize.x; x += zoom) {
             static const uint32_t hex[4] = {
-                0x2277aa,
-                0x2288aa,
-                0x3377aa,
-                0x338899,
+                0xb1afb8,
+                0xaeacb5,
+                0xaeacb5,
+                0xb1afb8,
             };
 
             if(w.x >= 0 && w.x < N_MAP_W
@@ -73,7 +73,7 @@ static void drawGrid(FVecFix TopLeft)
     FVecInt screenSize = f_screen_sizeGet();
     int zoom = n_cam_zoomGet();
 
-    f_color_colorSetHex(0x44aaaa);
+    f_color_colorSetHex(0xa6a4ae);
 
     for(int x = startScreen.x; x < screenSize.x; x += zoom) {
         if(w.x >= 0 && w.x <= N_MAP_W) {
@@ -95,7 +95,7 @@ static void drawGrid(FVecFix TopLeft)
 void n_map_draw(void)
 {
     f_color_blendSet(F_COLOR_BLEND_SOLID);
-    f_color_colorSetHex(0x3388aa);
+    f_color_colorSetHex(0xa2a0ab);
     f_draw_fill();
 
     FVecFix topLeft = n_cam_coordsFromScreen(0, 0);
