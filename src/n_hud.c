@@ -25,7 +25,7 @@ static void drawLife(uint32_t Color, unsigned OffsetAngle, int OffsetX, int Offs
     int wmax = screen.x - 32;
     int hmax = screen.y / 16;
 
-    int w = wmax * player->life / player->type->lifeMax
+    int w = wmax * player->life / player->type->lifeFull
                 + f_fix_toInt(
                     f_fps_ticksSin(1, 1, OffsetAngle + F_DEG_022_INT) * 4);
     int h = hmax + f_fix_toInt(f_fps_ticksSin(1, 1, OffsetAngle) * 4);

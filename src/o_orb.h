@@ -35,6 +35,8 @@ typedef enum {
     O_ORB_STATE_TURN_LEFT,
     O_ORB_STATE_TURN_RIGHT,
     O_ORB_STATE_FOLLOW,
+    O_ORB_STATE_CAPTURED,
+    O_ORB_STATE_DEAD,
     O_ORB_STATE_NUM
 } OOrbStateId;
 
@@ -44,7 +46,9 @@ struct OOrbType {
     FFix radius;
     uint32_t color1, color2;
     FFix speedMax;
-    int lifeMax;
+    int speedFollowMult;
+    FFix followThreshold;
+    int lifeFull;
     OOrbTickHandler* tick;
 };
 
@@ -56,6 +60,7 @@ struct OOrb {
     struct {
         OOrbStateId id;
         FTimer* timer;
+        unsigned angle;
     } state;
     struct {
         FVecFix acceleration;

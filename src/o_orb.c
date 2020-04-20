@@ -71,7 +71,9 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color1 = 0xcdea7d,
         .color2 = 0x63ea82,
         .speedMax = F_FIX_ONE * 2 / 128,
-        .lifeMax = 1000,
+        .speedFollowMult = 1,
+        .followThreshold = 0,
+        .lifeFull = 1000,
         .tick = h_orb_player
     },
 
@@ -80,7 +82,9 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color1 = 0x469ed5,
         .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
-        .lifeMax = 0,
+        .speedFollowMult = 4,
+        .followThreshold = F_FIX_ONE / 2,
+        .lifeFull = 50,
         .tick = h_orb_npc
     },
 
@@ -89,7 +93,9 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color1 = 0xed536c,
         .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
-        .lifeMax = 0,
+        .speedFollowMult = 2,
+        .followThreshold = F_FIX_ONE / 4,
+        .lifeFull = -100,
         .tick = h_orb_npc
     },
 };
@@ -103,7 +109,7 @@ OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y, unsigned Angle)
     o->coords.y = Y;
     o->origin = o->coords;
     o->offset = f_random_intu(F_DEG_360_INT);
-    o->life = o->type->lifeMax;
+    o->life = o->type->lifeFull;
 
     o->state.id = O_ORB_STATE_DRIFT;
     o->state.timer = f_timer_new(F_TIMER_MS, f_random_rangeu(500, 800), true);
@@ -124,6 +130,10 @@ void o_orb_free(OOrb* Orb)
 
 static void move(OOrb* Orb)
 {
+    if(Orb->state.id == O_ORB_STATE_CAPTURED) {
+        return;
+    }
+
     FVecFix old = Orb->coords;
 
     Orb->coords.x += Orb->physics.velocity.x;
@@ -160,7 +170,7 @@ static void move(OOrb* Orb)
     FFix magnitude = Orb->type->speedMax;
 
     if(Orb->state.id == O_ORB_STATE_FOLLOW) {
-        magnitude *= 4;
+        magnitude *= Orb->type->speedFollowMult;
     }
 
     Orb->physics.acceleration.x += f_fix_mul(f_fix_cos(angle), magnitude);
@@ -169,25 +179,27 @@ static void move(OOrb* Orb)
     Orb->physics.acceleration.y >>= 1;
 }
 
+static inline bool distance_lt(FFix DistanceSquared, FFix Threshold)
+{
+    return DistanceSquared < f_fix_mul(Threshold, Threshold);
+}
+
 static void logic(OOrb* Orb)
 {
-    const OOrb* player = t_game_playerGet();
+    OOrb* player = t_game_playerGet();
 
     if(Orb == player) {
         return;
     }
 
+    FVecFix delta = {Orb->coords.x - player->coords.x,
+                     Orb->coords.y - player->coords.y};
+    FFix distance = f_fix_mul(delta.x, delta.x) + f_fix_mul(delta.y, delta.y);
+
     switch(Orb->state.id) {
         case O_ORB_STATE_DRIFT: {
             if(Orb->type == &g_types[O_ORB_TYPE_NPC_GOOD]) {
-                FVecFix delta = {Orb->coords.x - player->coords.x,
-                                 Orb->coords.y - player->coords.y};
-                FFix distance = f_fix_mul(delta.x, delta.x)
-                                    + f_fix_mul(delta.y, delta.y);
-                FFix threshold = F_FIX_ONE;
-                threshold = f_fix_mul(threshold, threshold);
-
-                if(distance < threshold) {
+                if(distance_lt(distance, Orb->type->followThreshold)) {
                     Orb->state.id = O_ORB_STATE_FOLLOW;
                 }
             } else if(f_timer_expiredGet(Orb->state.timer)) {
@@ -222,6 +234,23 @@ static void logic(OOrb* Orb)
                                             Orb->coords.y,
                                             player->coords.x,
                                             player->coords.y);
+
+            if(distance_lt(distance, player->type->radius)) {
+                player->life = f_math_min(player->life + Orb->life,
+                                          player->type->lifeFull);
+
+                Orb->state.id = O_ORB_STATE_CAPTURED;
+                Orb->state.angle = 0;
+            }
+        } break;
+
+        case O_ORB_STATE_CAPTURED: {
+            Orb->origin = player->coords;
+            Orb->state.angle += F_DEG_001_INT * 2;
+
+            if(Orb->state.angle >= F_DEG_090_INT) {
+                Orb->state.id = O_ORB_STATE_DEAD;
+            }
         } break;
 
         default: break;
@@ -241,8 +270,16 @@ void o_orb_draw0(OOrb* Orb)
     FVecInt coords = n_cam_coordsToScreen(Orb->coords);
     FVecInt origin = n_cam_coordsToScreen(Orb->origin);
 
-    f_color_colorSetHex(0xa6a4ae);
-    f_color_blendSet(F_COLOR_BLEND_SOLID);
+    if(Orb->state.id == O_ORB_STATE_CAPTURED) {
+        f_color_colorSetHex(0xcdea7d);
+        f_color_blendSet(F_COLOR_BLEND_ALPHA);
+        f_color_alphaSet(f_fix_toInt(
+                            f_fix_sin(F_DEG_090_INT - Orb->state.angle)
+                                * F_COLOR_ALPHA_MAX / 2));
+    } else {
+        f_color_colorSetHex(0xa6a4ae);
+        f_color_blendSet(F_COLOR_BLEND_SOLID);
+    }
 
     f_draw_line(origin.x, origin.y - 2, coords.x, coords.y - radius);
     f_draw_line(origin.x, origin.y + 2, coords.x, coords.y + radius);
@@ -260,38 +297,56 @@ void o_orb_draw(OOrb* Orb)
     FFix sin13 = f_fps_ticksSin(1, 3, Orb->offset);
     FFix sin14 = f_fps_ticksSin(1, 4, Orb->offset);
 
-    f_color_fillDrawSet(false);
+    if(Orb->state.id == O_ORB_STATE_CAPTURED) {
+        f_color_fillDrawSet(true);
+        f_color_blendSet(F_COLOR_BLEND_ALPHA);
+        f_color_alphaSet(f_fix_toInt(
+                            f_fix_sin(F_DEG_090_INT - Orb->state.angle)
+                                * F_COLOR_ALPHA_MAX / 4));
 
-    f_color_colorSetHex(Orb->type->color2);
-    f_color_blendSet(F_COLOR_BLEND_ALPHA_50);
+        f_color_colorSetHex(Orb->type->color1);
+        f_draw_circle(coords.x,
+                      coords.y,
+                      f_fix_toInt(radius + f_fix_mul(radius / 2, sin12)));
 
-    f_draw_circle(coords.x,
-                  coords.y,
-                  f_fix_toInt(radius + f_fix_mul(radius / 2, sin13)));
+        f_color_colorSetHex(Orb->type->color2);
+        f_draw_circle(coords.x,
+                      coords.y,
+                      f_fix_toInt(radius / 2 + f_fix_mul(radius / 4, sin14)));
+    } else {
+        f_color_fillDrawSet(false);
 
-    f_color_colorSetHex(Orb->type->color1);
-    f_color_blendSet(F_COLOR_BLEND_ALPHA_75);
+        f_color_colorSetHex(Orb->type->color2);
+        f_color_blendSet(F_COLOR_BLEND_ALPHA_50);
 
-    f_draw_circle(coords.x,
-                  coords.y,
-                  f_fix_toInt(radius + f_fix_mul(radius / 4, sin12)));
+        f_draw_circle(coords.x,
+                      coords.y,
+                      f_fix_toInt(radius + f_fix_mul(radius / 2, sin13)));
 
-    f_color_fillDrawSet(true);
-    f_color_blendSet(F_COLOR_BLEND_ALPHA);
+        f_color_colorSetHex(Orb->type->color1);
+        f_color_blendSet(F_COLOR_BLEND_ALPHA_75);
 
-    f_color_colorSetHex(Orb->type->color2);
-    f_color_alphaSet(
-        F_COLOR_ALPHA_MAX / 4 + f_fix_toInt(sin12 * F_COLOR_ALPHA_MAX / 8));
+        f_draw_circle(coords.x,
+                      coords.y,
+                      f_fix_toInt(radius + f_fix_mul(radius / 4, sin12)));
 
-    f_draw_circle(coords.x,
-                  coords.y,
-                  f_fix_toInt(radius + f_fix_mul(radius / 4, sin14)));
+        f_color_fillDrawSet(true);
+        f_color_blendSet(F_COLOR_BLEND_ALPHA);
 
-    f_color_colorSetHex(Orb->type->color1);
-    f_color_alphaSet(
-        F_COLOR_ALPHA_MAX * 6 / 8 + f_fix_toInt(sin14 * F_COLOR_ALPHA_MAX / 8));
+        f_color_colorSetHex(Orb->type->color2);
+        f_color_alphaSet(F_COLOR_ALPHA_MAX / 4
+                            + f_fix_toInt(sin12 * F_COLOR_ALPHA_MAX / 8));
 
-    f_draw_circle(coords.x,
-                  coords.y,
-                  f_fix_toInt(radius / 2 + f_fix_mul(radius / 8, sin13)));
+        f_draw_circle(coords.x,
+                      coords.y,
+                      f_fix_toInt(radius + f_fix_mul(radius / 4, sin14)));
+
+        f_color_colorSetHex(Orb->type->color1);
+        f_color_alphaSet(F_COLOR_ALPHA_MAX * 6 / 8
+                            + f_fix_toInt(sin14 * F_COLOR_ALPHA_MAX / 8));
+
+        f_draw_circle(coords.x,
+                      coords.y,
+                      f_fix_toInt(radius / 2 + f_fix_mul(radius / 8, sin13)));
+    }
 }

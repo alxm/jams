@@ -30,9 +30,10 @@ void t_game(void)
     {
         g_game.orbs = f_list_new();
 
-        for(int i = 100; i--; ) {
-            OOrb* o = o_orb_new(f_random_chance(3, 4)
-                                    ? O_ORB_TYPE_NPC_GOOD : O_ORB_TYPE_NPC_POISON,
+        for(int i = 10; i--; ) {
+            OOrb* o = o_orb_new(f_random_chance(4, 5)
+                                    ? O_ORB_TYPE_NPC_GOOD
+                                    : O_ORB_TYPE_NPC_POISON,
                                 f_random_range(0, f_fix_fromInt(N_MAP_W)),
                                 f_random_range(0, f_fix_fromInt(N_MAP_H)),
                                 f_random_intu(F_DEG_360_INT));
@@ -57,11 +58,16 @@ void t_game(void)
 
         F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
             o_orb_tick(o);
+
+            if(o->state.id == O_ORB_STATE_DEAD) {
+                F_LIST_REMOVE_CURRENT();
+                o_orb_free(o);
+            }
         }
 
         n_cam_tick(g_game.player->coords);
 
-        g_game.player->life--;
+        g_game.player->life -= 2;
 
         if(g_game.player->life <= 0) {
             f_state_replace(t_game);
