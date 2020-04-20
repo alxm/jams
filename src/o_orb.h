@@ -41,7 +41,7 @@ struct OOrbType {
 
 struct OOrb {
     const OOrbType* type;
-    FVecFix coords;
+    FVecFix coords, origin;
     unsigned offset;
     int life;
     struct {
@@ -56,5 +56,7 @@ struct OOrb {
 
 extern OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y, unsigned Angle);
 extern void o_orb_free(OOrb* Orb);
+
 extern void o_orb_tick(OOrb* Orb);
+extern void o_orb_draw0(OOrb* Orb);
 extern void o_orb_draw(OOrb* Orb);

@@ -112,6 +112,7 @@ OOrb* o_orb_new(OOrbTypeId Type, FFix X, FFix Y, unsigned Angle)
     o->type = &g_types[Type];
     o->coords.x = X;
     o->coords.y = Y;
+    o->origin = o->coords;
     o->offset = f_random_intu(F_FIX_ANGLES_NUM);
     o->life = o->type->lifeMax;
     o->physics.timer = f_timer_new(F_TIMER_MS, 500, true);
@@ -178,6 +179,21 @@ void o_orb_tick(OOrb* Orb)
     } else if(Orb->physics.turnR) {
         Orb->physics.angle -= Orb->physics.turnInc;
     }
+}
+
+void o_orb_draw0(OOrb* Orb)
+{
+    int radius = f_fix_toInt(Orb->type->radius * n_cam_zoomGet()) / 2;
+    FVecInt coords = n_cam_coordsToScreen(Orb->coords);
+    FVecInt origin = n_cam_coordsToScreen(Orb->origin);
+
+    f_color_colorSetHex(0xa6a4ae);
+    f_color_blendSet(F_COLOR_BLEND_SOLID);
+
+    f_draw_line(origin.x, origin.y - 2, coords.x, coords.y - radius);
+    f_draw_line(origin.x, origin.y + 2, coords.x, coords.y + radius);
+    f_draw_line(origin.x - 2, origin.y, coords.x - radius, coords.y);
+    f_draw_line(origin.x + 2, origin.y, coords.x + radius, coords.y);
 }
 
 void o_orb_draw(OOrb* Orb)
