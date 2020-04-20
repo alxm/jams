@@ -126,8 +126,24 @@ void o_orb_tick(OOrb* Orb)
 {
     Orb->type->tick(Orb);
 
+    FVecFix old = Orb->coords;
+
     Orb->coords.x += Orb->physics.velocity.x;
     Orb->coords.y += Orb->physics.velocity.y;
+
+    if(Orb->coords.x < 0 || Orb->coords.x >= N_MAP_W * F_FIX_ONE) {
+        Orb->coords = old;
+        Orb->physics.angle = F_DEG_180_INT - Orb->physics.angle;
+        Orb->physics.velocity.x *= -1;
+        Orb->physics.acceleration.x *= -1;
+    }
+
+    if(Orb->coords.y < 0 || Orb->coords.y >= N_MAP_H * F_FIX_ONE) {
+        Orb->coords = old;
+        Orb->physics.angle = -Orb->physics.angle;
+        Orb->physics.velocity.y *= -1;
+        Orb->physics.acceleration.y *= -1;
+    }
 
     Orb->physics.velocity.x += Orb->physics.acceleration.x;
     Orb->physics.velocity.y += Orb->physics.acceleration.y;
