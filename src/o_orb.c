@@ -136,6 +136,10 @@ void o_orb_tick(OOrb* Orb)
         Orb->physics.angle = F_DEG_180_INT - Orb->physics.angle;
         Orb->physics.velocity.x *= -1;
         Orb->physics.acceleration.x *= -1;
+
+        if(Orb == t_game_getPlayer()) {
+            n_cam_zoomOut();
+        }
     }
 
     if(Orb->coords.y < 0 || Orb->coords.y >= N_MAP_H * F_FIX_ONE) {
@@ -143,6 +147,10 @@ void o_orb_tick(OOrb* Orb)
         Orb->physics.angle = -Orb->physics.angle;
         Orb->physics.velocity.y *= -1;
         Orb->physics.acceleration.y *= -1;
+
+        if(Orb == t_game_getPlayer()) {
+            n_cam_zoomOut();
+        }
     }
 
     Orb->physics.velocity.x += Orb->physics.acceleration.x;

@@ -83,3 +83,8 @@ void t_game(void)
         f_list_free(g_game.orbs);
     }
 }
+
+OOrb* t_game_getPlayer(void)
+{
+    return g_game.player;
+}

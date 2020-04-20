@@ -18,4 +18,8 @@
 
 #include <faur.h>
 
+#include "o_orb.h"
+
 extern FState t_game;
+
+extern OOrb* t_game_getPlayer(void);
