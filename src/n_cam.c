@@ -17,15 +17,11 @@
 #include "n_cam.h"
 #include "main.h"
 
-#define N_CAM_ZOOM_DEFAULT 256
-#define N_CAM_ZOOM_OUT (N_CAM_ZOOM_DEFAULT / 16)
-#define N_CAM_ZOOM_OSC (N_CAM_ZOOM_DEFAULT / 32)
-
 typedef struct {
     FVecFix coords;
     FVecInt shake;
     FTimer* timer;
-    int zoom;
+    int zoom, zoomDefault; // 1 unit is this many screen pixels
     unsigned zoomAngle;
     bool zoomOut;
 } NCam;
@@ -35,7 +31,8 @@ static NCam g_cam;
 void n_cam_new(void)
 {
     g_cam.shake = (FVecInt){0, 0};
-    g_cam.zoom = N_CAM_ZOOM_DEFAULT; // 1 unit is this many screen pixels
+    g_cam.zoomDefault = f_screen_sizeGetWidth() / 4;
+    g_cam.zoom = g_cam.zoomDefault;
     g_cam.zoomAngle = 0;
 
     if(g_cam.timer == NULL) {
@@ -69,9 +66,9 @@ void n_cam_tick(FVecFix Origin)
         }
     }
 
-    g_cam.zoom = N_CAM_ZOOM_DEFAULT
-                    - f_fix_toInt(N_CAM_ZOOM_OUT * f_fix_sin(g_cam.zoomAngle))
-                    + f_fix_toInt(N_CAM_ZOOM_OSC * f_fps_ticksSin(1, 4, 0));
+    g_cam.zoom = g_cam.zoomDefault
+        - f_fix_toInt((g_cam.zoomDefault / 16) * f_fix_sin(g_cam.zoomAngle))
+        + f_fix_toInt((g_cam.zoomDefault / 32) * f_fps_ticksSin(1, 4, 0));
 }
 
 FVecFix n_cam_coordsGetOrigin(void)
