@@ -35,6 +35,7 @@ typedef enum {
     O_ORB_STATE_TURN_LEFT,
     O_ORB_STATE_TURN_RIGHT,
     O_ORB_STATE_FOLLOW,
+    O_ORB_STATE_RETREAT,
     O_ORB_STATE_CAPTURED,
     O_ORB_STATE_DEAD,
     O_ORB_STATE_NUM
@@ -49,6 +50,7 @@ struct OOrbType {
     int speedFollowMult;
     FFix followThreshold;
     int lifeFull;
+    unsigned ms;
     OOrbTickHandler* tick;
 };
 
