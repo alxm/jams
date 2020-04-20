@@ -26,8 +26,5 @@ typedef struct {
     FGrid* grid;
 } NMap;
 
-extern void n_map_new(void);
-extern void n_map_free(void);
-extern void n_map_tick(void);
 extern void n_map_draw(void);
 

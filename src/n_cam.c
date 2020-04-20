@@ -34,10 +34,7 @@ void n_cam_new(void)
     g_cam.zoomDefault = f_screen_sizeGetWidth() / 4;
     g_cam.zoom = g_cam.zoomDefault;
     g_cam.zoomAngle = 0;
-
-    if(g_cam.timer == NULL) {
-        g_cam.timer = f_timer_new(F_TIMER_MS, 0, false);
-    }
+    g_cam.timer = f_timer_new(F_TIMER_MS, 0, false);
 
     f_timer_runStop(g_cam.timer);
 }

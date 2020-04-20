@@ -17,21 +17,6 @@
 #include "n_map.h"
 #include "main.h"
 
-void n_map_new(void)
-{
-    //
-}
-
-void n_map_free(void)
-{
-    //
-}
-
-void n_map_tick(void)
-{
-    //
-}
-
 static void drawTiles(FVecFix TopLeft)
 {
     FVecFix start = {f_fix_floor(TopLeft.x), f_fix_floor(TopLeft.y)};

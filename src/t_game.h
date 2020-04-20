@@ -20,6 +20,13 @@
 
 #include "o_orb.h"
 
-extern FState t_game;
+typedef struct {
+    FList* orbs;
+    OOrb* player;
+    int level;
+    unsigned orbsGood;
+} NGame;
 
-extern OOrb* t_game_playerGet(void);
+extern NGame n_game;
+
+extern FState t_game_play;

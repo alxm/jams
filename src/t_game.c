@@ -17,46 +17,83 @@
 #include "t_game.h"
 #include "main.h"
 
-typedef struct {
-    FList* orbs;
-    OOrb* player;
-} NGame;
+NGame n_game;
 
-static NGame g_game;
+static void n_game_new(void)
+{
+    n_game.orbs = f_list_new();
+}
 
-void t_game(void)
+static void n_game_free(void)
+{
+    f_list_freeEx(n_game.orbs, (FFree*)o_orb_free);
+}
+
+static void n_game_nextLevel(void)
+{
+    int level = n_game.level++;
+    F_UNUSED(level);
+
+    n_game.orbsGood = 0;
+
+    f_list_clearEx(n_game.orbs, (FFree*)o_orb_free);
+
+    for(int i = 10; i--; ) {
+        OOrbTypeId type = f_random_chance(4, 5)
+                                ? O_ORB_TYPE_NPC_GOOD
+                                : O_ORB_TYPE_NPC_POISON;
+
+        if(type == O_ORB_TYPE_NPC_GOOD) {
+            n_game.orbsGood++;
+        }
+
+        OOrb* o = o_orb_new(type,
+                            f_random_range(0, f_fix_fromInt(N_MAP_W)),
+                            f_random_range(0, f_fix_fromInt(N_MAP_H)),
+                            f_random_intu(F_DEG_360_INT));
+
+        f_list_addLast(n_game.orbs, o);
+    }
+
+    n_game.player = o_orb_new(O_ORB_TYPE_PLAYER,
+                              f_fix_fromInt(N_MAP_W / 2),
+                              f_fix_fromInt(N_MAP_H / 2),
+                              F_DEG_090_INT);
+
+    f_list_addLast(n_game.orbs, n_game.player);
+}
+
+static void t_game_dead(void)
 {
     F_STATE_INIT
     {
-        g_game.orbs = f_list_new();
+        f_state_popUntil(t_title);
+    }
+}
 
-        for(int i = 10; i--; ) {
-            OOrb* o = o_orb_new(f_random_chance(4, 5)
-                                    ? O_ORB_TYPE_NPC_GOOD
-                                    : O_ORB_TYPE_NPC_POISON,
-                                f_random_range(0, f_fix_fromInt(N_MAP_W)),
-                                f_random_range(0, f_fix_fromInt(N_MAP_H)),
-                                f_random_intu(F_DEG_360_INT));
+static void t_game_next(void)
+{
+    F_STATE_INIT
+    {
+        n_game_nextLevel();
 
-            f_list_addLast(g_game.orbs, o);
-        }
+        f_state_pop();
+    }
+}
 
-        g_game.player = o_orb_new(O_ORB_TYPE_PLAYER,
-                                  f_fix_fromInt(N_MAP_W / 2),
-                                  f_fix_fromInt(N_MAP_H / 2),
-                                  F_DEG_090_INT);
-
-        f_list_addLast(g_game.orbs, g_game.player);
-
-        n_map_new();
+void t_game_play(void)
+{
+    F_STATE_INIT
+    {
+        n_game_new();
         n_cam_new();
+
+        n_game_nextLevel();
     }
 
     F_STATE_TICK
     {
-        n_map_tick();
-
-        F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
+        F_LIST_ITERATE(n_game.orbs, OOrb*, o) {
             o_orb_tick(o);
 
             if(o->state.id == O_ORB_STATE_DEAD) {
@@ -65,12 +102,14 @@ void t_game(void)
             }
         }
 
-        n_cam_tick(g_game.player->coords);
+        n_cam_tick(n_game.player->coords);
 
-        g_game.player->life -= 2;
+        n_game.player->life -= 2;
 
-        if(g_game.player->life <= 0) {
-            f_state_replace(t_game);
+        if(n_game.player->life <= 0) {
+            f_state_push(t_game_dead);
+        } else if(n_game.orbsGood == 0) {
+            f_state_push(t_game_next);
         }
     }
 
@@ -78,11 +117,11 @@ void t_game(void)
     {
         n_map_draw();
 
-        F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
+        F_LIST_ITERATE(n_game.orbs, OOrb*, o) {
             o_orb_draw0(o);
         }
 
-        F_LIST_ITERATE(g_game.orbs, OOrb*, o) {
+        F_LIST_ITERATE(n_game.orbs, OOrb*, o) {
             o_orb_draw(o);
         }
 
@@ -91,13 +130,7 @@ void t_game(void)
 
     F_STATE_FREE
     {
-        f_list_freeEx(g_game.orbs, (FFree*)o_orb_free);
-
-        n_map_free();
+        n_game_free();
+        n_cam_free();
     }
-}
-
-OOrb* t_game_playerGet(void)
-{
-    return g_game.player;
 }

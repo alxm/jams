@@ -46,7 +46,7 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
         .speedFollowMult = 4,
-        .followThreshold = F_FIX_ONE / 2,
+        .followThreshold = F_FIX_ONE / 3,
         .lifeFull = 50,
         .ms = 800,
         .tick = h_orb_npc
@@ -58,7 +58,7 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
         .speedFollowMult = 8,
-        .followThreshold = F_FIX_ONE / 1,
+        .followThreshold = F_FIX_ONE / 2,
         .lifeFull = 100,
         .ms = 1200,
         .tick = h_orb_npc
@@ -206,12 +206,14 @@ static void logicAi(OOrb* Orb, OOrb* Player)
                         Orb->state.id = O_ORB_STATE_RETREAT;
                         f_timer_runStart(Orb->state.timer);
                     }
-                } else {
+                } else if(is_type(Orb, O_ORB_TYPE_NPC_GOOD)) {
                     Player->life = f_math_min(Player->life + Orb->life,
                                               Player->type->lifeFull);
 
                     Orb->state.id = O_ORB_STATE_CAPTURED;
                     Orb->state.angle = 0;
+
+                    n_game.orbsGood--;
                 }
             }
         } break;
@@ -243,12 +245,10 @@ static void logicAi(OOrb* Orb, OOrb* Player)
 
 static void logic(OOrb* Orb)
 {
-    OOrb* player = t_game_playerGet();
-
-    if(Orb == player) {
+    if(Orb == n_game.player) {
         logicPlayer(Orb);
     } else {
-        logicAi(Orb, player);
+        logicAi(Orb, n_game.player);
     }
 }
 
@@ -269,7 +269,7 @@ static void move(OOrb* Orb)
         Orb->physics.velocity.x *= -1;
         Orb->physics.acceleration.x *= -1;
 
-        if(Orb == t_game_playerGet()) {
+        if(Orb == n_game.player) {
             n_cam_zoomOut();
         }
     }
@@ -280,7 +280,7 @@ static void move(OOrb* Orb)
         Orb->physics.velocity.y *= -1;
         Orb->physics.acceleration.y *= -1;
 
-        if(Orb == t_game_playerGet()) {
+        if(Orb == n_game.player) {
             n_cam_zoomOut();
         }
     }

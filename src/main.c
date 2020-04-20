@@ -22,12 +22,11 @@ void f_main(void)
     {
         u_input_init();
 
-        f_state_push(t_game);
+        f_state_push(t_title);
     }
 
     F_STATE_FREE
     {
-        n_cam_free();
         u_input_uninit();
     }
 }
