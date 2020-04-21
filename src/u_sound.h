@@ -18,7 +18,16 @@
 
 #include <faur.h>
 
+typedef enum {
+    U_SFX_INVALID = -1,
+    U_SFX_JINGLE,
+    U_SFX_HISS,
+    U_SFX_NUM
+} USfxId;
+
 extern void u_sound_init(void);
 extern void u_sound_uninit(void);
 
 extern void u_sound_tick(void);
+
+extern void u_sound_play(USfxId Sfx);

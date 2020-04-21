@@ -206,6 +206,9 @@ static void logicAi(OOrb* Orb, OOrb* Player)
                         Orb->state.id = O_ORB_STATE_RETREAT;
                         f_timer_runStart(Orb->state.timer);
                     }
+
+                    u_sound_play(U_SFX_HISS);
+                    n_cam_shakeSet(200);
                 } else if(is_type(Orb, O_ORB_TYPE_NPC_GOOD)) {
                     Player->life = f_math_min(Player->life + Orb->life,
                                               Player->type->lifeFull);
@@ -214,6 +217,8 @@ static void logicAi(OOrb* Orb, OOrb* Player)
                     Orb->state.angle = 0;
 
                     n_game.orbsGood--;
+
+                    u_sound_play(U_SFX_JINGLE);
                 }
             }
         } break;

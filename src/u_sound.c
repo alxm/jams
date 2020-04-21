@@ -19,11 +19,21 @@
 
 #define U_NOTES_NUM 6
 
+static FSample* g_samples[U_SFX_NUM];
 static FSample* g_notes[U_NOTES_NUM];
 static FTimer* g_timer;
 
 void u_sound_init(void)
 {
+    static const char* sfx[U_SFX_NUM] = {
+        [U_SFX_JINGLE] = "assets/sfx/jingle.wav",
+        [U_SFX_HISS] = "assets/sfx/hiss.wav",
+    };
+
+    for(int i = 0; i < U_SFX_NUM; i++) {
+        g_samples[i] = f_sample_new(sfx[i]);
+    }
+
     for(int i = 0; i < U_NOTES_NUM; i++) {
         char buffer[64];
         f_str_fmt(buffer, sizeof(buffer), false, "assets/sfx/n%d.wav", i + 1);
@@ -61,4 +71,9 @@ void u_sound_tick(void)
                             g_notes[f_random_intu(U_NOTES_NUM)],
                             F_CHANNEL_PLAY_NORMAL);
     }
+}
+
+void u_sound_play(USfxId Sfx)
+{
+    f_channel_playStart(F_CHANNEL_ANY, g_samples[Sfx], F_CHANNEL_PLAY_NORMAL);
 }

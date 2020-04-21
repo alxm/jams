@@ -49,7 +49,8 @@ void n_cam_tick(FVecFix Origin)
     g_cam.coords = Origin;
 
     if(f_timer_runGet(g_cam.timer)) {
-        g_cam.shake = (FVecInt){f_random_range(-1, 2), f_random_range(-1, 2)};
+        g_cam.shake = (FVecInt){f_random_range(-1, 2) * 8,
+                                f_random_range(-1, 2) * 8};
     } else {
         g_cam.shake = (FVecInt){0, 0};
     }
