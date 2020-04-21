@@ -26,6 +26,8 @@ typedef enum {
     O_ORB_TYPE_PLAYER,
     O_ORB_TYPE_NPC_GOOD,
     O_ORB_TYPE_NPC_POISON,
+    O_ORB_TYPE_NPC_POISON2,
+    O_ORB_TYPE_NPC_POISON3,
     O_ORB_TYPE_NUM
 } OOrbTypeId;
 
@@ -50,6 +52,7 @@ struct OOrbType {
     int speedFollowMult;
     FFix followThreshold;
     int lifeFull;
+    int damage;
     unsigned ms;
     OOrbTickHandler* tick;
 };

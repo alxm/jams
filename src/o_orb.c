@@ -36,6 +36,7 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .speedFollowMult = 1,
         .followThreshold = 0,
         .lifeFull = 1000,
+        .damage = 0,
         .ms = 0,
         .tick = h_orb_player
     },
@@ -48,18 +49,46 @@ static const OOrbType g_types[O_ORB_TYPE_NUM] = {
         .speedFollowMult = 4,
         .followThreshold = F_FIX_ONE / 3,
         .lifeFull = 50,
+        .damage = 0,
         .ms = 800,
         .tick = h_orb_npc
     },
 
     [O_ORB_TYPE_NPC_POISON] = {
         .radius = F_FIX_ONE * 64 / 256,
+        .color1 = 0xed785d,
+        .color2 = 0x4e3d40,
+        .speedMax = F_FIX_ONE * 1 / 128,
+        .speedFollowMult = 2,
+        .followThreshold = F_FIX_ONE / 2,
+        .lifeFull = 50,
+        .damage = 50,
+        .ms = 1200,
+        .tick = h_orb_npc
+    },
+
+    [O_ORB_TYPE_NPC_POISON2] = {
+        .radius = F_FIX_ONE * 64 / 256,
         .color1 = 0xed536c,
         .color2 = 0x4e3d40,
         .speedMax = F_FIX_ONE * 1 / 128,
+        .speedFollowMult = 4,
+        .followThreshold = F_FIX_ONE / 1,
+        .lifeFull = 300,
+        .damage = 100,
+        .ms = 1200,
+        .tick = h_orb_npc
+    },
+
+    [O_ORB_TYPE_NPC_POISON3] = {
+        .radius = F_FIX_ONE * 64 / 256,
+        .color1 = 0xca47a9,
+        .color2 = 0x4e3d40,
+        .speedMax = F_FIX_ONE * 1 / 128,
         .speedFollowMult = 8,
-        .followThreshold = F_FIX_ONE / 2,
-        .lifeFull = 100,
+        .followThreshold = F_FIX_ONE * 2 / 3,
+        .lifeFull = 400,
+        .damage = 200,
         .ms = 1200,
         .tick = h_orb_npc
     },
@@ -195,9 +224,20 @@ static void logicAi(OOrb* Orb, OOrb* Player)
                                             Player->coords.y);
 
             if(distance_lt(distance, Player->type->radius)) {
-                if(is_type(Orb, O_ORB_TYPE_NPC_POISON)) {
-                    Player->life = f_math_max(Player->life - 100, 0);
-                    Orb->life -= 50;
+                if(is_type(Orb, O_ORB_TYPE_NPC_GOOD)) {
+                    Player->life = f_math_min(Player->life + Orb->life,
+                                              Player->type->lifeFull);
+
+                    Orb->state.id = O_ORB_STATE_CAPTURED;
+                    Orb->state.angle = 0;
+
+                    n_game.orbsGood--;
+
+                    u_sound_play(U_SFX_JINGLE);
+                } else {
+                    Player->life = f_math_max(
+                                    Player->life - Orb->type->damage, 0);
+                    Orb->life -= Orb->type->damage;
 
                     if(Orb->life <= 0) {
                         Orb->state.id = O_ORB_STATE_CAPTURED;
@@ -209,16 +249,6 @@ static void logicAi(OOrb* Orb, OOrb* Player)
 
                     u_sound_play(U_SFX_HISS);
                     n_cam_shakeSet(200);
-                } else if(is_type(Orb, O_ORB_TYPE_NPC_GOOD)) {
-                    Player->life = f_math_min(Player->life + Orb->life,
-                                              Player->type->lifeFull);
-
-                    Orb->state.id = O_ORB_STATE_CAPTURED;
-                    Orb->state.angle = 0;
-
-                    n_game.orbsGood--;
-
-                    u_sound_play(U_SFX_JINGLE);
                 }
             }
         } break;
@@ -268,7 +298,7 @@ static void move(OOrb* Orb)
     Orb->coords.x += Orb->physics.velocity.x;
     Orb->coords.y += Orb->physics.velocity.y;
 
-    if(Orb->coords.x < 0 || Orb->coords.x >= N_MAP_W * F_FIX_ONE) {
+    if(Orb->coords.x < 0 || Orb->coords.x >= n_game.size.x * F_FIX_ONE) {
         Orb->coords = old;
         Orb->physics.angle = F_DEG_180_INT - Orb->physics.angle;
         Orb->physics.velocity.x *= -1;
@@ -279,7 +309,7 @@ static void move(OOrb* Orb)
         }
     }
 
-    if(Orb->coords.y < 0 || Orb->coords.y >= N_MAP_H * F_FIX_ONE) {
+    if(Orb->coords.y < 0 || Orb->coords.y >= n_game.size.y * F_FIX_ONE) {
         Orb->coords = old;
         Orb->physics.angle = -Orb->physics.angle;
         Orb->physics.velocity.y *= -1;

@@ -37,8 +37,32 @@ static void drawLife(uint32_t Color, unsigned OffsetAngle, int OffsetX, int Offs
                      h);
 }
 
+static void drawProgress(uint32_t Color, unsigned OffsetAngle, int OffsetX, int OffsetY)
+{
+    FVecInt screen = f_screen_sizeGet();
+    int wmax = screen.x - 32;
+    int hmax = screen.y / 16;
+
+    int w = wmax * (n_game.orbsGoodTotal - n_game.orbsGood)
+                        / n_game.orbsGoodTotal
+                + f_fix_toInt(
+                    f_fps_ticksSin(1, 1, OffsetAngle + F_DEG_022_INT) * 4);
+    int h = hmax + f_fix_toInt(f_fps_ticksSin(1, 1, OffsetAngle) * 4);
+
+    f_color_colorSetHex(Color);
+    f_color_blendSet(F_COLOR_BLEND_ALPHA_75);
+
+    f_draw_rectangle(16 + (wmax - w) / 2 + OffsetX,
+                     16 + hmax + 8 + (hmax - h) / 2 + OffsetY,
+                     w,
+                     h);
+}
+
 void n_hud_draw(void)
 {
     drawLife(0x63ea82, 0, 4, 4);
     drawLife(0xcdea7d, F_DEG_067_INT, 0, 0);
+
+    drawProgress(0x63ea82, 0, 4, 4);
+    drawProgress(0x67c3ea, F_DEG_045_INT, 0, 0);
 }

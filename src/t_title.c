@@ -29,7 +29,11 @@ void t_title(void)
     F_STATE_TICK
     {
         if(f_button_pressGetOnce(u_input_get(U_BUTTON_ACTION))) {
+            f_color_colorSetHex(0xa2a0ab);
+            f_fade_startColorTo(200);
+
             f_state_push(t_game_play);
+            f_state_blockSet(f_fade_eventGet());
         }
     }
 
@@ -51,11 +55,12 @@ void t_title(void)
         f_font_coordsSet(screen.x / 2, screen.y / 2);
 
         f_font_print(
-            "Press Z key to start\n"
-            "Use arrow keys to move\n\n"
-            "Say hi to some, avoid others\n"
-            "Keep yourself alive\n\n"
-            "www.alxm.org 2020 - Ludum Dare 46"
+            "Dream 46, a small game for Ludum Dare 46\n\n"
+            "Press SPACE key to start\n"
+            "Use arrow keys to move in each direction\n\n"
+            "Collect all blue orbs to clear level\n"
+            "Don't let your life bar run out!\n\n"
+            "www.alxm.org 2020"
             );
 
         f_align_pop();

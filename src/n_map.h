@@ -18,13 +18,5 @@
 
 #include <faur.h>
 
-#define N_MAP_W 2
-#define N_MAP_H 2
-
-typedef struct {
-    int w, h;
-    FGrid* grid;
-} NMap;
-
 extern void n_map_draw(void);
 

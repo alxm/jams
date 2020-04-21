@@ -41,7 +41,7 @@ void u_input_init(void)
     f_button_bindKey(g_buttons[U_BUTTON_DOWN], F_KEY_DOWN);
     f_button_bindKey(g_buttons[U_BUTTON_LEFT], F_KEY_LEFT);
     f_button_bindKey(g_buttons[U_BUTTON_RIGHT], F_KEY_RIGHT);
-    f_button_bindKey(g_buttons[U_BUTTON_ACTION], F_KEY_Z);
+    f_button_bindKey(g_buttons[U_BUTTON_ACTION], F_KEY_SPACE);
 }
 
 void u_input_uninit(void)

@@ -36,8 +36,8 @@ static void drawTiles(FVecFix TopLeft)
                 0xb1afb8,
             };
 
-            if(w.x >= 0 && w.x < N_MAP_W
-                && w.y >= 0 && w.y < N_MAP_H) {
+            if(w.x >= 0 && w.x < n_game.size.x
+                && w.y >= 0 && w.y < n_game.size.y) {
 
                 f_color_colorSetHex(hex[((w.x & 1) << 1) | (w.y & 1)]);
                 f_draw_rectangle(x, y, zoom, zoom);
@@ -61,7 +61,7 @@ static void drawGrid(FVecFix TopLeft)
     f_color_colorSetHex(0xa6a4ae);
 
     for(int x = startScreen.x; x < screenSize.x; x += zoom) {
-        if(w.x >= 0 && w.x <= N_MAP_W) {
+        if(w.x >= 0 && w.x <= n_game.size.x) {
             f_draw_linev(x, 0, screenSize.y - 1);
         }
 
@@ -69,7 +69,7 @@ static void drawGrid(FVecFix TopLeft)
     }
 
     for(int y = startScreen.y; y < screenSize.y; y += zoom) {
-        if(w.y >= 0 && w.y <= N_MAP_H) {
+        if(w.y >= 0 && w.y <= n_game.size.y) {
             f_draw_lineh(0, screenSize.x - 1, y);
         }
 

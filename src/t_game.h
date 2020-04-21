@@ -23,8 +23,9 @@
 typedef struct {
     FList* orbs;
     OOrb* player;
+    int orbsGood, orbsGoodTotal;
     int level;
-    unsigned orbsGood;
+    FVecInt size;
 } NGame;
 
 extern NGame n_game;
