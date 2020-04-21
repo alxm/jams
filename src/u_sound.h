@@ -14,21 +14,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main.h"
+#pragma once
 
-void f_main(void)
-{
-    F_STATE_INIT
-    {
-        u_input_init();
-        u_sound_init();
+#include <faur.h>
 
-        f_state_push(t_title);
-    }
+extern void u_sound_init(void);
+extern void u_sound_uninit(void);
 
-    F_STATE_FREE
-    {
-        u_input_uninit();
-        u_sound_uninit();
-    }
-}
+extern void u_sound_tick(void);

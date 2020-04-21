@@ -93,6 +93,8 @@ void t_game_play(void)
 
     F_STATE_TICK
     {
+        u_sound_tick();
+
         F_LIST_ITERATE(n_game.orbs, OOrb*, o) {
             o_orb_tick(o);
 

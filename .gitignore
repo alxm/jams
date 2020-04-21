@@ -2,4 +2,6 @@
 /build/shared/
 /src/faur_gen/
 /todo
-/assets/gfx/mockup.xcf
+/assets/gfx/*.xcf
+/assets/sfx/*.xrns
+/assets/sfx/backup/
