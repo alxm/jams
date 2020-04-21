@@ -17,8 +17,15 @@
 #include "t_title.h"
 #include "main.h"
 
+static FFont* g_font;
+
 void t_title(void)
 {
+    F_STATE_INIT
+    {
+        g_font = f_font_newFromPng("assets/gfx/font_6x8.png", 0, 0, 0, 0);
+    }
+
     F_STATE_TICK
     {
         if(f_button_pressGetOnce(u_input_get(U_BUTTON_ACTION))) {
@@ -36,16 +43,27 @@ void t_title(void)
         f_align_push();
         f_align_set(F_ALIGN_X_CENTER, F_ALIGN_Y_CENTER);
 
+        f_font_fontSet(g_font);
+        f_color_fillBlitSet(true);
+        f_color_colorSetHex(0x4e3d40);
+
         FVecInt screen = f_screen_sizeGet();
         f_font_coordsSet(screen.x / 2, screen.y / 2);
 
         f_font_print(
             "Press Z key to start\n"
-            "Use arrow keys to move\n"
+            "Use arrow keys to move\n\n"
             "Say hi to some, avoid others\n"
-            "Keep yourself alive"
+            "Keep yourself alive\n\n"
+            "www.alxm.org 2020 - Ludum Dare 46"
             );
 
         f_align_pop();
+    }
+
+    F_STATE_FREE
+    {
+        f_font_fontSet(NULL);
+        f_font_free(g_font);
     }
 }
